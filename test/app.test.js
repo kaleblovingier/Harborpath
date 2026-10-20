@@ -3,11 +3,10 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createApp } from '../src/app.js';
+import { createApp, SECURITY_HEADERS } from '../src/app.js';
 import { readJson } from '../src/util.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const rootDir = path.join(here, '..');
 const sample = readJson(path.join(here, 'fixtures', 'findtreatment-sample.json'));
 
 const upstreamCalls = [];
@@ -24,7 +23,6 @@ let server;
 let base;
 before(async () => {
   const handler = createApp({
-    rootDir,
     fetchImpl: fakeFetch,
     rateLimit: { windowMs: 60_000, max: 40 },
     logger: { error: (m) => logged.push(m) },
@@ -48,6 +46,12 @@ test('index is served with a strict, third-party-free security policy', async ()
   assert.match(html, /Quick exit/);
   assert.doesNotMatch(html, /<script[^>]+src="https?:/, 'no third-party scripts');
   assert.doesNotMatch(html, /<link[^>]+href="https?:/, 'no third-party stylesheets or fonts');
+});
+
+test('vercel.json applies the same security headers to CDN-served files', () => {
+  const cfg = readJson(path.join(here, '..', 'vercel.json'));
+  const rule = cfg.headers.find((r) => r.source === '/(.*)');
+  assert.deepEqual(Object.fromEntries(rule.headers.map((x) => [x.key, x.value])), SECURITY_HEADERS);
 });
 
 test('static assets are gzip-compressed and cacheable by ETag', async () => {

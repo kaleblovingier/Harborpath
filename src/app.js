@@ -1,5 +1,6 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { createCache, createRateLimiter } from './cache.js';
@@ -7,7 +8,7 @@ import { createGeocoder, readLatLng } from './geo.js';
 import { createHealthCenterIndex } from './healthCenters.js';
 import { createTaxonomy } from './taxonomy.js';
 import { InputError, RADII_MILES, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
-import { readJson } from './util.js';
+import { loadData, PUBLIC_DIR } from './data.js';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -23,7 +24,7 @@ const MIME = {
 
 // No third-party origins at all: no CDNs, fonts, analytics, or maps. Visiting a
 // substance-use site is itself sensitive health information.
-const SECURITY_HEADERS = {
+export const SECURITY_HEADERS = {
   'Content-Security-Policy':
     "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; " +
     "font-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
@@ -35,8 +36,11 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'geolocation=(self), camera=(), microphone=()',
 };
 
+// Hosts with a CDN (e.g. Vercel) may serve public/ themselves and leave it out
+// of the server bundle, so a missing directory is not an error.
 function loadStatic(publicDir) {
   const files = new Map();
+  if (!existsSync(publicDir)) return files;
   const walk = (dir) => {
     for (const name of readdirSync(dir)) {
       const full = path.join(dir, name);
@@ -67,21 +71,17 @@ function clientKey(req, trustProxy) {
 }
 
 export function createApp({
-  rootDir,
   fetchImpl = fetch,
   trustProxy = false,
   rateLimit = { windowMs: 60_000, max: 120 },
   logger = console,
 } = {}) {
-  const dataDir = path.join(rootDir, 'data');
-  const taxonomy = createTaxonomy(readJson(path.join(dataDir, 'service-codes.json')));
-  const geocoder = createGeocoder({
-    zcta: readJson(path.join(dataDir, 'zcta.json')),
-    places: readJson(path.join(dataDir, 'places.json')),
-  });
-  const healthCenters = createHealthCenterIndex(readJson(path.join(dataDir, 'health-centers.json')));
-  const meta = readJson(path.join(dataDir, 'meta.json'));
-  const staticFiles = loadStatic(path.join(rootDir, 'public'));
+  const data = loadData();
+  const taxonomy = createTaxonomy(data.serviceCodes);
+  const geocoder = createGeocoder({ zcta: data.zcta, places: data.places });
+  const healthCenters = createHealthCenterIndex(data.healthCenters);
+  const meta = data.meta;
+  const staticFiles = loadStatic(fileURLToPath(PUBLIC_DIR));
   const treatmentCache = createCache({ ttlMs: 60 * 60 * 1000, maxEntries: 1000 });
   const limiter = createRateLimiter(rateLimit);
 

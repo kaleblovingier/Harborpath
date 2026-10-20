@@ -1,0 +1,7 @@
+legacy
+test
+docs
+scripts
+.github
+Dockerfile
+.dockerignore

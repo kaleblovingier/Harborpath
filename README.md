@@ -42,6 +42,8 @@ docker run -p 3000:3000 harborpath
 
 Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) work without the Dockerfile.
 
+**Vercel:** `npx vercel deploy --prod`. `vercel.json` selects the Node server preset and applies the same security headers to files Vercel serves from its CDN (a test keeps them identical to the server’s). Data files are loaded through literal `new URL()` paths in `src/data.js` so Vercel bundles them with the server.
+
 ## Project layout
 
 | Path | What it is |
