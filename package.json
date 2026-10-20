@@ -1,0 +1,16 @@
+{
+  "name": "harborpath-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Privacy-first finder for addiction treatment, harm reduction tools, and related health services, built on official SAMHSA, HRSA, and Census data.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test",
+    "data:build": "node scripts/build-data.mjs"
+  }
+}

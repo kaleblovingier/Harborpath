@@ -1,0 +1,10 @@
+{
+  "name": "HarborPath",
+  "short_name": "HarborPath",
+  "description": "Find treatment, harm reduction tools, and low-cost health care. Private, free, no tracking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f5f0",
+  "theme_color": "#0b4f5c",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

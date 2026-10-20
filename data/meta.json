@@ -1,0 +1,22 @@
+{
+  "builtAt": "2026-10-20T07:01:42.123Z",
+  "sources": {
+    "serviceCodes": {
+      "url": "https://findtreatment.gov/locator/serviceCategories.json",
+      "categories": 33
+    },
+    "zcta": {
+      "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_zcta_national.zip",
+      "count": 33791
+    },
+    "places": {
+      "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_place_national.zip",
+      "count": 32140
+    },
+    "healthCenters": {
+      "url": "https://data.hrsa.gov/DataDownload/DD_Files/Health_Center_Service_Delivery_and_LookAlike_Sites.csv",
+      "count": 13256,
+      "lastModified": "Mon, 19 Oct 2026 11:21:05 GMT"
+    }
+  }
+}
