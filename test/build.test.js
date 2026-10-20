@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { deflateRawSync } from 'node:zlib';
 import { parseCsv } from '../scripts/lib/csv.mjs';
 import { readZipEntries } from '../scripts/lib/unzip.mjs';
-import { cleanPlaceNames } from '../scripts/build-data.mjs';
+import { cleanPlaceNames } from '../scripts/sources/places.mjs';
 
 test('parseCsv handles quotes, escaped quotes, commas, and CRLF', () => {
   const rows = parseCsv('﻿Name,Note\r\n"Smith, Jo","said ""hi"""\r\nPlain,\r\n');

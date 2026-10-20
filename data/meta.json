@@ -1,9 +1,10 @@
 {
-  "builtAt": "2026-10-20T07:01:42.123Z",
+  "builtAt": "2026-10-20T23:51:42.566Z",
   "sources": {
     "serviceCodes": {
       "url": "https://findtreatment.gov/locator/serviceCategories.json",
-      "categories": 33
+      "categories": 33,
+      "builtAt": "2026-10-20T23:51:42.565Z"
     },
     "zcta": {
       "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_zcta_national.zip",
