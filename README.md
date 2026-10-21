@@ -10,6 +10,13 @@ A free, privacy-first platform for finding **addiction treatment**, **clinical c
 - **Health, VA, IHS & Emergency Services (`#/health`) & State Directories (`#/states`):** distance search over HRSA-funded Community Health Centers (sliding-fee primary care), SAMHSA mental health & crisis facilities, **VA Medical Centers & Vet Centers**, **Indian Health Service (IHS) & Tribal facilities**, **CMS Rural Health Clinics**, **CMS Emergency Response Hospitals**, and all **56+ State & Territory Behavioral Health Agencies and Medicaid directories**.
 - **Recovery & family (`#/support`) & Choosing care (`#/choosing-care`):** peer support and meeting finders, NARR recovery housing, CRAFT family support, NIDA Words Matter language guide, questions to ask providers, and EKRA (`18 U.S.C. § 220`) patient-brokering red flags.
 
+## Improvement roadmap
+
+A parallel agent swarm reviewed the platform and produced a ranked plan to serve more individuals while preserving privacy. See:
+
+- [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) — clinical expansion, accessibility/equity, data matching, and UX flows
+- [docs/AI_NAVIGATOR_SPEC.md](docs/AI_NAVIGATOR_SPEC.md) — privacy-first conversational navigator MVP that uses the existing pure functions
+
 ## Privacy by design
 
 Searching for substance use help is sensitive health information, so HarborPath:
@@ -56,6 +63,8 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `data/` | Compacted public datasets (SAMHSA service codes, Census ZCTAs/places/island places, HRSA health centers, VA facilities, IHS facilities, CMS rural health clinics & emergency hospitals, state agencies & Medicaid), built by `scripts/build-data.mjs` |
 | `test/` | `node:test` suites covering API, privacy headers, geocoding, federal providers, regional directories, and MD/PharmD/SUDP clinical modules |
 | `docs/ARCHITECTURE.md` | Data flow, API reference, and design decisions |
+| `docs/IMPROVEMENTS.md` | Ranked roadmap to serve more individuals |
+| `docs/AI_NAVIGATOR_SPEC.md` | Privacy-first AI navigator design |
 | `legacy/` | The earlier single-file prototype, kept for reference |
 
 ## Data sources
