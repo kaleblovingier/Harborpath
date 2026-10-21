@@ -1,5 +1,7 @@
 # HarborPath
 
+**Live platform:** [https://harborpath.vercel.app](https://harborpath.vercel.app)
+
 A free, privacy-first platform for finding **addiction treatment**, **clinical care navigation**, **evidence-based medications**, **harm reduction tools**, and **safety-net health services** across the United States and U.S. territories (in **English and Español**).
 
 - **Find treatment (`#/treatment`):** live search of SAMHSA’s [FindTreatment.gov](https://findtreatment.gov/), the federal directory of state-licensed facilities. Filter by medication (buprenorphine, methadone, naltrexone, OTPs, alcohol use disorder medication), type of care, payment (Medicaid, sliding scale, free), population served, language, and extras like naloxone or HIV/HCV testing. Includes rural/island reach expansion (up to 250 miles) and statewide telehealth listings.
@@ -16,6 +18,7 @@ A parallel agent swarm reviewed the platform and produced a ranked plan to serve
 
 - [docs/IMPROVEMENTS.md](docs/IMPROVEMENTS.md) — clinical expansion, accessibility/equity, data matching, and UX flows
 - [docs/AI_NAVIGATOR_SPEC.md](docs/AI_NAVIGATOR_SPEC.md) — privacy-first conversational navigator MVP that uses the existing pure functions
+- [docs/PHASE1_HELPERS.md](docs/PHASE1_HELPERS.md) — population helper functions now in `public/js/views/populationHelpers.js`
 
 ## Privacy by design
 
@@ -51,7 +54,7 @@ docker run -p 3000:3000 harborpath
 
 Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) work without the Dockerfile.
 
-**Vercel:** `npx vercel deploy --prod`. `vercel.json` selects the Node server preset and applies the same security headers to files Vercel serves from its CDN (a test keeps them identical to the server’s). Data files are loaded through literal `new URL()` paths in `src/data.js` so Vercel bundles them with the server.
+**Vercel:** Live at https://harborpath.vercel.app. `npx vercel deploy --prod`. `vercel.json` selects the Node server preset and applies the same security headers to files Vercel serves from its CDN (a test keeps them identical to the server’s). Data files are loaded through literal `new URL()` paths in `src/data.js` so Vercel bundles them with the server.
 
 ## Project layout
 
@@ -60,11 +63,13 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `server.js` | Entry point |
 | `src/` | HTTP app, FindTreatment.gov client with stale-while-revalidate cache, offline geocoder, spatial grid & columnar tables, HRSA/VA/IHS/RHC/ER provider indexes, state/region directory, and rate limiter |
 | `public/` | The web app: plain ES modules, bilingual `i18n` (`en`/`es`), opt-in offline Service Worker (`sw.js`), and WCAG 2.2 AA+ CSS with `@media print` clinical handout styles |
+| `public/js/views/populationHelpers.js` | Phase 1 pure functions for population-specific provider matching |
 | `data/` | Compacted public datasets (SAMHSA service codes, Census ZCTAs/places/island places, HRSA health centers, VA facilities, IHS facilities, CMS rural health clinics & emergency hospitals, state agencies & Medicaid), built by `scripts/build-data.mjs` |
 | `test/` | `node:test` suites covering API, privacy headers, geocoding, federal providers, regional directories, and MD/PharmD/SUDP clinical modules |
 | `docs/ARCHITECTURE.md` | Data flow, API reference, and design decisions |
 | `docs/IMPROVEMENTS.md` | Ranked roadmap to serve more individuals |
 | `docs/AI_NAVIGATOR_SPEC.md` | Privacy-first AI navigator design |
+| `docs/PHASE1_HELPERS.md` | Population helper functions |
 | `legacy/` | The earlier single-file prototype, kept for reference |
 
 ## Data sources
