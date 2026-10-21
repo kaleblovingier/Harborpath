@@ -181,6 +181,28 @@ export async function searchTreatment(query, {
         pageSize: PAGE_SIZE,
         results: rows.map((r) => normalizeFacility(r, taxonomy)),
       };
+      if (result.total === 0 && query.page === 1 && query.codes.length >= 2) {
+        try {
+          const broad = await searchTreatment(
+            { ...query, codes: [] },
+            { taxonomy, fetchImpl, cache, inflight, timeoutMs, retries, backoffMs, sleep },
+          );
+          const nearMatches = broad.results
+            .map((f) => ({ ...f, matchedCodes: query.codes.filter((c) => f.codes.includes(c)) }))
+            .filter((f) => f.matchedCodes.length > 0)
+            .sort((a, b) => b.matchedCodes.length - a.matchedCodes.length || (a.miles ?? Infinity) - (b.miles ?? Infinity))
+            .slice(0, 5);
+          if (nearMatches.length > 0 || broad.total > 0) {
+            result.relaxed = {
+              requestedCodes: query.codes,
+              totalUnfiltered: broad.total,
+              results: nearMatches,
+            };
+          }
+        } catch {
+          // A fallback failure never breaks the primary response.
+        }
+      }
       cache?.set(url, result);
       return result;
     } catch (err) {

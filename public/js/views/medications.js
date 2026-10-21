@@ -609,6 +609,104 @@ export const SPECIAL_POPULATIONS_PHARM = [
   },
 ];
 
+export const FORMULATION_MATRIX = [
+  {
+    id: 'bup_sl',
+    name: 'Daily Sublingual Buprenorphine/Naloxone Film or Tablet',
+    brandExamples: 'Suboxone, Zubsolv, generic buprenorphine/naloxone or mono-product',
+    disorder: 'oud',
+    frequency: 'daily',
+    route: 'Sublingual / buccal (dissolved under tongue or cheek in 5–10 minutes)',
+    setting: 'home_telehealth',
+    childSafetyNote: 'High pediatric ingestion risk: even one film or tablet can cause fatal respiratory depression in a toddler. Always store in child-resistant packaging inside a locked box or high cabinet, and swish with water after dissolving to protect teeth.',
+    costCoverage: 'Generic tablets and films are widely covered by Medicaid, Medicare, VA, and commercial insurance (often $0–$15 copay), and discounted at HRSA 340B community health center pharmacies.',
+    bestFitFor: 'People who want flexible at-home dosing, telehealth initiation, or split-dosing for concurrent chronic pain.',
+    samhsaCode: 'BU',
+  },
+  {
+    id: 'bup_depot',
+    name: 'Weekly or Monthly Extended-Release Buprenorphine Injection',
+    brandExamples: 'Sublocade (monthly depot), Brixadi (weekly or monthly depot)',
+    disorder: 'oud',
+    frequency: 'weekly_monthly',
+    route: 'Subcutaneous depot injection administered by a clinician (abdomen, thigh, buttock, or upper arm)',
+    setting: 'clinic_office',
+    childSafetyNote: 'Zero household child or pet exposure risk—no pills or films stored at home, and cannot be lost, stolen, or forgotten.',
+    costCoverage: 'Covered by most state Medicaid programs, Medicare Part B/D, VA, and commercial specialty pharmacies; manufacturer copay assistance often reduces commercial out-of-pocket cost to $0–$5.',
+    bestFitFor: 'People who want steady 24/7 receptor protection without daily pill burden, people living with young children or in shared housing, or people facing frequent travel or unstable housing.',
+    samhsaCode: 'BU',
+  },
+  {
+    id: 'methadone_otp',
+    name: 'Daily Liquid/Tablet Methadone via OTP (with 2024 Expanded Take-Homes)',
+    brandExamples: 'Methadose oral concentrate, Dolophine tablets, dispersible diskettes',
+    disorder: 'oud',
+    frequency: 'daily',
+    route: 'Oral liquid or dissolved tablet swallowed once daily (or split-dosed in pregnancy / rapid metabolizers)',
+    setting: 'otp_only',
+    childSafetyNote: 'Critical pediatric poison hazard: liquid methadone looks like juice or cough syrup and is lethal to children in tiny sips. Keep take-home bottles in a locked box out of sight and never transfer into drinking cups.',
+    costCoverage: 'Bundled coverage (medication + clinical visits) is mandated under Medicare Part B, covered by Medicaid in all states, and supported by state block-grant slots at public OTPs.',
+    bestFitFor: 'People with high tolerance from potent street fentanyl who need full-agonist stabilization without any risk of precipitated withdrawal upon starting. Under the 2024 SAMHSA 42 CFR Part 8 Final Rule, stable patients can earn up to 7 take-home doses in the first 14 days, 14 by day 15, and 28 by day 31.',
+    samhsaCode: 'OTP',
+  },
+  {
+    id: 'naltrexone_im',
+    name: 'Monthly Extended-Release Naltrexone Injection',
+    brandExamples: 'Vivitrol (380 mg microsphere intramuscular suspension)',
+    disorder: 'oud',
+    disorders: ['oud', 'aud'],
+    frequency: 'weekly_monthly',
+    route: 'Once-monthly (every 4 weeks) deep intramuscular gluteal injection by a clinician',
+    setting: 'clinic_office',
+    childSafetyNote: 'Zero household storage risk because it is administered in the clinic once every 28 days.',
+    costCoverage: 'Covered by Medicaid, Medicare, and commercial insurers for both Opioid Use Disorder and Alcohol Use Disorder; manufacturer copay savings programs are available for commercially insured patients.',
+    bestFitFor: 'For OUD: people who have already completed a full 7–14+ day opioid-free washout and prefer a non-opioid monthly receptor blockade. For AUD: people who want a once-monthly shot to curb heavy drinking and alcohol cravings without taking daily pills (no opioid-free wait needed if not taking opioids).',
+    samhsaCode: 'NU',
+  },
+  {
+    id: 'naltrexone_po',
+    name: 'Daily or Targeted Oral Naltrexone Tablet',
+    brandExamples: 'ReVia, generic naltrexone HCl (50 mg scored oral tablet)',
+    disorder: 'aud',
+    frequency: 'daily',
+    route: 'Oral tablet taken once daily (50 mg) or 1 hour before anticipated drinking (targeted / Sinclair dosing)',
+    setting: 'home_telehealth',
+    childSafetyNote: 'Non-controlled and non-sedating, though all prescriptions should be stored in child-resistant containers out of reach.',
+    costCoverage: 'Inexpensive generic oral tablet (typically $10–$30/month cash price with pharmacy discount cards, or $0–$10 copay on Medicaid/insurance).',
+    bestFitFor: 'First-line choice for reducing alcohol cravings and heavy drinking days—can be started immediately via primary care or telehealth even while still drinking (as long as no opioids are in your system).',
+    samhsaCode: 'PMAT',
+  },
+  {
+    id: 'acamprosate_po',
+    name: 'Three-Times-Daily Oral Acamprosate Delayed-Release Tablet',
+    brandExamples: 'Campral, generic acamprosate calcium (333 mg enteric-coated tablets)',
+    disorder: 'aud',
+    frequency: 'daily',
+    route: 'Oral delayed-release tablets (typically two 333 mg tablets taken three times daily with meals)',
+    setting: 'home_telehealth',
+    childSafetyNote: 'Non-sedating, non-addictive, and safe around household members when stored in standard child-resistant bottles.',
+    costCoverage: 'Generic available on most Medicaid and commercial formularies; primary care and telehealth prescribers can send directly to any retail or mail-order pharmacy.',
+    bestFitFor: 'Supporting alcohol abstinence after withdrawal—especially ideal for people with alcohol-associated liver disease/cirrhosis (100% kidney-cleared, zero liver metabolism) or people who also take buprenorphine, methadone, or opioid pain medications.',
+    samhsaCode: 'PMAT',
+  },
+];
+
+export function matchFormulationPreferences({ disorder = 'all', frequency = 'all', setting = 'all' } = {}) {
+  const d = String(disorder || 'all').trim().toLowerCase();
+  const f = String(frequency || 'all').trim().toLowerCase();
+  const s = String(setting || 'all').trim().toLowerCase();
+
+  return FORMULATION_MATRIX.filter((item) => {
+    if (d !== 'all') {
+      const matchesDisorder = item.disorder === d || (Array.isArray(item.disorders) && item.disorders.includes(d));
+      if (!matchesDisorder) return false;
+    }
+    if (f !== 'all' && item.frequency !== f) return false;
+    if (s !== 'all' && item.setting !== s) return false;
+    return true;
+  });
+}
+
 const SEVERITY_RANK = { none: 0, info: 1, moderate: 2, high: 3, critical: 4 };
 
 export function evaluateRegimenSafety(selectedIds = []) {

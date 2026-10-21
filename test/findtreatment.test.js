@@ -124,3 +124,31 @@ test('searchTreatment deduplicates concurrent identical requests and falls back 
   assert.equal(staleRes.stale, true);
   assert.equal(staleRes.results.length, 2);
 });
+
+test('searchTreatment automatically runs an unfiltered fallback and ranks near-matches when 2+ codes return 0 results', async () => {
+  const seenUrls = [];
+  const fetchImpl = async (url) => {
+    seenUrls.push(url);
+    const u = new URL(url);
+    if (u.searchParams.get('sCodes')) {
+      return new Response(JSON.stringify({ page: 1, totalPages: 0, recordCount: 0, rows: [] }), { status: 200 });
+    }
+    return new Response(JSON.stringify(sample), { status: 200 });
+  };
+  const cache = createCache();
+  // Both sample facilities have BU; only one (or neither) has OTP, and one has TELE.
+  const query = { lat: 48.75, lng: -122.48, radiusMiles: 25, kind: 'sa', page: 1, codes: ['BU', 'OTP', 'TELE'] };
+  const res = await searchTreatment(query, { taxonomy, fetchImpl, cache, retries: 0 });
+  assert.equal(res.total, 0);
+  assert.equal(res.results.length, 0);
+  assert.equal(seenUrls.length, 2, 'queried filtered then unfiltered');
+  assert.ok(res.relaxed, 'attached relaxed fallback');
+  assert.deepEqual(res.relaxed.requestedCodes, ['BU', 'OTP', 'TELE']);
+  assert.equal(res.relaxed.totalUnfiltered, sample.recordCount);
+  assert.ok(res.relaxed.results.length > 0);
+  assert.ok(
+    res.relaxed.results.every((r, i, a) => i === 0 || a[i - 1].matchedCodes.length >= r.matchedCodes.length),
+    'sorted by matchedCodes count descending',
+  );
+  assert.ok(res.relaxed.results[0].matchedCodes.includes('BU'));
+});

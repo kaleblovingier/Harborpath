@@ -321,6 +321,170 @@ export function scoreAlcoholSedativeRisk(factors = {}) {
 }
 
 /**
+ * Pure function evaluating acute mortality & tolerance-loss risk across
+ * high-risk care transitions (post-overdose, post-release from incarceration,
+ * post-detox/hospital discharge without MOUD, or stopping naltrexone).
+ *
+ * @param {object} [params]
+ * @param {'none'|'post_overdose'|'post_release'|'post_detox_hospital'|'post_naltrexone'} [params.event]
+ * @param {'under_7'|'7_to_28'|'over_28'} [params.daysSince]
+ * @param {boolean} [params.onMoud]
+ * @param {boolean} [params.hasNaloxone]
+ * @returns {{
+ *   riskBand: 'baseline' | 'elevated' | 'critical',
+ *   headline: string,
+ *   physiologicalWhy: string,
+ *   actionSteps: string[],
+ *   recommendedCodes: string[],
+ *   searchHref: string
+ * }}
+ */
+export function evaluateTransitionRisk({
+  event = 'none',
+  daysSince = 'under_7',
+  onMoud = false,
+  hasNaloxone = false,
+} = {}) {
+  const validEvents = new Set(['none', 'post_overdose', 'post_release', 'post_detox_hospital', 'post_naltrexone']);
+  const normEvent = validEvents.has(event) ? event : 'none';
+  const validDays = new Set(['under_7', '7_to_28', 'over_28']);
+  const normDays = validDays.has(daysSince) ? daysSince : 'under_7';
+  const isOnMoud = Boolean(onMoud);
+  const carriesNaloxone = Boolean(hasNaloxone);
+
+  const recommendedCodes = [];
+  const addRecCode = (c) => {
+    if (c && !recommendedCodes.includes(c)) recommendedCodes.push(c);
+  };
+
+  if (normEvent === 'none') {
+    if (!carriesNaloxone) addRecCode('NOE');
+    addRecCode('BU');
+    addRecCode('OP');
+    return {
+      riskBand: 'baseline',
+      headline: 'Baseline Transition Profile — Keep Naloxone & Overdose Prevention Tools Ready',
+      physiologicalWhy:
+        'Opioid receptor tolerance remains relatively steady during consistent daily agonist medication (buprenorphine or methadone), but drops rapidly within days of any pause in opioid use, hospitalization, incarceration, or detox.',
+      actionSteps: [
+        carriesNaloxone
+          ? 'Keep your naloxone (Narcan) visible and make sure family or friends know where it is.'
+          : 'Get free or over-the-counter naloxone nasal spray (SAMHSA code NOE) to keep at home and on your person.',
+        isOnMoud
+          ? 'Continue your daily buprenorphine or methadone maintenance—staying on agonist medication cuts fatal overdose risk by 60–80%.'
+          : 'If you use opioids, starting buprenorphine (BU) or methadone (OTP) protects your receptor tolerance and prevents fatal respiratory arrest.',
+        'Never use alone: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590) if no trusted person is nearby.',
+      ],
+      recommendedCodes,
+      searchHref: `#/treatment?codes=${recommendedCodes.join(',')}`,
+    };
+  }
+
+  // Active high-risk transition event
+  let riskBand = 'critical';
+  if (isOnMoud && carriesNaloxone) {
+    riskBand = normDays === 'over_28' ? 'baseline' : 'elevated';
+  } else if (isOnMoud || normDays === 'over_28') {
+    riskBand = normDays === 'under_7' && !isOnMoud ? 'critical' : 'elevated';
+  } else {
+    riskBand = 'critical';
+  }
+
+  let headline = '';
+  let physiologicalWhy = '';
+  const actionSteps = [];
+
+  if (normEvent === 'post_release') {
+    headline =
+      riskBand === 'critical'
+        ? 'Critical Re-Entry Window: Extremely High Overdose Risk After Release from Jail or Prison'
+        : 'Elevated Re-Entry Transition: Maintain Medication Continuity & Overdose Protection';
+    physiologicalWhy = isOnMoud
+      ? 'Daily buprenorphine or methadone maintains mu-opioid receptor cross-tolerance and reduces post-release overdose mortality by up to 75%. Ensure uninterrupted prescription or OTP bridge dosing so no gap occurs during re-entry.'
+      : 'During incarceration, mu-opioid receptors rapidly resensitize and physiological opioid tolerance drops back toward opioid-naive levels. Returning to a previous “normal” dose—especially with street fentanyl—is the #1 cause of fatal overdose in the first 7–14 days after release.';
+    addRecCode('CJ');
+    addRecCode('BU');
+    addRecCode('NOE');
+    addRecCode('PEER');
+  } else if (normEvent === 'post_overdose') {
+    headline =
+      riskBand === 'critical'
+        ? 'Critical Post-Overdose Window: Highest Immediate Risk of Repeat Overdose'
+        : 'Post-Overdose Stabilization: Continue Agonist Protection & Multi-Dose Naloxone';
+    physiologicalWhy = isOnMoud
+      ? 'Continuing daily buprenorphine or methadone stabilizes opioid receptors after a non-fatal overdose. Still use extreme caution: high-potency fentanyl analogs and xylazine/medetomidine (“tranq”) can cause profound sedation even with tolerance.'
+      : 'A recent non-fatal overdose indicates high-potency fentanyl/xylazine exposure or reduced respiratory reserve. After naloxone reversal or an ER visit without maintenance medication, unbound opioid receptors and acute withdrawal cravings drive a spike in fatal repeat overdoses within 48 hours to 7 days.';
+    addRecCode('NOE');
+    addRecCode('BU');
+    addRecCode('PEER');
+    addRecCode('TELE');
+  } else if (normEvent === 'post_detox_hospital') {
+    headline =
+      riskBand === 'critical'
+        ? 'Critical Post-Detox / Hospital Discharge Alert: Rapid Loss of Opioid Tolerance'
+        : 'Post-Discharge Care Continuity: Protect Receptor Tolerance with Ongoing MOUD';
+    physiologicalWhy = isOnMoud
+      ? 'Staying on daily buprenorphine or methadone after hospital or residential discharge protects your mu-opioid receptor tolerance while you transition to outpatient care.'
+      : 'Completing detox, inpatient withdrawal management, or a hospital stay without ongoing buprenorphine or methadone resets your physiological opioid tolerance within 3 to 7 days. Taking even a fraction of your pre-hospital dose can stop breathing within minutes.';
+    addRecCode('BU');
+    addRecCode('OTP');
+    addRecCode('NOE');
+    addRecCode('PEER');
+  } else if (normEvent === 'post_naltrexone') {
+    headline =
+      riskBand === 'critical'
+        ? 'Critical Post-Naltrexone (Vivitrol) Receptor Supersensitivity Window'
+        : 'Post-Naltrexone Transition: Bridge Safely to Agonist Protection & Carry Naloxone';
+    physiologicalWhy = isOnMoud
+      ? 'Transitioning onto daily buprenorphine or methadone restores steady mu-opioid receptor protection after stopping naltrexone.'
+      : 'Extended-release naltrexone (Vivitrol) blocks opioid receptors for 28–35 days (oral naltrexone for 24–72 hours) while completely eliminating opioid tolerance. Attempting to “override” the blockade or using opioids as the shot wears off exposes hypersensitive, unblocked receptors to fatal respiratory depression.';
+    addRecCode('BU');
+    addRecCode('NOE');
+    addRecCode('TELE');
+    addRecCode('PEER');
+  }
+
+  if (!isOnMoud) {
+    actionSteps.push(
+      'Start or restart buprenorphine (BU) or methadone (OTP) today: under the federal DEA 72-Hour Rule (21 CFR § 1306.07(b)) and telehealth rules (TELE), emergency rooms and bridge clinics can provide immediate same-day medication.',
+    );
+  } else {
+    actionSteps.push(
+      'Prevent any gap in your daily buprenorphine or methadone: if your prescription or clinic transfer is delayed after release or discharge, an Emergency Department can dispense up to 72 hours of bridge medication under 21 CFR § 1306.07(b).',
+    );
+  }
+
+  if (!carriesNaloxone) {
+    actionSteps.push(
+      'Get at least 2 doses of naloxone (Narcan) immediately (SAMHSA code NOE): high-potency fentanyl often requires repeat doses every 2–3 minutes.',
+    );
+  } else {
+    actionSteps.push(
+      'Keep multiple doses of naloxone within arm’s reach and tell someone you trust before using.',
+    );
+  }
+
+  actionSteps.push(
+    'Never use alone during a transition window: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590), and if you do use, test a tiny fraction first (“start low, go slow”).',
+  );
+
+  if (normEvent === 'post_release') {
+    actionSteps.push(
+      'Ask for justice-involved re-entry navigation and peer recovery specialists (SAMHSA codes CJ, PEER) who can help with Medicaid reactivation, ID, housing, and same-day MOUD.',
+    );
+  }
+
+  return {
+    riskBand,
+    headline,
+    physiologicalWhy,
+    actionSteps,
+    recommendedCodes,
+    searchHref: `#/treatment?codes=${recommendedCodes.join(',')}`,
+  };
+}
+
+/**
  * Pure function that formats a structured plain-text ASAM 4th Edition
  * Clinical Summary & Provider Handoff Note for clipboard copy or printing.
  *

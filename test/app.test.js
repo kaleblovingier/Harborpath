@@ -17,6 +17,10 @@ const logged = [];
 async function fakeFetch(url) {
   upstreamCalls.push(url);
   if (upstreamMode === 'down') throw new Error('connect ECONNREFUSED');
+  const u = new URL(url);
+  if (u.searchParams.get('sCodes') === 'BU,OTP,PW') {
+    return new Response(JSON.stringify({ page: 1, totalPages: 0, recordCount: 0, rows: [] }), { status: 200 });
+  }
   return new Response(JSON.stringify(sample), { status: 200 });
 }
 
@@ -100,6 +104,17 @@ test('treatment search forwards only coarsened coordinates upstream', async () =
   const sent = new URL(upstreamCalls.at(-1));
   assert.equal(sent.searchParams.get('sAddr'), '48.75,-122.48');
   assert.ok(!upstreamCalls.at(-1).includes('751934'), 'precise coordinates never leave the server');
+});
+
+test('multi-filter treatment search with 0 exact hits returns relaxed near-matches', async () => {
+  const res = await fetch(`${base}/api/treatment?lat=48.75&lng=-122.48&radius=25&codes=BU,OTP,PW`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.total, 0);
+  assert.ok(body.relaxed, 'relaxed fallback included');
+  assert.deepEqual(body.relaxed.requestedCodes, ['BU', 'OTP', 'PW']);
+  assert.ok(body.relaxed.results.length > 0);
+  assert.ok(body.relaxed.results[0].matchedCodes.includes('BU'));
 });
 
 test('invalid treatment queries get a 400 with a readable message', async () => {
