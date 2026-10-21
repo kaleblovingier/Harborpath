@@ -29,6 +29,7 @@ async function getJson(path, params, signal) {
 }
 
 export const round2 = (n) => Math.round(n * 100) / 100;
+export const round = round2;
 
 export const api = {
   geocode: (q, signal) => getJson('/api/geocode', { q }, signal),
@@ -44,6 +45,8 @@ export const api = {
     }, signal),
   healthCenters: ({ lat, lng, radius }, signal) =>
     getJson('/api/health-centers', { lat: round2(lat), lng: round2(lng), radius }, signal),
+  nearbySummary: ({ lat, lng, radius } = {}, signal) =>
+    getJson('/api/nearby-summary', { lat: round2(lat), lng: round2(lng), radius }, signal),
   providers: ({ lat, lng, radius, kind, type, filter }, signal) =>
     getJson('/api/providers', {
       lat: round2(lat),

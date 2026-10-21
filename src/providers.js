@@ -120,8 +120,20 @@ export function createProviderSearch(data) {
     };
   }
 
+  const stripCoords = ({ lat: _lat, lng: _lng, ...rest }) => rest;
+
   return {
     counts: Object.fromEntries(Object.entries(sets).map(([type, s]) => [type, s.items.length])),
+
+    summary({ lat, lng, radiusMiles = 25 }) {
+      if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
+      const out = {};
+      for (const type of ['va', 'ihs', 'rhc', 'er']) {
+        const { total, results } = searchList(sets[type].items, { lat, lng, radiusMiles, limit: 1 });
+        out[type] = { count: total, nearest: results[0] ? stripCoords(results[0]) : null };
+      }
+      return out;
+    },
 
     search(params, { lat, lng }) {
       const type = params.get('type');
@@ -141,7 +153,7 @@ export function createProviderSearch(data) {
         total,
         // The UI shows distance and builds directions from the address, so
         // facility coordinates are left out to keep responses small.
-        results: results.map(({ lat: _lat, lng: _lng, ...rest }) => rest),
+        results: results.map(stripCoords),
         source: def.source,
         sourceUrl: def.sourceUrl,
         updated: sets[type].updated,

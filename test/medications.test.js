@@ -6,6 +6,9 @@ import {
   MEDICATION_CATEGORIES,
   INTERACTIONS,
   INTERACTION_SUBSTANCES,
+  REGIMEN_AGENTS,
+  SPECIAL_POPULATIONS_PHARM,
+  evaluateRegimenSafety,
   filterMedications,
   filterInteractions,
   medicationsView,
@@ -267,9 +270,106 @@ describe('medicationsView() DOM construction & CSP safety', () => {
       audTab.listeners.get('click')();
       assert.equal(audTab.getAttribute('aria-selected'), 'true');
       assert.equal(oudTab.getAttribute('aria-selected'), 'false');
+
+      // Verify special-populations section and regimen-safety-checker exist
+      const specialPopSection = allNodes.find((n) => n.id === 'special-populations');
+      assert.ok(specialPopSection, 'Expected #special-populations section in medicationsView');
+      const regimenPanel = allNodes.find((n) => n.id === 'regimen-safety-checker');
+      assert.ok(regimenPanel, 'Expected #regimen-safety-checker panel in medicationsView');
     } finally {
       globalThis.Node = prevNode;
       globalThis.document = prevDoc;
     }
   });
 });
+
+describe('REGIMEN_AGENTS, evaluateRegimenSafety() & SPECIAL_POPULATIONS_PHARM', () => {
+  it('exports all 11 required REGIMEN_AGENTS with valid ids and labels', () => {
+    const requiredIds = [
+      'opioids_fentanyl',
+      'buprenorphine',
+      'methadone',
+      'naltrexone',
+      'alcohol',
+      'benzos_sedatives',
+      'xylazine_medetomidine',
+      'stimulants',
+      'gabapentinoids',
+      'disulfiram',
+      'qtc_meds',
+    ];
+    assert.equal(REGIMEN_AGENTS.length, 11);
+    for (const id of requiredIds) {
+      const agent = REGIMEN_AGENTS.find((a) => a.id === id);
+      assert.ok(agent, `Missing regimen agent: ${id}`);
+      assert.equal(typeof agent.label, 'string');
+      assert.ok(agent.label.length > 0);
+    }
+  });
+
+  it('evaluates multi-substance combinations for triple+ depressants, precipitated withdrawal, and QTc/metabolic risks', () => {
+    // Fewer than 2 agents -> none
+    const single = evaluateRegimenSafety(['opioids_fentanyl']);
+    assert.equal(single.riskLevel, 'none');
+    assert.deepEqual(single.alerts, []);
+    assert.deepEqual(single.matchedInteractions, []);
+
+    // Triple+ CNS / Respiratory Depressant Synergy -> critical
+    const triple = evaluateRegimenSafety(['opioids_fentanyl', 'benzos_sedatives', 'xylazine_medetomidine']);
+    assert.equal(triple.riskLevel, 'critical');
+    assert.ok(triple.alerts.some((a) => a.id === 'triple-depressant-synergy'));
+    assert.ok(triple.matchedInteractions.some((ix) => ix.id === 'opioids-benzos'));
+    assert.ok(triple.matchedInteractions.some((ix) => ix.id === 'opioids-xylazine'));
+    assert.ok(triple.actionSteps.length >= 2);
+
+    // Precipitated opioid withdrawal risk (fentanyl + buprenorphine) -> high, mentions Bernese Method
+    const bupPrecip = evaluateRegimenSafety(['opioids_fentanyl', 'buprenorphine']);
+    assert.equal(bupPrecip.riskLevel, 'high');
+    assert.ok(bupPrecip.alerts.some((a) => a.id === 'precipitated-withdrawal-buprenorphine'));
+    assert.ok(bupPrecip.actionSteps.some((s) => /Bernese Method/i.test(s)));
+
+    // Precipitated withdrawal with Naltrexone + Methadone -> critical
+    const naltrexonePrecip = evaluateRegimenSafety(['methadone', 'naltrexone']);
+    assert.equal(naltrexonePrecip.riskLevel, 'critical');
+    assert.ok(naltrexonePrecip.alerts.some((a) => a.id === 'precipitated-withdrawal-naltrexone'));
+
+    // QTc & CYP3A4 interaction (methadone + qtc_meds) -> high
+    const qtc = evaluateRegimenSafety(['methadone', 'qtc_meds']);
+    assert.equal(qtc.riskLevel, 'high');
+    assert.ok(qtc.alerts.some((a) => a.id === 'methadone-qtc-cyp-synergy'));
+    assert.ok(qtc.matchedInteractions.some((ix) => ix.id === 'methadone-cyp-qtc'));
+
+    // Disulfiram + Alcohol -> critical
+    const disulf = evaluateRegimenSafety(['disulfiram', 'alcohol']);
+    assert.equal(disulf.riskLevel, 'critical');
+    assert.ok(disulf.alerts.some((a) => a.id === 'disulfiram-acetaldehyde-reaction'));
+
+    // Naltrexone + Alcohol alone -> info (evidence-based AUD therapy)
+    const audTherapeutic = evaluateRegimenSafety(['naltrexone', 'alcohol']);
+    assert.equal(audTherapeutic.riskLevel, 'info');
+    assert.ok(audTherapeutic.alerts.some((a) => a.id === 'naltrexone-alcohol-therapeutic'));
+  });
+
+  it('validates SPECIAL_POPULATIONS_PHARM contains all 4 clinical guides with SAMHSA codes', () => {
+    assert.equal(SPECIAL_POPULATIONS_PHARM.length, 4);
+    const expectedIds = [
+      'pregnancy_lactation',
+      'hepatic_hcv',
+      'renal_ckd',
+      'acute_pain_perioperative',
+    ];
+    for (const id of expectedIds) {
+      const pop = SPECIAL_POPULATIONS_PHARM.find((p) => p.id === id);
+      assert.ok(pop, `Missing special population guide: ${id}`);
+      assert.equal(typeof pop.title, 'string');
+      assert.equal(typeof pop.summary, 'string');
+      assert.ok(Array.isArray(pop.keyPoints) && pop.keyPoints.length >= 3);
+      assert.ok(Array.isArray(pop.samhsaCodes) && pop.samhsaCodes.length >= 1);
+    }
+    const preg = SPECIAL_POPULATIONS_PHARM.find((p) => p.id === 'pregnancy_lactation');
+    assert.ok(preg.samhsaCodes.includes('PW'));
+    const hcv = SPECIAL_POPULATIONS_PHARM.find((p) => p.id === 'hepatic_hcv');
+    assert.ok(hcv.samhsaCodes.includes('HCT'));
+  });
+});
+

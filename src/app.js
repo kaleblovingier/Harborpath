@@ -292,6 +292,29 @@ export function createApp({
         }
         case '/api/providers':
           return json(req, res, 200, providers().search(params, readLocation(params)));
+        case '/api/nearby-summary': {
+          const { lat, lng } = readLocation(params);
+          const radiusMiles = Number(params.get('radius') ?? 25);
+          if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
+          const hc = healthCenters().search({ lat, lng, radiusMiles });
+          const prov = providers().summary({ lat, lng, radiusMiles });
+          const reg = regions().forPoint(lat, lng);
+          const stateInfo = reg?.region ? stateDirectory().get(reg.region.code) : null;
+          return json(req, res, 200, {
+            radiusMiles,
+            region: reg?.region ?? null,
+            nearbyRegions: reg?.nearby ?? [],
+            agency: stateInfo?.agency ?? null,
+            medicaid: stateInfo?.medicaid ?? null,
+            networks: {
+              healthCenters: { count: hc.total, nearest: hc.results[0] ?? null },
+              va: prov.va,
+              ihs: prov.ihs,
+              rhc: prov.rhc,
+              er: prov.er,
+            },
+          });
+        }
         default:
           return json(req, res, 404, { error: 'Not found' });
       }

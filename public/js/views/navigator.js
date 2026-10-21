@@ -67,6 +67,88 @@ const CODE_META = {
   MN: { label: 'Men', tone: 'extra' },
 };
 
+const OPIOID_SYMPTOM_ITEMS = [
+  {
+    key: 'restlessness',
+    label: 'Restlessness or inability to sit still',
+    detail: 'Feeling antsy, tossing and turning, or pacing',
+  },
+  {
+    key: 'sweating_chills',
+    label: 'Sweating, hot flashes, or chills / shivering',
+    detail: 'Drenching sweats or waves of cold chills not from fever',
+  },
+  {
+    key: 'muscle_bone_aches',
+    label: 'Diffuse muscle, back, joint, or bone aches',
+    detail: 'Deep aching in legs, back, or joints',
+  },
+  {
+    key: 'gi_upset',
+    label: 'Stomach cramps, nausea, vomiting, or diarrhea',
+    detail: 'GI distress over the last 30–60 minutes',
+  },
+  {
+    key: 'runny_nose_tearing',
+    label: 'Runny nose or watery / tearing eyes',
+    detail: 'Unexplained by seasonal allergies or a cold',
+  },
+  {
+    key: 'tremor_gooseflesh',
+    label: 'Hand tremor / shakiness, goosebumps, or large pupils',
+    detail: 'Visible objective physical signs of opioid withdrawal',
+  },
+  {
+    key: 'anxiety_irritability',
+    label: 'Anxiety, irritability, or racing heartbeat',
+    detail: 'Feeling on edge, panicky, or heart pounding',
+  },
+  {
+    key: 'yawning_insomnia',
+    label: 'Frequent yawning or inability to sleep',
+    detail: 'Repeated yawning or severe sleeplessness',
+  },
+];
+
+const ALCOHOL_RISK_ITEMS = [
+  {
+    key: 'dailyHeavyUse',
+    points: 2,
+    label: 'Daily heavy alcohol use or daily benzodiazepine / sedative use (for 2+ weeks)',
+    detail: 'Regular GABAergic substance dependence',
+  },
+  {
+    key: 'priorSeizuresOrDTs',
+    points: 4,
+    label: 'Past withdrawal seizure, delirium tremens (DTs), or prior inpatient medical detox',
+    detail: 'Strongest clinical predictor of severe, life-threatening withdrawal ("kindling" effect)',
+  },
+  {
+    key: 'tremorSweatingAgitation',
+    points: 2,
+    label: 'Active hand shakes / tremors, drenching sweats, or severe agitation when cutting back',
+    detail: 'Signs of active sympathetic nervous system hyperactivity',
+  },
+  {
+    key: 'autonomicInstability',
+    points: 3,
+    label: 'Racing heart, high blood pressure, confusion, disorientation, or seeing/hearing things',
+    detail: 'Warning signs of impending severe withdrawal or delirium tremens',
+  },
+  {
+    key: 'unableToKeepFluids',
+    points: 2,
+    label: 'Repeated vomiting or unable to keep fluids and oral medications down',
+    detail: 'High risk of dehydration, electrolyte imbalance, and failed oral taper',
+  },
+  {
+    key: 'concurrentIllnessOrOlder',
+    points: 1,
+    label: 'Co-existing medical illness, pregnancy, liver disease, older age, or combining alcohol + benzos',
+    detail: 'Lowers physiological reserve during withdrawal',
+  },
+];
+
 function normalizeSubstances(raw) {
   if (!raw) return new Set();
   if (raw instanceof Set) return new Set([...raw].map((s) => String(s).toLowerCase().trim()).filter(Boolean));
@@ -75,6 +157,242 @@ function normalizeSubstances(raw) {
     return new Set(raw.split(',').map((s) => s.toLowerCase().trim()).filter(Boolean));
   }
   return new Set();
+}
+
+/**
+ * Pure function evaluating patient-reported opioid withdrawal symptoms
+ * (modeled on COWS / SOWS domains).
+ *
+ * Each symptom key (`restlessness`, `sweating_chills`, `muscle_bone_aches`,
+ * `gi_upset`, `runny_nose_tearing`, `tremor_gooseflesh`, `anxiety_irritability`,
+ * `yawning_insomnia`) may be scored 0 (none), 1 (mild), 2 (moderate), 4 (severe),
+ * or passed as a boolean (`true` = 2, `false` = 0).
+ *
+ * @param {Record<string, number|boolean>} [symptoms]
+ * @returns {{
+ *   score: number,
+ *   band: 'none_minimal' | 'mild' | 'moderate' | 'moderately_severe' | 'severe',
+ *   navWithdrawalRisk: 'none' | 'mild' | 'moderate' | 'severe',
+ *   bupGuidance: string
+ * }}
+ */
+export function scoreOpioidWithdrawal(symptoms = {}) {
+  let score = 0;
+  for (const { key } of OPIOID_SYMPTOM_ITEMS) {
+    const val = symptoms?.[key];
+    if (typeof val === 'boolean') {
+      if (val) score += 2;
+    } else if (typeof val === 'number' && Number.isFinite(val)) {
+      const clamped = Math.max(0, Math.min(4, Math.round(val)));
+      score += clamped;
+    } else if (typeof val === 'string' && val.trim() !== '') {
+      const parsed = Number(val);
+      if (Number.isFinite(parsed)) {
+        score += Math.max(0, Math.min(4, Math.round(parsed)));
+      }
+    }
+  }
+
+  let band = 'none_minimal';
+  let navWithdrawalRisk = 'none';
+  let bupGuidance = '';
+
+  if (score <= 4) {
+    band = 'none_minimal';
+    navWithdrawalRisk = 'none';
+    bupGuidance = t(
+      'nav.calc.opioid.guidance.none',
+      'Too early for standard sublingual buprenorphine: With minimal or no objective withdrawal (score 0–4), taking full sublingual doses of buprenorphine right after full-agonist opioids (especially fentanyl or methadone) can trigger precipitated withdrawal. Wait until clear mild-to-moderate objective withdrawal (score >= 8–12), or ask a clinician about low-dose micro-induction (“Bernese method”, see #/medications) or OTP methadone, which do not require waiting for withdrawal.',
+    );
+  } else if (score <= 12) {
+    band = 'mild';
+    navWithdrawalRisk = 'mild';
+    if (score < 8) {
+      bupGuidance = t(
+        'nav.calc.opioid.guidance.mild_early',
+        'Early mild withdrawal (score 5–7): Standard sublingual buprenorphine usually works best once at least 3 objective signs reach score >= 8–12. If you have been using high-potency lipophilic fentanyl, starting full-dose buprenorphine too early can cause precipitated withdrawal—consider waiting a few more hours until score >= 10–12, or ask about low-dose micro-induction (“Bernese method”, #/medications) or OTP methadone.',
+      );
+    } else {
+      bupGuidance = t(
+        'nav.calc.opioid.guidance.mild_ready',
+        'Mild-to-moderate withdrawal window (score 8–12): Standard sublingual buprenorphine initiation (starting with a cautious 2–4 mg test dose) is typically safe after heroin or short-acting prescription opioids. Extra caution for fentanyl: because lipophilic fentanyl lingers in fat tissues, waiting for score >= 12–13, using a cautious low-dose micro-induction (“Bernese method”, #/medications), or starting OTP methadone can prevent precipitated withdrawal.',
+      );
+    }
+  } else if (score <= 20) {
+    band = 'moderate';
+    navWithdrawalRisk = 'moderate';
+    bupGuidance = t(
+      'nav.calc.opioid.guidance.moderate',
+      'Moderate objective withdrawal (score 13–20): Standard sublingual buprenorphine initiation is typically safe and provides rapid relief. If you have experienced precipitated withdrawal from street fentanyl in the past, ask a bridge clinic or Emergency Department clinician about macro-induction, comfort medications (clonidine, ondansetron, hydroxyzine), low-dose micro-induction (“Bernese method”, #/medications), or OTP methadone.',
+    );
+  } else if (score <= 24) {
+    band = 'moderately_severe';
+    navWithdrawalRisk = 'severe';
+    bupGuidance = t(
+      'nav.calc.opioid.guidance.mod_severe',
+      'Moderately severe withdrawal (score 21–24): Standard or high-dose sublingual buprenorphine initiation or OTP methadone is appropriate right now. Under the federal DEA 72-Hour Rule (21 CFR § 1306.07(b)), any hospital Emergency Department or bridge clinic can administer buprenorphine or methadone immediately to relieve acute withdrawal; if xylazine (“tranq”) is in the supply, ask for clonidine or tizanidine alongside opioid medication (see #/medications).',
+    );
+  } else {
+    band = 'severe';
+    navWithdrawalRisk = 'severe';
+    bupGuidance = t(
+      'nav.calc.opioid.guidance.severe',
+      'Severe acute opioid withdrawal (score >= 25): Seek prompt medical stabilization at an Emergency Department, bridge clinic, or inpatient withdrawal program (ASAM Level 3.7-WM / 4.0). Standard or rapid high-dose buprenorphine initiation or methadone under the DEA 72-Hour Rule (21 CFR § 1306.07(b)), IV fluids for dehydration, and targeted alpha-2 agonist support (if xylazine is involved; see #/medications) can safely relieve symptoms within hours.',
+    );
+  }
+
+  return {
+    score,
+    band,
+    navWithdrawalRisk,
+    bupGuidance,
+  };
+}
+
+/**
+ * Pure function evaluating PAWSS / CIWA-Ar informed alcohol & benzodiazepine
+ * withdrawal risk factors.
+ *
+ * @param {object} [factors]
+ * @param {boolean|number} [factors.dailyHeavyUse]
+ * @param {boolean|number} [factors.priorSeizuresOrDTs]
+ * @param {boolean|number} [factors.tremorSweatingAgitation]
+ * @param {boolean|number} [factors.autonomicInstability]
+ * @param {boolean|number} [factors.unableToKeepFluids]
+ * @param {boolean|number} [factors.concurrentIllnessOrOlder]
+ * @returns {{
+ *   score: number,
+ *   riskLevel: 'low' | 'moderate' | 'high_seizure_dt_risk',
+ *   navWithdrawalRisk: 'none' | 'mild' | 'moderate' | 'severe',
+ *   guidance: string
+ * }}
+ */
+export function scoreAlcoholSedativeRisk(factors = {}) {
+  const isTruthyFactor = (val) => Boolean(val && val !== '0' && val !== 'false');
+
+  const dailyHeavyUse = isTruthyFactor(factors?.dailyHeavyUse);
+  const priorSeizuresOrDTs = isTruthyFactor(factors?.priorSeizuresOrDTs);
+  const tremorSweatingAgitation = isTruthyFactor(factors?.tremorSweatingAgitation);
+  const autonomicInstability = isTruthyFactor(factors?.autonomicInstability);
+  const unableToKeepFluids = isTruthyFactor(factors?.unableToKeepFluids);
+  const concurrentIllnessOrOlder = isTruthyFactor(factors?.concurrentIllnessOrOlder);
+
+  let score = 0;
+  if (dailyHeavyUse) score += 2;
+  if (priorSeizuresOrDTs) score += 4;
+  if (tremorSweatingAgitation) score += 2;
+  if (autonomicInstability) score += 3;
+  if (unableToKeepFluids) score += 2;
+  if (concurrentIllnessOrOlder) score += 1;
+
+  let riskLevel = 'low';
+  let navWithdrawalRisk = 'none';
+  let guidance = '';
+
+  if (priorSeizuresOrDTs || autonomicInstability || unableToKeepFluids || score >= 4) {
+    riskLevel = 'high_seizure_dt_risk';
+    navWithdrawalRisk = 'severe';
+    guidance = t(
+      'nav.calc.alcohol.guidance.high',
+      'High risk for withdrawal seizures or delirium tremens (DTs): Do NOT stop alcohol or benzodiazepines abruptly (“cold turkey”). Prior seizures/DTs, autonomic instability, or inability to keep fluids down requires 24-hour medically managed withdrawal care (ASAM Level 3.7-WM / 4.0, SAMHSA codes DT & HI) or immediate Emergency Department evaluation with IV fluids, thiamine, and GABAergic medication protection.',
+    );
+  } else if (dailyHeavyUse || tremorSweatingAgitation || score >= 2) {
+    riskLevel = 'moderate';
+    navWithdrawalRisk = 'moderate';
+    guidance = t(
+      'nav.calc.alcohol.guidance.moderate',
+      'Moderate GABAergic withdrawal risk: Stopping daily alcohol or benzodiazepine use without medical supervision carries seizure risk. Seek medically supervised withdrawal management (code DT) or a same-day physician evaluation for a monitored medication taper; go to an Emergency Department if tremors, sweating, confusion, or vomiting worsen.',
+    );
+  } else {
+    riskLevel = 'low';
+    navWithdrawalRisk = score > 0 ? 'mild' : 'none';
+    guidance = t(
+      'nav.calc.alcohol.guidance.low',
+      'Lower acute seizure/DT risk based on reported factors: Outpatient medical care (code OP) and FDA-approved alcohol use disorder medications (naltrexone, acamprosate, disulfiram; code PMAT) are often appropriate. If shakes, drenching sweats, racing heart, or confusion develop at any point, seek immediate medical evaluation.',
+    );
+  }
+
+  return {
+    score,
+    riskLevel,
+    navWithdrawalRisk,
+    guidance,
+  };
+}
+
+/**
+ * Pure function that formats a structured plain-text ASAM 4th Edition
+ * Clinical Summary & Provider Handoff Note for clipboard copy or printing.
+ *
+ * @param {object} [answers]
+ * @param {ReturnType<typeof evaluateAsamCare>} [evaluation]
+ * @returns {string}
+ */
+export function formatAsamHandoffText(answers = {}, evaluation = evaluateAsamCare(answers)) {
+  const evalResult = evaluation ?? evaluateAsamCare(answers);
+  const substances = [...normalizeSubstances(answers?.substances)];
+  const dateStr = new Date().toISOString().slice(0, 10);
+
+  const codeDescriptions = (evalResult.codes ?? []).map((code) => {
+    const meta = CODE_META[code];
+    return meta ? `${code} (${meta.label})` : code;
+  });
+
+  const lines = [
+    'HARBORPATH — ASAM 4TH EDITION CLINICAL CARE SUMMARY & PROVIDER HANDOFF NOTE',
+    `Date Generated: ${dateStr}`,
+    'Privacy Note: Generated 100% locally in browser memory. Not stored on any server.',
+    '========================================================================',
+    '',
+    `RECOMMENDED LEVEL OF CARE: ${evalResult.asamLevel} — ${evalResult.asamTitle}`,
+    `Clinical Rationale: ${evalResult.summary}`,
+    '',
+    'PATIENT-REPORTED PROFILE:',
+    `- Substances Reported: ${substances.length ? substances.join(', ') : 'None specified'}`,
+    `- Withdrawal Acuity (Dim 1): ${answers?.withdrawalRisk || 'none'}`,
+    `- Biomedical Status (Dim 2): ${answers?.biomedical || 'none'}`,
+    `- Emotional / Behavioral / Cognitive (Dim 3): ${answers?.mentalHealth || 'none'}`,
+    `- Daily Structure Preference (Dim 4): ${answers?.structureNeeded || 'flexible'}`,
+    `- Recovery Environment (Dim 5): ${answers?.environment || 'supportive'}`,
+    `- Practical / Access Filters (Dim 6): ${[
+      answers?.preferTelehealth ? 'Telehealth (TELE)' : null,
+      answers?.payment ? `Payment: ${answers.payment}` : null,
+      answers?.population ? `Population: ${answers.population}` : null,
+    ].filter(Boolean).join(', ') || 'None specified'}`,
+    '',
+    '6-DIMENSION ASAM CLINICAL BREAKDOWN:',
+    ...(evalResult.dimensionBreakdown ?? []).map(
+      (d) => `- ${d.dimension} (${d.title}): ${d.finding}`,
+    ),
+    '',
+    'RED-FLAG MEDICAL SAFETY ALERTS:',
+    ...(evalResult.redFlags?.length
+      ? evalResult.redFlags.map((flag) => `! ${flag}`)
+      : ['- None flagged based on current selections.']),
+    '',
+    'PHYSICIAN CLINICAL NOTES:',
+    ...(evalResult.clinicalNotes?.length
+      ? evalResult.clinicalNotes.map((note) => `* ${note}`)
+      : ['- Standard outpatient or harm reduction support indicated.']),
+    '',
+    'RECOMMENDED SAMHSA DIRECTORY SERVICE CODES:',
+    `- Focused Filter Codes (<= 8): ${codeDescriptions.join(', ') || 'None'}`,
+    `- Broad Core Codes: ${(evalResult.broadCodes ?? []).join(', ') || 'None'}`,
+    `- HarborPath Search Route: ${evalResult.searchHref}`,
+    '',
+    'FEDERAL PATIENT RIGHTS & EMERGENCY BRIDGE CARE:',
+    '- EMTALA: Hospital emergency departments must screen and stabilize emergency medical conditions (severe withdrawal, overdose, active labor, systemic infection) regardless of ability to pay.',
+    '- DEA 72-Hour Rule (21 CFR 1306.07(b)): Hospital/ED clinicians may administer or dispense up to 72 hours of buprenorphine or methadone for acute opioid withdrawal.',
+    '- 42 CFR Part 2 & ADA: Substance use treatment records carry heightened federal confidentiality, and the ADA protects patients on prescribed MOUD from discriminatory denial of health care.',
+    '',
+    '24/7 CONFIDENTIAL CRISIS & SUPPORT LINES:',
+    '- Medical Emergency: Call 911',
+    '- Suicide & Crisis Lifeline: Call or text 988 (24/7, free, confidential)',
+    '- SAMHSA National Helpline: 1-800-662-4357 (24/7 treatment referral in English & Spanish)',
+    '- Never Use Alone Overdose Prevention Line: 1-800-484-3731',
+  ];
+
+  return lines.join('\n');
 }
 
 /**
@@ -376,9 +694,6 @@ export function evaluateAsamCare(answers = {}) {
   if (hasOpioids) {
     addCode('BU');
     addBroadCode('BU');
-    // For severe withdrawal or 24-hour structure where methadone OTP may also be sought,
-    // keep BU in core codes so AND-filtering stays broad enough to return matches,
-    // and note OTP / MU in clinical notes.
   }
 
   if (hasAlcohol && !hasOpioids) {
@@ -750,6 +1065,24 @@ export function careNavigatorView({ query } = {}) {
             {
               type: 'button',
               class: 'btn btn-ghost',
+              onclick: async () => {
+                const handoffText = formatAsamHandoffText(answers, result);
+                try {
+                  await navigator.clipboard.writeText(handoffText);
+                  announce(t('nav.announce.copied_handoff', 'Clinical handoff note copied to clipboard'));
+                } catch {
+                  announce(t('nav.announce.copy_unavailable', 'Copy is not available in this browser'));
+                }
+              },
+            },
+            icon('copy'),
+            t('nav.cta.copy_handoff', 'Copy clinical handoff note'),
+          ),
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'btn btn-ghost',
               onclick: () => window.print(),
             },
             icon('printer'),
@@ -839,6 +1172,212 @@ export function careNavigatorView({ query } = {}) {
   const mentalHealthRadios = buildRadioGroup('mentalHealth', MENTAL_HEALTH_CHOICES, 'mentalHealth');
   const environmentRadios = buildRadioGroup('environment', ENVIRONMENT_CHOICES, 'environment');
   const structureRadios = buildRadioGroup('structureNeeded', STRUCTURE_CHOICES, 'structureNeeded');
+
+  function applyWithdrawalRiskFromCalculator(riskValue, substanceToEnsure) {
+    answers.withdrawalRisk = riskValue;
+    for (const lbl of withdrawalRadios) {
+      const inp = lbl.querySelector('input');
+      if (inp) inp.checked = inp.value === riskValue;
+    }
+    if (substanceToEnsure) {
+      answers.substances.add(substanceToEnsure);
+      for (const lbl of substanceCheckboxes) {
+        const inp = lbl.querySelector('input');
+        if (inp && inp.value === substanceToEnsure) inp.checked = true;
+      }
+    }
+    updateRecommendation(true);
+  }
+
+  // -------------------------------------------------------------------------
+  // Interactive Validated Withdrawal Self-Check Calculators (Collapsible)
+  // -------------------------------------------------------------------------
+  const opioidSymptomsState = {};
+  const opioidResultContainer = h('div', { 'aria-live': 'polite' });
+
+  function renderOpioidCalcResult() {
+    const res = scoreOpioidWithdrawal(opioidSymptomsState);
+    clear(opioidResultContainer);
+    const calloutTone = res.score >= 21 ? 'callout-emergency' : res.score >= 8 ? 'callout-info' : 'callout-warn';
+    opioidResultContainer.append(
+      h(
+        'div',
+        { class: `callout ${calloutTone}` },
+        h(
+          'p',
+          { class: 'callout-title' },
+          icon('info'),
+          t('nav.calc.opioid.score_heading', 'Opioid Withdrawal Score: {score} / 32 ({band})', {
+            score: res.score,
+            band: res.band.replace(/_/g, ' '),
+          }),
+        ),
+        p(res.bupGuidance),
+        h(
+          'p',
+          { class: 'actions' },
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'btn btn-secondary btn-small',
+              onclick: () => applyWithdrawalRiskFromCalculator(res.navWithdrawalRisk, 'opioids'),
+            },
+            icon('check'),
+            t('nav.calc.apply_btn', 'Apply to my Care Navigator above'),
+          ),
+          h(
+            'a',
+            { class: 'btn btn-ghost btn-small', href: '#/medications' },
+            t('nav.calc.meds_link', 'Read buprenorphine & micro-induction guide'),
+          ),
+        ),
+      ),
+    );
+  }
+
+  const opioidSelectControls = OPIOID_SYMPTOM_ITEMS.map((item) => {
+    const sel = h(
+      'select',
+      {
+        class: 'select',
+        id: `opioid-sym-${item.key}`,
+        onchange: (e) => {
+          opioidSymptomsState[item.key] = Number(e.target.value);
+          renderOpioidCalcResult();
+        },
+      },
+      h('option', { value: '0' }, t('nav.calc.opt.0', '0 — None')),
+      h('option', { value: '1' }, t('nav.calc.opt.1', '1 — Mild')),
+      h('option', { value: '2' }, t('nav.calc.opt.2', '2 — Moderate')),
+      h('option', { value: '4' }, t('nav.calc.opt.4', '4 — Severe')),
+    );
+    return h(
+      'div',
+      { class: 'resource' },
+      h('label', { class: 'label', for: `opioid-sym-${item.key}` }, t(`nav.calc.opioid.${item.key}`, item.label)),
+      h('p', { class: 'help' }, t(`nav.calc.opioid.${item.key}.detail`, item.detail)),
+      sel,
+    );
+  });
+
+  const alcoholFactorsState = {};
+  const alcoholResultContainer = h('div', { 'aria-live': 'polite' });
+
+  function renderAlcoholCalcResult() {
+    const res = scoreAlcoholSedativeRisk(alcoholFactorsState);
+    clear(alcoholResultContainer);
+    const calloutTone =
+      res.riskLevel === 'high_seizure_dt_risk'
+        ? 'callout-emergency'
+        : res.riskLevel === 'moderate'
+          ? 'callout-warn'
+          : 'callout-info';
+    alcoholResultContainer.append(
+      h(
+        'div',
+        { class: `callout ${calloutTone}` },
+        h(
+          'p',
+          { class: 'callout-title' },
+          icon('alert'),
+          t('nav.calc.alcohol.score_heading', 'Alcohol / Sedative Risk Score: {score} ({level})', {
+            score: res.score,
+            level: res.riskLevel.replace(/_/g, ' '),
+          }),
+        ),
+        p(res.guidance),
+        h(
+          'p',
+          { class: 'actions' },
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'btn btn-secondary btn-small',
+              onclick: () => {
+                const sub = answers.substances.has('benzos') ? 'benzos' : 'alcohol';
+                applyWithdrawalRiskFromCalculator(res.navWithdrawalRisk, sub);
+              },
+            },
+            icon('check'),
+            t('nav.calc.apply_btn', 'Apply to my Care Navigator above'),
+          ),
+        ),
+      ),
+    );
+  }
+
+  const alcoholFactorCheckboxes = ALCOHOL_RISK_ITEMS.map((item) => {
+    const inp = h('input', {
+      type: 'checkbox',
+      value: item.key,
+      onchange: () => {
+        alcoholFactorsState[item.key] = inp.checked;
+        renderAlcoholCalcResult();
+      },
+    });
+    return h(
+      'label',
+      { class: 'check' },
+      inp,
+      h(
+        'span',
+        null,
+        t(`nav.calc.alcohol.${item.key}`, item.label),
+        h('small', null, t(`nav.calc.alcohol.${item.key}.detail`, item.detail)),
+      ),
+    );
+  });
+
+  renderOpioidCalcResult();
+  renderAlcoholCalcResult();
+
+  const withdrawalCalculatorsDetails = h(
+    'details',
+    { class: 'card facility-details', id: 'withdrawal-self-check-calculators' },
+    h(
+      'summary',
+      null,
+      t('nav.calc.summary', 'Optional: Unsure of your withdrawal risk? Use the Clinical Withdrawal Self-Check'),
+    ),
+    fine(
+      t(
+        'nav.calc.privacy_note',
+        'Calculated 100% in this tab’s memory. Use either calculator below and tap “Apply to my Care Navigator above” to update Dimension 1B.',
+      ),
+    ),
+    h(
+      'fieldset',
+      { class: 'filter-group' },
+      h('legend', null, t('nav.calc.opioid.legend', 'Opioid Withdrawal Self-Check (SOWS / COWS-Informed) & Buprenorphine Timing')),
+      h(
+        'p',
+        { class: 'help' },
+        t(
+          'nav.calc.opioid.help',
+          'Rate how you feel right now across these 8 physical signs to check your withdrawal severity and when sublingual buprenorphine is safest to start.',
+        ),
+      ),
+      h('div', { class: 'resource-list' }, ...opioidSelectControls),
+      opioidResultContainer,
+    ),
+    h(
+      'fieldset',
+      { class: 'filter-group' },
+      h('legend', null, t('nav.calc.alcohol.legend', 'Alcohol & Benzodiazepine / Sedative Seizure & DT Risk Check (PAWSS / CIWA-Informed)')),
+      h(
+        'p',
+        { class: 'help' },
+        t(
+          'nav.calc.alcohol.help',
+          'Check any factors that apply to estimate the risk of severe GABAergic withdrawal seizures or delirium tremens.',
+        ),
+      ),
+      ...alcoholFactorCheckboxes,
+      alcoholResultContainer,
+    ),
+  );
 
   const paymentSelect = h(
     'select',
@@ -981,7 +1520,7 @@ export function careNavigatorView({ query } = {}) {
           ...substanceCheckboxes,
         ),
 
-        // Dimension 1B: Withdrawal Risk
+        // Dimension 1B: Withdrawal Risk + Collapsible Validated Calculators
         h(
           'fieldset',
           { class: 'filter-group' },
@@ -992,6 +1531,7 @@ export function careNavigatorView({ query } = {}) {
             t('nav.dim1b.help', 'Daily heavy alcohol or benzodiazepine use, or past withdrawal seizures/delirium tremens, requires medical supervision.'),
           ),
           ...withdrawalRadios,
+          withdrawalCalculatorsDetails,
         ),
 
         // Dimension 2: Biomedical Conditions

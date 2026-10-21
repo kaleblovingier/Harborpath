@@ -3,7 +3,8 @@
 // worked out from the location in memory; it is never added to the URL. Links
 // to a state page (#/state/WA) only change the URL when someone follows them.
 import { h, clear, ext, tel, icon, digits } from '../dom.js';
-import { t, getLang } from '../i18n.js';
+import { api } from '../api.js';
+import { t, getLang, formatNumber } from '../i18n.js';
 import { state, subscribe } from '../state.js';
 import { regionsApi, regionForLocation } from '../regionsApi.js';
 
@@ -47,6 +48,78 @@ function nearbyLinks(nearby) {
     joinDot(nearby.map((r) => h('a', { href: stateHref(r.code) }, r.name))));
 }
 
+function renderSafetyNet(summary, miles) {
+  const networks = summary?.networks ?? summary;
+  if (!networks || typeof networks !== 'object') return null;
+  const hc = networks.healthCenters;
+  const er = networks.er;
+  const va = networks.va;
+  const ihs = networks.ihs;
+  const rhc = networks.rhc;
+  if (!hc && !er && !va && !ihs && !rhc) return null;
+
+  const ihsCount = ihs?.count ?? 0;
+  const rhcCount = rhc?.count ?? 0;
+  const ihsRhcCount = ihsCount + rhcCount;
+  let ihsRhcNearest = null;
+  if (ihs?.nearest && rhc?.nearest) {
+    ihsRhcNearest = (ihs.nearest.miles ?? Infinity) <= (rhc.nearest.miles ?? Infinity) ? ihs.nearest : rhc.nearest;
+  } else {
+    ihsRhcNearest = ihs?.nearest ?? rhc?.nearest ?? null;
+  }
+  const ihsRhcNetwork = ihsCount > 0 && (!rhc?.nearest || (ihs?.nearest?.miles ?? Infinity) <= (rhc?.nearest?.miles ?? Infinity))
+    ? 'ihs'
+    : (rhcCount > 0 ? 'rhc' : 'ihs');
+
+  const cards = [
+    {
+      label: t('regions.safetyNet.healthCenters', 'Sliding-fee health centers'),
+      href: '#/health?tab=clinics',
+      count: hc?.count ?? 0,
+      nearest: hc?.nearest ?? null,
+    },
+    {
+      label: t('regions.safetyNet.er', '24/7 Emergency hospitals'),
+      href: '#/health?tab=federal&network=er',
+      count: er?.count ?? 0,
+      nearest: er?.nearest ?? null,
+    },
+    {
+      label: t('regions.safetyNet.va', 'VA & Vet Centers'),
+      href: '#/health?tab=federal&network=va',
+      count: va?.count ?? 0,
+      nearest: va?.nearest ?? null,
+    },
+    {
+      label: t('regions.safetyNet.ihsRhc', 'IHS / Tribal & Rural Health Clinics'),
+      href: `#/health?tab=federal&network=${ihsRhcNetwork}`,
+      count: ihsRhcCount,
+      nearest: ihsRhcNearest,
+    },
+  ];
+
+  return h('div', { class: 'safety-net-block' },
+    h('h3', { class: 'safety-net-heading' },
+      t('regions.safetyNet.title', 'Safety-net care within {miles} miles', { miles })),
+    h('ul', { class: 'safety-net-grid' },
+      cards.map((c) => h('li', { class: 'safety-net-item' },
+        h('div', { class: 'safety-net-top' },
+          h('a', { class: 'safety-net-link', href: c.href }, c.label),
+          h('span', { class: 'badge' }, formatNumber(c.count)),
+        ),
+        h('p', { class: 'safety-net-meta' },
+          c.nearest
+            ? t('regions.safetyNet.nearest', 'Nearest: {name} ({miles} mi)', {
+                name: c.nearest.name,
+                miles: c.nearest.miles,
+              })
+            : t('regions.safetyNet.noneWithin', 'None within {miles} mi', { miles }),
+        ),
+      )),
+    ),
+  );
+}
+
 /** The compact panel for finder pages. Re-renders when the searched location changes. */
 export function statePanel() {
   const body = h('div', { 'aria-live': 'polite' });
@@ -62,7 +135,8 @@ export function statePanel() {
 
   async function render() {
     const loc = state.location;
-    const key = loc ? `${loc.lat},${loc.lng},${loc.state ?? ''}` : '';
+    const radius = state.radius || 25;
+    const key = loc ? `${loc.lat},${loc.lng},${loc.state ?? ''},${radius},${getLang()}` : '';
     if (key === shownFor) return;
     shownFor = key;
     const mine = ++request;
@@ -72,9 +146,19 @@ export function statePanel() {
     }
     let found = null;
     let data = null;
+    let summary = null;
     try {
-      found = await regionForLocation(loc);
-      if (found) data = await regionsApi.state(found.region.code);
+      const [regionRes, summaryRes] = await Promise.all([
+        (async () => {
+          const f = await regionForLocation(loc);
+          const d = f ? await regionsApi.state(f.region.code) : null;
+          return { found: f, data: d };
+        })(),
+        api.nearbySummary({ lat: loc.lat, lng: loc.lng, radius }).catch(() => null),
+      ]);
+      found = regionRes.found;
+      data = regionRes.data;
+      summary = summaryRes;
     } catch {
       data = null;
     }
@@ -106,6 +190,7 @@ export function statePanel() {
     }
     clear(body).append(
       h('h2', { id: 'state-panel-title' }, t('regions.panelTitle', 'Resources in {state}', { state: region.name })),
+      renderSafetyNet(summary, radius),
       items.length ? h('ul', { class: 'resource-list' }, items) : null,
       h('p', { class: 'actions' },
         h('a', { class: 'btn btn-small btn-secondary', href: stateHref(region.code) },

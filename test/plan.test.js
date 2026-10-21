@@ -2,9 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   COUNSELING_MODALITIES,
+  GROUNDING_EXERCISES,
   INTAKE_STEPS,
   TRIGGER_SUGGESTIONS,
   COPING_SUGGESTIONS,
+  buildIntakeCallScript,
   formatSafetyPlanText,
   planView,
 } from '../public/js/views/plan.js';
@@ -45,6 +47,93 @@ test('COUNSELING_MODALITIES exports all 7 evidence-based SUDP counseling approac
   assert.match(peer.whatItLooksLike, /SMART Recovery/);
   assert.match(peer.whatItLooksLike, /Recovery Dharma/);
   assert.match(peer.whatItLooksLike, /MARA/);
+});
+
+test('GROUNDING_EXERCISES exports all 4 acute craving & distress regulation skills', () => {
+  assert.ok(Array.isArray(GROUNDING_EXERCISES));
+  assert.equal(GROUNDING_EXERCISES.length, 4);
+
+  const ids = GROUNDING_EXERCISES.map((g) => g.id);
+  for (const expectedId of [
+    'urge_surfing',
+    'sensory_54321',
+    'paced_breathing_478',
+    'tipp_temperature_paired_relaxation',
+  ]) {
+    assert.ok(ids.includes(expectedId), `Expected GROUNDING_EXERCISES to include ${expectedId}`);
+  }
+
+  for (const ex of GROUNDING_EXERCISES) {
+    assert.equal(typeof ex.title, 'string');
+    assert.ok(ex.title.length > 0);
+    assert.equal(typeof ex.clinicalBasis, 'string');
+    assert.ok(ex.clinicalBasis.length > 0);
+    assert.equal(typeof ex.whenToUse, 'string');
+    assert.ok(ex.whenToUse.length > 0);
+    assert.ok(Array.isArray(ex.steps));
+    assert.ok(ex.steps.length >= 3);
+  }
+});
+
+test('buildIntakeCallScript generates tailored scripts across caller, need, and insurance combinations', () => {
+  // Default parameters
+  const def = buildIntakeCallScript();
+  assert.equal(def.caller, 'self');
+  assert.equal(def.need, 'moud_bup');
+  assert.equal(def.insurance, 'medicaid');
+  assert.match(def.opening, /calling for myself/i);
+  assert.match(def.opening, /buprenorphine/i);
+  assert.match(def.opening, /Medicaid/i);
+  assert.ok(Array.isArray(def.keyQuestions) && def.keyQuestions.length >= 4);
+  assert.ok(Array.isArray(def.barrierRights) && def.barrierRights.length >= 2);
+  assert.match(def.redFlagReminder, /EKRA/);
+  assert.match(def.fullText, /HARBORPATH CLINIC INTAKE CALL SCRIPT/);
+
+  // Loved one + pregnant priority + uninsured
+  const famPreg = buildIntakeCallScript({
+    caller: 'loved_one',
+    need: 'pregnant',
+    insurance: 'uninsured',
+  });
+  assert.match(famPreg.opening, /loved one/i);
+  assert.match(famPreg.opening, /pregnant or postpartum/i);
+  assert.match(famPreg.opening, /without insurance/i);
+  assert.ok(famPreg.keyQuestions.some((q) => /priority admission/i.test(q)));
+  assert.ok(famPreg.keyQuestions.some((q) => /sliding fee scale/i.test(q)));
+  assert.ok(famPreg.barrierRights.some((r) => /CRAFT/i.test(r)));
+
+  // Clinician warm handoff + methadone OTP + medicare_va
+  const clinOtp = buildIntakeCallScript({
+    caller: 'clinician',
+    need: 'methadone_otp',
+    insurance: 'medicare_va',
+  });
+  assert.match(clinOtp.opening, /warm handoff/i);
+  assert.match(clinOtp.opening, /Opioid Treatment Program/i);
+  assert.ok(clinOtp.keyQuestions.some((q) => /take-home/i.test(q)));
+  assert.ok(clinOtp.barrierRights.some((r) => /89 FR 12472/i.test(r)));
+  assert.ok(clinOtp.barrierRights.some((r) => /Medicare/i.test(r)));
+
+  // Self + detox + private insurance
+  const detoxPriv = buildIntakeCallScript({
+    caller: 'self',
+    need: 'detox',
+    insurance: 'private',
+  });
+  assert.match(detoxPriv.opening, /withdrawal management/i);
+  assert.ok(detoxPriv.keyQuestions.some((q) => /in-network/i.test(q)));
+  assert.ok(detoxPriv.barrierRights.some((r) => /Parity/i.test(r)));
+
+  // Outpatient counseling fallback handling for unknown inputs
+  const fallback = buildIntakeCallScript({
+    caller: 'unknown_caller',
+    need: 'outpatient',
+    insurance: 'unknown_ins',
+  });
+  assert.equal(fallback.caller, 'self');
+  assert.equal(fallback.need, 'outpatient');
+  assert.equal(fallback.insurance, 'medicaid');
+  assert.ok(fallback.keyQuestions.some((q) => /Contingency Management/i.test(q)));
 });
 
 test('INTAKE_STEPS demystifies the 6 stages of treatment intake, rights, and barrier navigation', () => {
@@ -128,7 +217,7 @@ test('TRIGGER_SUGGESTIONS and COPING_SUGGESTIONS provide evidence-based quick-se
   assert.ok(COPING_SUGGESTIONS.length >= 6);
 });
 
-test('planView renders zero-knowledge builder, intake guide, counseling links, and 42 CFR Part 2 section', () => {
+test('planView renders zero-knowledge builder, urge-surfing toolkit, intake script builder, and 42 CFR Part 2 section', () => {
   class MockNode {
     constructor(tag) {
       this.tagName = tag.toUpperCase();
@@ -139,6 +228,7 @@ test('planView renders zero-knowledge builder, intake guide, counseling links, a
       this.children = [];
       this.value = '';
       this._textContent = '';
+      this.isConnected = false;
     }
     get firstChild() {
       return this.children[0] ?? null;
@@ -199,12 +289,26 @@ test('planView renders zero-knowledge builder, intake guide, counseling links, a
     const root = planView({ query: new URLSearchParams('goal=Stay+safe+tonight') });
     const fullText = root.textContent;
 
-    // Verify all 4 sections render
+    // Verify all 5 sections render
     assert.match(fullText, /Personal safety & recovery action plan/);
+    assert.match(fullText, /Craving & distress toolkit/);
+    assert.match(fullText, /5-4-3-2-1 Sensory Grounding/);
     assert.match(fullText, /What to expect at your first appointment/);
+    assert.match(fullText, /Interactive “What to Say When You Call a Clinic” Script Builder/);
     assert.match(fullText, /Counseling & therapy approaches explained/);
     assert.match(fullText, /Your confidentiality rights \(42 CFR Part 2/);
     assert.match(fullText, /89 FR 12472/);
+
+    // Verify Copy call script button exists and intake script selectors update output
+    const copyScriptBtns = root.findAll(
+      (n) => n.tagName === 'BUTTON' && n.textContent.includes('Copy call script'),
+    );
+    assert.equal(copyScriptBtns.length, 1);
+
+    const needSelect = root.findAll((n) => n.attributes.id === 'script-need')[0];
+    assert.ok(needSelect);
+    needSelect.listeners.change({ target: { value: 'pregnant' } });
+    assert.match(root.textContent, /priority admission/i);
 
     // Verify print-ready preview card exists with required class
     const previewCards = root.findAll((n) => n.className === 'card safety-plan-preview');
@@ -236,4 +340,3 @@ test('planView renders zero-knowledge builder, intake guide, counseling links, a
     globalThis.document = prevDoc;
   }
 });
-

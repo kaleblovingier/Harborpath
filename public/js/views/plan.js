@@ -65,6 +65,61 @@ export const COUNSELING_MODALITIES = [
 ];
 
 /**
+ * Evidence-based acute craving & distress regulation skills (MBRP, Seeking Safety, Autonomic Pacing, DBT-SUD).
+ */
+export const GROUNDING_EXERCISES = [
+  {
+    id: 'urge_surfing',
+    title: 'Urge Surfing (Mindfulness-Based Relapse Prevention)',
+    clinicalBasis: 'Mindfulness-Based Relapse Prevention (Marlatt & Bowen)',
+    whenToUse: 'When a sudden craving hits and feels like it will keep climbing unless you act on it.',
+    steps: [
+      'Pause for 60 seconds and remind yourself: an urge is a physical wave in the nervous system, not a command.',
+      'Notice where the craving sits in your body right now (tight jaw, hollow stomach, restless hands, racing thoughts) without fighting or judging it.',
+      'Picture yourself riding on top of an ocean wave. Most acute cravings crest within 15 to 20 minutes and always fall if you do not feed them.',
+      'Use the 3-minute or 5-minute Urge Surfing timer below to breathe steadily while the wave peaks and softens.',
+    ],
+  },
+  {
+    id: 'sensory_54321',
+    title: '5-4-3-2-1 Sensory Grounding (Seeking Safety)',
+    clinicalBasis: 'Seeking Safety (Najavits) & trauma-informed stabilization',
+    whenToUse: 'When trauma reminders, panic, flashbacks, or dissociation pull you out of the present room.',
+    steps: [
+      '5 things you can SEE: Look around the room and name 5 ordinary objects out loud (for example, “blue mug, window frame, shoelace, lamp, door handle”).',
+      '4 things you can FEEL: Notice 4 physical sensations right now (your feet flat on the floor, your back against the chair, cool air on your skin, the fabric of your sleeve).',
+      '3 things you can HEAR: Listen for 3 distinct sounds in the environment (hum of a fan, distant traffic, your own breathing).',
+      '2 things you can SMELL: Notice 2 scents in the air, or recall 2 favorite calming scents (coffee, rain, soap, pine).',
+      '1 steady truth: Say 1 grounded truth about right now (“I am in this room, it is today’s date, and I am surviving this moment”).',
+    ],
+  },
+  {
+    id: 'paced_breathing_478',
+    title: 'Paced Parasympathetic Breathing (4-7-8 / Extended Exhale)',
+    clinicalBasis: 'Vagal brake activation & autonomic nervous system regulation',
+    whenToUse: 'When your heart is pounding, your chest feels tight, or anxiety and anger are fueling an urge.',
+    steps: [
+      'Inhale quietly through your nose for a slow count of 4 seconds.',
+      'Rest and hold the breath gently for 7 seconds (or 2 seconds if holding feels uncomfortable—never strain).',
+      'Exhale slowly through pursed lips for 8 seconds, making the out-breath roughly twice as long as the in-breath.',
+      'Repeat for 4 cycles. Lengthening the exhale signals your vagus nerve to slow your heart rate and lower stress hormones.',
+    ],
+  },
+  {
+    id: 'tipp_temperature_paired_relaxation',
+    title: 'TIPP Skill: Cool Temperature & Paired Muscle Relaxation (DBT-SUD)',
+    clinicalBasis: 'Dialectical Behavior Therapy for Substance Use Disorders (Linehan / Dimeff)',
+    whenToUse: 'When distress or craving is at a 9/10 or 10/10 and talking yourself down feels impossible.',
+    steps: [
+      'Temperature (Mammalian Dive Reflex): Hold a cold wet washcloth (or a zip-top bag of ice water) over your eyes and upper cheeks for 15 to 30 seconds while leaning slightly forward. This rapidly drops heart rate.',
+      'Paired Muscle Relaxation: Tense your hands, arms, and shoulders tightly for 5 seconds while inhaling, then let them drop completely limp while exhaling.',
+      'As your muscles soften, silently say the word “release” or “safe right now” on the exhale.',
+      'Once your body intensity drops from a 9/10 to a 5/10, pick one simple next step (drink water, step outside, or call a safe person).',
+    ],
+  },
+];
+
+/**
  * Step-by-step demystification of the SUDP treatment intake & assessment process.
  */
 export const INTAKE_STEPS = [
@@ -162,6 +217,175 @@ export const COPING_SUGGESTIONS = [
   'Doing slow 4-7-8 breathing and grounding',
 ];
 
+const CALLER_OPENINGS = {
+  self: 'Hi, I am calling for myself to ask about starting care',
+  loved_one: 'Hi, I am calling to get information for a loved one who is looking at care options',
+  clinician: 'Hello, I am a clinician / peer navigator coordinating a warm handoff for a patient',
+};
+
+const NEED_DETAILS = {
+  moud_bup: {
+    phrase: 'for outpatient buprenorphine (Suboxone / Sublocade) or medication treatment',
+    questions: [
+      'How soon can someone see a prescriber for a same-day or next-day buprenorphine start (in person or by telehealth)?',
+      'Does your prescriber offer low-dose / micro-induction (“Bernese method”) protocols if fentanyl is in the supply, so we can avoid precipitated withdrawal?',
+      'Can medication be started right away even if counseling or group intake appointments are scheduled for later?',
+    ],
+  },
+  methadone_otp: {
+    phrase: 'at your Opioid Treatment Program (OTP) for methadone',
+    questions: [
+      'What days and hours do you accept walk-in intakes for methadone, and how early should someone arrive?',
+      'Can the first dose of methadone be given on the same day as the intake exam?',
+      'How does your clinic apply the 2024 SAMHSA OTP rules for early take-home doses and flexible counseling schedules?',
+    ],
+  },
+  detox: {
+    phrase: 'for medically supervised withdrawal management (detox)',
+    questions: [
+      'Do you have an open bed today or a walk-in triage window, and is there 24/7 medical monitoring (especially for alcohol, benzo, or severe opioid/xylazine withdrawal)?',
+      'What comfort medications and FDA-approved medications (buprenorphine, methadone, phenobarbital/benzodiazepine tapers) do you use during withdrawal?',
+      'Do you start ongoing medication (MOUD/MAUD) and schedule a warm handoff to outpatient care before discharge so tolerance drop does not lead to overdose?',
+    ],
+  },
+  outpatient: {
+    phrase: 'for outpatient counseling or Intensive Outpatient (IOP)',
+    questions: [
+      'How quickly can we schedule a biopsychosocial assessment (ASAM evaluation), and is walk-in or telehealth intake available?',
+      'Which evidence-based therapies do your counselors offer (such as CBT, Motivational Interviewing, Contingency Management for stimulants, or Seeking Safety for trauma)?',
+      'If someone is taking prescribed buprenorphine, methadone, or naltrexone—or isn’t ready for total abstinence on day one—are they fully welcomed in your groups?',
+    ],
+  },
+  pregnant: {
+    phrase: 'for pregnant or postpartum substance use care (priority intake)',
+    questions: [
+      'Because pregnant patients receive federal and state priority admission, how quickly can we do a same-day or next-day intake?',
+      'Do you coordinate prenatal care alongside buprenorphine or methadone stabilization without punitive reporting?',
+      'Do you offer family-friendly services like childcare (BC), residential beds for children, or help building a supportive Plan of Safe Care?',
+    ],
+  },
+};
+
+const INSURANCE_DETAILS = {
+  medicaid: {
+    phrase: 'using Medicaid.',
+    questions: [
+      'Do you accept my state Medicaid plan (or Medicaid managed care plan) with zero copay for intake and medication?',
+      'Can your intake coordinator help arrange Medicaid Non-Emergency Medical Transportation (NEMT) or transit passes (TA) for visits?',
+    ],
+    rights: [
+      'Medicaid covers FDA-approved medications for opioid and alcohol use disorder (buprenorphine, methadone at OTPs, naltrexone, acamprosate) and counseling.',
+      'If you do not have your physical Medicaid card with you, the clinic can usually verify active coverage using your name, date of birth, and Social Security number.',
+    ],
+  },
+  uninsured: {
+    phrase: 'without insurance right now (looking for sliding-scale or state-funded slots).',
+    questions: [
+      'Do you have state-funded / SAMHSA Block Grant slots, payment assistance (PA), or a sliding fee scale (SS) for uninsured patients?',
+      'What is the exact out-of-pocket cost for the first visit, and can your navigator help me apply for presumptive Medicaid or emergency coverage at intake?',
+      'If I am missing a government photo ID or proof of address, what temporary alternatives do you accept so care is not delayed?',
+    ],
+    rights: [
+      'Programs receiving federal Substance Use Prevention, Treatment, and Recovery Services Block Grant funds must give priority admission to pregnant people and people who inject drugs, and cannot turn away priority patients solely for inability to pay.',
+      'Federally Qualified Health Centers (FQHCs) must offer a sliding fee scale based on income and cannot deny primary or behavioral health care due to inability to pay.',
+    ],
+  },
+  private: {
+    phrase: 'using private / employer health insurance.',
+    questions: [
+      'Are BOTH the facility and the prescribing clinician in-network with my specific insurance plan?',
+      'Will you give me a written estimate of any deductible, copay, or coinsurance before I sign financial forms?',
+    ],
+    rights: [
+      'Under the federal Mental Health Parity and Addiction Equity Act (MHPAEA), most health plans cannot impose stricter prior authorizations, visit limits, or higher copays on SUD care than on medical/surgical care.',
+      'Under the No Surprises Act and state consumer laws, be cautious of out-of-network facilities that promise your insurance will “cover 100% of everything” without verifying in-network status in writing.',
+    ],
+  },
+  medicare_va: {
+    phrase: 'using Medicare, VA, TRICARE, or IHS coverage.',
+    questions: [
+      'Are you certified to bill Medicare (including Medicare Part B OTP bundle for methadone/buprenorphine), VA Community Care, TRICARE, or IHS?',
+      'Are there any out-of-pocket coinsurance costs, or is the service covered at 100% under my benefit?',
+    ],
+    rights: [
+      'Medicare covers Opioid Treatment Programs (OTPs) with zero Part B deductible for methadone, buprenorphine, naltrexone, and counseling.',
+      'Veterans can access SUD care and medications through VA Medical Centers, Vet Centers, or authorized VA Community Care providers regardless of service connection in crisis situations.',
+    ],
+  },
+};
+
+/**
+ * Pure helper that builds a tailored, printable/copyable intake phone script
+ * based on caller ('self' | 'loved_one' | 'clinician'), need ('moud_bup' | 'methadone_otp' | 'detox' | 'outpatient' | 'pregnant'),
+ * and insurance ('medicaid' | 'uninsured' | 'private' | 'medicare_va').
+ */
+export function buildIntakeCallScript({ caller = 'self', need = 'moud_bup', insurance = 'medicaid' } = {}) {
+  const safeCaller = Object.hasOwn(CALLER_OPENINGS, caller) ? caller : 'self';
+  const safeNeed = Object.hasOwn(NEED_DETAILS, need) ? need : 'moud_bup';
+  const safeInsurance = Object.hasOwn(INSURANCE_DETAILS, insurance) ? insurance : 'medicaid';
+
+  const callerPrefix = CALLER_OPENINGS[safeCaller];
+  const needInfo = NEED_DETAILS[safeNeed];
+  const insInfo = INSURANCE_DETAILS[safeInsurance];
+
+  const opening = `“${callerPrefix} ${needInfo.phrase}, ${insInfo.phrase} Can you tell me what your intake process looks like today?”`;
+
+  const keyQuestions = [
+    ...needInfo.questions,
+    ...insInfo.questions,
+    'Is your program licensed by the state, and what is your policy if a patient experiences a slip or return to use during care?',
+  ];
+
+  const barrierRights = [...insInfo.rights];
+  if (safeCaller === 'loved_one') {
+    barrierRights.push(
+      '42 CFR Part 2 note for families: Even without a signed release from your loved one, staff can answer general questions about their program, medications, and costs, and can listen to safety concerns you share.',
+      'Evidence-based tip (CRAFT): Avoid confrontational “interventions.” Offer calm, specific options (such as a ride or sitting together while calling) and keep naloxone at home.',
+    );
+  } else if (safeCaller === 'clinician') {
+    barrierRights.push(
+      '42 CFR Part 2 (89 FR 12472) warm handoff note: Have the patient sign a single written consent for Treatment, Payment, and Healthcare Operations (TPO) so you can share ASAM dimensions and last medication dose directly with the receiving team.',
+    );
+  } else {
+    barrierRights.push(
+      '42 CFR Part 2 privacy protection: Simply calling to ask questions or completing a screening does not go on a public record, employment check, or law enforcement database.',
+    );
+  }
+
+  const redFlagReminder =
+    'EKRA Anti-Brokering Warning (18 U.S.C. § 220): Hang up if a call center refuses to give the clinic’s exact street address, pressures you to fly out of state today, discourages FDA-approved medications (buprenorphine/methadone), or offers free rent, cash, or paid airfare.';
+
+  const fullText = [
+    '============================================================',
+    'HARBORPATH CLINIC INTAKE CALL SCRIPT',
+    '============================================================',
+    '',
+    'WHAT TO SAY WHEN THEY PICK UP:',
+    opening,
+    '',
+    'KEY QUESTIONS TO ASK:',
+    ...keyQuestions.map((q, i) => `${i + 1}. ${q}`),
+    '',
+    'YOUR RIGHTS & BARRIER WORKAROUNDS:',
+    ...barrierRights.map((r) => `• ${r}`),
+    '',
+    'RED FLAG REMINDER:',
+    redFlagReminder,
+    '============================================================',
+  ].join('\n');
+
+  return {
+    caller: safeCaller,
+    need: safeNeed,
+    insurance: safeInsurance,
+    opening,
+    keyQuestions,
+    barrierRights,
+    redFlagReminder,
+    fullText,
+  };
+}
+
 function normalizeField(value) {
   if (Array.isArray(value)) {
     return value.map((v) => String(v ?? '').trim()).filter(Boolean).join('\n• ');
@@ -237,8 +461,243 @@ function hasSuggestionInText(currentText, item) {
 }
 
 /**
- * Interactive SUDP Counseling, Intake Demystification, 42 CFR Part 2 Rights,
- * and Zero-Knowledge Personal Safety & Recovery Action Plan view.
+ * Interactive guided Urge Surfing & Paced Breathing timer component.
+ * Cleans up its interval automatically when disconnected from the DOM and respects prefers-reduced-motion.
+ */
+function urgeSurfingTimer() {
+  let totalSeconds = 180;
+  let remaining = 180;
+  let interval = null;
+
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const display = h('p', { class: 'timer-display', 'aria-hidden': 'true' }, '3:00');
+  const livePrompt = h(
+    'p',
+    { class: 'timer-live', role: 'status', 'aria-live': 'polite' },
+    t('plan.timer.ready', 'Choose 3 or 5 minutes when an urge hits. Most cravings crest and soften like a wave if you ride out the peak.'),
+  );
+
+  function stopTimer() {
+    if (interval !== null) {
+      clearInterval(interval);
+      interval = null;
+    }
+  }
+
+  function coachingForRemaining(rem, total) {
+    const elapsed = total - rem;
+    const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (rem <= 0) {
+      return t(
+        'plan.timer.done',
+        'Wave surfed. Notice how your body feels now compared to when you started. You made it through these minutes—drink some water or take one safe next step.',
+      );
+    }
+    if (elapsed < 30) {
+      return t(
+        'plan.timer.phase1',
+        'Settle your feet on the floor. Notice where the urge sits in your body without fighting it. Breathe in gently for 4 seconds, out slowly for 6 to 8 seconds.',
+      );
+    }
+    if (elapsed < 90) {
+      return reducedMotion
+        ? t('plan.timer.phase2.calm', 'Keep a steady, slow exhale. Picture the craving as a wave passing beneath you—you do not have to act on a thought.')
+        : t('plan.timer.phase2', 'Inhale slowly (1-2-3-4)… exhale softly (1-2-3-4-5-6). Let your shoulders drop as the wave crests.');
+    }
+    if (rem > 45) {
+      return t(
+        'plan.timer.phase3',
+        'You are over the halfway mark. Name 3 things you can see in the room right now and keep lengthening your out-breath.',
+      );
+    }
+    return t(
+      'plan.timer.phase4',
+      'Final stretch—the peak is passing. Unclench your jaw and hands, and take two more slow, deep breaths.',
+    );
+  }
+
+  function start(seconds) {
+    stopTimer();
+    totalSeconds = seconds;
+    remaining = seconds;
+    display.textContent = fmt(remaining);
+    livePrompt.textContent = coachingForRemaining(remaining, totalSeconds);
+
+    interval = setInterval(() => {
+      if (root.isConnected === false) {
+        stopTimer();
+        return;
+      }
+      remaining -= 1;
+      display.textContent = fmt(Math.max(remaining, 0));
+      // Update aria-live coaching prompt at gentle 15-second boundaries or completion so screen readers aren't spammed every second
+      if (remaining <= 0) {
+        stopTimer();
+        livePrompt.textContent = coachingForRemaining(0, totalSeconds);
+      } else if ((totalSeconds - remaining) % 15 === 0) {
+        livePrompt.textContent = coachingForRemaining(remaining, totalSeconds);
+      }
+    }, 1000);
+  }
+
+  const start3Btn = h('button', {
+    type: 'button',
+    class: 'btn btn-primary btn-small',
+    onclick: () => start(180),
+  }, icon('clock'), t('plan.timer.start3', 'Start 3-minute urge surf'));
+
+  const start5Btn = h('button', {
+    type: 'button',
+    class: 'btn btn-secondary btn-small',
+    onclick: () => start(300),
+  }, icon('clock'), t('plan.timer.start5', 'Start 5-minute urge surf'));
+
+  const resetBtn = h('button', {
+    type: 'button',
+    class: 'btn btn-ghost btn-small',
+    onclick: () => {
+      stopTimer();
+      remaining = totalSeconds;
+      display.textContent = fmt(remaining);
+      livePrompt.textContent = t('plan.timer.reset', 'Timer paused and reset. Start again whenever you are ready.');
+    },
+  }, icon('x'), t('plan.timer.resetBtn', 'Pause / reset'));
+
+  const root = h('div', { class: 'timer', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
+    display,
+    h('div', { class: 'actions' }, start3Btn, start5Btn, resetBtn),
+    livePrompt,
+  );
+  return root;
+}
+
+/**
+ * Interactive "What to Say When You Call a Clinic" script builder component.
+ */
+function intakeScriptBuilderCard() {
+  const state = {
+    caller: 'self',
+    need: 'moud_bup',
+    insurance: 'medicaid',
+  };
+
+  const scriptOutput = h('div', { class: 'intake-script-output' });
+  const copyMsg = h('p', { class: 'field-status', role: 'status', 'aria-live': 'polite' });
+
+  function renderScript() {
+    clear(scriptOutput);
+    const built = buildIntakeCallScript(state);
+    scriptOutput.append(
+      h('div', { class: 'callout callout-info' },
+        h('p', { class: 'callout-title' }, icon('phone'), t('plan.script.sayTitle', 'What to say when they pick up')),
+        p(strong(built.opening)),
+      ),
+      h('h4', null, t('plan.script.questionsHeading', 'Key questions to ask on the call')),
+      h('ol', { class: 'checklist' }, built.keyQuestions.map((q) => h('li', null, q))),
+      h('h4', null, t('plan.script.rightsHeading', 'Your rights & barrier workarounds for this call')),
+      ul(built.barrierRights),
+      h('div', { class: 'callout callout-warn' },
+        p(icon('alert'), ' ', strong(t('plan.script.redFlagTitle', 'Safety & EKRA reminder: ')), built.redFlagReminder),
+      ),
+    );
+  }
+
+  const callerSelect = h('select', {
+    id: 'script-caller',
+    class: 'select',
+    onchange: (e) => {
+      state.caller = e.target.value;
+      renderScript();
+    },
+  },
+    h('option', { value: 'self' }, t('plan.script.caller.self', 'Myself')),
+    h('option', { value: 'loved_one' }, t('plan.script.caller.lovedOne', 'A family member, partner, or friend')),
+    h('option', { value: 'clinician' }, t('plan.script.caller.clinician', 'A patient (peer navigator / clinician warm handoff)')),
+  );
+
+  const needSelect = h('select', {
+    id: 'script-need',
+    class: 'select',
+    onchange: (e) => {
+      state.need = e.target.value;
+      renderScript();
+    },
+  },
+    h('option', { value: 'moud_bup' }, t('plan.script.need.bup', 'Buprenorphine (Suboxone / Sublocade) or outpatient MOUD')),
+    h('option', { value: 'methadone_otp' }, t('plan.script.need.otp', 'Methadone clinic (Opioid Treatment Program / OTP)')),
+    h('option', { value: 'detox' }, t('plan.script.need.detox', 'Medical detox / withdrawal management')),
+    h('option', { value: 'outpatient' }, t('plan.script.need.outpatient', 'Outpatient counseling or Intensive Outpatient (IOP)')),
+    h('option', { value: 'pregnant' }, t('plan.script.need.pregnant', 'Pregnant or postpartum care (priority intake)')),
+  );
+
+  const insuranceSelect = h('select', {
+    id: 'script-insurance',
+    class: 'select',
+    onchange: (e) => {
+      state.insurance = e.target.value;
+      renderScript();
+    },
+  },
+    h('option', { value: 'medicaid' }, t('plan.script.ins.medicaid', 'Medicaid / state coverage')),
+    h('option', { value: 'uninsured' }, t('plan.script.ins.uninsured', 'Uninsured / sliding scale / no ID')),
+    h('option', { value: 'private' }, t('plan.script.ins.private', 'Private / employer insurance')),
+    h('option', { value: 'medicare_va' }, t('plan.script.ins.medicareVa', 'Medicare, VA, TRICARE, or IHS')),
+  );
+
+  async function handleCopyScript() {
+    const built = buildIntakeCallScript(state);
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(built.fullText);
+        copyMsg.textContent = t('plan.script.copied', 'Copied intake call script to clipboard.');
+        announce(copyMsg.textContent);
+      } else {
+        copyMsg.textContent = t('plan.script.copyUnavailable', 'Clipboard unavailable in this browser. Use Print instead.');
+      }
+    } catch {
+      copyMsg.textContent = t('plan.script.copyError', 'Could not copy automatically. Use Print instead.');
+    }
+  }
+
+  renderScript();
+
+  return h('div', { class: 'card intake-script-card', id: 'intake' },
+    h('h3', null, t('plan.script.heading', 'Interactive “What to Say When You Call a Clinic” Script Builder')),
+    fine(t('plan.script.sub', 'Choose who is calling, what kind of care you are asking about, and how you plan to pay to get a word-for-word phone script.')),
+    h('div', { class: 'location-row' },
+      h('div', null,
+        h('label', { class: 'label', for: 'script-caller' }, t('plan.script.callerLabel', 'I am calling for')),
+        callerSelect,
+      ),
+      h('div', null,
+        h('label', { class: 'label', for: 'script-need' }, t('plan.script.needLabel', 'Looking for')),
+        needSelect,
+      ),
+      h('div', null,
+        h('label', { class: 'label', for: 'script-insurance' }, t('plan.script.insLabel', 'Insurance / payment')),
+        insuranceSelect,
+      ),
+    ),
+    scriptOutput,
+    h('div', { class: 'actions' },
+      h('button', {
+        type: 'button',
+        class: 'btn btn-primary btn-small',
+        onclick: handleCopyScript,
+      }, icon('copy'), t('plan.script.copyBtn', 'Copy call script')),
+      h('button', {
+        type: 'button',
+        class: 'btn btn-secondary btn-small',
+        onclick: () => window.print(),
+      }, icon('printer'), t('plan.script.printBtn', 'Print script')),
+    ),
+    copyMsg,
+  );
+}
+
+/**
+ * Interactive SUDP Counseling, Craving/Distress Grounding Toolkit, Intake Demystification,
+ * 42 CFR Part 2 Rights, and Zero-Knowledge Personal Safety & Recovery Action Plan view.
  */
 export function planView({ query } = {}) {
   // Zero-knowledge state lives purely inside this closure in browser RAM.
@@ -415,13 +874,14 @@ export function planView({ query } = {}) {
       t('plan.title', 'Safety planning, counseling & what to expect'),
       t(
         'plan.lede',
-        'Build a private, zero-knowledge personal safety and recovery action plan, explore evidence-based counseling approaches, and see what really happens at a treatment intake.',
+        'Build a private, zero-knowledge personal safety and recovery action plan, ride out a craving with an urge-surfing timer, get a word-for-word clinic call script, and see what really happens at intake.',
       ),
     ),
     emergencyCallout(),
     tocNav([
       ['safety-plan', t('plan.toc.safetyPlan', 'Personal safety & action plan')],
-      ['intake-guide', t('plan.toc.intake', 'What to expect at your first appointment')],
+      ['craving-toolkit', t('plan.toc.cravingToolkit', 'Craving & distress toolkit (urge surfing)')],
+      ['intake-guide', t('plan.toc.intake', 'What to expect & clinic call script')],
       ['counseling-modalities', t('plan.toc.modalities', 'Counseling & therapy approaches')],
       ['confidentiality-rights', t('plan.toc.rights', 'Your confidentiality rights (42 CFR Part 2)')],
     ]),
@@ -544,12 +1004,30 @@ export function planView({ query } = {}) {
       ),
     ),
 
-    // 2. What to Expect at Your First Appointment (SUDP Intake Guide)
+    // 1b. Interactive Craving & Distress Toolkit (Urge Surfing & Grounding Pacer)
+    section('craving-toolkit', t('plan.section.cravingToolkit', 'Craving & distress toolkit (urge surfing & grounding timer)'),
+      p(t(
+        'plan.cravingToolkit.intro',
+        'Having an urge or sudden wave of anxiety right now? Use this 3- or 5-minute guided pacer and evidence-based grounding exercises to help your nervous system ride out the peak safely.',
+      )),
+      urgeSurfingTimer(),
+      h('div', { class: 'results-list' },
+        GROUNDING_EXERCISES.map((ex) => h('article', { class: 'card', id: `grounding-${ex.id}` },
+          h('h3', null, ex.title),
+          fine(strong('Clinical basis: '), ex.clinicalBasis),
+          p(strong('When to use it: '), ex.whenToUse),
+          ul(ex.steps),
+        )),
+      ),
+    ),
+
+    // 2. What to Expect at Your First Appointment (SUDP Intake Guide + Call Script Builder)
     section('intake-guide', t('plan.section.intake', 'What to expect at your first appointment (SUDP intake guide)'),
       p(t(
         'plan.intake.intro',
         'Calling or walking into a treatment program for the first time can feel intimidating—especially if you have had judgmental healthcare experiences in the past. Knowing what happens step by step puts you in the driver’s seat.',
       )),
+      intakeScriptBuilderCard(),
       h('ol', { class: 'steps' },
         INTAKE_STEPS.map((s) => h('li', { class: 'step', id: `intake-step-${s.step}` },
           h('span', { class: 'step-num', 'aria-hidden': 'true' }, String(s.step)),

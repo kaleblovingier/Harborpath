@@ -1,6 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluateAsamCare } from '../public/js/views/navigator.js';
+import {
+  evaluateAsamCare,
+  scoreOpioidWithdrawal,
+  scoreAlcoholSedativeRisk,
+  formatAsamHandoffText,
+} from '../public/js/views/navigator.js';
 
 describe('evaluateAsamCare() — ASAM Criteria (4th Edition) Clinical Engine', () => {
   it('returns ASAM Level 1.0 / 1.5 Outpatient by default with empty answers', () => {
@@ -164,5 +169,136 @@ describe('evaluateAsamCare() — ASAM Criteria (4th Edition) Clinical Engine', (
     assert.ok(res.broadCodes.length >= 1 && res.broadCodes.length <= 3, 'Expected 1 to 3 broadCodes');
     assert.equal(res.searchHref, `#/treatment?codes=${res.codes.join(',')}`);
     assert.equal(res.broadSearchHref, `#/treatment?codes=${res.broadCodes.join(',')}`);
+  });
+});
+
+describe('scoreOpioidWithdrawal() — Validated SOWS / COWS-Informed Calculator', () => {
+  it('scores none/minimal withdrawal (0–4) and warns against premature sublingual buprenorphine initiation while explaining micro-induction & methadone', () => {
+    const zero = scoreOpioidWithdrawal({});
+    assert.equal(zero.score, 0);
+    assert.equal(zero.band, 'none_minimal');
+    assert.equal(zero.navWithdrawalRisk, 'none');
+    assert.match(zero.bupGuidance, /precipitated withdrawal/i);
+    assert.match(zero.bupGuidance, /Bernese|#\/medications/i);
+    assert.match(zero.bupGuidance, /methadone/i);
+  });
+
+  it('scores mild withdrawal (5–12) and highlights fentanyl lipophilicity and micro-induction options', () => {
+    const mild = scoreOpioidWithdrawal({
+      restlessness: 2,
+      sweating_chills: 2,
+      muscle_bone_aches: 2,
+      anxiety_irritability: 2,
+      yawning_insomnia: 1,
+    });
+    assert.equal(mild.score, 9);
+    assert.equal(mild.band, 'mild');
+    assert.equal(mild.navWithdrawalRisk, 'mild');
+    assert.match(mild.bupGuidance, /fentanyl/i);
+    assert.match(mild.bupGuidance, /Bernese|#\/medications/i);
+  });
+
+  it('scores moderate (13–20), moderately_severe (21–24), and severe (>= 25) withdrawal accurately and supports boolean inputs', () => {
+    const moderate = scoreOpioidWithdrawal({
+      restlessness: true,
+      sweating_chills: true,
+      muscle_bone_aches: true,
+      gi_upset: true,
+      runny_nose_tearing: true,
+      tremor_gooseflesh: true,
+      anxiety_irritability: true,
+    });
+    assert.equal(moderate.score, 14);
+    assert.equal(moderate.band, 'moderate');
+    assert.equal(moderate.navWithdrawalRisk, 'moderate');
+
+    const modSevere = scoreOpioidWithdrawal({
+      restlessness: 4,
+      sweating_chills: 4,
+      muscle_bone_aches: 4,
+      gi_upset: 4,
+      runny_nose_tearing: 2,
+      tremor_gooseflesh: 2,
+      anxiety_irritability: 2,
+    });
+    assert.equal(modSevere.score, 22);
+    assert.equal(modSevere.band, 'moderately_severe');
+    assert.equal(modSevere.navWithdrawalRisk, 'severe');
+
+    const severe = scoreOpioidWithdrawal({
+      restlessness: 4,
+      sweating_chills: 4,
+      muscle_bone_aches: 4,
+      gi_upset: 4,
+      runny_nose_tearing: 4,
+      tremor_gooseflesh: 4,
+      anxiety_irritability: 4,
+      yawning_insomnia: 4,
+    });
+    assert.equal(severe.score, 32);
+    assert.equal(severe.band, 'severe');
+    assert.equal(severe.navWithdrawalRisk, 'severe');
+    assert.match(severe.bupGuidance, /1306\.07\(b\)|72-Hour Rule/i);
+  });
+});
+
+describe('scoreAlcoholSedativeRisk() — PAWSS / CIWA-Ar Informed GABAergic Risk Calculator', () => {
+  it('returns low risk when no risk factors are present', () => {
+    const low = scoreAlcoholSedativeRisk({});
+    assert.equal(low.score, 0);
+    assert.equal(low.riskLevel, 'low');
+    assert.equal(low.navWithdrawalRisk, 'none');
+    assert.match(low.guidance, /Outpatient|PMAT/i);
+  });
+
+  it('returns moderate risk for daily heavy use or tremor/sweating without severe red flags', () => {
+    const mod = scoreAlcoholSedativeRisk({ dailyHeavyUse: true });
+    assert.equal(mod.score, 2);
+    assert.equal(mod.riskLevel, 'moderate');
+    assert.equal(mod.navWithdrawalRisk, 'moderate');
+    assert.match(mod.guidance, /seizure|DT/i);
+  });
+
+  it('returns high_seizure_dt_risk and severe navWithdrawalRisk for prior seizures/DTs, autonomic instability, or combined high score', () => {
+    const priorSeizure = scoreAlcoholSedativeRisk({ priorSeizuresOrDTs: true });
+    assert.equal(priorSeizure.score, 4);
+    assert.equal(priorSeizure.riskLevel, 'high_seizure_dt_risk');
+    assert.equal(priorSeizure.navWithdrawalRisk, 'severe');
+    assert.match(priorSeizure.guidance, /cold turkey|3\.7-WM|4\.0/i);
+
+    const autonomic = scoreAlcoholSedativeRisk({ autonomicInstability: true });
+    assert.equal(autonomic.riskLevel, 'high_seizure_dt_risk');
+    assert.equal(autonomic.navWithdrawalRisk, 'severe');
+  });
+});
+
+describe('formatAsamHandoffText() — Clinician Handoff & Referral Summary Formatter', () => {
+  it('formats a complete, structured ASAM 4th Edition plain-text summary with dimensions, red flags, SAMHSA codes, and crisis lines', () => {
+    const answers = {
+      substances: ['opioids', 'xylazine'],
+      withdrawalRisk: 'moderate',
+      biomedical: 'pregnant',
+      mentalHealth: 'mild_moderate',
+      environment: 'unstable',
+      structureNeeded: '24_hour',
+      payment: 'MD',
+      preferTelehealth: true,
+    };
+    const evaluation = evaluateAsamCare(answers);
+    const text = formatAsamHandoffText(answers, evaluation);
+
+    assert.match(text, /HARBORPATH — ASAM 4TH EDITION CLINICAL CARE SUMMARY/i);
+    assert.ok(text.includes(evaluation.asamLevel), 'Handoff note must include recommended ASAM level');
+    assert.match(text, /Dimension 1/i);
+    assert.match(text, /Dimension 2/i);
+    assert.match(text, /Dimension 3/i);
+    assert.match(text, /Dimension 4 & 5/i);
+    assert.match(text, /Dimension 6/i);
+    assert.match(text, /RED-FLAG MEDICAL SAFETY ALERTS/i);
+    assert.match(text, /PW \(Pregnant \/ Postpartum Specialty\)/);
+    assert.match(text, /BU \(Buprenorphine/);
+    assert.match(text, /988/);
+    assert.match(text, /1-800-662-4357/);
+    assert.match(text, /21 CFR 1306\.07\(b\)/);
   });
 });

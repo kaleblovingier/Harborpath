@@ -132,6 +132,30 @@ test('health center search runs against the HRSA dataset', async () => {
   assert.ok(body.results.every((r) => r.miles <= 25));
 });
 
+test('nearby-summary aggregates local multi-network counts, nearest sites, and state resources with zero upstream calls', async () => {
+  const callsBefore = upstreamCalls.length;
+  const res = await fetch(`${base}/api/nearby-summary?lat=48.751934&lng=-122.478712&radius=50`);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('cache-control'), 'no-store');
+  assert.equal(upstreamCalls.length, callsBefore, 'nearby-summary never calls upstream');
+  const body = await res.json();
+  assert.equal(body.radiusMiles, 50);
+  assert.equal(body.region.code, 'WA');
+  assert.ok(Array.isArray(body.nearbyRegions));
+  assert.ok(body.agency?.name);
+  assert.ok(body.medicaid?.agency);
+  for (const key of ['healthCenters', 'va', 'ihs', 'rhc', 'er']) {
+    assert.ok(body.networks[key].count > 0, `expected ${key} count > 0`);
+    assert.ok(body.networks[key].nearest?.name, `expected ${key} nearest facility`);
+    assert.ok(body.networks[key].nearest.miles <= 50);
+  }
+
+  const badRadius = await fetch(`${base}/api/nearby-summary?lat=48.75&lng=-122.48&radius=13`);
+  assert.equal(badRadius.status, 400);
+  const badLoc = await fetch(`${base}/api/nearby-summary?lat=999&lng=-122.48`);
+  assert.equal(badLoc.status, 400);
+});
+
 test('non-GET methods are rejected', async () => {
   const res = await fetch(`${base}/api/geocode?q=x`, { method: 'POST' });
   assert.equal(res.status, 405);

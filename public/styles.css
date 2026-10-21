@@ -464,6 +464,114 @@ textarea.input {
   color: var(--text);
 }
 
+/* ------------------------------------------------------------ Wave 2: Safety-Net Snapshot & Clinical Tools */
+.safety-net-block {
+  margin: 12px 0 18px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.safety-net-heading {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.safety-net-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 10px;
+}
+.safety-net-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.safety-net-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.safety-net-link {
+  font-weight: 700;
+  font-size: 0.94rem;
+  color: var(--brand-strong);
+}
+.safety-net-meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.regimen-checker,
+#regimen-safety-checker {
+  margin-bottom: 18px;
+  border-left: 4px solid var(--brand);
+}
+.regimen-checker .presets,
+#regimen-safety-checker .presets {
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+#regimen-safety-output {
+  margin-top: 8px;
+}
+
+.grounding-pacer,
+#craving-toolkit .timer {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+
+.script-builder,
+.intake-script-card {
+  margin-bottom: 20px;
+  border-left: 4px solid var(--info);
+}
+.script-builder .location-row,
+.intake-script-card .location-row {
+  margin: 12px 0 16px;
+}
+.intake-script-output {
+  margin: 14px 0;
+}
+.intake-script-output h4 {
+  margin: 14px 0 6px;
+  font-size: 1rem;
+}
+
+.withdrawal-calc,
+#withdrawal-self-check-calculators {
+  margin-top: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+}
+.withdrawal-calc > summary,
+#withdrawal-self-check-calculators > summary {
+  font-weight: 700;
+  color: var(--brand-strong);
+}
+.withdrawal-calc .resource-list,
+#withdrawal-self-check-calculators .resource-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  margin-top: 10px;
+}
+
 /* ------------------------------------------------------------ Facility cards */
 .facility-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
 .facility-name { font-size: 1.12rem; margin-bottom: 2px; overflow-wrap: anywhere; }

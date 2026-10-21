@@ -488,6 +488,262 @@ const PRESCRIBER_QUESTIONS = [
   'Can you also prescribe over-the-counter or prescription naloxone and nicotine replacement therapy (patch + gum/lozenge) so my insurance covers them at $0 copay?',
 ];
 
+export const REGIMEN_AGENTS = [
+  {
+    id: 'opioids_fentanyl',
+    label: 'Opioids (fentanyl, heroin, oxycodone)',
+    interactionTag: 'opioids',
+    isDepressant: true,
+    isFullOpioid: true,
+  },
+  {
+    id: 'buprenorphine',
+    label: 'Buprenorphine (Suboxone, Sublocade, Brixadi)',
+    interactionTag: 'buprenorphine',
+    isDepressant: true,
+    isPartialAgonist: true,
+  },
+  {
+    id: 'methadone',
+    label: 'Methadone',
+    interactionTag: 'methadone',
+    isDepressant: true,
+    isFullOpioid: true,
+    isQtc: true,
+  },
+  {
+    id: 'naltrexone',
+    label: 'Naltrexone (Vivitrol / oral ReVia)',
+    interactionTag: 'naltrexone',
+    isAntagonist: true,
+  },
+  {
+    id: 'alcohol',
+    label: 'Alcohol',
+    interactionTag: 'alcohol',
+    isDepressant: true,
+  },
+  {
+    id: 'benzos_sedatives',
+    label: 'Benzodiazepines / sleep meds (Xanax, Klonopin, Ambien)',
+    interactionTag: 'benzodiazepines',
+    isDepressant: true,
+  },
+  {
+    id: 'xylazine_medetomidine',
+    label: 'Xylazine / Medetomidine ("Tranq")',
+    interactionTag: 'xylazine',
+    isDepressant: true,
+  },
+  {
+    id: 'stimulants',
+    label: 'Stimulants (cocaine, methamphetamine)',
+    interactionTag: 'stimulants',
+    isQtc: true,
+  },
+  {
+    id: 'gabapentinoids',
+    label: 'Gabapentinoids (gabapentin, pregabalin)',
+    interactionTag: 'gabapentinoids',
+    isDepressant: true,
+  },
+  {
+    id: 'disulfiram',
+    label: 'Disulfiram (Antabuse) / Metronidazole',
+    interactionTag: 'disulfiram',
+  },
+  {
+    id: 'qtc_meds',
+    label: 'QTc / CYP3A4 meds (ondansetron, citalopram, fluconazole, macrolides)',
+    interactionTag: 'methadone',
+    isQtc: true,
+  },
+];
+
+export const SPECIAL_POPULATIONS_PHARM = [
+  {
+    id: 'pregnancy_lactation',
+    title: 'Pregnancy, Postpartum & Breastfeeding',
+    summary: 'Buprenorphine and methadone are the gold-standard, ACOG- and ASAM-recommended treatments during pregnancy. Continuing medication prevents fetal withdrawal cycles, preterm birth, and postpartum overdose.',
+    keyPoints: [
+      'Never stop buprenorphine or methadone abruptly ("detox") during pregnancy—repeated opioid withdrawal causes placental stress and high return-to-use risk.',
+      'Both mono-product buprenorphine and combination buprenorphine/naloxone (Suboxone) have strong human safety data in pregnancy; no switch is required if you are stable on combination film/tablets.',
+      'Blood volume and liver enzyme activity increase in the 2nd and 3rd trimesters: methadone or buprenorphine doses often need to be increased or split into twice-daily dosing to prevent evening withdrawal.',
+      'Breastfeeding is safe and strongly encouraged on buprenorphine or methadone: tiny amounts pass into breastmilk, and skin-to-skin breastfeeding reduces the severity of Neonatal Opioid Withdrawal Syndrome (NOWS) and hospital stay length.',
+    ],
+    samhsaCodes: ['PW', 'BU', 'OTP'],
+  },
+  {
+    id: 'hepatic_hcv',
+    title: 'Liver Disease, Cirrhosis & Hepatitis C',
+    summary: 'Liver inflammation or cirrhosis changes how some medications are processed, but effective addiction and Hepatitis C treatments remain safe and available.',
+    keyPoints: [
+      'For Alcohol Use Disorder in significant liver disease or cirrhosis, Acamprosate (100% kidney-cleared, zero liver metabolism) and off-label Baclofen or Gabapentin are preferred over disulfiram or naltrexone.',
+      'Buprenorphine and methadone are safe in compensated Hepatitis C and mild-to-moderate liver impairment; in severe decompensated cirrhosis (Child-Pugh C), buprenorphine mono-product is preferred over buprenorphine/naloxone because impaired hepatic first-pass clearance can raise systemic naloxone levels.',
+      'Direct-Acting Antiviral (DAA) pills cure Hepatitis C in 8–12 weeks (>95% cure rate) and are fully compatible with buprenorphine, methadone, and active substance use—you do NOT need to be abstinent to be cured of Hep C.',
+    ],
+    samhsaCodes: ['HCT', 'PMAT'],
+  },
+  {
+    id: 'renal_ckd',
+    title: 'Kidney Disease (CKD) & Dialysis',
+    summary: 'Unlike morphine or codeine (which build up toxic metabolites in kidney failure), buprenorphine and methadone are cleared primarily through the liver and gut, making them safe in chronic kidney disease and dialysis.',
+    keyPoints: [
+      'Buprenorphine (including Sublocade and Brixadi) and methadone do not require routine dose reduction in chronic kidney disease or hemodialysis, and neither is significantly removed by dialysis.',
+      'Acamprosate is excreted unchanged by the kidneys: reduce the dose by 50% (333 mg three times daily) for moderate kidney impairment (CrCl 30–50 mL/min) and avoid if CrCl is 30 mL/min or lower.',
+      'Gabapentin and pregabalin depend 100% on renal clearance—doses must be carefully adjusted for kidney function to prevent severe sedation, myoclonus, and respiratory depression.',
+    ],
+    samhsaCodes: ['BU', 'OTP', 'PMAT'],
+  },
+  {
+    id: 'acute_pain_perioperative',
+    title: 'Acute Pain, Dental Work & Surgery While Taking MOUD',
+    summary: 'If you have a fracture, dental procedure, labor/delivery, or surgery, clinical guidelines (ASAM, APS, SAMHSA) are clear: continue your daily buprenorphine or methadone.',
+    keyPoints: [
+      'Do NOT stop buprenorphine or methadone before surgery or dental work. Stopping destabilizes recovery, creates baseline opioid debt, and makes postoperative pain harder to control.',
+      'Buprenorphine’s analgesic effect lasts 6–8 hours even though craving protection lasts 24+ hours: temporarily splitting your daily buprenorphine into every-6-to-8-hour doses (e.g., 4 mg four times daily) provides strong baseline pain relief.',
+      'Combine scheduled multimodal non-opioid pain control (acetaminophen, NSAIDs like ibuprofen/ketorolac, local/regional nerve blocks) with short-acting high-affinity full agonists if needed in the hospital.',
+      'If you take extended-release naltrexone (Vivitrol), tell your surgical/dental team in advance: oral naltrexone is held 72 hours before planned surgery, and Vivitrol requires non-opioid multimodal analgesia or regional nerve blocks for 4 weeks after the last injection.',
+    ],
+    samhsaCodes: ['BU', 'OTP', 'NU'],
+  },
+];
+
+const SEVERITY_RANK = { none: 0, info: 1, moderate: 2, high: 3, critical: 4 };
+
+export function evaluateRegimenSafety(selectedIds = []) {
+  const validMap = new Map(REGIMEN_AGENTS.map((a) => [a.id, a]));
+  const chosenIds = [...new Set(Array.from(selectedIds || []).map((id) => String(id).trim()))]
+    .filter((id) => validMap.has(id));
+
+  if (chosenIds.length < 2) {
+    return {
+      riskLevel: 'none',
+      alerts: [],
+      matchedInteractions: [],
+      actionSteps: [],
+    };
+  }
+
+  const has = (id) => chosenIds.includes(id);
+  const chosenAgents = chosenIds.map((id) => validMap.get(id));
+  const hasAnyOpioidAgonist = has('opioids_fentanyl') || has('buprenorphine') || has('methadone');
+  const hasFullOpioid = has('opioids_fentanyl') || has('methadone');
+
+  // Pairwise interaction matching
+  const matchedIds = new Set();
+  if (has('benzos_sedatives') && hasAnyOpioidAgonist) matchedIds.add('opioids-benzos');
+  if (has('xylazine_medetomidine') && hasAnyOpioidAgonist) matchedIds.add('opioids-xylazine');
+  if (has('gabapentinoids') && hasAnyOpioidAgonist) matchedIds.add('opioids-gabapentinoids');
+  if (has('alcohol') && hasAnyOpioidAgonist) matchedIds.add('opioids-alcohol');
+  if (has('buprenorphine') && hasFullOpioid) matchedIds.add('buprenorphine-full-agonists');
+  if (has('methadone') && (has('qtc_meds') || has('stimulants'))) matchedIds.add('methadone-cyp-qtc');
+  if (has('naltrexone') && hasAnyOpioidAgonist) matchedIds.add('naltrexone-opioids');
+  if (has('stimulants') && has('alcohol')) matchedIds.add('cocaine-alcohol');
+  if (has('stimulants') && hasAnyOpioidAgonist) matchedIds.add('stimulants-opioids');
+  if (has('alcohol') && has('disulfiram')) matchedIds.add('alcohol-disulfiram');
+
+  const matchedInteractions = INTERACTIONS.filter((ix) => matchedIds.has(ix.id));
+  const alerts = [];
+  const actionSteps = new Set();
+
+  // 1. Triple+ CNS / Respiratory Depressant Synergy
+  const depressants = chosenAgents.filter((a) => a.isDepressant);
+  if (depressants.length >= 3) {
+    alerts.push({
+      id: 'triple-depressant-synergy',
+      severity: 'critical',
+      title: `Critical Polypharmacy Alert: ${depressants.length} CNS & Respiratory Depressants Combined`,
+      detail: `Combining ${depressants.map((d) => d.label.split(' (')[0]).join(' + ')} creates compounding, non-linear suppression of brainstem breathing drive and upper airway reflexes.`,
+    });
+    actionSteps.add('Keep multiple 4 mg naloxone nasal sprays immediately accessible and never use alone (or call Never Use Alone at 800-484-3731).');
+    actionSteps.add('If an overdose occurs, give naloxone AND perform rescue breathing (1 breath every 5 seconds)—naloxone reverses opioids, but rescue breaths are essential for alcohol, benzodiazepines, xylazine, or gabapentinoids.');
+  }
+
+  // 2. Precipitated Opioid Withdrawal Risks
+  if (has('buprenorphine') && hasFullOpioid) {
+    alerts.push({
+      id: 'precipitated-withdrawal-buprenorphine',
+      severity: 'high',
+      title: 'Precipitated Opioid Withdrawal Risk (Full-Agonist Opioid + Buprenorphine)',
+      detail: 'Because buprenorphine has higher mu-receptor binding affinity but partial activation, taking a standard 4–8 mg dose while fentanyl, heroin, or methadone is still attached to receptors will rapidly strip the full agonist and trigger acute precipitated withdrawal.',
+    });
+    actionSteps.add('To transition from fentanyl or methadone to buprenorphine without precipitated withdrawal, discuss a Low-Dose / Micro-Induction ("Bernese Method") cross-taper starting at 0.25–0.5 mg, or wait until objective withdrawal is clearly established.');
+  }
+
+  if (has('naltrexone') && hasAnyOpioidAgonist) {
+    alerts.push({
+      id: 'precipitated-withdrawal-naltrexone',
+      severity: 'critical',
+      title: 'Severe Precipitated Withdrawal & Receptor Blockade (Naltrexone + Opioid)',
+      detail: 'Naltrexone is a potent competitive mu-opioid antagonist that displaces fentanyl, buprenorphine, and methadone—causing prolonged, severe precipitated withdrawal. Trying to override naltrexone blockade with high-dose opioids can cause sudden fatal overdose.',
+    });
+    actionSteps.add('Ensure a full 7–10 day opioid-free interval after short-acting opioids (10–14+ days after fentanyl, buprenorphine, or methadone) before starting oral naltrexone or Vivitrol.');
+  }
+
+  // 3. QTc Prolongation & Hepatic/Metabolic Alerts
+  if (has('methadone') && has('qtc_meds')) {
+    alerts.push({
+      id: 'methadone-qtc-cyp-synergy',
+      severity: 'high',
+      title: 'QTc Prolongation & CYP3A4/2B6 Metabolic Interaction (Methadone + QTc/CYP Meds)',
+      detail: 'Combining methadone with CYP3A4 inhibitors (e.g., fluconazole, macrolides) or QTc-prolonging drugs (e.g., ondansetron, citalopram, antipsychotics) can raise serum methadone concentrations and prolong the cardiac QT interval.',
+    });
+    actionSteps.add('Ask your pharmacist or prescriber to check for CYP3A4/2B6 interactions and consider a baseline/follow-up ECG and electrolyte check (potassium & magnesium).');
+  } else if (chosenAgents.filter((a) => a.isQtc).length >= 2) {
+    alerts.push({
+      id: 'cardiac-qtc-strain',
+      severity: 'moderate',
+      title: 'Additive Cardiac Rhythm (QTc) & Sympathetic Strain',
+      detail: 'Combining stimulants, methadone, or QTc-prolonging medications increases cardiac conduction stress and arrhythmia risk, especially during dehydration or electrolyte depletion.',
+    });
+    actionSteps.add('Stay hydrated, replenish electrolytes, and seek immediate medical care for palpitations, dizziness, fainting, or chest pain.');
+  }
+
+  if (has('alcohol') && has('disulfiram')) {
+    alerts.push({
+      id: 'disulfiram-acetaldehyde-reaction',
+      severity: 'critical',
+      title: 'Acute Acetaldehyde Toxicity (Disulfiram / Metronidazole + Alcohol)',
+      detail: 'Disulfiram blocks aldehyde dehydrogenase, causing toxic acetaldehyde accumulation within 10–30 minutes of any alcohol intake (flushing, throbbing headache, severe vomiting, tachycardia, and hypotension).',
+    });
+    actionSteps.add('Strictly avoid all alcohol sources (including mouthwash, liquid medications, cooking wine, and kombucha) while taking disulfiram and for 14 days after stopping.');
+  }
+
+  if (has('naltrexone') && has('alcohol') && !hasAnyOpioidAgonist) {
+    alerts.push({
+      id: 'naltrexone-alcohol-therapeutic',
+      severity: 'info',
+      title: 'Evidence-Based AUD Combination (Naltrexone + Alcohol)',
+      detail: 'Unlike disulfiram, naltrexone does NOT make you sick if you drink alcohol. It safely blocks endorphin reward signaling to reduce cravings and heavy drinking days.',
+    });
+    actionSteps.add('Continue taking naltrexone as prescribed (daily or 1 hour prior to drinking per your care plan) and have periodic liver enzyme checks.');
+  }
+
+  for (const ix of matchedInteractions) {
+    actionSteps.add(ix.action);
+  }
+
+  let riskLevel = 'info';
+  for (const a of alerts) {
+    if (SEVERITY_RANK[a.severity] > SEVERITY_RANK[riskLevel]) riskLevel = a.severity;
+  }
+  for (const ix of matchedInteractions) {
+    if (SEVERITY_RANK[ix.severity] > SEVERITY_RANK[riskLevel]) riskLevel = ix.severity;
+  }
+
+  if (actionSteps.size === 0) {
+    actionSteps.add('Review your full medication list with a clinical pharmacist or prescriber to check for kidney/liver dose adjustments.');
+  }
+
+  return {
+    riskLevel,
+    alerts,
+    matchedInteractions,
+    actionSteps: [...actionSteps],
+  };
+}
+
 export function filterMedications({ category = 'all', query = '' } = {}) {
   const cat = String(category || 'all').trim().toLowerCase();
   const q = String(query || '').trim().toLowerCase();
@@ -529,6 +785,9 @@ export function filterInteractions({ substance = 'all', query = '' } = {}) {
 }
 
 function severityBadge(severity) {
+  if (severity === 'critical') {
+    return h('span', { class: 'chip chip-extra' }, icon('alert'), ' ', t('meds.severity.critical', 'Critical polypharmacy risk'));
+  }
   if (severity === 'high') {
     return h('span', { class: 'chip chip-extra' }, icon('alert'), ' ', t('meds.severity.high', 'High-risk interaction'));
   }
@@ -536,6 +795,24 @@ function severityBadge(severity) {
     return h('span', { class: 'chip chip-care' }, icon('info'), ' ', t('meds.severity.moderate', 'Monitor / dose check'));
   }
   return h('span', { class: 'chip chip-med' }, icon('info'), ' ', t('meds.severity.info', 'Clinical note'));
+}
+
+function specialPopulationCard(pop) {
+  return h('article', { class: 'card facility', id: `pop-${pop.id}`, 'aria-labelledby': `pop-title-${pop.id}` },
+    h('div', { class: 'facility-head' },
+      h('h3', { class: 'facility-name', id: `pop-title-${pop.id}` }, pop.title),
+      h('ul', { class: 'chips', 'aria-label': 'Related SAMHSA codes' },
+        pop.samhsaCodes.map((c) => h('li', { class: 'chip chip-care' }, `SAMHSA: ${c}`))),
+    ),
+    p(pop.summary),
+    ul(pop.keyPoints),
+    h('div', { class: 'actions' },
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: `#/treatment?codes=${pop.samhsaCodes[0]}`,
+      }, icon('pin'), `Search ${pop.samhsaCodes[0]} programs`),
+    ),
+  );
 }
 
 function medicationCard(med) {
@@ -733,6 +1010,106 @@ export function medicationsView({ query } = {}) {
 
   renderInteractions(false);
 
+  // ---------------------------------------------------------------- Multi-substance regimen safety checker
+  const selectedRegimen = new Set();
+  const regimenPills = [];
+  const regimenOutput = h('div', {
+    id: 'regimen-safety-output',
+    role: 'region',
+    'aria-live': 'polite',
+    'aria-label': t('meds.regimen.outputLabel', 'Multi-substance combination evaluation'),
+  });
+
+  function renderRegimenChecker(shouldAnnounce = false) {
+    for (const pill of regimenPills) {
+      const checked = selectedRegimen.has(pill.dataset.agentId);
+      pill.setAttribute('aria-pressed', String(checked));
+      pill.setAttribute('aria-current', checked ? 'true' : null);
+    }
+
+    clear(regimenOutput);
+    const chosenIds = [...selectedRegimen];
+    if (chosenIds.length < 2) {
+      regimenOutput.append(
+        fine(t('meds.regimen.prompt', 'Select 2 or more substances or medications above to check for multi-drug respiratory, receptor-displacement (precipitated withdrawal), or cardiac/metabolic risks. Checked only in your browser memory.')),
+      );
+      return;
+    }
+
+    const result = evaluateRegimenSafety(chosenIds);
+    const calloutTone = result.riskLevel === 'critical' || result.riskLevel === 'high'
+      ? 'callout callout-emergency'
+      : result.riskLevel === 'moderate'
+        ? 'callout callout-warn'
+        : 'callout callout-info';
+
+    const summaryTitle = result.riskLevel === 'critical'
+      ? 'Critical Multi-Substance Risk Detected'
+      : result.riskLevel === 'high'
+        ? 'High-Risk Combination Detected'
+        : result.riskLevel === 'moderate'
+          ? 'Moderate Interaction — Clinical Monitoring Recommended'
+          : 'Combination Pharmacology Note';
+
+    if (shouldAnnounce) {
+      announce(`${summaryTitle}: ${result.alerts.length} clinical alert${result.alerts.length === 1 ? '' : 's'} and ${result.matchedInteractions.length} pairwise interaction${result.matchedInteractions.length === 1 ? '' : 's'}.`);
+    }
+
+    regimenOutput.append(
+      h('div', { class: calloutTone },
+        h('div', { class: 'facility-head' },
+          h('p', { class: 'callout-title' },
+            icon(result.riskLevel === 'info' ? 'info' : 'alert'),
+            summaryTitle),
+          severityBadge(result.riskLevel),
+        ),
+        result.alerts.length > 0 && ul(
+          result.alerts.map((a) => [strong(`${a.title}: `), a.detail]),
+        ),
+        result.actionSteps.length > 0 && h('div', null,
+          p(strong('Clinical Pharmacist Harm-Reduction Steps:')),
+          ul(result.actionSteps),
+        ),
+        h('p', { class: 'actions' },
+          h('button', {
+            type: 'button',
+            class: 'btn btn-ghost btn-small',
+            onclick: () => {
+              selectedRegimen.clear();
+              renderRegimenChecker(true);
+            },
+          }, icon('x'), 'Clear selection'),
+        ),
+      ),
+    );
+  }
+
+  const regimenCheckerPanel = h('div', { class: 'card', id: 'regimen-safety-checker' },
+    h('h3', null, t('meds.regimen.title', 'Multi-Substance Regimen & Polypharmacy Safety Check')),
+    p('Select 2 or more medications or substances below to evaluate combined sedative load, precipitated withdrawal risk, and cardiac QTc / liver enzyme interactions:'),
+    h('div', {
+      class: 'presets',
+      role: 'group',
+      'aria-label': t('meds.regimen.groupLabel', 'Select substances or medications in combination'),
+    }, REGIMEN_AGENTS.map((agent) => {
+      const btn = h('button', {
+        type: 'button',
+        class: 'preset',
+        dataset: { agentId: agent.id },
+        onclick: () => {
+          if (selectedRegimen.has(agent.id)) selectedRegimen.delete(agent.id);
+          else selectedRegimen.add(agent.id);
+          renderRegimenChecker(true);
+        },
+      }, agent.label);
+      regimenPills.push(btn);
+      return btn;
+    })),
+    regimenOutput,
+  );
+
+  renderRegimenChecker(false);
+
   return h('div', { class: 'view view-medications' },
     pageHeader(
       t('meds.title', 'Medications & Pharmacology Guide'),
@@ -745,6 +1122,7 @@ export function medicationsView({ query } = {}) {
       ['bernese-guide', 'Fentanyl & micro-induction ("Bernese Method")'],
       ['otp-rules', 'Methadone & 2024 take-home rules'],
       ['reversal-science', 'Naloxone vs. nalmefene & xylazine'],
+      ['special-populations', 'Pregnancy, liver/kidney & surgery'],
       ['interactions', 'Drug interaction explorer'],
       ['questions', 'Questions for your prescriber or pharmacist'],
     ]),
@@ -849,7 +1227,15 @@ export function medicationsView({ query } = {}) {
       ),
     ),
 
+    section('special-populations', t('meds.specialPopulations.title', 'Special Populations & Clinical Situations (Pregnancy, Liver/Kidney Health & Surgery)'),
+      p('Clinical pharmacology guidance for common medical situations where dosing, organ clearance, or acute pain management matters:'),
+      h('div', { class: 'results-list' },
+        ...SPECIAL_POPULATIONS_PHARM.map(specialPopulationCard),
+      ),
+    ),
+
     section('interactions', t('meds.interactions.title', 'Interactive Drug & Medication Interaction Explorer'),
+      regimenCheckerPanel,
       p('Filter by substance or search any medication, street supply adulterant, or prescription drug class to review mechanism and harm-reduction guidance:'),
       substanceFilterBar,
       h('div', { class: 'finder-search' },

@@ -74,6 +74,21 @@ test('provider search rejects invalid type, radius, or filter with InputError', 
   assert.throws(() => providers.search(q('type=va&radius=13'), { lat: 48, lng: -122 }), InputError);
   assert.throws(() => providers.search(q('type=va&filter=bogus'), { lat: 48, lng: -122 }), InputError);
   assert.throws(() => providers.search(q('type=er&filter=bh'), { lat: 48, lng: -122 }), InputError);
+  assert.throws(() => providers.summary({ lat: 48, lng: -122, radiusMiles: 13 }), InputError);
+});
+
+test('providers.summary returns counts and nearest facility across all four federal networks', () => {
+  const sum = providers.summary({ lat: 48.75, lng: -122.48, radiusMiles: 50 });
+  assert.deepEqual(Object.keys(sum).sort(), ['er', 'ihs', 'rhc', 'va']);
+  for (const key of ['va', 'ihs', 'rhc', 'er']) {
+    assert.equal(typeof sum[key].count, 'number');
+    assert.ok(sum[key].count > 0, `expected ${key} count > 0`);
+    assert.ok(sum[key].nearest, `expected nearest for ${key}`);
+    assert.equal(sum[key].nearest.type, key);
+    assert.ok(sum[key].nearest.miles <= 50);
+    assert.equal(sum[key].nearest.lat, undefined);
+    assert.equal(sum[key].nearest.lng, undefined);
+  }
 });
 
 test('provider builder helpers clean and filter raw source records', () => {

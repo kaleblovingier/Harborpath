@@ -1,6 +1,7 @@
 import { h, ext, tel, icon } from '../dom.js';
 import { overdoseGuide } from '../components/overdose.js';
 import { HOTLINES } from '../content/hotlines.js';
+import { offlineControlCard } from './core.js';
 import { pageHeader, section, p, fine, ul, strong, resourceList, hotlineGrid, tocNav, emergencyCallout } from './common.js';
 
 // ---------------------------------------------------------------- Overdose
@@ -9,6 +10,7 @@ export function overdoseView() {
     pageHeader('Overdose response', 'What to do right now, step by step.',
       h('p', { class: 'actions' }, tel('911', [icon('phone'), 'Call 911'], { class: 'btn btn-emergency btn-large' }))),
     overdoseGuide(),
+    offlineControlCard(),
   );
 }
 
@@ -85,6 +87,8 @@ export function harmReductionView() {
         'Leave the door unlocked, or tell someone to check on you.',
         'Keep naloxone where others can see it and know how to use it.',
       ]),
+      p('Want to map out where your naloxone is kept and who to call in a hard moment? ',
+        h('a', { href: '#/plan' }, 'Build a private, zero-knowledge Personal Safety Plan'), '.'),
     ),
 
     section('checking', 'Check your drugs',
@@ -132,6 +136,8 @@ export function harmReductionView() {
             h('th', { scope: 'row' }, c.combo), h('td', null, c.why), h('td', null, ext(c.src[1], c.src[0]))))),
         ),
       ),
+      p('For pharmacist-reviewed interactions with buprenorphine, methadone, naltrexone, and other medications, check the ',
+        h('a', { href: '#/medications' }, 'Pharmacist Medication & Interaction Hub'), '.'),
       fine('For other substances, the community-maintained ', ext('https://combo.tripsit.me/', 'TripSit combination chart'),
         ' covers many more pairs. When in doubt, call Poison Help at ', tel('18002221222', '1-800-222-1222'), ', free and 24/7.'),
     ),
@@ -157,11 +163,19 @@ export function harmReductionView() {
           ext('https://endoverdose.net/toolkit/', 'End Overdose'), ' and ', ext('https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws', 'LawAtlas'),
           ' track state laws.'],
         [strong('Naloxone and test strips: '), 'state laws on carrying test strips and other supplies differ. Most states now allow fentanyl test strips.'],
-        [strong('Treatment privacy: '), 'federal law (42 CFR Part 2) gives records from most substance use treatment programs extra protection. They generally cannot be shared without your written consent, or used against you in legal proceedings without your consent or a special court order.'],
+        [strong('Treatment privacy: '), 'federal law (42 CFR Part 2) gives records from most substance use treatment programs extra protection. They generally cannot be shared without your written consent, or used against you in legal proceedings without your consent or a special court order. ',
+          h('a', { href: '#/plan' }, 'Learn more about your 42 CFR Part 2 privacy rights'), '.'],
       ]),
     ),
 
-    section('more', 'More harm reduction resources',
+    section('more', 'More harm reduction & clinical tools',
+      p(
+        h('a', { class: 'btn btn-secondary btn-small', href: '#/plan' }, 'Build a Personal Safety Plan'),
+        ' ',
+        h('a', { class: 'btn btn-secondary btn-small', href: '#/medications' }, 'Medication & Interaction Hub'),
+        ' ',
+        h('a', { class: 'btn btn-secondary btn-small', href: '#/navigator' }, 'ASAM Care Navigator'),
+      ),
       resourceList([
         { name: 'National Harm Reduction Coalition', href: 'https://harmreduction.org/', desc: 'Guides, training, and information on harm reduction principles.' },
         { name: 'SAMHSA Overdose Prevention and Response Toolkit', href: 'https://library.samhsa.gov/product/overdose-prevention-response-toolkit/pep23-03-00-001', desc: 'Free federal guide for individuals, families, and communities.' },
@@ -179,7 +193,8 @@ export function supportView() {
     tocNav([['peer', 'Peer support & meetings'], ['housing', 'Recovery housing'], ['family', 'For family & friends'], ['language', 'Words matter']]),
 
     section('peer', 'Peer support & meetings',
-      p('Mutual-help groups are free. Different groups work for different people, so it is fine to try a few. You can be in recovery while taking medications like buprenorphine or methadone.'),
+      p('Mutual-help groups are free. Different groups work for different people, so it is fine to try a few. You can be in recovery while taking medications like buprenorphine or methadone (',
+        h('a', { href: '#/medications' }, 'see our Medication Guide'), ').'),
       resourceList([
         { name: 'SMART Recovery', href: 'https://meetings.smartrecovery.org/', desc: 'Science-based, self-empowering meetings in person and online.' },
         { name: 'Alcoholics Anonymous', href: 'https://www.aa.org/find-aa', desc: '12-step meetings for people with a drinking problem.' },
@@ -188,7 +203,11 @@ export function supportView() {
         { name: 'LifeRing Secular Recovery', href: 'https://lifering.org/', desc: 'Secular, abstinence-based peer support.' },
         { name: 'Faces & Voices of Recovery', href: 'https://facesandvoicesofrecovery.org/', desc: 'Find recovery community organizations and peer recovery coaches near you.' },
       ]),
-      p(h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=PEER' }, 'Find programs with peer support')),
+      p(
+        h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=PEER' }, 'Find programs with peer support'),
+        ' ',
+        h('a', { class: 'btn btn-ghost', href: '#/plan' }, 'Personal Safety Plan & Urge Surfing Timer'),
+      ),
     ),
 
     section('housing', 'Recovery housing',
@@ -196,7 +215,11 @@ export function supportView() {
       resourceList([
         { name: 'National Alliance for Recovery Residences (NARR)', href: 'https://narronline.org/', desc: 'National standards for recovery housing and links to state affiliates that certify homes.' },
       ]),
-      p(h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=HH' }, 'Find recovery housing listed with SAMHSA')),
+      p(
+        h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=HH' }, 'Find recovery housing listed with SAMHSA'),
+        ' ',
+        h('a', { class: 'btn btn-ghost', href: '#/navigator' }, 'Check level of care with the ASAM Navigator'),
+      ),
     ),
 
     section('family', 'For family & friends',
@@ -205,7 +228,8 @@ export function supportView() {
         [strong('Try CRAFT, not confrontation. '), 'Community Reinforcement and Family Training (CRAFT) teaches families to communicate positively, reward healthy choices, and look after their own wellbeing. ',
           'Research shows it helps more loved ones start treatment than confrontational “interventions” do.'],
         [strong('Keep naloxone at home '), 'and learn the ', h('a', { href: '#/overdose' }, 'overdose response steps'), '.'],
-        [strong('Meet them where they are. '), 'Staying connected matters more than getting them to agree to everything at once.'],
+        [strong('Meet them where they are. '), 'Staying connected matters more than getting them to agree to everything at once. Need help calling a clinic for a loved one? Use the ',
+          h('a', { href: '#/plan' }, 'Intake Call Script Builder'), '.'],
       ]),
       hotlineGrid(HOTLINES.substanceUse.filter((l) => l.name.startsWith('Partnership'))),
       resourceList([
@@ -268,9 +292,12 @@ export function choosingCareView() {
     section('quality', 'Signs of quality treatment',
       ul([
         [strong('Licensed and accredited. '), 'The program and its clinicians are licensed by the state. Accreditation from groups like CARF or The Joint Commission is a plus.'],
-        [strong('Offers FDA-approved medications '), 'for opioid and alcohol use disorder, or works closely with someone who does.'],
-        [strong('Uses proven therapies, '), 'such as cognitive behavioral therapy (CBT), motivational interviewing, and contingency management.'],
-        [strong('Treats the whole person, '), 'including mental health, physical health, and needs like housing and work.'],
+        [strong('Offers FDA-approved medications '), 'for opioid and alcohol use disorder, or works closely with someone who does. Compare options in our ',
+          h('a', { href: '#/medications' }, 'Pharmacist Medication & Interaction Hub'), '.'],
+        [strong('Uses proven therapies, '), 'such as cognitive behavioral therapy (CBT), motivational interviewing, and contingency management. ',
+          h('a', { href: '#/plan' }, 'See how each counseling therapy works'), '.'],
+        [strong('Treats the whole person, '), 'including mental health, physical health, and needs like housing and work. Not sure what level of care fits? Try the ',
+          h('a', { href: '#/navigator' }, 'ASAM Clinical Care Navigator'), '.'],
         [strong('Builds a plan with you, '), 'involves family if you want, and plans for support after you leave.'],
       ]),
       fine('Adapted from ', ext('https://www.samhsa.gov/find-support/learn-about-treatment/finding-quality-treatment', 'SAMHSA: Finding quality treatment'), '.'),
@@ -278,7 +305,11 @@ export function choosingCareView() {
 
     section('questions', 'Questions to ask when you call',
       h('ol', { class: 'checklist' }, QUESTIONS.map((q) => h('li', null, q))),
-      p(h('button', { type: 'button', class: 'btn btn-secondary', onclick: () => window.print() }, icon('printer'), 'Print these questions')),
+      p(
+        h('button', { type: 'button', class: 'btn btn-secondary', onclick: () => window.print() }, icon('printer'), 'Print these questions'),
+        ' ',
+        h('a', { class: 'btn btn-primary', href: '#/plan' }, 'Build a custom clinic call script'),
+      ),
     ),
 
     section('red-flags', 'Red flags: scams and patient brokering',
