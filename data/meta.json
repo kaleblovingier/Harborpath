@@ -1,23 +1,121 @@
 {
-  "builtAt": "2026-10-20T23:51:42.566Z",
+  "builtAt": "2026-10-21T00:21:17.460Z",
   "sources": {
     "serviceCodes": {
       "url": "https://findtreatment.gov/locator/serviceCategories.json",
       "categories": 33,
-      "builtAt": "2026-10-20T23:51:42.565Z"
+      "builtAt": "2026-10-21T00:19:02.294Z"
     },
     "zcta": {
       "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_zcta_national.zip",
-      "count": 33791
+      "count": 33791,
+      "builtAt": "2026-10-21T00:11:46.746Z"
     },
     "places": {
       "url": "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_place_national.zip",
-      "count": 32140
+      "count": 32140,
+      "builtAt": "2026-10-21T00:11:47.384Z"
     },
     "healthCenters": {
       "url": "https://data.hrsa.gov/DataDownload/DD_Files/Health_Center_Service_Delivery_and_LookAlike_Sites.csv",
-      "count": 13256,
-      "lastModified": "Mon, 19 Oct 2026 11:21:05 GMT"
+      "count": 13255,
+      "lastModified": "Tue, 20 Oct 2026 11:05:09 GMT",
+      "builtAt": "2026-10-21T00:11:50.727Z"
+    },
+    "zipStates": {
+      "url": "https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt",
+      "lastModified": "Thu, 09 Dec 2021 16:27:40 GMT",
+      "zctas": 33791,
+      "exceptions": 112,
+      "crossBorder": 105,
+      "prefixesChecked": 896,
+      "builtAt": "2026-10-21T00:16:19.470Z"
+    },
+    "islandPlaces": {
+      "urls": [
+        "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_60_place.zip",
+        "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_66_place.zip",
+        "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_69_place.zip",
+        "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_78_place.zip",
+        "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1/query?where=STATE%20IN%20('60'%2C'66'%2C'69'%2C'78')&outFields=STATE,BASENAME,INTPTLAT,INTPTLON,AREALAND&returnGeometry=false&f=json"
+      ],
+      "places": 279,
+      "counties": 13,
+      "count": 289,
+      "builtAt": "2026-10-21T00:16:20.570Z"
+    },
+    "stateAgencies": {
+      "url": "https://findtreatment.gov/locator/stateAgencyList.json",
+      "lastModified": "Fri, 09 Oct 2026 19:06:58 GMT",
+      "count": 59,
+      "oldestRecord": "2019-04-08",
+      "newestRecord": "2026-10-05",
+      "builtAt": "2026-10-21T00:18:17.534Z"
+    },
+    "stateMedicaid": {
+      "url": "https://www.medicaid.gov/about-us/where-can-people-get-help-medicaid-chip",
+      "count": 56,
+      "fetchedAt": "2026-10-21",
+      "builtAt": "2026-10-21T00:17:42.674Z"
+    },
+    "vaFacilities": {
+      "url": "https://services1.arcgis.com/smmmD7AGkh7eJR2a/arcgis/rest/services/Veterans_Health_Administration_(VHA)_Facilities/FeatureServer/0",
+      "landingPage": "https://www.arcgis.com/home/item.html?id=c6821e66523a46f5b32893641b9bd0dd",
+      "publisher": "U.S. Department of Veterans Affairs, Veterans Health Administration (VAST)",
+      "license": "U.S. federal government work (17 U.S.C. 105), public domain; released by VHA for public use",
+      "updateCadence": "Monthly snapshot per VHA (check MONTHYEAR)",
+      "snapshot": "MAR2025",
+      "count": 1784,
+      "lastModified": "Thu, 17 Apr 2025 15:12:55 GMT",
+      "builtAt": "2026-10-21T00:16:41.288Z"
+    },
+    "ihsFacilities": {
+      "url": "https://services2.arcgis.com/VFLAJVozK0rtzQmT/arcgis/rest/services/ITU_Health_Facilities_View/FeatureServer/0",
+      "landingPage": "https://www.arcgis.com/home/item.html?id=39054333f05b4c05837cba3f4340ecbf",
+      "publisher": "Indian Health Service, Office of Public Health",
+      "license": "U.S. federal government work (17 U.S.C. 105), public domain; IHS asks users to cite the IHS Office of Public Health",
+      "updateCadence": "Quarterly",
+      "sourceCount": 1150,
+      "count": 1086,
+      "lastModified": "Wed, 14 Oct 2026 21:24:29 GMT",
+      "builtAt": "2026-10-21T00:16:42.471Z"
+    },
+    "erHospitals": {
+      "url": "https://data.cms.gov/provider-data/sites/default/files/resources/893c372430d9d71a1c52737d01239d47_1785189955/Hospital_General_Information.csv",
+      "landingPage": "https://data.cms.gov/provider-data/dataset/xubh-q36u",
+      "publisher": "Centers for Medicare & Medicaid Services (CMS)",
+      "license": "U.S. federal government work (17 U.S.C. 105), public domain",
+      "updateCadence": "Quarterly (Care Compare refresh)",
+      "modified": "2026-07-22",
+      "sourceCount": 5419,
+      "count": 4457,
+      "geocoding": {
+        "method": "U.S. Census Bureau batch geocoder, ZIP centroid fallback",
+        "geocoded": 3816,
+        "approximate": 641,
+        "unplaced": 0
+      },
+      "lastModified": "Mon, 27 Jul 2026 22:11:00 GMT",
+      "builtAt": "2026-10-21T00:20:30.425Z"
+    },
+    "ruralHealthClinics": {
+      "url": "https://data.cms.gov/data-api/v1/dataset/3b7e7659-067e-41ea-8e36-f9ee2036e1f6/data",
+      "landingPage": "https://data.cms.gov/provider-characteristics/hospitals-and-other-facilities/rural-health-clinic-enrollments",
+      "publisher": "Centers for Medicare & Medicaid Services (CMS)",
+      "license": "U.S. federal government work (17 U.S.C. 105), public domain",
+      "updateCadence": "Quarterly",
+      "version": "2026-10-01",
+      "modified": "2026-10-19",
+      "sourceCount": 5626,
+      "count": 5626,
+      "geocoding": {
+        "method": "U.S. Census Bureau batch geocoder, ZIP centroid fallback",
+        "geocoded": 4858,
+        "approximate": 768,
+        "unplaced": 0
+      },
+      "lastModified": "Mon, 19 Oct 2026 00:00:00 GMT",
+      "builtAt": "2026-10-21T00:21:17.460Z"
     }
   }
 }

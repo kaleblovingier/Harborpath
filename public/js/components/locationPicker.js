@@ -1,9 +1,11 @@
 import { h, clear, icon, announce, debounce } from '../dom.js';
 import { api, round2 } from '../api.js';
 import { state, setLocation, setRadius, subscribe } from '../state.js';
+import { t } from '../i18n.js';
 
 let uid = 0;
-const RADII = [5, 10, 25, 50, 100];
+// Matches RADII_MILES in src/findtreatment.js. 200 and 250 are for rural areas.
+export const RADII = [5, 10, 25, 50, 100, 200, 250];
 
 /**
  * ZIP / city search with suggestions, "use my location", and a distance menu.
@@ -23,24 +25,24 @@ export function locationPicker({ onChange, compact = false } = {}) {
     autocomplete: 'off',
     autocapitalize: 'words',
     spellcheck: 'false',
-    placeholder: 'ZIP code or city, state',
+    placeholder: t('loc.placeholder', 'ZIP code or city, state'),
     role: 'combobox',
     'aria-autocomplete': 'list',
     'aria-expanded': 'false',
     'aria-controls': `${id}-list`,
     'aria-describedby': `${id}-help`,
   });
-  const list = h('ul', { id: `${id}-list`, class: 'suggestions', role: 'listbox', hidden: true, 'aria-label': 'Matching places' });
+  const list = h('ul', { id: `${id}-list`, class: 'suggestions', role: 'listbox', hidden: true, 'aria-label': t('loc.matching', 'Matching places') });
   const status = h('p', { class: 'field-status', 'aria-live': 'polite' });
   const radiusSelect = h('select', { id: `${id}-radius`, class: 'select' },
-    RADII.map((r) => h('option', { value: r, selected: r === state.radius }, `Within ${r} miles`)));
+    RADII.map((r) => h('option', { value: r, selected: r === state.radius }, t('loc.within', 'Within {n} miles', { n: r }))));
 
   const current = h('p', { class: 'current-location' });
 
   function renderCurrent() {
     clear(current);
     if (state.location) {
-      current.append(icon('pin'), h('span', null, 'Searching near ', h('strong', null, state.location.label)));
+      current.append(icon('pin'), h('span', null, t('loc.searchingNear', 'Searching near '), h('strong', null, state.location.label)));
     }
   }
 
@@ -74,9 +76,10 @@ export function locationPicker({ onChange, compact = false } = {}) {
     suggestions = [];
     close();
     status.textContent = '';
-    setLocation({ label: s.label, lat: s.lat, lng: s.lng });
+    // `state` (a jurisdiction code from the geocoder) stays in memory like the rest.
+    setLocation({ label: s.label, lat: s.lat, lng: s.lng, state: s.state ?? null });
     renderCurrent();
-    announce(`Location set to ${s.label}`);
+    announce(t('loc.setAnnounce', 'Location set to {label}', { label: s.label }));
     onChange?.();
   }
 
@@ -118,10 +121,10 @@ export function locationPicker({ onChange, compact = false } = {}) {
       e.preventDefault();
       if (active >= 0 && suggestions[active]) return choose(suggestions[active]);
       const q = input.value.trim();
-      if (q.length < 2) { status.textContent = 'Enter a 5-digit ZIP code or a city and state.'; return; }
+      if (q.length < 2) { status.textContent = t('loc.enterZip', 'Enter a 5-digit ZIP code or a city and state.'); return; }
       const results = suggestions.length ? suggestions : await fetchSuggestions(q);
       if (results.length) choose(results[0]);
-      else status.textContent = `We couldn't find "${q}". Try a 5-digit ZIP code, or a city and state like "Dayton, OH".`;
+      else status.textContent = t('loc.notFound', 'We couldn\'t find "{q}". Try a 5-digit ZIP code, or a city and state like "Dayton, OH".', { q });
     } else if (e.key === 'Escape' && !list.hidden) {
       // Closing the list must not count toward the Esc-Esc quick exit.
       e.stopPropagation();
@@ -134,23 +137,23 @@ export function locationPicker({ onChange, compact = false } = {}) {
     class: 'btn btn-ghost',
     onclick: () => {
       if (!('geolocation' in navigator)) {
-        status.textContent = 'Your browser does not support location sharing. Enter a ZIP code instead.';
+        status.textContent = t('loc.noGeo', 'Your browser does not support location sharing. Enter a ZIP code instead.');
         return;
       }
-      status.textContent = 'Finding your area…';
+      status.textContent = t('loc.finding', 'Finding your area…');
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           // Round on the device before it is used anywhere (about 1 km).
           const lat = round2(pos.coords.latitude);
           const lng = round2(pos.coords.longitude);
           input.value = '';
-          choose({ label: 'your current area', lat, lng });
+          choose({ label: t('loc.currentArea', 'your current area'), lat, lng });
         },
-        () => { status.textContent = 'Location is off or was declined. Enter a ZIP code or city instead.'; },
+        () => { status.textContent = t('loc.declined', 'Location is off or was declined. Enter a ZIP code or city instead.'); },
         { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 },
       );
     },
-  }, icon('locate'), 'Use my location');
+  }, icon('locate'), t('loc.useMyLocation', 'Use my location'));
 
   radiusSelect.addEventListener('change', () => {
     setRadius(Number(radiusSelect.value));
@@ -158,18 +161,20 @@ export function locationPicker({ onChange, compact = false } = {}) {
   });
 
   renderCurrent();
-  if (state.location && state.location.label !== 'your current area') input.value = state.location.label;
+  if (state.location && state.location.label !== 'your current area' && state.location.label !== t('loc.currentArea', 'your current area')) {
+    input.value = state.location.label;
+  }
 
   const root = h('div', { class: `location-picker${compact ? ' compact' : ''}` },
-    h('label', { class: 'label', for: input.id }, 'Where should we look?'),
+    h('label', { class: 'label', for: input.id }, t('loc.label', 'Where should we look?')),
     h('div', { class: 'location-row' },
       h('div', { class: 'combo' }, icon('search'), input, list),
-      h('label', { class: 'visually-hidden', for: radiusSelect.id }, 'Distance'),
+      h('label', { class: 'visually-hidden', for: radiusSelect.id }, t('loc.distance', 'Distance')),
       radiusSelect,
     ),
     h('div', { class: 'location-meta' },
       geoButton,
-      h('p', { id: `${id}-help`, class: 'help' }, 'Your exact location is never stored. Searches use an area rounded to about 1 km.'),
+      h('p', { id: `${id}-help`, class: 'help' }, t('loc.help', 'Your exact location is never stored. Searches use an area rounded to about 1 km.')),
     ),
     status,
     current,

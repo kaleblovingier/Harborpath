@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
   <title>HarborPath: Find treatment, harm reduction &amp; health services</title>
-  <meta name="description" content="Free, private search for licensed addiction treatment, naloxone and harm reduction tools, low-cost health centers, and crisis support. Official SAMHSA and HRSA data. No ads, no tracking.">
+  <meta name="description" content="Free, private search for licensed addiction treatment, naloxone and harm reduction tools, low-cost health centers, and crisis support. Official SAMHSA and HRSA data. No ads, no tracking." data-i18n-content="app.description">
   <meta name="theme-color" content="#0b4f5c" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1b1f" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -14,46 +14,53 @@
   <script type="module" src="/js/app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main" data-i18n="app.skip">Skip to content</a>
 
-  <div class="safety-bar" role="region" aria-label="Emergency help">
+  <div class="safety-bar" role="region" aria-label="Emergency help" data-i18n-aria-label="app.safety.label">
     <div class="wrap safety-inner">
       <p class="safety-text">
-        <span class="safety-label">Emergency?</span>
-        <a href="tel:911">Call 911</a>
+        <span class="safety-label" data-i18n="app.safety.emergency">Emergency?</span>
+        <a href="tel:911" data-i18n="app.safety.call911">Call 911</a>
         <span aria-hidden="true">·</span>
-        <a href="#/overdose">Overdose steps</a>
+        <a href="#/overdose" data-i18n="app.safety.overdose">Overdose steps</a>
         <span aria-hidden="true">·</span>
-        <a href="tel:988">Crisis line 988</a>
+        <a href="tel:988" data-i18n="app.safety.crisis">Crisis line 988</a>
         <span class="hide-sm" aria-hidden="true">·</span>
-        <a class="hide-sm" href="#/crisis">All support lines</a>
+        <a class="hide-sm" href="#/crisis" data-i18n="app.safety.allLines">All support lines</a>
       </p>
       <button class="quick-exit" id="quick-exit" type="button" aria-describedby="quick-exit-hint">
         <svg class="icon" aria-hidden="true"><use href="/icons.svg#exit"></use></svg>
-        Quick exit
+        <span data-i18n="app.quickExit">Quick exit</span>
       </button>
-      <span id="quick-exit-hint" class="visually-hidden">Leaves this site immediately and erases what it stored. You can also press Escape twice.</span>
+      <span id="quick-exit-hint" class="visually-hidden" data-i18n="app.quickExit.hint">Leaves this site immediately and erases what it stored. You can also press Escape twice.</span>
     </div>
   </div>
 
   <header class="site-header">
     <div class="wrap header-inner">
-      <a class="brand" href="#/" aria-label="HarborPath home">
+      <a class="brand" href="#/" aria-label="HarborPath home" data-i18n-aria-label="app.home">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><use href="/icons.svg#logo"></use></svg>
         <span class="brand-name">HarborPath</span>
       </a>
+      <nav class="lang-switch" data-lang-switch aria-label="Language" data-i18n-aria-label="app.language">
+        <a href="?lang=en" hreflang="en" lang="en" aria-current="true">English</a>
+        <a href="?lang=es" hreflang="es" lang="es">Español</a>
+      </nav>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
         <svg class="icon" aria-hidden="true"><use href="/icons.svg#menu"></use></svg>
-        Menu
+        <span data-i18n="app.menu">Menu</span>
       </button>
-      <nav id="site-nav" class="site-nav" aria-label="Main">
+      <nav id="site-nav" class="site-nav" aria-label="Main" data-i18n-aria-label="app.nav.label">
         <ul>
-          <li><a href="#/treatment" data-nav="treatment">Find treatment</a></li>
-          <li><a href="#/harm-reduction" data-nav="harm-reduction">Harm reduction</a></li>
-          <li><a href="#/health" data-nav="health">Health services</a></li>
-          <li><a href="#/support" data-nav="support">Recovery &amp; family</a></li>
-          <li><a href="#/choosing-care" data-nav="choosing-care">Choosing care</a></li>
-          <li><a href="#/saved" data-nav="saved">Saved <span id="saved-count" class="count" hidden></span></a></li>
+          <li><a href="#/treatment" data-nav="treatment" data-i18n="app.nav.treatment">Find treatment</a></li>
+          <li><a href="#/navigator" data-nav="navigator" data-i18n="app.nav.navigator">Care navigator</a></li>
+          <li><a href="#/medications" data-nav="medications" data-i18n="app.nav.medications">Medications</a></li>
+          <li><a href="#/harm-reduction" data-nav="harm-reduction" data-i18n="app.nav.harm">Harm reduction</a></li>
+          <li><a href="#/health" data-nav="health" data-i18n="app.nav.health">Health services</a></li>
+          <li><a href="#/plan" data-nav="plan" data-i18n="app.nav.plan">Safety plan</a></li>
+          <li><a href="#/support" data-nav="support" data-i18n="app.nav.support">Recovery &amp; family</a></li>
+          <li><a href="#/choosing-care" data-nav="choosing-care" data-i18n="app.nav.choosing">Choosing care</a></li>
+          <li><a href="#/saved" data-nav="saved"><span data-i18n="app.nav.saved">Saved</span> <span id="saved-count" class="count" hidden></span></a></li>
         </ul>
       </nav>
     </div>
@@ -73,6 +80,17 @@
           <li>Find a low-cost health center at <a href="https://findahealthcenter.hrsa.gov/" rel="noopener noreferrer">findahealthcenter.hrsa.gov</a></li>
         </ul>
       </div>
+      <div class="view" lang="es">
+        <h2>Para buscar, HarborPath necesita JavaScript</h2>
+        <p>Pero puede recibir ayuda ahora mismo:</p>
+        <ul class="list">
+          <li>Emergencias: llame al <a href="tel:911">911</a></li>
+          <li>Línea 988 de Prevención del Suicidio y Crisis: marque <a href="tel:988">988</a> y presione 2 para español, o envíe AYUDA por mensaje de texto al 988</li>
+          <li>Línea Nacional de Ayuda de SAMHSA (gratis, las 24 horas, en español): <a href="tel:18006624357">1-800-662-4357</a></li>
+          <li>Busque tratamiento en <a href="https://findtreatment.gov/es" rel="noopener noreferrer" hreflang="es">FindTreatment.gov en español</a></li>
+          <li>Encuentre un centro de salud de bajo costo en <a href="https://findahealthcenter.hrsa.gov/" rel="noopener noreferrer">findahealthcenter.hrsa.gov</a> (en inglés)</li>
+        </ul>
+      </div>
     </noscript>
   </main>
 
@@ -82,20 +100,21 @@
     <div class="wrap footer-inner">
       <div>
         <p class="footer-brand">HarborPath</p>
-        <p>Free and independent. No ads, paid listings, or referral fees.</p>
+        <p data-i18n="app.footer.tagline">Free and independent. No ads, paid listings, or referral fees.</p>
         <p id="data-updated" class="fine"></p>
       </div>
-      <nav aria-label="Footer">
+      <nav aria-label="Footer" data-i18n-aria-label="app.footer.label">
         <ul>
-          <li><a href="#/crisis">Support lines</a></li>
-          <li><a href="#/overdose">Overdose response</a></li>
-          <li><a href="#/privacy">Privacy</a></li>
-          <li><a href="https://findtreatment.gov/" target="_blank" rel="noopener noreferrer">FindTreatment.gov</a></li>
+          <li><a href="#/crisis" data-i18n="app.footer.lines">Support lines</a></li>
+          <li><a href="#/overdose" data-i18n="app.footer.overdose">Overdose response</a></li>
+          <li><a href="#/states" data-i18n="app.footer.states">State resources</a></li>
+          <li><a href="#/privacy" data-i18n="app.footer.privacy">Privacy</a></li>
+          <li><a href="https://findtreatment.gov/" target="_blank" rel="noopener noreferrer" data-i18n-href="url.findtreatment">FindTreatment.gov</a></li>
         </ul>
       </nav>
-      <p class="fine footer-disclaimer">
-        HarborPath shares information from SAMHSA, HRSA, CDC, FDA, NIDA, and NIAAA. It is not medical advice and does not endorse any provider.
-        Listings are provided by facilities to SAMHSA; call ahead to confirm services. In an emergency, call 911.
+      <p class="fine footer-disclaimer" data-i18n="app.footer.disclaimer">
+        HarborPath shares information from SAMHSA, HRSA, CMS, VA, IHS, CDC, FDA, NIDA, and NIAAA. It is not medical advice and does not endorse any provider.
+        Listings are provided by facilities to federal directories; call ahead to confirm services. In an emergency, call 911.
       </p>
     </div>
   </footer>

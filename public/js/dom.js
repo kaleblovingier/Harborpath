@@ -1,5 +1,6 @@
 // Tiny DOM builder. Every string becomes a text node, so data from the API can
 // never be interpreted as markup.
+import { t, isLocalizedUrl } from './i18n.js';
 
 export function h(tag, props, ...children) {
   const el = document.createElement(tag);
@@ -31,10 +32,20 @@ export function clear(el) {
   return el;
 }
 
+/**
+ * When the interface is not in English, links to pages that exist only in
+ * English say so: hreflang="en" plus a short visible note.
+ */
+export function langNote(href) {
+  if (isLocalizedUrl(href)) return null;
+  return h('span', { class: 'lang-note' }, t('common.inEnglish', ' (in English)'));
+}
+
 /** External link: new tab, no referrer, marked for screen readers. */
 export function ext(href, ...children) {
-  return h('a', { href, target: '_blank', rel: 'noopener noreferrer', class: 'ext' },
-    ...children, h('span', { class: 'visually-hidden' }, ' (opens in a new tab)'));
+  const english = !isLocalizedUrl(href);
+  return h('a', { href, target: '_blank', rel: 'noopener noreferrer', class: 'ext', hreflang: english ? 'en' : null },
+    ...children, langNote(href), h('span', { class: 'visually-hidden' }, t('common.newTab', ' (opens in a new tab)')));
 }
 
 export function digits(phone) {
@@ -74,9 +85,9 @@ export function announce(message) {
 }
 
 export function debounce(fn, ms) {
-  let t;
+  let timer;
   return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
   };
 }

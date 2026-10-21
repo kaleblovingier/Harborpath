@@ -1,22 +1,51 @@
 // Small in-memory TTL cache with LRU eviction. Keys are upstream URLs built
 // from coarsened coordinates, so entries never hold a precise location.
-export function createCache({ ttlMs = 60 * 60 * 1000, maxEntries = 500, now = Date.now } = {}) {
+//
+// An entry is fresh for ttlMs. For staleMs after that, get() no longer returns
+// it but getStale() does, so a search can still be answered while the
+// upstream is down. After ttlMs + staleMs the entry is gone: a sweep removes
+// it even if nobody asks for it again, so nothing is kept longer than that.
+export function createCache({ ttlMs = 60 * 60 * 1000, staleMs = 0, maxEntries = 500, now = Date.now, sweepEveryMs = 60 * 1000 } = {}) {
   const store = new Map();
+  let lastSweep = now();
+
+  function sweep() {
+    const t = now();
+    lastSweep = t;
+    for (const [key, hit] of store) if (hit.dropAt <= t) store.delete(key);
+  }
+  function maybeSweep() {
+    if (now() - lastSweep >= sweepEveryMs) sweep();
+  }
+  // Also sweep on a timer, so an idle server does not hold old searches.
+  // unref() keeps the timer from holding the process open.
+  if (sweepEveryMs > 0) setInterval(sweep, sweepEveryMs).unref?.();
+
+  function read(key, field) {
+    maybeSweep();
+    const hit = store.get(key);
+    if (!hit) return undefined;
+    const t = now();
+    if (hit.dropAt <= t) {
+      store.delete(key);
+      return undefined;
+    }
+    if (hit[field] <= t) return undefined;
+    store.delete(key);
+    store.set(key, hit); // refresh LRU position
+    return hit.value;
+  }
+
   return {
-    get(key) {
-      const hit = store.get(key);
-      if (!hit) return undefined;
-      if (hit.expires <= now()) {
-        store.delete(key);
-        return undefined;
-      }
-      store.delete(key);
-      store.set(key, hit); // refresh LRU position
-      return hit.value;
-    },
+    /** The value if still fresh. */
+    get: (key) => read(key, 'expires'),
+    /** The value if fresh or within the stale window. */
+    getStale: (key) => read(key, 'dropAt'),
     set(key, value) {
+      maybeSweep();
       store.delete(key);
-      store.set(key, { value, expires: now() + ttlMs });
+      const t = now();
+      store.set(key, { value, expires: t + ttlMs, dropAt: t + ttlMs + staleMs });
       while (store.size > maxEntries) store.delete(store.keys().next().value);
     },
     get size() {

@@ -1,26 +1,35 @@
 import { api } from './api.js';
 import { state, subscribe, wipeAll } from './state.js';
-import { homeView, treatmentView, healthView, savedView, crisisView, privacyView, notFoundView } from './views/core.js';
+import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
+import { homeView, treatmentView, healthView, statesView, stateDetailView, savedView, crisisView, privacyView, notFoundView } from './views/core.js';
 import { harmReductionView, overdoseView, supportView, choosingCareView } from './views/guides.js';
+import { careNavigatorView } from './views/navigator.js';
+import { medicationsView } from './views/medications.js';
+import { planView } from './views/plan.js';
 
 const SITE = 'HarborPath';
 const EXIT_URL = 'https://www.weather.gov/';
 
 const ROUTES = {
-  '': [homeView, 'Find treatment, harm reduction & health services'],
-  treatment: [treatmentView, 'Find treatment'],
-  'harm-reduction': [harmReductionView, 'Harm reduction'],
-  overdose: [overdoseView, 'Overdose response'],
-  health: [healthView, 'Health services'],
-  support: [supportView, 'Recovery & family support'],
-  'choosing-care': [choosingCareView, 'Choosing quality care'],
-  saved: [savedView, 'Saved places'],
-  crisis: [crisisView, 'Talk to someone now'],
-  privacy: [privacyView, 'Privacy'],
+  '': [homeView, () => t('route.home', 'Find treatment, harm reduction & health services')],
+  treatment: [treatmentView, () => t('route.treatment', 'Find treatment')],
+  navigator: [careNavigatorView, () => t('route.navigator', 'Clinical care navigator (ASAM)')],
+  medications: [medicationsView, () => t('route.medications', 'Medications & interactions')],
+  'harm-reduction': [harmReductionView, () => t('route.harm', 'Harm reduction')],
+  overdose: [overdoseView, () => t('route.overdose', 'Overdose response')],
+  health: [healthView, () => t('route.health', 'Health services')],
+  plan: [planView, () => t('route.plan', 'Safety plan & first visit')],
+  support: [supportView, () => t('route.support', 'Recovery & family support')],
+  'choosing-care': [choosingCareView, () => t('route.choosing', 'Choosing quality care')],
+  states: [statesView, () => t('route.states', 'Resources by state and territory')],
+  saved: [savedView, () => t('route.saved', 'Saved places')],
+  crisis: [crisisView, () => t('route.crisis', 'Talk to someone now')],
+  privacy: [privacyView, () => t('route.privacy', 'Privacy')],
 };
 
 const main = document.getElementById('main');
 let firstRender = true;
+let lastMeta = null;
 
 function parseHash() {
   const raw = location.hash.replace(/^#\/?/, '');
@@ -28,10 +37,27 @@ function parseHash() {
   return { path: path.replace(/\/$/, ''), query: new URLSearchParams(qs) };
 }
 
+function resolveRoute(path, query) {
+  if (ROUTES[path]) {
+    const [view, getTitle] = ROUTES[path];
+    return [() => view({ query }), getTitle()];
+  }
+  if (path.startsWith('state/')) {
+    const code = path.slice(6);
+    if (/^[A-Za-z]{2}$/.test(code)) {
+      return [
+        () => stateDetailView({ code: code.toUpperCase(), query }),
+        t('route.stateDetail', 'State resources ({code})', { code: code.toUpperCase() }),
+      ];
+    }
+  }
+  return [() => notFoundView({ query }), t('route.notFound', 'Page not found')];
+}
+
 function render() {
   const { path, query } = parseHash();
-  const [view, title] = ROUTES[path] ?? [notFoundView, 'Page not found'];
-  main.replaceChildren(view({ query }));
+  const [buildView, title] = resolveRoute(path, query);
+  main.replaceChildren(buildView());
   document.title = path ? `${title} · ${SITE}` : `${SITE}: ${title}`;
 
   for (const link of document.querySelectorAll('[data-nav]')) {
@@ -94,22 +120,44 @@ toggle?.addEventListener('click', () => {
 // ---------------------------------------------------------------- Saved count
 const savedCount = document.getElementById('saved-count');
 function updateSavedCount() {
+  if (!savedCount) return;
   const n = state.saved.size;
   savedCount.hidden = n === 0;
   savedCount.textContent = String(n);
-  savedCount.setAttribute('aria-label', `${n} saved`);
+  savedCount.setAttribute('aria-label', t('app.savedCount', '{n} saved', { n }));
 }
 subscribe(updateSavedCount);
 updateSavedCount();
 
 // ---------------------------------------------------------------- Footer data dates
-api.meta().then((meta) => {
+function renderFooterMeta() {
   const el = document.getElementById('data-updated');
-  if (!el || !meta.healthCenters?.updated) return;
-  const date = new Date(meta.healthCenters.updated);
+  if (!el || !lastMeta?.healthCenters?.updated) return;
+  const date = new Date(lastMeta.healthCenters.updated);
   if (!Number.isNaN(date.getTime())) {
-    el.textContent = `Health center data updated ${date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}. Treatment listings are searched live.`;
+    const formatted = formatDate(date, { year: 'numeric', month: 'long', day: 'numeric' });
+    el.textContent = t(
+      'app.footer.dataUpdated',
+      'Health center data updated {date}. Treatment listings are searched live.',
+      { date: formatted },
+    );
   }
+}
+
+api.meta().then((meta) => {
+  lastMeta = meta;
+  renderFooterMeta();
 }).catch(() => { /* footer note is optional */ });
 
-render();
+// ---------------------------------------------------------------- Initialize i18n & render
+onLanguageChange(() => {
+  updateSavedCount();
+  renderFooterMeta();
+  render();
+});
+
+initI18n().finally(() => {
+  updateSavedCount();
+  renderFooterMeta();
+  render();
+});

@@ -1,7 +1,11 @@
 // HRSA health center service delivery sites -> data/health-centers.json
+// A column table (src/columns.js) in HRSA's file order. Organization names,
+// websites, cities, and states repeat across sites, so they are stored once in
+// a dictionary.
 import { download, round } from '../lib/fetch.mjs';
 import { parseCsv } from '../lib/csv.mjs';
 import { normalizeWebsite } from '../../src/util.js';
+import { encodeTable } from '../../src/columns.js';
 
 const url = 'https://data.hrsa.gov/DataDownload/DD_Files/Health_Center_Service_Delivery_and_LookAlike_Sites.csv';
 
@@ -14,6 +18,29 @@ const EXCLUDED_SETTINGS = new Set([
   'Domestic Violence',
   'Nursing Home',
 ]);
+
+// Field order is the key order of each site object the API returns.
+export const SITE_COLUMNS = {
+  id: 'plain',
+  name: 'plain',
+  org: 'dict',
+  street: 'plain',
+  city: 'dict',
+  state: 'dict',
+  zip: 'plain',
+  phone: 'plain',
+  website: 'dict',
+  hours: 'plain',
+  mobile: 'bits',
+  seasonal: 'bits',
+  lookAlike: 'bits',
+  lat: { decimals: 5 },
+  lng: { decimals: 5 },
+};
+
+export function encodeSites(sites) {
+  return encodeTable(sites, SITE_COLUMNS);
+}
 
 export default {
   id: 'healthCenters',
@@ -48,6 +75,6 @@ export default {
         lng: round(lng, 5),
       });
     }
-    return { data: sites, meta: { url, count: sites.length, lastModified } };
+    return { data: encodeSites(sites), meta: { url, count: sites.length, lastModified } };
   },
 };

@@ -1,38 +1,44 @@
 import { h, tel, icon, announce, digits } from '../dom.js';
-import { highlights, DETAIL_ORDER, DETAIL_HIDDEN } from '../codes.js';
+import { highlights, localizeServices, DETAIL_ORDER, DETAIL_HIDDEN } from '../codes.js';
 import { isSaved, toggleSaved } from '../state.js';
+import { t, formatNumber, getServiceNames } from '../i18n.js';
 
-const isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+const isApple = typeof navigator !== 'undefined' && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
 
 export function formatAddress(a) {
-  const line1 = [a.street1, a.street2].filter(Boolean).join(', ');
+  if (!a) return '';
+  const line1 = [a.street1 ?? a.street, a.street2, a.building].filter(Boolean).join(', ');
   const line2 = [a.city, [a.state, a.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
   return [line1, line2].filter(Boolean).join(', ');
 }
 
-function directionsUrl(address) {
+export function directionsUrl(address) {
   const q = encodeURIComponent(address);
   return isApple ? `https://maps.apple.com/?daddr=${q}` : `https://www.google.com/maps/dir/?api=1&destination=${q}`;
 }
 
-function saveButton(item) {
+export function saveButton(item) {
   const btn = h('button', { type: 'button', class: 'btn btn-small btn-ghost save-btn' });
   const render = () => {
     const saved = isSaved(item.id);
-    btn.replaceChildren(icon(saved ? 'bookmark-fill' : 'bookmark'), saved ? 'Saved' : 'Save');
+    btn.replaceChildren(icon(saved ? 'bookmark-fill' : 'bookmark'), saved ? t('card.saved', 'Saved') : t('card.save', 'Save'));
     btn.setAttribute('aria-pressed', String(saved));
-    btn.setAttribute('aria-label', `${saved ? 'Remove' : 'Save'} ${item.name}${saved ? ' from saved list' : ''}`);
+    btn.setAttribute('aria-label', saved
+      ? t('card.removeLabel', 'Remove {name} from saved list', { name: item.name })
+      : t('card.saveLabel', 'Save {name}', { name: item.name }));
   };
   btn.addEventListener('click', () => {
     const nowSaved = toggleSaved(item);
     render();
-    announce(nowSaved ? `${item.name} saved` : `${item.name} removed from saved list`);
+    announce(nowSaved
+      ? t('card.savedAnnounce', '{name} saved', { name: item.name })
+      : t('card.removedAnnounce', '{name} removed from saved list', { name: item.name }));
   });
   render();
   return btn;
 }
 
-function copyButton(text, name) {
+export function copyButton(text, name) {
   return h('button', {
     type: 'button',
     class: 'btn btn-small btn-ghost',
@@ -40,36 +46,40 @@ function copyButton(text, name) {
       const btn = e.currentTarget;
       try {
         await navigator.clipboard.writeText(text);
-        btn.replaceChildren(icon('check'), 'Copied');
-        announce(`Details for ${name} copied`);
-        setTimeout(() => btn.replaceChildren(icon('copy'), 'Copy'), 2000);
+        btn.replaceChildren(icon('check'), t('card.copied', 'Copied'));
+        announce(t('card.copiedAnnounce', 'Details for {name} copied', { name }));
+        setTimeout(() => btn.replaceChildren(icon('copy'), t('card.copy', 'Copy')), 2000);
       } catch {
-        announce('Copy is not available in this browser');
+        announce(t('common.copyUnavailable', 'Copy is not available in this browser'));
       }
     },
-  }, icon('copy'), 'Copy');
+  }, icon('copy'), t('card.copy', 'Copy'));
 }
 
-function distance(miles) {
+export function distance(miles) {
   if (miles === null || miles === undefined) return null;
-  return h('p', { class: 'distance' }, miles < 0.1 ? 'Under 0.1 mi' : `${miles.toFixed(1)} mi`);
+  return h('p', { class: 'distance' }, miles < 0.1
+    ? t('card.distanceUnder', 'Under 0.1 mi')
+    : t('card.distance', '{miles} mi', { miles: formatNumber(miles, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) }));
 }
 
 export function treatmentText(f) {
+  if (f?.kind === 'provider') return providerText(f);
   return [
     f.name + (f.subname ? ` (${f.subname})` : ''),
     formatAddress(f.address),
-    f.phone && `Phone: ${f.phone}`,
-    f.intake && f.intake !== f.phone && `Intake: ${f.intake}`,
+    f.phone && t('card.text.phone', 'Phone: {phone}', { phone: f.phone }),
+    f.intake && f.intake !== f.phone && t('card.text.intake', 'Intake: {phone}', { phone: f.intake }),
     f.website,
-    'Source: SAMHSA FindTreatment.gov. Call ahead to confirm services.',
+    t('card.text.sourceSamhsa', 'Source: SAMHSA FindTreatment.gov. Call ahead to confirm services.'),
   ].filter(Boolean).join('\n');
 }
 
 export function treatmentCard(f, { headingLevel = 3 } = {}) {
+  if (f?.kind === 'provider') return providerCard(f, { headingLevel });
   const address = formatAddress(f.address);
   const chips = highlights(f);
-  const services = [...f.services]
+  const services = localizeServices(f, getServiceNames())
     .filter((s) => !DETAIL_HIDDEN.has(s.category))
     .sort((a, b) => {
       const ai = DETAIL_ORDER.indexOf(a.category);
@@ -86,24 +96,24 @@ export function treatmentCard(f, { headingLevel = 3 } = {}) {
       distance(f.miles),
     ),
     address && h('p', { class: 'address' }, icon('pin'), address),
-    chips.length > 0 && h('ul', { class: 'chips', 'aria-label': 'Highlights' },
+    chips.length > 0 && h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
       chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
     h('div', { class: 'actions' },
-      f.phone && tel(f.phone, [icon('phone'), `Call ${f.phone}`], { class: 'btn btn-small btn-primary' }),
-      f.intake && digits(f.intake) !== digits(f.phone) && tel(f.intake, [icon('phone'), `Intake ${f.intake}`], { class: 'btn btn-small btn-secondary' }),
-      f.hotline && digits(f.hotline) !== digits(f.phone) && tel(f.hotline, [icon('phone'), `24/7 line ${f.hotline}`], { class: 'btn btn-small btn-secondary' }),
+      f.phone && tel(f.phone, [icon('phone'), t('card.call', 'Call {phone}', { phone: f.phone })], { class: 'btn btn-small btn-primary' }),
+      f.intake && digits(f.intake) !== digits(f.phone) && tel(f.intake, [icon('phone'), t('card.intake', 'Intake {phone}', { phone: f.intake })], { class: 'btn btn-small btn-secondary' }),
+      f.hotline && digits(f.hotline) !== digits(f.phone) && tel(f.hotline, [icon('phone'), t('card.hotline', '24/7 line {phone}', { phone: f.hotline })], { class: 'btn btn-small btn-secondary' }),
       f.website && h('a', { class: 'btn btn-small btn-ghost', href: f.website, target: '_blank', rel: 'noopener noreferrer' },
-        icon('globe'), 'Website', h('span', { class: 'visually-hidden' }, ` for ${f.name} (opens in a new tab)`)),
+        icon('globe'), t('common.website', 'Website'), h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: f.name }))),
       address && h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
-        icon('directions'), 'Directions', h('span', { class: 'visually-hidden' }, ' (opens a map in a new tab)')),
+        icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
       saveButton({ ...f, kind: 'treatment' }),
       copyButton(treatmentText(f), f.name),
     ),
     services.length > 0 && h('details', { class: 'facility-details' },
-      h('summary', null, 'All listed services'),
+      h('summary', null, t('card.allServices', 'All listed services')),
       h('dl', { class: 'service-list' },
         services.map((s) => [h('dt', null, s.label), h('dd', null, s.items.join(' · '))])),
-      h('p', { class: 'fine' }, 'Listed by the facility in SAMHSA’s national directory. Call to confirm availability, cost, and wait times.'),
+      h('p', { class: 'fine' }, t('card.servicesNote', 'Listed by the facility in SAMHSA’s national directory. Call to confirm availability, cost, and wait times.')),
     ),
   );
 }
@@ -111,20 +121,20 @@ export function treatmentCard(f, { headingLevel = 3 } = {}) {
 export function healthCenterText(c) {
   return [
     c.name,
-    c.org && c.org !== c.name ? `Operated by ${c.org}` : null,
+    c.org && c.org !== c.name ? t('card.text.operatedBy', 'Operated by {org}', { org: c.org }) : null,
     `${c.street}, ${c.city}, ${c.state} ${c.zip}`,
-    c.phone && `Phone: ${c.phone}`,
+    c.phone && t('card.text.phone', 'Phone: {phone}', { phone: c.phone }),
     c.website,
-    'Source: HRSA Health Center Program. Sliding fee scale available.',
+    t('card.text.sourceHrsa', 'Source: HRSA Health Center Program. Sliding fee scale available.'),
   ].filter(Boolean).join('\n');
 }
 
 const SMALL_WORDS = new Set(['of', 'and', 'the', 'for', 'at', 'in', 'on', 'de']);
-const UPPER_WORDS = new Set(['INC', 'INC.', 'LLC', 'CHC', 'FQHC', 'HIV', 'PC', 'PLLC', 'II', 'III']);
+const UPPER_WORDS = new Set(['INC', 'INC.', 'LLC', 'CHC', 'FQHC', 'HIV', 'PC', 'PLLC', 'II', 'III', 'VA', 'IHS', 'RHC', 'ER', 'EMS', 'AMC', 'CBOC']);
 
-// HRSA publishes organization names in all caps; make them readable.
-function tidyName(s) {
-  if (s !== s.toUpperCase()) return s;
+// HRSA and CMS publish organization names in all caps; make them readable.
+export function tidyName(s) {
+  if (!s || s !== s.toUpperCase()) return s;
   return s.toLowerCase().split(' ').map((w, i) => {
     if (UPPER_WORDS.has(w.toUpperCase())) return w.toUpperCase();
     if (i > 0 && SMALL_WORDS.has(w)) return w;
@@ -144,21 +154,163 @@ export function healthCenterCard(c, { headingLevel = 3 } = {}) {
       distance(c.miles),
     ),
     h('p', { class: 'address' }, icon('pin'), address),
-    h('ul', { class: 'chips', 'aria-label': 'Highlights' },
-      h('li', { class: 'chip chip-pay' }, 'Sliding fee scale'),
-      c.lookAlike ? h('li', { class: 'chip chip-care' }, 'FQHC look-alike') : h('li', { class: 'chip chip-care' }, 'Community health center'),
-      c.mobile && h('li', { class: 'chip chip-extra' }, 'Mobile clinic'),
-      c.seasonal && h('li', { class: 'chip chip-extra' }, 'Seasonal'),
-      c.hours && h('li', { class: 'chip chip-neutral' }, `${Math.round(c.hours)} hrs/week`),
+    h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
+      h('li', { class: 'chip chip-pay' }, t('hc.sliding', 'Sliding fee scale')),
+      c.lookAlike ? h('li', { class: 'chip chip-care' }, t('hc.lookAlike', 'FQHC look-alike')) : h('li', { class: 'chip chip-care' }, t('hc.chc', 'Community health center')),
+      c.mobile && h('li', { class: 'chip chip-extra' }, t('hc.mobile', 'Mobile clinic')),
+      c.seasonal && h('li', { class: 'chip chip-extra' }, t('hc.seasonal', 'Seasonal')),
+      c.hours && h('li', { class: 'chip chip-neutral' }, t('hc.hours', '{hours} hrs/week', { hours: formatNumber(Math.round(c.hours)) })),
     ),
     h('div', { class: 'actions' },
-      c.phone && tel(c.phone.replace(/\s*x.*$/i, ''), [icon('phone'), `Call ${c.phone}`], { class: 'btn btn-small btn-primary' }),
+      c.phone && tel(c.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: c.phone })], { class: 'btn btn-small btn-primary' }),
       c.website && h('a', { class: 'btn btn-small btn-ghost', href: c.website, target: '_blank', rel: 'noopener noreferrer' },
-        icon('globe'), 'Website', h('span', { class: 'visually-hidden' }, ` for ${c.name} (opens in a new tab)`)),
+        icon('globe'), t('common.website', 'Website'), h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: c.name }))),
       h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
-        icon('directions'), 'Directions', h('span', { class: 'visually-hidden' }, ' (opens a map in a new tab)')),
+        icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
       saveButton({ ...c, kind: 'health-center' }),
       copyButton(healthCenterText(c), c.name),
+    ),
+  );
+}
+
+function providerChips(p) {
+  const net = p.providerType || p.type;
+  const chips = [];
+  const add = (label, tone = 'care') => chips.push({ label, tone });
+
+  if (net === 'va') {
+    const vaMap = {
+      vamc: t('providers.va.vamc', 'VA Medical Center'),
+      hcc: t('providers.va.hcc', 'VA Health Care Center'),
+      mscboc: t('providers.va.mscboc', 'Multi-specialty VA clinic'),
+      pccboc: t('providers.va.pccboc', 'Primary care VA clinic'),
+      oos: t('providers.va.oos', 'VA outpatient services'),
+      rrtp: t('providers.va.rrtp', 'VA residential rehab (RRTP)'),
+      vc: t('providers.va.vc', 'Vet Center'),
+      mvc: t('providers.va.mvc', 'Mobile Vet Center'),
+    };
+    add(vaMap[p.category] ?? t('providers.va.clinic', 'VA health facility'), 'care');
+    add(t('providers.va.badge', 'Veterans & eligible family'), 'pay');
+  } else if (net === 'ihs') {
+    const opMap = {
+      I: t('providers.ihs.op.I', 'Indian Health Service (IHS)'),
+      T: t('providers.ihs.op.T', 'Tribal health program'),
+      U: t('providers.ihs.op.U', 'Urban Indian health program'),
+    };
+    add(opMap[p.operator] ?? t('providers.ihs.badge', 'IHS / Tribal / Urban Indian'), 'pay');
+    const catMap = {
+      hospital: t('providers.ihs.cat.hospital', 'IHS / Tribal hospital'),
+      center: t('providers.ihs.cat.center', 'Health center'),
+      station: t('providers.ihs.cat.station', 'Health station'),
+      village: t('providers.ihs.cat.village', 'Alaska village clinic'),
+      behavioral: t('providers.ihs.cat.behavioral', 'Behavioral health & treatment'),
+      dental: t('providers.ihs.cat.dental', 'Dental clinic'),
+    };
+    if (catMap[p.category]) add(catMap[p.category], 'care');
+    const flags = new Set(p.flags ?? []);
+    if (flags.has('sud')) add(t('providers.ihs.flag.sud', 'Substance use care'), 'med');
+    if (flags.has('bh') && p.category !== 'behavioral') add(t('providers.ihs.flag.bh', 'Behavioral health'), 'care');
+    if (flags.has('er')) add(t('providers.ihs.flag.er', 'Emergency care'), 'extra');
+    if (flags.has('urgent')) add(t('providers.ihs.flag.urgent', 'Urgent care'), 'extra');
+    if (flags.has('pharmacy')) add(t('providers.ihs.flag.pharmacy', 'Pharmacy'), 'med');
+  } else if (net === 'rhc') {
+    add(t('providers.rhc.badge', 'CMS Rural Health Clinic'), 'care');
+    add(t('providers.rhc.pay', 'Medicare & Medicaid certified'), 'pay');
+  } else if (net === 'er') {
+    const erMap = {
+      acute: t('providers.er.acute', 'Acute care hospital'),
+      cah: t('providers.er.cah', 'Critical access hospital'),
+      reh: t('providers.er.reh', 'Rural emergency hospital'),
+      psych: t('providers.er.psych', 'Psychiatric hospital'),
+      children: t('providers.er.children', 'Children’s hospital'),
+      va: t('providers.er.va', 'VA hospital with emergency room'),
+      ltc: t('providers.er.ltc', 'Long-term care hospital'),
+    };
+    add(erMap[p.category] ?? t('providers.er.badge', 'Emergency services hospital'), 'care');
+    add(t('providers.er.247', 'Emergency department'), 'extra');
+  }
+  return chips;
+}
+
+export function providerText(p) {
+  const address = formatAddress(p.address ?? p);
+  const web = p.website || p.detailsUrl;
+  const sourceMap = {
+    va: t('providers.text.sourceVa', 'Source: U.S. Department of Veterans Affairs (VA.gov).'),
+    ihs: t('providers.text.sourceIhs', 'Source: Indian Health Service (IHS.gov).'),
+    rhc: t('providers.text.sourceRhc', 'Source: CMS Rural Health Clinic directory.'),
+    er: t('providers.text.sourceEr', 'Source: CMS Hospital General Information.'),
+  };
+  const net = p.providerType || p.type;
+  return [
+    p.name,
+    p.alias || (p.org && p.org !== p.name ? tidyName(p.org) : null),
+    address,
+    p.phone && t('card.text.phone', 'Phone: {phone}', { phone: p.phone }),
+    web,
+    sourceMap[net] ?? t('providers.text.sourceDefault', 'Source: Federal health provider directory.'),
+  ].filter(Boolean).join('\n');
+}
+
+export function providerCard(p, { headingLevel = 3 } = {}) {
+  const safeId = String(p.id).replace(/[^a-zA-Z0-9_-]/g, '-');
+  const address = formatAddress(p.address ?? p);
+  const sub = p.alias || (p.org && p.org.toLowerCase() !== p.name.toLowerCase() ? tidyName(p.org) : null) || p.subname;
+  const web = p.website || p.detailsUrl;
+  const chips = providerChips(p);
+  const hasDetails = Boolean(p.servicesText || p.hours || p.serviceType);
+
+  const savedPayload = {
+    ...p,
+    kind: 'provider',
+    providerType: p.providerType || p.type,
+    address: p.address ?? {
+      street1: p.street,
+      street2: p.street2 || p.building,
+      city: p.city,
+      state: p.state,
+      zip: p.zip,
+    },
+    website: web,
+    codes: p.codes ?? [],
+    services: p.services ?? [],
+  };
+
+  return h('article', { class: 'card facility provider-card', 'aria-labelledby': `pr-${safeId}` },
+    h('div', { class: 'facility-head' },
+      h('div', null,
+        h(`h${headingLevel}`, { id: `pr-${safeId}`, class: 'facility-name' }, tidyName(p.name)),
+        sub && h('p', { class: 'subname' }, sub),
+      ),
+      distance(p.miles),
+    ),
+    address && h('p', { class: 'address' },
+      icon('pin'),
+      h('span', null,
+        address,
+        p.approx ? [' ', h('span', { class: 'fine' }, t('providers.approx', '(approximate area)'))] : null,
+      ),
+    ),
+    chips.length > 0 && h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
+      chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
+    h('div', { class: 'actions' },
+      p.phone && tel(p.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: p.phone })], { class: 'btn btn-small btn-primary' }),
+      web && h('a', { class: 'btn btn-small btn-ghost', href: web, target: '_blank', rel: 'noopener noreferrer' },
+        icon('globe'),
+        p.detailsUrl && !p.website ? t('providers.detailsLink', 'Facility details') : t('common.website', 'Website'),
+        h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: p.name }))),
+      address && h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
+        icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
+      saveButton(savedPayload),
+      copyButton(providerText(p), p.name),
+    ),
+    hasDetails && h('details', { class: 'facility-details' },
+      h('summary', null, t('providers.moreInfo', 'Program details & hours')),
+      h('dl', { class: 'service-list' },
+        p.serviceType && [h('dt', null, t('providers.field.type', 'Facility type')), h('dd', null, p.serviceType)],
+        p.hours && [h('dt', null, t('providers.field.hours', 'Hours')), h('dd', null, p.hours)],
+        p.servicesText && [h('dt', null, t('providers.field.services', 'Services')), h('dd', null, p.servicesText)],
+      ),
     ),
   );
 }

@@ -2,7 +2,10 @@
 // or the URL. Saved places stay in memory unless the visitor opts in to keeping
 // them on this device.
 
-const KEYS = { persist: 'hp:persist', saved: 'hp:saved' };
+import { STORAGE_KEY as LANG_KEY } from './i18n.js';
+import { wipeOfflineCopy } from './offline.js';
+
+const KEYS = { persist: 'hp:persist', saved: 'hp:saved', lang: LANG_KEY };
 const listeners = new Set();
 
 function safeGet(key) {
@@ -16,7 +19,7 @@ function safeRemove(key) {
 }
 
 export const state = {
-  location: null, // { label, lat, lng }
+  location: null, // { label, lat, lng, state? }
   radius: 25,
   saved: new Map(),
   persist: safeGet(KEYS.persist) === '1',
@@ -55,7 +58,7 @@ export function isSaved(id) {
   return state.saved.has(id);
 }
 
-/** item: { id, kind: 'treatment' | 'health-center', name, ... } */
+/** item: { id, kind: 'treatment' | 'health-center' | 'provider', name, ... } */
 export function toggleSaved(item) {
   if (state.saved.has(item.id)) state.saved.delete(item.id);
   else state.saved.set(item.id, { ...item, savedAt: Date.now() });
@@ -83,4 +86,5 @@ export function wipeAll() {
   state.persist = false;
   for (const key of Object.values(KEYS)) safeRemove(key);
   try { sessionStorage.clear(); } catch { /* ignore */ }
+  wipeOfflineCopy();
 }

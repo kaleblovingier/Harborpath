@@ -1,4 +1,5 @@
-import { h, ext, tel, sms, icon } from '../dom.js';
+import { h, ext, tel, sms, icon, langNote } from '../dom.js';
+import { t, getLang } from '../i18n.js';
 
 export function pageHeader(title, lede, ...extra) {
   return h('header', { class: 'page-header' },
@@ -22,8 +23,8 @@ export const strong = (t) => h('strong', null, t);
 
 /** In-page navigation for long guides. Uses buttons so the hash route is untouched. */
 export function tocNav(items) {
-  return h('nav', { class: 'toc', 'aria-label': 'On this page' },
-    h('p', { class: 'toc-title' }, 'On this page'),
+  return h('nav', { class: 'toc', 'aria-label': t('common.toc', 'On this page') },
+    h('p', { class: 'toc-title' }, t('common.toc', 'On this page')),
     h('ul', null, items.map(([id, label]) => h('li', null,
       h('button', {
         type: 'button',
@@ -47,14 +48,18 @@ export function resourceList(items) {
 }
 
 export function hotlineCard(line) {
+  // Outside English, lines that confirmed service in the visitor's language say so.
+  const inLanguage = getLang() === 'es' && line.spanish;
   return h('li', { class: 'card hotline' },
     h('h3', null, line.name),
+    inLanguage && h('p', { class: 'chips' }, h('span', { class: 'chip chip-extra' }, t('hotline.inSpanish', 'Spanish available'))),
     h('p', null, line.desc),
     h('div', { class: 'actions' },
       line.call && tel(line.call.number, [icon('phone'), line.call.label], { class: 'btn btn-small btn-primary' }),
       line.text && sms(line.text.number, line.text.body, [icon('message'), line.text.label], { class: 'btn btn-small btn-secondary' }),
-      line.web && h('a', { class: 'btn btn-small btn-ghost', href: line.web, target: '_blank', rel: 'noopener noreferrer' },
-        icon('globe'), line.webLabel ?? 'Website', h('span', { class: 'visually-hidden' }, ` for ${line.name} (opens in a new tab)`)),
+      line.web && h('a', { class: 'btn btn-small btn-ghost', href: line.web, target: '_blank', rel: 'noopener noreferrer', hreflang: langNote(line.web) ? 'en' : null },
+        icon('globe'), line.webLabel ?? t('common.website', 'Website'), langNote(line.web),
+        h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: line.name }))),
     ),
   );
 }
@@ -76,11 +81,11 @@ export function pathCard({ href, title, desc, iconName, tone = 'default' }) {
 
 export function emergencyCallout() {
   return h('div', { class: 'callout callout-emergency' },
-    h('p', { class: 'callout-title' }, icon('alert'), 'Someone not breathing or won’t wake up?'),
-    h('p', null, 'Call 911, give naloxone if you have it, and follow the step-by-step guide.'),
+    h('p', { class: 'callout-title' }, icon('alert'), t('common.emergency.title', 'Someone not breathing or won’t wake up?')),
+    h('p', null, t('common.emergency.body', 'Call 911, give naloxone if you have it, and follow the step-by-step guide.')),
     h('p', { class: 'actions' },
-      tel('911', [icon('phone'), 'Call 911'], { class: 'btn btn-emergency' }),
-      h('a', { class: 'btn btn-secondary', href: '#/overdose' }, 'Overdose response steps'),
+      tel('911', [icon('phone'), t('common.call911', 'Call 911')], { class: 'btn btn-emergency' }),
+      h('a', { class: 'btn btn-secondary', href: '#/overdose' }, t('common.emergency.steps', 'Overdose response steps')),
     ),
   );
 }

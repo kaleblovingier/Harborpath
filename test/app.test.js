@@ -1,6 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createApp, SECURITY_HEADERS } from '../src/app.js';
@@ -61,6 +62,18 @@ test('static assets are gzip-compressed and cacheable by ETag', async () => {
   const etag = res.headers.get('etag');
   const again = await fetch(`${base}/styles.css`, { headers: { 'If-None-Match': etag } });
   assert.equal(again.status, 304);
+});
+
+test('service worker APP_SHELL assets all exist and are served 200 OK', async () => {
+  const swText = readFileSync(path.join(here, '..', 'public', 'sw.js'), 'utf8');
+  const match = swText.match(/const APP_SHELL = \[([\s\S]*?)\];/);
+  assert.ok(match, 'APP_SHELL list found in public/sw.js');
+  const urls = [...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+  assert.ok(urls.length >= 20, 'APP_SHELL contains all core static files');
+  for (const urlPath of urls) {
+    const res = await fetch(`${base}${urlPath}`);
+    assert.equal(res.status, 200, `Expected 200 OK for ${urlPath}`);
+  }
 });
 
 test('path traversal cannot escape public/', async () => {

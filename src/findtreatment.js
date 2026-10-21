@@ -6,7 +6,10 @@ import { clean, normalizeWebsite, stableId, toFiniteNumber } from './util.js';
 
 export const UPSTREAM_URL = 'https://findtreatment.gov/locator/exportsAsJson/v2';
 export const PAGE_SIZE = 25;
-export const RADII_MILES = [5, 10, 25, 50, 100];
+// 200 and 250 serve rural areas; FindTreatment.gov accepts any distance in meters
+// (checked live in October 2026 from Jordan, MT: 7 listings within 100 miles,
+// 52 within 200, 81 within 250).
+export const RADII_MILES = [5, 10, 25, 50, 100, 200, 250];
 export const KINDS = ['sa', 'mh'];
 const METERS_PER_MILE = 1609.344;
 const MAX_CODES = 8;
@@ -100,33 +103,94 @@ export function normalizeFacility(row, taxonomy) {
   };
 }
 
-export async function searchTreatment(query, { taxonomy, fetchImpl = fetch, cache, timeoutMs = 15000 }) {
+class UpstreamError extends Error {
+  constructor(message, { retryable }) {
+    super(message);
+    this.retryable = retryable;
+  }
+}
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** One upstream request. Network failures and 5xx responses are retryable. */
+async function fetchListing(url, { fetchImpl, timeoutMs }) {
+  let res;
+  try {
+    res = await fetchImpl(url, {
+      headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (err) {
+    throw new UpstreamError(err.message, { retryable: err.name !== 'AbortError' });
+  }
+  if (!res.ok) {
+    throw new UpstreamError(`FindTreatment.gov responded with HTTP ${res.status}`, { retryable: res.status >= 500 });
+  }
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    // The API answers malformed queries with a plain-text message and HTTP 200.
+    throw new UpstreamError(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`, { retryable: false });
+  }
+}
+
+/**
+ * Retry network errors and 5xx responses with exponential backoff and jitter,
+ * all within one overall time budget, so a slow upstream is never waited on
+ * longer than timeoutMs in total.
+ */
+async function fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep }) {
+  const deadline = Date.now() + timeoutMs;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fetchListing(url, { fetchImpl, timeoutMs: Math.max(1, deadline - Date.now()) });
+    } catch (err) {
+      const delay = backoffMs * 2 ** attempt * (0.75 + Math.random() / 2);
+      // Only retry when a later attempt still has a fair amount of time left.
+      if (!err.retryable || attempt >= retries || Date.now() + delay + 1000 > deadline) throw err;
+      await sleep(delay);
+    }
+  }
+}
+
+/**
+ * Search FindTreatment.gov. With a `cache`, results are reused and, if the
+ * upstream fails, a recent (stale) copy is returned with `stale: true`. With
+ * an `inflight` Map, identical concurrent searches share one upstream call.
+ * Cache and in-flight keys are upstream URLs, which only hold coarsened
+ * coordinates.
+ */
+export async function searchTreatment(query, {
+  taxonomy, fetchImpl = fetch, cache, inflight, timeoutMs = 15000, retries = 2, backoffMs = 250, sleep = wait,
+}) {
   const url = buildUpstreamUrl(query);
   const cached = cache?.get(url);
   if (cached) return cached;
+  const pending = inflight?.get(url);
+  if (pending) return pending;
 
-  const res = await fetchImpl(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!res.ok) throw new Error(`FindTreatment.gov responded with HTTP ${res.status}`);
-  const text = await res.text();
-  let body;
-  try {
-    body = JSON.parse(text);
-  } catch {
-    // The API answers malformed queries with a plain-text message and HTTP 200.
-    throw new Error(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`);
-  }
-
-  const rows = Array.isArray(body.rows) ? body.rows : [];
-  const result = {
-    page: toFiniteNumber(body.page) ?? query.page,
-    totalPages: toFiniteNumber(body.totalPages) ?? 0,
-    total: toFiniteNumber(body.recordCount) ?? rows.length,
-    pageSize: PAGE_SIZE,
-    results: rows.map((r) => normalizeFacility(r, taxonomy)),
-  };
-  cache?.set(url, result);
-  return result;
+  const work = (async () => {
+    try {
+      const body = await fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep });
+      const rows = Array.isArray(body.rows) ? body.rows : [];
+      const result = {
+        page: toFiniteNumber(body.page) ?? query.page,
+        totalPages: toFiniteNumber(body.totalPages) ?? 0,
+        total: toFiniteNumber(body.recordCount) ?? rows.length,
+        pageSize: PAGE_SIZE,
+        results: rows.map((r) => normalizeFacility(r, taxonomy)),
+      };
+      cache?.set(url, result);
+      return result;
+    } catch (err) {
+      const stale = cache?.getStale?.(url);
+      if (stale) return { ...stale, stale: true };
+      throw err;
+    } finally {
+      inflight?.delete(url);
+    }
+  })();
+  inflight?.set(url, work);
+  return work;
 }

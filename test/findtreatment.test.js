@@ -7,8 +7,7 @@ import { createCache } from '../src/cache.js';
 import {
   InputError, buildUpstreamUrl, normalizeFacility, parseTreatmentQuery, searchTreatment,
 } from '../src/findtreatment.js';
-import { normalizeWebsite } from '../src/util.js';
-import { readJson } from '../src/util.js';
+import { normalizeWebsite, readJson } from '../src/util.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const taxonomy = createTaxonomy(readJson(path.join(here, '..', 'data', 'service-codes.json')));
@@ -87,11 +86,41 @@ test('searchTreatment surfaces the plain-text error the API returns for bad quer
   );
 });
 
-test('cache entries expire', () => {
+test('cache entries expire and serve stale within staleMs', () => {
   let now = 0;
-  const cache = createCache({ ttlMs: 100, now: () => now });
+  const cache = createCache({ ttlMs: 100, staleMs: 100, now: () => now, sweepEveryMs: 0 });
   cache.set('k', 1);
   assert.equal(cache.get('k'), 1);
   now = 150;
   assert.equal(cache.get('k'), undefined);
+  assert.equal(cache.getStale('k'), 1);
+  now = 250;
+  assert.equal(cache.getStale('k'), undefined);
+});
+
+test('searchTreatment deduplicates concurrent identical requests and falls back to stale cache on outage', async () => {
+  let now = 0;
+  let calls = 0;
+  let fail = false;
+  const fetchImpl = async () => {
+    calls++;
+    await new Promise((r) => setTimeout(r, 10));
+    if (fail) throw new Error('upstream down');
+    return new Response(JSON.stringify(sample), { status: 200 });
+  };
+  const cache = createCache({ ttlMs: 100, staleMs: 100, now: () => now, sweepEveryMs: 0 });
+  const inflight = new Map();
+  const query = { lat: 48.75, lng: -122.48, radiusMiles: 25, kind: 'sa', page: 1, codes: ['BU'] };
+  const [r1, r2] = await Promise.all([
+    searchTreatment(query, { taxonomy, fetchImpl, cache, inflight, retries: 0 }),
+    searchTreatment(query, { taxonomy, fetchImpl, cache, inflight, retries: 0 }),
+  ]);
+  assert.equal(calls, 1);
+  assert.equal(r1, r2);
+
+  now = 150;
+  fail = true;
+  const staleRes = await searchTreatment(query, { taxonomy, fetchImpl, cache, inflight, retries: 0 });
+  assert.equal(staleRes.stale, true);
+  assert.equal(staleRes.results.length, 2);
 });

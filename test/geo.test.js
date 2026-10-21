@@ -10,6 +10,7 @@ const dataDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'd
 const geocoder = createGeocoder({
   zcta: readJson(path.join(dataDir, 'zcta.json')),
   places: readJson(path.join(dataDir, 'places.json')),
+  islandPlaces: readJson(path.join(dataDir, 'island-places.json')),
 });
 
 test('ZIP codes resolve to a centroid labeled with the nearest place', () => {
@@ -32,9 +33,13 @@ test('PO-box-only ZIPs fall back to a nearby ZIP with the same prefix', () => {
   assert.match(hit.label, /^85001 · Phoenix, AZ$/);
 });
 
-test('names with accents and later-word matches are found', () => {
+test('names with accents, island territories, and later-word matches are found', () => {
   assert.ok(geocoder.lookup('Catano, PR').some((r) => r.label === 'Cataño, PR'));
   assert.ok(geocoder.lookup('Honolulu').some((r) => r.label === 'Urban Honolulu, HI'));
+  assert.ok(geocoder.lookup('Hagatna, GU').some((r) => r.label === 'Hagåtña, GU'));
+  assert.ok(geocoder.lookup('St. Croix, VI').some((r) => r.label === 'St. Croix, VI'));
+  assert.ok(geocoder.lookup('Pago Pago, AS').some((r) => r.label === 'Pago Pago, AS'));
+  assert.ok(geocoder.lookup('Saipan, MP').some((r) => r.label === 'Saipan, MP'));
 });
 
 test('unknown ZIPs and bare numbers return nothing', () => {
