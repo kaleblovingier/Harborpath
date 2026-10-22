@@ -1,1 +1,0 @@
-$(cat /tmp/navigator_updated.js)
