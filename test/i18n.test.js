@@ -11,6 +11,9 @@ import {
   getLocale,
   getServiceNames,
   isLocalizedUrl,
+  isPlainLanguage,
+  setPlainLanguage,
+  onLanguageChange,
 } from '../public/js/i18n.js';
 import es from '../public/js/locales/es.js';
 import esServices from '../public/js/locales/es-services.js';
@@ -214,4 +217,106 @@ test('public/js/locales/es.js and es-services.js have valid keys, non-empty stri
     }
   }
   assert.deepEqual(missingKeys, [], `Missing Spanish translations for keys in public/: ${missingKeys.join(', ')}`);
+});
+
+// ---------------------------------------------------------------- Plain-language mode
+test('plain-language mode is off by default and t() returns standard text', () => {
+  useDictionary('en', {});
+  assert.equal(isPlainLanguage(), false);
+  assert.equal(t('demo.key', { text: 'Standard words.', plain: 'Simple words.' }), 'Standard words.');
+  // A plain string fallback behaves exactly as before.
+  assert.equal(t('demo.key', 'Standard words.'), 'Standard words.');
+});
+
+test('plain-language mode prefers the plain variant in English and in the dictionary', () => {
+  useDictionary('en', {});
+  setPlainLanguage(true, { notify: false });
+  try {
+    assert.equal(isPlainLanguage(), true);
+    // English: the call site's plain text.
+    assert.equal(t('demo.key', { text: 'Standard words.', plain: 'Simple words.' }), 'Simple words.');
+    // Keys without a plain variant are unchanged.
+    assert.equal(t('demo.key', { text: 'Only standard.' }), 'Only standard.');
+    assert.equal(t('demo.key', 'Only standard.'), 'Only standard.');
+    // Placeholders work in plain text too.
+    assert.equal(t('demo.vars', { text: 'Within {n} miles', plain: 'Up to {n} miles away' }, { n: 5 }), 'Up to 5 miles away');
+
+    // Dictionary: key.plain wins over key.
+    useDictionary('es', { 'demo.key': 'Palabras normales.', 'demo.key.plain': 'Palabras simples.', 'demo.only': 'Solo normal.' });
+    assert.equal(t('demo.key', { text: 'Standard words.', plain: 'Simple words.' }), 'Palabras simples.');
+    // A translated key without a .plain version keeps its translation and
+    // never falls back to English plain text.
+    assert.equal(t('demo.only', { text: 'Standard words.', plain: 'Simple words.' }), 'Solo normal.');
+    // A key missing from a non-English dictionary falls back to standard English, not English plain.
+    assert.equal(t('demo.missing', { text: 'Standard words.', plain: 'Simple words.' }), 'Standard words.');
+
+    // Real Spanish dictionary.
+    useDictionary('es', es);
+    assert.equal(t('home.hero.title', { text: 'x', plain: 'y' }), es['home.hero.title.plain']);
+  } finally {
+    setPlainLanguage(false, { notify: false });
+    useDictionary('en', {});
+  }
+  // Turning it off restores standard text.
+  assert.equal(t('demo.key', { text: 'Standard words.', plain: 'Simple words.' }), 'Standard words.');
+  useDictionary('es', es);
+  assert.equal(t('home.hero.title', { text: 'x', plain: 'y' }), es['home.hero.title']);
+  useDictionary('en', {});
+});
+
+test('setPlainLanguage() notifies listeners only on change and writes nothing to storage', () => {
+  const writes = [];
+  const fakeStorage = { setItem: (k, v) => writes.push([k, v]), getItem: () => null, removeItem: () => {} };
+  const hadLocal = Object.hasOwn(globalThis, 'localStorage');
+  const previous = globalThis.localStorage;
+  Object.defineProperty(globalThis, 'localStorage', { value: fakeStorage, configurable: true, writable: true });
+  let calls = 0;
+  const off = onLanguageChange(() => { calls += 1; });
+  try {
+    setPlainLanguage(true);
+    setPlainLanguage(true);
+    assert.equal(calls, 1);
+    setPlainLanguage(false);
+    assert.equal(calls, 2);
+    assert.deepEqual(writes, [], 'plain-language mode must stay in memory only');
+  } finally {
+    off();
+    setPlainLanguage(false, { notify: false });
+    if (hadLocal) Object.defineProperty(globalThis, 'localStorage', { value: previous, configurable: true, writable: true });
+    else delete globalThis.localStorage;
+  }
+});
+
+test('every plain-language call site has a Spanish .plain translation and keeps phone numbers', () => {
+  const root = path.resolve(new URL('../public/js', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+  const files = [];
+  const walk = (dir) => {
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) { if (name !== 'locales') walk(full); } else if (name.endsWith('.js')) files.push(full);
+    }
+  };
+  walk(root);
+  const missing = [];
+  let found = 0;
+  const phone = /\b(?:911|988|1-\d{3}-\d{3}-\d{4})\b/g;
+  for (const file of files) {
+    const src = fs.readFileSync(file, 'utf8');
+    for (const m of src.matchAll(/\bt\(\s*'([a-zA-Z0-9_.-]+)'\s*,\s*\{\s*text:\s*('(?:[^'\\]|\\.)*')\s*,\s*plain:\s*('(?:[^'\\]|\\.)*')/g)) {
+      found += 1;
+      const [, key, text, plainText] = m;
+      if (!Object.hasOwn(es, `${key}.plain`)) missing.push(`${path.basename(file)}: ${key}.plain`);
+      // Simplifying must never drop or change an emergency number.
+      assert.deepEqual(plainText.match(phone) ?? [], text.match(phone) ?? [], `Phone numbers differ in plain text for ${key}`);
+      if (Object.hasOwn(es, key) && Object.hasOwn(es, `${key}.plain`)) {
+        assert.deepEqual(es[`${key}.plain`].match(phone) ?? [], es[key].match(phone) ?? [], `Phone numbers differ in Spanish plain text for ${key}`);
+      }
+    }
+  }
+  assert.ok(found >= 30, `Expected at least 30 plain-language strings, found ${found}`);
+  assert.deepEqual(missing, [], `Missing Spanish plain-language versions: ${missing.join(', ')}`);
+  // Every Spanish .plain key belongs to a translated standard key.
+  for (const key of Object.keys(es).filter((k) => k.endsWith('.plain'))) {
+    assert.ok(Object.hasOwn(es, key.slice(0, -'.plain'.length)), `${key} has no standard translation`);
+  }
 });
