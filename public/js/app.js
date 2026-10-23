@@ -1,6 +1,7 @@
 import { api } from './api.js';
 import { state, subscribe, wipeAll } from './state.js';
-import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
+import { initI18n, onLanguageChange, isPlainLanguage, t, formatDate } from './i18n.js';
+import { announce } from './dom.js';
 import { homeView, treatmentView, healthView, statesView, stateDetailView, savedView, crisisView, privacyView, notFoundView } from './views/core.js';
 import { harmReductionView, overdoseView, supportView, choosingCareView } from './views/guides.js';
 import { careNavigatorView } from './views/navigator.js';
@@ -54,7 +55,12 @@ function resolveRoute(path, query) {
   return [() => notFoundView({ query }), t('route.notFound', 'Page not found')];
 }
 
-function render() {
+/**
+ * Render the current route. `moveFocus: false` keeps focus and scroll where
+ * they are, for re-renders the visitor did not navigate to (language or
+ * plain-language changes).
+ */
+function render({ moveFocus = true } = {}) {
   const { path, query } = parseHash();
   const [buildView, title] = resolveRoute(path, query);
   main.replaceChildren(buildView());
@@ -65,7 +71,7 @@ function render() {
     else link.removeAttribute('aria-current');
   }
   closeMenu();
-  if (!firstRender) {
+  if (!firstRender && moveFocus) {
     window.scrollTo(0, 0);
     document.getElementById('page-title')?.focus({ preventScroll: true });
   }
@@ -84,7 +90,7 @@ document.addEventListener('click', (e) => {
   if (href === location.hash || (href === '#/' && !location.hash)) render();
   else location.replace(href);
 });
-window.addEventListener('hashchange', render);
+window.addEventListener('hashchange', () => render());
 
 // ---------------------------------------------------------------- Quick exit
 function quickExit() {
@@ -99,6 +105,11 @@ document.getElementById('quick-exit')?.addEventListener('click', quickExit);
 let lastEscape = 0;
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
+  // A single Escape also closes the open mobile menu and returns focus to its button.
+  if (toggle?.getAttribute('aria-expanded') === 'true') {
+    closeMenu();
+    toggle.focus();
+  }
   const now = Date.now();
   if (now - lastEscape < 1000) quickExit();
   lastEscape = now;
@@ -150,10 +161,18 @@ api.meta().then((meta) => {
 }).catch(() => { /* footer note is optional */ });
 
 // ---------------------------------------------------------------- Initialize i18n & render
+let lastPlain = isPlainLanguage();
 onLanguageChange(() => {
   updateSavedCount();
   renderFooterMeta();
-  render();
+  // Keep focus on the language or plain-language control the visitor used.
+  render({ moveFocus: false });
+  if (isPlainLanguage() !== lastPlain) {
+    lastPlain = isPlainLanguage();
+    announce(lastPlain
+      ? t('app.plainToggle.on', 'Plain language is on.')
+      : t('app.plainToggle.off', 'Plain language is off.'));
+  }
 });
 
 initI18n().finally(() => {
