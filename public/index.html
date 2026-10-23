@@ -46,6 +46,11 @@
         <a href="?lang=en" hreflang="en" lang="en" aria-current="true">English</a>
         <a href="?lang=es" hreflang="es" lang="es">Español</a>
       </nav>
+      <button class="plain-toggle" type="button" data-plain-toggle aria-pressed="false" aria-describedby="plain-hint">
+        <span class="plain-toggle-box" aria-hidden="true"></span>
+        <span data-i18n="app.plainToggle">Plain language</span>
+      </button>
+      <span id="plain-hint" class="visually-hidden" data-i18n="app.plainToggle.hint">Uses simpler words for key explanations. This setting is not saved on your device.</span>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
         <svg class="icon" aria-hidden="true"><use href="/icons.svg#menu"></use></svg>
         <span data-i18n="app.menu">Menu</span>
@@ -94,7 +99,7 @@
     </noscript>
   </main>
 
-  <div id="announcer" class="visually-hidden" aria-live="polite"></div>
+  <div id="announcer" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <footer class="site-footer">
     <div class="wrap footer-inner">

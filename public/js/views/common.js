@@ -82,7 +82,10 @@ export function pathCard({ href, title, desc, iconName, tone = 'default' }) {
 export function emergencyCallout() {
   return h('div', { class: 'callout callout-emergency' },
     h('p', { class: 'callout-title' }, icon('alert'), t('common.emergency.title', 'Someone not breathing or won’t wake up?')),
-    h('p', null, t('common.emergency.body', 'Call 911, give naloxone if you have it, and follow the step-by-step guide.')),
+    h('p', null, t('common.emergency.body', {
+      text: 'Call 911, give naloxone if you have it, and follow the step-by-step guide.',
+      plain: 'Call 911. Give naloxone if you have it. Then follow the steps.',
+    })),
     h('p', { class: 'actions' },
       tel('911', [icon('phone'), t('common.call911', 'Call 911')], { class: 'btn btn-emergency' }),
       h('a', { class: 'btn btn-secondary', href: '#/overdose' }, t('common.emergency.steps', 'Overdose response steps')),

@@ -20,6 +20,20 @@
 //   (and key.many when a language has it), chosen with Intl.PluralRules.
 // - test/i18n.test.js scans public/ for keys and fails when one is missing from
 //   locales/es.js, so new English text is flagged until it is translated.
+//
+// Plain-language mode (a 6th–8th grade reading level for key explanations):
+// - A call site may pass { text, plain } instead of a string fallback:
+//     t('home.hero.lede', { text: 'Search licensed…', plain: 'Find help…' })
+//   The dictionary holds the translation under `key` and its plain version
+//   under `key.plain`.
+// - With the mode on, t() prefers `key.plain` in the active dictionary, then
+//   the call site's English `plain` (English only), then the usual lookup. A
+//   language that lacks a plain version shows its regular translation, never
+//   English plain text.
+// - The mode lives in memory only. Nothing is written to the device, so a
+//   reload or Quick exit returns to the default.
+// - test/i18n.test.js fails when a call site has a `plain` variant but
+//   locales/es.js has no `key.plain`.
 
 export const STORAGE_KEY = 'hp:lang';
 
@@ -39,12 +53,43 @@ let dict = {};
 let lang = 'en';
 let serviceNames = null;
 let localizedUrls = new Set();
+let plain = false;
 const listeners = new Set();
 
+/**
+ * Look up `key`. `fallback` is the English string, or { text, plain } when the
+ * text has a plain-language version.
+ */
 export function t(key, fallback, vars) {
-  let s = Object.hasOwn(dict, key) ? dict[key] : fallback;
-  if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (Object.hasOwn(vars, k) ? String(vars[k]) : m));
+  const variants = fallback !== null && typeof fallback === 'object';
+  const english = variants ? fallback.text : fallback;
+  const plainKey = `${key}.plain`;
+  let s;
+  if (plain && Object.hasOwn(dict, plainKey)) s = dict[plainKey];
+  else if (Object.hasOwn(dict, key)) s = dict[key];
+  else if (plain && variants && lang === 'en' && fallback.plain) s = fallback.plain;
+  else s = english;
+  if (vars && typeof s === 'string') s = s.replace(/\{(\w+)\}/g, (m, k) => (Object.hasOwn(vars, k) ? String(vars[k]) : m));
   return s;
+}
+
+/** Whether plain-language mode is on. */
+export function isPlainLanguage() {
+  return plain;
+}
+
+/**
+ * Turn plain-language mode on or off. Kept in memory only: it is never stored
+ * on the device. Notifies the same listeners as a language change so views
+ * re-render. Pass { notify: false } in tests.
+ */
+export function setPlainLanguage(on, { notify = true } = {}) {
+  const next = Boolean(on);
+  if (next === plain) return;
+  plain = next;
+  applyStatic();
+  updatePlainToggle();
+  if (notify) for (const fn of listeners) fn(lang);
 }
 
 export function getLang() {
@@ -107,6 +152,7 @@ export function detectLanguage({ query = null, stored = null, languages = [] } =
     ?? 'en';
 }
 
+/** Called after the language or plain-language mode changes. */
 export function onLanguageChange(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
@@ -151,6 +197,13 @@ function updateSwitch() {
   }
 }
 
+function updatePlainToggle() {
+  if (typeof document === 'undefined') return;
+  for (const btn of document.querySelectorAll('[data-plain-toggle]')) {
+    btn.setAttribute('aria-pressed', String(plain));
+  }
+}
+
 /** Switch the interface language. `remember` saves an explicit choice. */
 export async function setLanguage(code, { remember = false } = {}) {
   const next = Object.hasOwn(LANGUAGES, code) ? code : 'en';
@@ -187,6 +240,10 @@ export async function initI18n() {
       if (link.hreflang !== lang) setLanguage(link.hreflang, { remember: true });
     });
   }
+  for (const btn of document.querySelectorAll('[data-plain-toggle]')) {
+    btn.addEventListener('click', () => setPlainLanguage(!plain));
+  }
+  updatePlainToggle();
   const code = detectLanguage({
     query: new URLSearchParams(location.search).get('lang'),
     stored: readStored(),
