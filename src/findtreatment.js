@@ -15,29 +15,63 @@ const METERS_PER_MILE = 1609.344;
 const MAX_CODES = 8;
 const MAX_PAGE = 40;
 
+// Messages are fixed text: they never repeat what the visitor sent, so a
+// response (or a screenshot of one) cannot carry a location or search back.
 export class InputError extends Error {}
+
+// Longest `codes` value worth reading: 8 codes of up to 8 characters plus commas.
+const MAX_CODES_PARAM = 120;
+
+/**
+ * The radius in miles (default 25). Accepts only the exact allowed values,
+ * written as plain integers ("25", not "25.0", "0x19", or "2.5e1").
+ */
+export function parseRadius(params, fallback = 25) {
+  const raw = params.get('radius');
+  if (raw === null) return fallback;
+  const n = /^\d{1,3}$/.test(raw.trim()) ? Number(raw.trim()) : NaN;
+  if (!RADII_MILES.includes(n)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
+  return n;
+}
+
+/** Page number 1..MAX_PAGE (default 1), written as a plain integer. */
+export function parsePage(params) {
+  const raw = params.get('page');
+  if (raw === null) return 1;
+  const n = /^\d{1,3}$/.test(raw.trim()) ? Number(raw.trim()) : NaN;
+  if (!Number.isInteger(n) || n < 1 || n > MAX_PAGE) throw new InputError('page is out of range');
+  return n;
+}
+
+/** 'sa' (default) or 'mh'. */
+export function parseKind(params) {
+  const kind = (params.get('kind') ?? 'sa').trim().toLowerCase();
+  if (!KINDS.includes(kind)) throw new InputError('kind must be "sa" or "mh"');
+  return kind;
+}
+
+/**
+ * Comma-separated SAMHSA service codes, deduplicated and checked against the
+ * taxonomy. `ignore` drops one code (telehealth adds TELE itself).
+ */
+export function parseCodes(params, taxonomy, { max = MAX_CODES, ignore = null } = {}) {
+  const raw = params.get('codes') ?? '';
+  if (raw.length > MAX_CODES_PARAM) throw new InputError(`At most ${max} filters at once`);
+  const codes = [...new Set(raw.split(',').map((c) => c.trim()).filter(Boolean))].filter((c) => c !== ignore);
+  if (codes.length > max) throw new InputError(`At most ${max} filters at once`);
+  if (codes.some((c) => !taxonomy.hasService(c))) throw new InputError('Unknown service code in filters');
+  return codes.sort();
+}
 
 /** Validate and normalize raw query-string params into a search request. */
 export function parseTreatmentQuery(params, taxonomy) {
   const loc = readLatLng(params);
   if (!loc) throw new InputError('A valid location is required.');
-
-  const radiusMiles = Number(params.get('radius') ?? 25);
-  if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
-
-  const kind = (params.get('kind') ?? 'sa').toLowerCase();
-  if (!KINDS.includes(kind)) throw new InputError('kind must be "sa" or "mh"');
-
-  const page = Number(params.get('page') ?? 1);
-  if (!Number.isInteger(page) || page < 1 || page > MAX_PAGE) throw new InputError('page is out of range');
-
-  const codes = [...new Set((params.get('codes') ?? '').split(',').map((c) => c.trim()).filter(Boolean))];
-  if (codes.length > MAX_CODES) throw new InputError(`At most ${MAX_CODES} filters at once`);
-  for (const c of codes) {
-    if (!taxonomy.hasService(c)) throw new InputError(`Unknown service code: ${c}`);
-  }
-
-  return { ...loc, radiusMiles, kind, page, codes: codes.sort() };
+  const radiusMiles = parseRadius(params);
+  const kind = parseKind(params);
+  const page = parsePage(params);
+  const codes = parseCodes(params, taxonomy);
+  return { ...loc, radiusMiles, kind, page, codes };
 }
 
 export function buildUpstreamUrl({ lat, lng, radiusMiles, kind, page, codes }) {
@@ -103,35 +137,89 @@ export function normalizeFacility(row, taxonomy) {
   };
 }
 
-class UpstreamError extends Error {
-  constructor(message, { retryable }) {
-    super(message);
+/**
+ * Any failure talking to FindTreatment.gov. `code` is one of: 'timeout',
+ * 'network', 'http', 'rate-limited', 'malformed', 'too-large', 'circuit-open'.
+ *
+ * Messages are fixed strings plus, at most, an HTTP status number. They never
+ * include the upstream URL (which holds coordinates), the response body
+ * (which may echo the query), or the underlying fetch error text.
+ */
+export class UpstreamError extends Error {
+  constructor(code, { retryable = false, status = null } = {}) {
+    super(UPSTREAM_MESSAGES[code] ? UPSTREAM_MESSAGES[code](status) : 'FindTreatment.gov request failed');
+    this.name = 'UpstreamError';
+    this.code = code;
     this.retryable = retryable;
+    this.status = status;
   }
 }
 
+const UPSTREAM_MESSAGES = {
+  timeout: () => 'FindTreatment.gov did not respond in time',
+  network: () => 'FindTreatment.gov could not be reached',
+  http: (status) => `FindTreatment.gov responded with HTTP ${Number(status) || 0}`,
+  'rate-limited': () => 'FindTreatment.gov is rate limiting requests',
+  malformed: () => 'FindTreatment.gov returned a non-JSON or malformed response',
+  'too-large': () => 'FindTreatment.gov returned an unexpectedly large response',
+  'circuit-open': () => 'FindTreatment.gov is temporarily marked unavailable',
+};
+
+// 25 listings are about 100 KB. Anything far past that is not a listing page.
+export const MAX_UPSTREAM_BYTES = 4 * 1024 * 1024;
+
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** One upstream request. Network failures and 5xx responses are retryable. */
+/**
+ * One upstream request, bounded by a hard deadline. The timer both aborts the
+ * fetch and rejects on its own, so even a fetch implementation that ignores
+ * its AbortSignal (or a body that never finishes) cannot hang the request.
+ */
 async function fetchListing(url, { fetchImpl, timeoutMs }) {
-  let res;
+  const controller = new AbortController();
+  let timer;
+  const deadline = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new UpstreamError('timeout'));
+      controller.abort();
+    }, timeoutMs);
+  });
+  const attempt = (async () => {
+    let res;
+    try {
+      res = await fetchImpl(url, {
+        headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
+        signal: controller.signal,
+      });
+    } catch (err) {
+      const timedOut = controller.signal.aborted || err?.name === 'AbortError' || err?.name === 'TimeoutError';
+      throw new UpstreamError(timedOut ? 'timeout' : 'network', { retryable: !timedOut });
+    }
+    if (!res || typeof res.text !== 'function') throw new UpstreamError('malformed');
+    if (res.status === 429) throw new UpstreamError('rate-limited', { status: 429 });
+    if (!res.ok) throw new UpstreamError('http', { retryable: res.status >= 500, status: res.status });
+    const declared = Number(res.headers?.get?.('content-length'));
+    if (Number.isFinite(declared) && declared > MAX_UPSTREAM_BYTES) throw new UpstreamError('too-large');
+    let text;
+    try {
+      text = await res.text();
+    } catch {
+      const timedOut = controller.signal.aborted;
+      throw new UpstreamError(timedOut ? 'timeout' : 'network', { retryable: !timedOut });
+    }
+    if (text.length > MAX_UPSTREAM_BYTES) throw new UpstreamError('too-large');
+    try {
+      return JSON.parse(text);
+    } catch {
+      // The API answers malformed queries with a plain-text message and HTTP 200.
+      throw new UpstreamError('malformed');
+    }
+  })();
   try {
-    res = await fetchImpl(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-  } catch (err) {
-    throw new UpstreamError(err.message, { retryable: err.name !== 'AbortError' });
-  }
-  if (!res.ok) {
-    throw new UpstreamError(`FindTreatment.gov responded with HTTP ${res.status}`, { retryable: res.status >= 500 });
-  }
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch {
-    // The API answers malformed queries with a plain-text message and HTTP 200.
-    throw new UpstreamError(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`, { retryable: false });
+    return await Promise.race([attempt, deadline]);
+  } finally {
+    clearTimeout(timer);
+    attempt.catch(() => {}); // the loser of the race must not become an unhandled rejection
   }
 }
 
@@ -154,17 +242,59 @@ async function fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, s
   }
 }
 
+// An integer >= 0, or null.
+const count = (v) => {
+  const n = toFiniteNumber(v);
+  return n === null || n < 0 ? null : Math.floor(n);
+};
+
 /**
- * Search FindTreatment.gov. With a `cache`, results are reused and, if the
- * upstream fails, a recent (stale) copy is returned with `stale: true`. With
- * an `inflight` Map, identical concurrent searches share one upstream call.
- * Cache and in-flight keys are upstream URLs, which only hold coarsened
- * coordinates.
+ * Check that a parsed body looks like a listing page and turn it into the
+ * public result shape. Rows that are not objects are dropped, and a row that
+ * cannot be normalized is skipped rather than failing the whole page.
  */
-export async function searchTreatment(query, {
-  taxonomy, fetchImpl = fetch, cache, inflight, timeoutMs = 15000, retries = 2, backoffMs = 250, sleep = wait,
+export function readListingPage(body, { taxonomy, page }) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) throw new UpstreamError('malformed');
+  let rows = body.rows;
+  if (rows === undefined || rows === null) {
+    // An empty answer may leave rows out; anything else without rows is not a listing.
+    if (count(body.recordCount) !== 0) throw new UpstreamError('malformed');
+    rows = [];
+  }
+  if (!Array.isArray(rows)) throw new UpstreamError('malformed');
+  const results = [];
+  for (const row of rows) {
+    if (!row || typeof row !== 'object' || Array.isArray(row)) continue;
+    try {
+      results.push(normalizeFacility(row, taxonomy));
+    } catch {
+      // One bad listing never hides the others.
+    }
+  }
+  return {
+    page: count(body.page) ?? page,
+    totalPages: count(body.totalPages) ?? 0,
+    total: count(body.recordCount) ?? results.length,
+    pageSize: PAGE_SIZE,
+    results,
+  };
+}
+
+/**
+ * Fetch and validate one listing page, sharing the cache, in-flight map, and
+ * circuit breaker. `finish(result)` may add to a fresh result before it is
+ * cached.
+ *
+ * - A fresh cache hit returns at once.
+ * - Identical concurrent requests share one upstream call (`inflight`).
+ * - When the upstream fails (or the breaker is open), a copy within the
+ *   cache's stale window is returned with `stale: true`; with none, an
+ *   UpstreamError is thrown.
+ */
+export async function fetchListingPage(url, {
+  taxonomy, page, fetchImpl = fetch, cache, inflight, breaker,
+  timeoutMs = 15000, retries = 2, backoffMs = 250, sleep = wait, finish = (r) => r,
 }) {
-  const url = buildUpstreamUrl(query);
   const cached = cache?.get(url);
   if (cached) return cached;
   const pending = inflight?.get(url);
@@ -172,21 +302,50 @@ export async function searchTreatment(query, {
 
   const work = (async () => {
     try {
-      const body = await fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep });
-      const rows = Array.isArray(body.rows) ? body.rows : [];
-      const result = {
-        page: toFiniteNumber(body.page) ?? query.page,
-        totalPages: toFiniteNumber(body.totalPages) ?? 0,
-        total: toFiniteNumber(body.recordCount) ?? rows.length,
-        pageSize: PAGE_SIZE,
-        results: rows.map((r) => normalizeFacility(r, taxonomy)),
-      };
+      if (breaker && !breaker.allow()) throw new UpstreamError('circuit-open');
+      let body;
+      try {
+        body = await fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep });
+        breaker?.success();
+      } catch (err) {
+        // A reachable upstream that rejects one query is not an outage.
+        const reachable = err.code === 'malformed' || err.code === 'too-large' || (err.code === 'http' && err.status < 500);
+        if (reachable) breaker?.success();
+        else breaker?.failure();
+        throw err;
+      }
+      const result = await finish(readListingPage(body, { taxonomy, page }));
+      cache?.set(url, result);
+      return result;
+    } catch (err) {
+      const stale = cache?.getStale?.(url);
+      if (stale) return { ...stale, stale: true };
+      throw err instanceof UpstreamError ? err : new UpstreamError('malformed');
+    } finally {
+      inflight?.delete(url);
+    }
+  })();
+  inflight?.set(url, work);
+  return work;
+}
+
+/**
+ * Search FindTreatment.gov. With a `cache`, results are reused and, if the
+ * upstream fails, a recent (stale) copy is returned with `stale: true`. With
+ * an `inflight` Map, identical concurrent searches share one upstream call.
+ * With a `breaker` (cache.js createCircuitBreaker), a run of failures makes
+ * later searches fail fast instead of each waiting out the timeout.
+ * Cache and in-flight keys are upstream URLs, which only hold coarsened
+ * coordinates.
+ */
+export async function searchTreatment(query, options) {
+  return fetchListingPage(buildUpstreamUrl(query), {
+    ...options,
+    page: query.page,
+    async finish(result) {
       if (result.total === 0 && query.page === 1 && query.codes.length >= 2) {
         try {
-          const broad = await searchTreatment(
-            { ...query, codes: [] },
-            { taxonomy, fetchImpl, cache, inflight, timeoutMs, retries, backoffMs, sleep },
-          );
+          const broad = await searchTreatment({ ...query, codes: [] }, options);
           const nearMatches = broad.results
             .map((f) => ({ ...f, matchedCodes: query.codes.filter((c) => f.codes.includes(c)) }))
             .filter((f) => f.matchedCodes.length > 0)
@@ -203,16 +362,7 @@ export async function searchTreatment(query, {
           // A fallback failure never breaks the primary response.
         }
       }
-      cache?.set(url, result);
       return result;
-    } catch (err) {
-      const stale = cache?.getStale?.(url);
-      if (stale) return { ...stale, stale: true };
-      throw err;
-    } finally {
-      inflight?.delete(url);
-    }
-  })();
-  inflight?.set(url, work);
-  return work;
+    },
+  });
 }

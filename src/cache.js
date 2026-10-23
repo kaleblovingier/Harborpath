@@ -56,18 +56,68 @@ export function createCache({ ttlMs = 60 * 60 * 1000, staleMs = 0, maxEntries = 
 
 // Fixed-window request limiter. Keys live only in memory for one window and
 // are never written to logs.
-export function createRateLimiter({ windowMs = 60 * 1000, max = 60, now = Date.now } = {}) {
+//
+// At most maxKeys distinct clients are tracked per window. Past that, new
+// clients share one bucket, so a flood of distinct addresses cannot grow
+// memory without bound (and cannot reset anyone else's count either).
+export function createRateLimiter({ windowMs = 60 * 1000, max = 60, maxKeys = 50_000, now = Date.now } = {}) {
   let windowStart = now();
   let counts = new Map();
+  const OVERFLOW = '\u0000overflow';
   return {
     allow(key) {
       if (now() - windowStart >= windowMs) {
         windowStart = now();
         counts = new Map();
       }
-      const n = (counts.get(key) ?? 0) + 1;
-      counts.set(key, n);
+      const k = counts.has(key) || counts.size < maxKeys ? key : OVERFLOW;
+      const n = (counts.get(k) ?? 0) + 1;
+      counts.set(k, n);
       return n <= max;
+    },
+    /** Whole seconds until the current window ends (for Retry-After). */
+    retryAfterSeconds() {
+      return Math.max(1, Math.ceil((windowStart + windowMs - now()) / 1000));
+    },
+    get size() {
+      return counts.size;
+    },
+  };
+}
+
+// Circuit breaker for the upstream API. After `threshold` consecutive
+// failures it opens for `cooldownMs`: requests then fail fast (and are served
+// from the stale cache when possible) instead of each waiting out the full
+// upstream timeout. After the cooldown one probe request is let through; its
+// success closes the breaker, its failure reopens it.
+export function createCircuitBreaker({ threshold = 3, cooldownMs = 30 * 1000, now = Date.now } = {}) {
+  let failures = 0;
+  let openUntil = 0;
+  let probing = false;
+  return {
+    /** True when a request may go upstream. */
+    allow() {
+      if (failures < threshold) return true;
+      if (now() < openUntil || probing) return false;
+      probing = true; // half-open: exactly one probe
+      return true;
+    },
+    success() {
+      failures = 0;
+      openUntil = 0;
+      probing = false;
+    },
+    failure() {
+      failures++;
+      probing = false;
+      if (failures >= threshold) openUntil = now() + cooldownMs;
+    },
+    /** Whole seconds until a probe will be allowed (0 when closed). */
+    retryAfterSeconds() {
+      return failures >= threshold ? Math.max(1, Math.ceil((openUntil - now()) / 1000)) : 0;
+    },
+    get open() {
+      return failures >= threshold && (now() < openUntil || probing);
     },
   };
 }
