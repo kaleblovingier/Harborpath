@@ -3,12 +3,19 @@ import { state, subscribe, wipeAll } from './state.js';
 import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
 import { homeView, treatmentView, healthView, statesView, stateDetailView, savedView, crisisView, privacyView, notFoundView } from './views/core.js';
 import { harmReductionView, overdoseView, supportView, choosingCareView } from './views/guides.js';
-import { careNavigatorView } from './views/navigator.js';
-import { medicationsView } from './views/medications.js';
-import { planView } from './views/plan.js';
+import { h } from './dom.js';
+import { pageHeader, emergencyCallout } from './views/common.js';
 
 const SITE = 'HarborPath';
 const EXIT_URL = 'https://www.weather.gov/';
+
+// Large views load only when their route is visited, so the overdose steps and
+// support lines arrive in a much smaller first download. Keep these paths in
+// public/sw.js APP_SHELL (test/offline.test.js checks).
+const lazy = (load, name) => (props) => load().then((m) => m[name](props));
+const careNavigatorView = lazy(() => import('./views/navigator.js'), 'careNavigatorView');
+const medicationsView = lazy(() => import('./views/medications.js'), 'medicationsView');
+const planView = lazy(() => import('./views/plan.js'), 'planView');
 
 const ROUTES = {
   '': [homeView, () => t('route.home', 'Find treatment, harm reduction & health services')],
@@ -54,10 +61,29 @@ function resolveRoute(path, query) {
   return [() => notFoundView({ query }), t('route.notFound', 'Page not found')];
 }
 
+let renderId = 0;
 function render() {
   const { path, query } = parseHash();
   const [buildView, title] = resolveRoute(path, query);
-  main.replaceChildren(buildView());
+  const id = ++renderId;
+  const view = buildView();
+  if (view instanceof Promise) {
+    main.replaceChildren(h('div', { class: 'view', 'aria-busy': 'true' }, pageHeader(title)));
+    view.then((el) => {
+      if (id !== renderId) return;
+      const hadFocus = document.activeElement?.id === 'page-title';
+      main.replaceChildren(el);
+      if (hadFocus) document.getElementById('page-title')?.focus({ preventScroll: true });
+    }, () => {
+      // The view could not download (no signal, or a new version was deployed).
+      if (id !== renderId) return;
+      main.replaceChildren(h('div', { class: 'view' }, pageHeader(title), emergencyCallout(),
+        h('p', null, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => location.reload() },
+          t('reach.retry', 'Try again')))));
+    });
+  } else {
+    main.replaceChildren(view);
+  }
   document.title = path ? `${title} · ${SITE}` : `${SITE}: ${title}`;
 
   for (const link of document.querySelectorAll('[data-nav]')) {
