@@ -1,6 +1,7 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
+import { buildCareRoutes, REENTRY_TRANSITION_INPUT } from './populationHelpers.js';
 
 // Valid SAMHSA filter codes for Dimension 6 validation and chip display
 const PAYMENT_OPTIONS = [
@@ -980,6 +981,22 @@ export function evaluateAsamCare(answers = {}) {
   };
 }
 
+/**
+ * Pure function returning the Phase 1 population care routes (pregnancy /
+ * postpartum, teens & young adults, re-entry after incarceration, xylazine /
+ * medetomidine) that apply to the navigator's answers. The re-entry route is
+ * built on evaluateTransitionRisk() so its codes match the transition engine.
+ * Runs entirely in memory; links carry SAMHSA codes only.
+ *
+ * @param {object} [answers]
+ * @returns {ReturnType<typeof buildCareRoutes>}
+ */
+export function getPopulationCareRoutes(answers = {}) {
+  const population = VALID_POPULATIONS.has(answers?.population) ? answers.population : '';
+  const transition = population === 'CJ' ? evaluateTransitionRisk(REENTRY_TRANSITION_INPUT) : undefined;
+  return buildCareRoutes({ ...answers, population }, { transition });
+}
+
 // ---------------------------------------------------------------------------
 // Interactive Care Navigator View
 // ---------------------------------------------------------------------------
@@ -1190,6 +1207,42 @@ export function careNavigatorView({ query } = {}) {
         )
       : null;
 
+    const careRoutes = getPopulationCareRoutes(answers);
+    const careRoutesBlock = careRoutes.length
+      ? h(
+          'div',
+          { class: 'care-routes', role: 'region', 'aria-label': t('nav.route.region_aria', 'Care routes for your situation') },
+          h('h4', null, t('nav.route.heading', 'Care routes for your situation')),
+          fine(t('nav.route.intro', 'Based on your answers, these routes add specific guidance and searches. Each search link contains only SAMHSA filter codes, never your answers.')),
+          careRoutes.map((route) =>
+            h(
+              'div',
+              { class: `callout ${route.urgent ? 'callout-warn' : 'callout-info'}`, dataset: { route: route.id } },
+              h('p', { class: 'callout-title' }, icon(route.urgent ? 'alert' : 'compass'), route.title),
+              p(strong(route.fits)),
+              h('p', { class: 'label' }, t('nav.route.why', 'Why:')),
+              ul(route.why),
+              h(
+                'p',
+                { class: 'actions' },
+                route.links.map((l) =>
+                  h('a', { class: 'btn btn-secondary btn-small', href: l.href }, icon('search'), `${l.label} (${l.codes.join(', ')})`),
+                ),
+                route.extraLinks.map((l) => h('a', { class: 'btn btn-ghost btn-small', href: l.href }, l.label)),
+              ),
+              fine(t('nav.route.sources', 'Sources: {sources}', { sources: route.sources })),
+            ),
+          ),
+          p(
+            t('nav.route.help', 'Questions about any route? Call the free, confidential SAMHSA National Helpline (24/7, English and Spanish): '),
+            tel('18006624357', '1-800-662-4357'),
+            t('nav.route.help_988', '. In a mental health crisis, call or text '),
+            tel('988', '988'),
+            '.',
+          ),
+        )
+      : null;
+
     const breakdownList = h(
       'dl',
       { class: 'service-list' },
@@ -1259,6 +1312,7 @@ export function careNavigatorView({ query } = {}) {
             'Tip: SAMHSA combines filters with AND. If “Search matching treatment near me” shows few results in a rural area, use “Broaden search” to search by your primary level of care first.',
           ),
         ),
+        careRoutesBlock,
         clinicalNotesBlock,
         h(
           'details',

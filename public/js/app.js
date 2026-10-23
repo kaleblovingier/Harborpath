@@ -1,14 +1,21 @@
 import { api } from './api.js';
 import { state, subscribe, wipeAll } from './state.js';
-import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
+import { initI18n, onLanguageChange, isPlainLanguage, t, formatDate } from './i18n.js';
+import { announce, h } from './dom.js';
 import { homeView, treatmentView, healthView, statesView, stateDetailView, savedView, crisisView, privacyView, notFoundView } from './views/core.js';
 import { harmReductionView, overdoseView, supportView, choosingCareView } from './views/guides.js';
-import { careNavigatorView } from './views/navigator.js';
-import { medicationsView } from './views/medications.js';
-import { planView } from './views/plan.js';
+import { pageHeader, emergencyCallout } from './views/common.js';
 
 const SITE = 'HarborPath';
 const EXIT_URL = 'https://www.weather.gov/';
+
+// Large views load only when their route is visited, so the overdose steps and
+// support lines arrive in a much smaller first download. Keep these paths in
+// public/sw.js APP_SHELL (test/offline.test.js checks).
+const lazy = (load, name) => (props) => load().then((m) => m[name](props));
+const careNavigatorView = lazy(() => import('./views/navigator.js'), 'careNavigatorView');
+const medicationsView = lazy(() => import('./views/medications.js'), 'medicationsView');
+const planView = lazy(() => import('./views/plan.js'), 'planView');
 
 const ROUTES = {
   '': [homeView, () => t('route.home', 'Find treatment, harm reduction & health services')],
@@ -54,10 +61,35 @@ function resolveRoute(path, query) {
   return [() => notFoundView({ query }), t('route.notFound', 'Page not found')];
 }
 
-function render() {
+let renderId = 0;
+/**
+ * Render the current route. `moveFocus: false` keeps focus and scroll where
+ * they are, for re-renders the visitor did not navigate to (language or
+ * plain-language changes). Lazily loaded views resolve to a Promise; a stale
+ * one (the visitor navigated again) is ignored via renderId.
+ */
+function render({ moveFocus = true } = {}) {
   const { path, query } = parseHash();
   const [buildView, title] = resolveRoute(path, query);
-  main.replaceChildren(buildView());
+  const id = ++renderId;
+  const view = buildView();
+  if (view instanceof Promise) {
+    main.replaceChildren(h('div', { class: 'view', 'aria-busy': 'true' }, pageHeader(title)));
+    view.then((el) => {
+      if (id !== renderId) return;
+      const hadFocus = document.activeElement?.id === 'page-title';
+      main.replaceChildren(el);
+      if (hadFocus) document.getElementById('page-title')?.focus({ preventScroll: true });
+    }, () => {
+      // The view could not download (no signal, or a new version was deployed).
+      if (id !== renderId) return;
+      main.replaceChildren(h('div', { class: 'view' }, pageHeader(title), emergencyCallout(),
+        h('p', null, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => location.reload() },
+          t('reach.retry', 'Try again')))));
+    });
+  } else {
+    main.replaceChildren(view);
+  }
   document.title = path ? `${title} · ${SITE}` : `${SITE}: ${title}`;
 
   for (const link of document.querySelectorAll('[data-nav]')) {
@@ -65,7 +97,7 @@ function render() {
     else link.removeAttribute('aria-current');
   }
   closeMenu();
-  if (!firstRender) {
+  if (!firstRender && moveFocus) {
     window.scrollTo(0, 0);
     document.getElementById('page-title')?.focus({ preventScroll: true });
   }
@@ -84,7 +116,7 @@ document.addEventListener('click', (e) => {
   if (href === location.hash || (href === '#/' && !location.hash)) render();
   else location.replace(href);
 });
-window.addEventListener('hashchange', render);
+window.addEventListener('hashchange', () => render());
 
 // ---------------------------------------------------------------- Quick exit
 function quickExit() {
@@ -99,6 +131,11 @@ document.getElementById('quick-exit')?.addEventListener('click', quickExit);
 let lastEscape = 0;
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
+  // A single Escape also closes the open mobile menu and returns focus to its button.
+  if (toggle?.getAttribute('aria-expanded') === 'true') {
+    closeMenu();
+    toggle.focus();
+  }
   const now = Date.now();
   if (now - lastEscape < 1000) quickExit();
   lastEscape = now;
@@ -150,10 +187,18 @@ api.meta().then((meta) => {
 }).catch(() => { /* footer note is optional */ });
 
 // ---------------------------------------------------------------- Initialize i18n & render
+let lastPlain = isPlainLanguage();
 onLanguageChange(() => {
   updateSavedCount();
   renderFooterMeta();
-  render();
+  // Keep focus on the language or plain-language control the visitor used.
+  render({ moveFocus: false });
+  if (isPlainLanguage() !== lastPlain) {
+    lastPlain = isPlainLanguage();
+    announce(lastPlain
+      ? t('app.plainToggle.on', 'Plain language is on.')
+      : t('app.plainToggle.off', 'Plain language is off.'));
+  }
 });
 
 initI18n().finally(() => {
