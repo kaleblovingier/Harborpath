@@ -6,15 +6,15 @@
 // for facilities in a state within a given radius distance"); the value must be
 // quoted ('WA'), or the API rejects the request.
 import { readLatLng } from './geo.js';
-import { InputError, KINDS, PAGE_SIZE, UPSTREAM_URL, normalizeFacility } from './findtreatment.js';
+import {
+  InputError, PAGE_SIZE, UPSTREAM_URL, fetchListingPage, parseCodes, parseKind, parsePage,
+} from './findtreatment.js';
 import { describeRegion } from './regions.js';
-import { toFiniteNumber } from './util.js';
 
 export const TELEHEALTH_CODE = 'TELE';
 // 5,000 miles reaches every corner of any state or territory from any point in it.
 const STATEWIDE_METERS = 8_046_720;
 const MAX_EXTRA_CODES = 7;
-const MAX_PAGE = 40;
 
 /**
  * Validate a telehealth query. `state` is required; lat/lng are optional, and
@@ -29,25 +29,16 @@ export function parseTelehealthQuery(params, { taxonomy, anchorFor }) {
   }
 
   let point = null;
-  if (params.get('lat') || params.get('lng')) {
+  if (params.has('lat') || params.has('lng')) {
     point = readLatLng(params);
     if (!point) throw new InputError('A valid location is required.');
   }
   const anchor = point ?? anchorFor(code);
   if (!anchor) throw new InputError('No search point for that state');
 
-  const kind = (params.get('kind') ?? 'sa').toLowerCase();
-  if (!KINDS.includes(kind)) throw new InputError('kind must be "sa" or "mh"');
-
-  const page = Number(params.get('page') ?? 1);
-  if (!Number.isInteger(page) || page < 1 || page > MAX_PAGE) throw new InputError('page is out of range');
-
-  const extra = [...new Set((params.get('codes') ?? '').split(',').map((c) => c.trim()).filter(Boolean))]
-    .filter((c) => c !== TELEHEALTH_CODE);
-  if (extra.length > MAX_EXTRA_CODES) throw new InputError(`At most ${MAX_EXTRA_CODES} filters with telehealth`);
-  for (const c of extra) {
-    if (!taxonomy.hasService(c)) throw new InputError(`Unknown service code: ${c}`);
-  }
+  const kind = parseKind(params);
+  const page = parsePage(params);
+  const extra = parseCodes(params, taxonomy, { max: MAX_EXTRA_CODES, ignore: TELEHEALTH_CODE });
 
   return {
     state: code,
@@ -75,37 +66,23 @@ export function buildTelehealthUrl({ state, lat, lng, byDistance, kind, page, co
   return `${UPSTREAM_URL}?${qs}`;
 }
 
-export async function searchTelehealth(query, { taxonomy, fetchImpl = fetch, cache, timeoutMs = 15000 }) {
-  const url = buildTelehealthUrl(query);
-  const cached = cache?.get(url);
-  if (cached) return cached;
-
-  const res = await fetchImpl(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
-    signal: AbortSignal.timeout(timeoutMs),
+/**
+ * Statewide telehealth search. Shares the treatment search's hardened
+ * upstream path (fetchListingPage): a hard timeout, retries for transient
+ * failures, response validation, the circuit breaker, in-flight sharing, and
+ * stale-while-revalidate answers from the cache when the upstream is down.
+ */
+export async function searchTelehealth(query, { taxonomy, ...options }) {
+  return fetchListingPage(buildTelehealthUrl(query), {
+    ...options,
+    taxonomy,
+    page: query.page,
+    finish: (page) => ({
+      ...page,
+      state: describeRegion(query.state),
+      byDistance: query.byDistance,
+      // Distances from a point the visitor did not choose would mislead.
+      results: query.byDistance ? page.results : page.results.map((f) => ({ ...f, miles: null })),
+    }),
   });
-  if (!res.ok) throw new Error(`FindTreatment.gov responded with HTTP ${res.status}`);
-  const text = await res.text();
-  let body;
-  try {
-    body = JSON.parse(text);
-  } catch {
-    throw new Error(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`);
-  }
-  const rows = Array.isArray(body.rows) ? body.rows : [];
-  const results = rows
-    .map((r) => normalizeFacility(r, taxonomy))
-    // Distances from a point the visitor did not choose would mislead.
-    .map((f) => (query.byDistance ? f : { ...f, miles: null }));
-  const result = {
-    page: toFiniteNumber(body.page) ?? query.page,
-    totalPages: toFiniteNumber(body.totalPages) ?? 0,
-    total: toFiniteNumber(body.recordCount) ?? rows.length,
-    pageSize: PAGE_SIZE,
-    state: describeRegion(query.state),
-    byDistance: query.byDistance,
-    results,
-  };
-  cache?.set(url, result);
-  return result;
 }
