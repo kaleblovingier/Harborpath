@@ -1,1 +1,0 @@
-$(cat /tmp/population-routes.test.js)
