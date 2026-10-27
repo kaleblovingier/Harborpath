@@ -43,7 +43,7 @@ node scripts/smoke.mjs <url>   # post-deploy smoke test (see docs/DEPLOYMENT.md)
 npm run data:build   # refresh data/ from SAMHSA, Census, HRSA, VA, IHS, CMS, and Medicaid
 ```
 
-Environment variables: `PORT` (default `3000`), `HOST` (default `0.0.0.0`), and `TRUST_PROXY=1` when running behind a load balancer, so rate limiting sees client IPs.
+Environment variables: `PORT` (default `3000`), `HOST` (default `0.0.0.0`), and `TRUST_PROXY=<number of proxies>` (usually `1`) when running behind a load balancer, so rate limiting sees client IPs.
 
 ### Deploy
 

@@ -12,7 +12,7 @@
 |---|---|---|
 | `PORT` | `3000` | |
 | `HOST` | `0.0.0.0` | |
-| `TRUST_PROXY` | off | Set to `1` only behind a reverse proxy that sets `X-Forwarded-For`. The rate limiter keys on the **rightmost** entry. It is automatic on Vercel. |
+| `TRUST_PROXY` | off | The number of proxies in front of the app that append to `X-Forwarded-For`: `1` for one load balancer, `2` for a CDN plus a load balancer. The rate limiter keys on the entry that many places from the right; IPv6 clients are keyed by /64. Leave it unset when nothing sits in front of the app. It is automatic on Vercel. |
 
 There are no secrets. FindTreatment.gov, Census, HRSA, and the other sources need no keys.
 

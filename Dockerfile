@@ -6,8 +6,9 @@ COPY src ./src
 COPY public ./public
 COPY data ./data
 
-# Set TRUST_PROXY=1 only when a reverse proxy in front of this container sets
-# X-Forwarded-For; without a proxy, trusting it would let clients pick their key.
+# Set TRUST_PROXY to the number of reverse proxies in front of this container
+# that append to X-Forwarded-For (1 for one load balancer). Without a proxy,
+# leave it unset: trusting the header would let clients pick their own key.
 ENV NODE_ENV=production \
     PORT=3000
 
