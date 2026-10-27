@@ -145,7 +145,7 @@ export default {
   'match.s3.either': 'Cualquiera está bien',
   'match.s3.inPerson': 'En persona',
   'match.s3.virtual': 'En línea / telesalud, en cualquier parte de mi estado',
-  'match.s3.privacy': 'Basta con un código postal o una ciudad. Su ubicación se redondea a aproximadamente 1 km y nunca se guarda.',
+  'match.s3.privacy': 'Basta con un código postal o una ciudad. Su ubicación se redondea a aproximadamente 1 km antes de enviarse, y HarborPath no la guarda.',
   'match.s3.custom': 'Distancia personalizada en millas (opcional, 1–250)',
   'match.s4.title': '¿Cómo va a pagar?',
   'match.s4.coverage': 'Su cobertura',

@@ -1690,7 +1690,7 @@ export function careNavigatorView({ query } = {}) {
       ),
     ),
 
-    // Zero-knowledge privacy banner
+    // Privacy banner: answers are evaluated in the browser
     h(
       'div',
       { class: 'callout callout-info', role: 'note' },
@@ -1698,12 +1698,12 @@ export function careNavigatorView({ query } = {}) {
         'p',
         { class: 'callout-title' },
         icon('lock'),
-        t('nav.privacy.title', '100% private, zero-knowledge clinical self-check'),
+        t('nav.privacy.title', 'Private self-check: your answers stay in this browser tab'),
       ),
       p(
         t(
           'nav.privacy.body',
-          'Answers stay in this tab’s memory only and are never sent to a server, saved to disk, or shared with anyone. Closing this tab or pressing Quick Exit erases everything immediately.',
+          'Your result is worked out in your browser. HarborPath does not send your answers to its server or save them. If you choose to search for programs, only the matching service filters and your rounded location are sent. Closing this tab or pressing Quick exit clears your answers from this page, but not your browser history or anything you copied or printed.',
         ),
       ),
     ),

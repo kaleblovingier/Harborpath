@@ -300,7 +300,7 @@ const STEPS = [
         onChange: (v) => { profile.modality = v; },
       }),
       customMilesField(),
-      fine(t('match.s3.privacy', 'A ZIP code or city is enough. Your location is rounded to about 1 km and never stored.')),
+      fine(t('match.s3.privacy', 'A ZIP code or city is enough. Your location is rounded to about 1 km before it is sent, and HarborPath does not save it.')),
     ],
   },
   {
@@ -730,10 +730,17 @@ function actionPlan(shown) {
 }
 
 // ---------------------------------------------------------------- View
+let appliedStart = null;
+
 export function matchView({ query } = {}) {
-  const start = query?.get('start');
-  if (start === 'virtual') { profile.modality = 'virtual'; }
-  if (start === 'affordable') { profile.needsFinancialHelp = true; }
+  // The router keeps a link's filters across re-renders (e.g. a language
+  // change), so apply a preset once per navigation, not on every render.
+  if (query && query !== appliedStart) {
+    appliedStart = query;
+    const start = query.get('start');
+    if (start === 'virtual') profile.modality = 'virtual';
+    if (start === 'affordable') profile.needsFinancialHelp = true;
+  }
   root = h('div', { class: 'match-root' });
   rerender();
   return h('div', { class: 'view view-match' },

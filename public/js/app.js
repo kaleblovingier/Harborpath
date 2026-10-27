@@ -33,10 +33,31 @@ const main = document.getElementById('main');
 let firstRender = true;
 let lastMeta = null;
 
-function parseHash() {
-  const raw = location.hash.replace(/^#\/?/, '');
+function splitHref(hash) {
+  const raw = String(hash).replace(/^#\/?/, '');
   const [path, qs = ''] = raw.split('?');
   return { path: path.replace(/\/$/, ''), query: new URLSearchParams(qs) };
+}
+
+// Filters such as `?codes=PW,OTP` or `?tab=mental` can reveal health details,
+// so they are kept out of the address bar, back history, and session restore.
+// Internal links hand their filters over in memory (see the click handler).
+// When a URL with filters is opened directly or set by code, the filters are
+// read once and the visible URL is immediately replaced with the bare route.
+// `carried` keeps them in memory so a re-render of the same route (for
+// example, after a language change) does not lose them.
+let carried = null;
+
+function parseHash() {
+  const { path, query } = splitHref(location.hash);
+  if ([...query.keys()].length) {
+    carried = { path, query };
+    history.replaceState(history.state, '', `#/${path}`);
+    return { path, query };
+  }
+  if (carried && carried.path === path) return { path, query: carried.query };
+  carried = null;
+  return { path, query };
 }
 
 function resolveRoute(path, query) {
@@ -82,7 +103,10 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#/"], a[href="#"]');
   if (!a) return;
   e.preventDefault();
-  const href = a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href');
+  const { path, query } = splitHref(a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href'));
+  // Explicit navigation replaces any filters carried from an earlier link.
+  carried = [...query.keys()].length ? { path, query } : null;
+  const href = `#/${path}`;
   if (href === location.hash || (href === '#/' && !location.hash)) render();
   else location.replace(href);
 });

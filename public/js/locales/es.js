@@ -3,6 +3,7 @@
 
 import esMatch from './es-match.js';
 import esClinical from './es-clinical.js';
+import esPrivacy from './es-privacy.js';
 
 export default {
   // ---------------------------------------------------------------- App shell & static HTML
@@ -232,7 +233,7 @@ export default {
   'loc.useMyLocation': 'Usar mi ubicación',
   'loc.label': '¿Dónde debemos buscar?',
   'loc.distance': 'Distancia',
-  'loc.help': 'Su ubicación exacta nunca se guarda. Las búsquedas usan un área redondeada a ~1 km.',
+  'loc.help': 'La ubicación de su dispositivo se redondea a aproximadamente 1 km antes de enviarse, y el código de HarborPath no la guarda.',
   'finder.enterLocation': 'Ingrese un código postal o ciudad arriba, o use su ubicación actual, para buscar cerca.',
   'finder.searching': 'Buscando cerca de {label}…',
   'finder.errorTitle': 'No se pudo completar la búsqueda',
@@ -399,8 +400,8 @@ export default {
   // ---------------------------------------------------------------- Clinical Care Navigator (navigator.js)
   'nav.title': 'Navegador de atención: una autoevaluación basada en las dimensiones de los Criterios ASAM',
   'nav.lede': '¿No sabe si necesita desintoxicación médica, medicamentos ambulatorios, tratamiento ambulatorio intensivo o atención residencial? Responda tanto o tan poco como desee para relacionar sus necesidades con los filtros oficiales de SAMHSA.',
-  'nav.privacy.title': 'Autoevaluación clínica 100 % privada y sin almacenamiento externo',
-  'nav.privacy.body': 'Sus respuestas permanecen únicamente en la memoria temporal de esta pestaña y nunca se envían a ningún servidor, ni se guardan en el disco ni se comparten con nadie. Al cerrar la pestaña o presionar Salida rápida se borra todo de inmediato.',
+  'nav.privacy.title': 'Autoevaluación privada: sus respuestas se quedan en esta pestaña del navegador',
+  'nav.privacy.body': 'Su resultado se calcula en su navegador. HarborPath no envía sus respuestas a su servidor ni las guarda. Si decide buscar programas, solo se envían los filtros de servicio correspondientes y su ubicación redondeada. Cerrar esta pestaña o presionar Salida rápida borra sus respuestas de esta página, pero no su historial del navegador ni lo que haya copiado o impreso.',
   'nav.form.heading': 'Paso 1: Cuéntenos qué está pasando en este momento',
   'nav.form.instructions': 'Todas las preguntas son opcionales. Su recomendación de atención abajo se actualiza automáticamente mientras elige.',
   'nav.cta.reset': 'Restablecer todas las respuestas',
@@ -588,14 +589,14 @@ export default {
 
   // ---------------------------------------------------------------- Personal Safety & Action Plan (plan.js)
   'plan.title': 'Plan de seguridad, consejería y qué esperar',
-  'plan.lede': 'Cree un plan personal de seguridad y recuperación 100 % privado en su navegador, conozca los enfoques de consejería basados en evidencia y vea qué ocurre realmente en una primera cita de admisión.',
+  'plan.lede': 'Cree en su navegador un plan personal y privado de seguridad y recuperación, conozca los enfoques de consejería basados en evidencia y vea qué ocurre realmente en una primera cita de admisión.',
   'plan.toc.safetyPlan': 'Plan personal de seguridad y acción',
   'plan.toc.intake': 'Qué esperar en su primera cita',
   'plan.toc.modalities': 'Enfoques de consejería y terapia',
   'plan.toc.rights': 'Sus derechos de confidencialidad (42 CFR Parte 2)',
   'plan.section.safetyPlan': 'Plan personal de seguridad y acción para la recuperación',
-  'plan.zeroKnowledge.title': '100 % en la memoria del navegador — nunca se guarda ni se transmite',
-  'plan.zeroKnowledge.desc': 'Todo lo que escriba o seleccione abajo permanece estrictamente en la memoria RAM temporal de su navegador. Nada se envía a un servidor, ni se guarda en cookies ni en el disco a menos que usted decida copiarlo o imprimirlo. Al hacer clic en Salida rápida (o presionar Escape dos veces) se borra de inmediato.',
+  'plan.zeroKnowledge.title': 'Se queda en esta pestaña del navegador: HarborPath no lo guarda ni lo envía',
+  'plan.zeroKnowledge.desc': 'Lo que escriba o seleccione abajo se queda en la memoria de esta pestaña del navegador. HarborPath no lo envía a un servidor ni lo guarda en cookies ni en el almacenamiento del sitio. Usted decide si lo copia o lo imprime. Salida rápida (o presionar Escape dos veces) lo borra de esta página, pero no puede borrar su portapapeles ni lo que haya impreso.',
   'plan.form.ariaLabel': 'Creador de plan personal de seguridad y acción para la recuperación',
   'plan.form.heading': 'arme su plan (complete solo lo que le resulte útil)',
   'plan.form.sub': 'Ya sea que su meta hoy sea mantenerse con vida, reducir el consumo, empezar un medicamento o prevenir un retorno al consumo, los pasos concretos ayudan en los momentos difíciles.',
@@ -765,7 +766,7 @@ export default {
   'home.promise.nopaid.title': 'Sin posicionamiento pagado',
   'home.promise.nopaid.body': 'Sin anuncios, listados patrocinados ni comisiones por referencias. Nunca vendemos datos ni desviamos llamadas a centros privados.',
   'home.promise.privacy.title': 'Privado por diseño',
-  'home.promise.privacy.body': 'Sin cuentas, cookies, analíticas ni scripts de terceros. Su ubicación se redondea y nunca se guarda; las herramientas clínicas funcionan 100 % en la memoria de su navegador.',
+  'home.promise.privacy.body': 'Sin cuentas, cookies, analíticas ni scripts de terceros. Su ubicación se redondea a aproximadamente 1 km antes de salir de su dispositivo, el código de HarborPath no guarda sus búsquedas y las respuestas de las herramientas clínicas permanecen en la memoria de su navegador.',
   'home.promise.meet.title': 'Le acompaña donde usted está',
   'home.promise.meet.body': 'Ya sea que quiera dejar de consumir, reducir el consumo, empezar un medicamento o simplemente estar más seguro/a esta noche, aquí hay algo para usted.',
 
@@ -875,16 +876,16 @@ export default {
   'privacy.collect.1.lead': 'Sin cuentas, cookies, analíticas, anuncios ni píxeles de rastreo. ',
   'privacy.collect.1.body': 'El sitio no carga scripts, fuentes ni mapas de terceros.',
   'privacy.collect.2.lead': 'La ubicación se redondea. ',
-  'privacy.collect.2.body': 'Cuando busca, su área se redondea a aproximadamente 1 km (0.01°) antes de enviarse. HarborPath reenvía las búsquedas de tratamiento a FindTreatment.gov de SAMHSA con esa ubicación redondeada. Las búsquedas de centros de salud, VA, IHS, clínicas rurales, hospitales y códigos postales se responden en nuestro propio servidor.',
-  'privacy.collect.3.lead': 'Nada se registra con su ubicación. ',
-  'privacy.collect.3.body': 'Nuestro servidor no guarda términos de búsqueda, códigos postales ni coordenadas. Las búsquedas redondeadas pueden almacenarse en caché en memoria hasta por una hora para agilizar búsquedas repetidas.',
+  'privacy.collect.2.body': 'Si usa la ubicación de su dispositivo, se redondea a aproximadamente 1 km (0.01°) en su dispositivo antes de enviarse. El código postal o el nombre del lugar que escriba se envía a nuestro servidor para buscarlo. HarborPath reenvía las búsquedas de tratamiento a FindTreatment.gov de SAMHSA con una ubicación redondeada. Las búsquedas de centros de salud, VA, IHS, clínicas rurales, hospitales y códigos postales se responden en nuestro propio servidor.',
+  'privacy.collect.3.lead': 'Nuestro código no registra sus búsquedas. ',
+  'privacy.collect.3.body': 'El código del servidor de HarborPath no registra ni guarda términos de búsqueda, códigos postales, coordenadas ni filtros de servicios. Las búsquedas se envían como parte de la dirección web (parámetros de consulta de la URL), por lo que nuestro proveedor de alojamiento (por ejemplo, Vercel) puede conservar registros de acceso estándar que incluyen esas direcciones y su dirección IP. Las búsquedas redondeadas pueden almacenarse en caché en la memoria del servidor hasta por una hora para agilizar búsquedas repetidas.',
   'privacy.collect.4.lead': 'Las herramientas clínicas y los lugares guardados permanecen en su dispositivo. ',
-  'privacy.collect.4.body': 'El Navegador de Atención ASAM y el Plan Personal de Seguridad funcionan 100 % en la memoria de su navegador y nunca se nos envían. Los lugares guardados permanecen en memoria a menos que elija conservarlos en este dispositivo.',
+  'privacy.collect.4.body': 'Sus respuestas en el Navegador de Atención ASAM y en el Plan Personal de Seguridad se mantienen en la memoria de su navegador y no se envían a nuestro servidor. Si luego busca tratamiento, solo se envía esa búsqueda (una ubicación redondeada y los filtros de servicios). Los lugares guardados permanecen en memoria a menos que elija conservarlos en este dispositivo.',
   'privacy.outbound.title': 'Cuando sale de HarborPath',
   'privacy.outbound.body': 'Los enlaces a otros sitios se abren en una pestaña nueva sin indicarles que usted provino de HarborPath. Esos sitios, incluidos los enlaces de mapas para indicaciones, tienen sus propias prácticas de privacidad.',
   'privacy.safety.title': 'Cómo mantenerse seguro/a en un dispositivo compartido',
   'privacy.safety.1.lead': 'Salida rápida: ',
-  'privacy.safety.1.body': 'presione el botón Salida rápida o la tecla Escape dos veces. HarborPath borra lo que guardó (incluidos lugares guardados, preferencia de idioma y cualquier copia sin conexión) y reemplaza esta página por un sitio del clima.',
+  'privacy.safety.1.body': 'presione el botón Salida rápida o la tecla Escape dos veces. HarborPath borra lo que guardó en este navegador (su memoria, el almacenamiento local, los lugares guardados, la preferencia de idioma y cualquier copia sin conexión) y reemplaza esta página por un sitio del clima. No puede borrar el historial de su navegador, nada de lo que haya copiado al portapapeles ni los archivos que haya descargado o impreso.',
   'privacy.safety.2': 'HarborPath ocupa una sola entrada en el historial de retroceso de su navegador, por lo que presionar Atrás después de una salida rápida no regresa aquí.',
   'privacy.safety.3': 'Su navegador aún podría mostrar HarborPath en su lista de historial. Para mayor privacidad, use una ventana privada o de incógnito, o borre su historial después.',
   'privacy.safety.4': 'Si alguien pudiera estar vigilando su dispositivo, considere usar otro teléfono o computadora, como el de una biblioteca.',
@@ -986,4 +987,5 @@ export default {
   'meds.specialPopulations.title': 'Poblaciones Especiales y Situaciones Clínicas (Embarazo, Salud Hepática/Renal y Cirugía)',
   ...esMatch,
   ...esClinical,
+  ...esPrivacy,
 };

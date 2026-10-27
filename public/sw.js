@@ -40,6 +40,7 @@ const APP_SHELL = [
   '/js/locales/es.js',
   '/js/locales/es-match.js',
   '/js/locales/es-clinical.js',
+  '/js/locales/es-privacy.js',
   '/js/locales/es-services.js',
 ];
 

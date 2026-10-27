@@ -50,6 +50,8 @@ Errors use `400` for bad input (with a readable `error`), `429` when rate limite
 | Location stays in memory only; saved list is opt-in persistent | `public/js/state.js` |
 | Quick exit wipes state and calls `location.replace()`; internal navigation also uses `replace()`, so the site holds one history entry | `public/js/app.js` |
 | All DOM text set through `textContent`, never `innerHTML` | `public/js/dom.js` `h()` |
+| Filters in the hash (`?codes=`, `?tab=`…) are read once, kept in memory, and stripped from the address bar with `history.replaceState`; internal links never put them in the URL | `public/js/app.js` `parseHash` and the click handler |
+| The Privacy page states the real data flows, including host access logs that can hold query strings with IP addresses, and includes a consumer health data privacy notice | `public/js/views/core.js` `privacyView` |
 
 HarborPath stores no personal health information, so it is not a HIPAA covered entity or a 42 CFR Part 2 program. The consent-vault design in `legacy/` is not part of this build.
 
