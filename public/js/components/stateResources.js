@@ -123,7 +123,8 @@ function renderSafetyNet(summary, miles) {
 /** The compact panel for finder pages. Re-renders when the searched location changes. */
 export function statePanel() {
   const body = h('div', { 'aria-live': 'polite' });
-  const root = h('section', { class: 'section state-panel', 'aria-labelledby': 'state-panel-title' }, body);
+  // Labelled by its heading once a state loads; until then the heading does not exist.
+  const root = h('section', { class: 'section state-panel' }, body);
   let shownFor = null;
   let request = 0;
 
@@ -188,6 +189,7 @@ export function statePanel() {
           ext(data.links.nextDistro, t('regions.nextDistroLink', 'NEXT Distro: {state}', { state: region.name })),
           t('regions.nextDistroShort', ': local programs, and supplies by mail where available.'))));
     }
+    body.parentElement?.setAttribute('aria-labelledby', 'state-panel-title');
     clear(body).append(
       h('h2', { id: 'state-panel-title' }, t('regions.panelTitle', 'Resources in {state}', { state: region.name })),
       renderSafetyNet(summary, radius),

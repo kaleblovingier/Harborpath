@@ -2,28 +2,32 @@
 
 Run date: 2026-10-27, on Node 22.22. Run with `npm test`; the browser walkthrough is `node scripts/e2e-match.mjs`.
 
-## Results
+## Results (round 2)
 
 | Suite | Tests | Result |
 |---|---|---|
 | Existing suites (API, privacy headers, geocoding, providers, regions, clinical modules, i18n, SW) | 93 | ✅ pass |
-| `test/match.test.js`: matching engine scenarios | 18 | ✅ pass |
-| `test/virtualProviders.test.js`: registry validation, review gate, endpoint | 6 | ✅ pass |
-| `test/security.test.js`: regressions for audit findings H-1 and L-9 | 3 | ✅ pass |
-| **Total** | **120** | **120 pass, 0 fail** |
+| `test/match.test.js`: matching-engine scenarios, Medicaid state rules, hostile input | 21 | ✅ pass |
+| `test/virtualProviders.test.js`: registry validation, review gate, public fields, endpoint | 7 | ✅ pass |
+| `test/security.test.js`: proxy key, IPv6 /64, overflow-bucket lockout, hop count | 6 | ✅ pass |
+| `test/clinical-safety.test.js`: self-report framing, crisis-first card, prescriber warning | 8 | ✅ pass |
+| `test/privacy.test.js`: no absolute privacy claims (EN + ES), health data notice, URL filter stripping | 8 | ✅ pass |
+| `test/accessibility.test.js`: focus restoration, no `setAttribute(…, null)`, keyboard-reachable tables | 5 | ✅ pass |
+| **Total** | **148 tests, 12 suites** | **148 pass, 0 fail, 0 todo** |
 
-The headless Chromium walkthrough (375×800, English and Spanish) passed. It uses the recorded FindTreatment fixture in place of the live API:
+**Browser verification** (headless Chromium):
 
-- The landing page shows the new headline and the four calls to action.
-- Choosing "anyone in danger?" shows the emergency panel and moves focus to it; "Everyone is safe" returns to the flow.
-- The full assessment works: opioids, outpatient, buprenorphine, ZIP 98101, Medicaid, evening hours, transportation help.
-- Results are ranked with reasons. Medicaid is shown as "Listed as accepted (provider-reported)", and hours appear under "Still needs confirming".
-- Comparing two programs builds a side-by-side table; the action plan has 5 steps.
-- There is no horizontal scroll at 375px.
-- **Privacy:** no answer (medicaid, opioid, evening, transport, buprenorphine) appears in any request URL. The hash stays `#/match` and localStorage stays empty.
-- The Spanish UI renders, and there are no console errors.
-
-`node scripts/smoke.mjs <url>` against a local server: 10 of 11 checks pass. The `/api/treatment` check fails only because this sandbox cannot reach findtreatment.gov; the server answered with its designed 502 fallback.
+- **axe-core 4.14, WCAG 2.0/2.1/2.2 A + AA:** the QA swarm scanned 120 page states. That covered every route, every match step, the emergency panel, and results with comparison, at 375 and 1280px, in light and dark, and in English and Spanish. After the fixes, a re-scan of the affected routes at 320px in both languages shows no violations. The one exception is the documented sticky-bar `target-size` flag ([SECURITY_REVIEW.md](SECURITY_REVIEW.md)).
+- **Reflow:** no horizontal scroll at 320px on `#/`, `#/match`, `#/navigator`, `#/plan`, `#/medications`, `#/treatment`, or `#/privacy`, in both languages.
+- **Keyboard and focus:**
+  - Arrow keys no longer open the emergency panel.
+  - Focus lands on the step heading after "Everyone is safe", on the results heading after loading, and stays on a filter after toggling it.
+  - Checking a compare box moves focus to the comparison; unchecking keeps focus on the box; clearing the comparison moves it to the results heading.
+  - The 4th compare box is disabled and says why.
+- **Functional:** with an 8-listing fixture, the filters show 8 → 4 / 4 / 2 results. "Change answers" round-trips. A preset link restarts the questions. The empty state never invents results.
+- **Navigation:** hash-only route changes render correctly. This check caught and fixed a focus crash on the first render of `#/match` before anything was pushed.
+- **`scripts/e2e-match.mjs`:** passes. No sensitive answer appears in any request URL, nothing is written to localStorage, and there are no console errors.
+- **`scripts/smoke.mjs`:** 10 of 11 checks pass locally. The `/api/treatment` check can't pass in this sandbox (no outbound network); the server returns its designed 502 fallback.
 
 ## Scenario coverage (from the brief)
 
@@ -47,12 +51,7 @@ The headless Chromium walkthrough (375×800, English and Spanish) passed. It use
 
 ## Not yet tested
 
-- An automated accessibility scan (axe-core), since there is no dependency budget for it in CI yet. Manual checks so far:
-  - fieldsets with legends for every question;
-  - focus moves to each step heading;
-  - visible focus rings;
-  - an `aria-live` results count;
-  - the comparison table uses `th` with `scope`.
+- Accessibility scans in CI. axe was run as a one-off audit, not on every push, because it is not a project dependency.
 - Screen readers (NVDA, VoiceOver), real devices, and Safari or Firefox.
 - The live FindTreatment.gov API from the new flow. Only the fixture has been used; this sandbox has no outbound access.
 - Load and performance testing.

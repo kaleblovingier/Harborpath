@@ -1057,7 +1057,7 @@ export function medicationsView({ query } = {}) {
   function renderInteractions(shouldAnnounce = false) {
     for (const b of subButtons) {
       const on = b.dataset.substance === activeSubstance;
-      b.setAttribute('aria-current', on ? 'true' : null);
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
       b.setAttribute('aria-pressed', String(on));
     }
     const matches = filterInteractions({ substance: activeSubstance, query: interactionSearch });
@@ -1122,7 +1122,7 @@ export function medicationsView({ query } = {}) {
     for (const pill of regimenPills) {
       const checked = selectedRegimen.has(pill.dataset.agentId);
       pill.setAttribute('aria-pressed', String(checked));
-      pill.setAttribute('aria-current', checked ? 'true' : null);
+      if (checked) pill.setAttribute('aria-current', 'true'); else pill.removeAttribute('aria-current');
     }
 
     clear(regimenOutput);
@@ -1261,7 +1261,7 @@ export function medicationsView({ query } = {}) {
         h('p', { class: 'callout-title' }, icon('alert'), t('meds.bernese.warn.title', 'For prescribers. Not for self-dosing.')),
         p(t('meds.bernese.warn.body', 'The schedule below is an example to help you talk with a prescriber. It is not instructions to follow on your own. Never start buprenorphine this way or change any dose without your prescriber. If you do not have one, a bridge clinic or telehealth program can help, or call the SAMHSA National Helpline at 1-800-662-4357 (free, 24/7).')),
       ),
-      h('div', { class: 'table-wrap' },
+      h('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Illustrative 7-day low-dose buprenorphine micro-induction cross-taper schedule' },
         h('table', null,
           h('caption', { class: 'visually-hidden' }, 'Illustrative 7-day low-dose buprenorphine micro-induction cross-taper schedule'),
           h('thead', null,
@@ -1299,7 +1299,7 @@ export function medicationsView({ query } = {}) {
     section('reversal-science', t('meds.reversal.title', 'Overdose Reversal Pharmacology: 4 mg vs. 8 mg Naloxone, Nalmefene & Xylazine'),
       p('When responding to an opioid overdose, ', strong('the medical goal is restoring normal breathing—not forcing immediate, wide-awake withdrawal. '),
         'Understanding the pharmacokinetics of reversal agents helps keep people alive and safe.'),
-      h('div', { class: 'table-wrap' },
+      h('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Comparison of opioid overdose reversal medications' },
         h('table', null,
           h('caption', { class: 'visually-hidden' }, 'Comparison of opioid overdose reversal medications'),
           h('thead', null,

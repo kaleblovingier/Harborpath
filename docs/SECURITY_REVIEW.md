@@ -1,23 +1,50 @@
 # Security, privacy, clinical safety & compliance review
 
-> **Remediation status (updated 2026-10-27, after this review)**
+> **Remediation status: round 1 findings (updated 2026-10-27)**
 >
-> | # | Severity | Status | Where |
+> All 14 findings are now closed. Findings 2–8 and 14 were fixed in round 2 by the clinical-safety and privacy/compliance swarms. Every fix has a regression test.
+>
+> | # | Severity | Status |
+> |---|---|---|
+> | 1 | High | **Fixed.** Rate-limit key uses the trusted hop from the right of `X-Forwarded-For`; `TRUST_PROXY` is opt-in (`test/security.test.js`). |
+> | 2 | Medium | **Fixed.** Navigator output is framed as the person's own self-reported answers, with a "not a diagnosis" disclaimer and no clinician-document wording (`test/clinical-safety.test.js`). |
+> | 3 | Medium | **Fixed.** Uncited mortality percentages are replaced with qualitative wording; the naltrexone claim is corrected (EN + ES). |
+> | 4 | Medium | **Fixed.** A "For prescribers. Not for self-dosing." callout sits above the micro-induction table. |
+> | 5 | Medium | **Fixed.** A self-harm answer shows a crisis-first 988/911 card above any level-of-care result. |
+> | 6 | Medium | **Fixed.** Privacy claims are rewritten to match real data flows, including host access logs. A test bans absolute claims in both languages (`test/privacy.test.js`). |
+> | 7 | Medium | **Fixed.** Filters in links (`?codes=`, `?tab=`) are kept in memory and stripped from the address bar, history, and session restore. Clipboard notes are added. |
+> | 8 | Medium | **Fixed in code.** A consumer health data notice is on the privacy page. It makes no compliance claim. *Legal review by the owner is still recommended.* |
+> | 9 | Low | **Fixed.** Limiter caps keys; see round 2 finding R2-1 for the overflow redesign. |
+> | 10 | Low | **Fixed.** No upstream body text in logs. |
+> | 11 | Low | **Fixed.** HSTS. |
+> | 12 | Low | **Fixed.** `safeHref` guards every data-driven external link (round 2 extended it to facility, provider, and state links). |
+> | 13 | Info | **Fixed.** New modules are in the offline shell. |
+> | 14 | Info | **Fixed.** Legacy files carry a "not deployed, no compliance claim" banner. |
+>
+> **Round 2 adversarial review (security swarm H2): all findings fixed**
+>
+> | # | Severity | Finding | Fix |
 > |---|---|---|---|
-> | 1 | High | **Fixed.** `clientKey` uses the rightmost `X-Forwarded-For` entry; `TRUST_PROXY` is no longer on by default in the Dockerfile. | `src/app.js`, `Dockerfile`, `test/security.test.js` |
-> | 2 | Medium | Open. Retitle navigator output as self-reported answers and add a "not a diagnosis" disclaimer. | `public/js/views/navigator.js` |
-> | 3 | Medium | **Partly fixed.** The naltrexone mortality claim is corrected and cited (EN + ES). Other uncited percentages in the navigator are still open. | `navigator.js`, `locales/es.js` |
-> | 4 | Medium | Open. Move the micro-induction "prescriber only" warning above the table as a callout. | `public/js/views/medications.js` |
-> | 5 | Medium | Open. Show a crisis-first card above the level-of-care result when self-harm is reported. | `navigator.js` |
-> | 6 | Medium | Open. Reword privacy claims to match host logging; consider redacting query strings in host logs. The new match flow keeps answers out of URLs entirely. | `views/core.js` privacy page |
-> | 7 | Medium | Open for existing finder links (`#/treatment?codes=…`). The new match flow keeps all answers in memory only (verified in the e2e run: hash stays `#/match`, no storage written). | `public/js/` |
-> | 8 | Medium | Open. Needs a consumer-health-data policy (WA MHMDA and similar laws). This needs an owner decision and legal review, not a code change. | n/a |
-> | 9 | Low | **Fixed.** The limiter caps distinct keys per window (overflow bucket). | `src/cache.js`, `test/security.test.js` |
-> | 10 | Low | **Fixed.** Error logs record only the size of a bad upstream body, never its text. | `src/findtreatment.js`, `src/telehealth.js` |
-> | 11 | Low | **Fixed.** HSTS is added to `SECURITY_HEADERS` and `vercel.json`, which are kept identical by test. | `src/app.js`, `vercel.json` |
-> | 12 | Low | **Fixed.** `ext()` drops any href that isn't http(s), tel, sms, mailto, or `#`. | `public/js/dom.js` |
-> | 13 | Info | **Fixed.** The new modules are added to the SW `APP_SHELL`; the existing test checks that every entry is served. | `public/sw.js` |
-> | 14 | Info | Open. Delete or caveat the legacy HIPAA claim. | `legacy/` |
+> | R2-1 | Medium | One shared overflow bucket let ~10k distinct keys lock out every new visitor, and could fail container health checks. | 1024 salted overflow buckets; `/api/health` exempt from limiting (`src/cache.js`, `src/app.js`). |
+> | R2-2 | Medium | IPv6 clients could rotate through 2^64 keys in their /64. | Keys are IPv6 /64 prefixes; IPv4-mapped addresses are keyed as IPv4 (`networkKey`). |
+> | R2-3 | Low | One fixed trusted hop; empty `X-Forwarded-For` entries produced the key `''`. | `TRUST_PROXY` is a hop count; empty entries fall back to the socket address. |
+> | R2-4 | Low | Malformed registry fields could throw in the validator or the browser engine. | Every field is type-checked, the validator never throws, and lookups use own properties. |
+> | R2-5 | Low | `normalizeProfile` accepted prototype keys (`toString`, `constructor`). | `Object.hasOwn` checks. |
+> | R2-6 | Low | Some external links skipped the scheme check. | `safeHref` everywhere data supplies a URL. |
+> | R2-7 | Info | Registry responses included internal review notes. The handler had no top-level catch. | Only public fields are served; a last-resort catch returns 500. |
+>
+> **Accessibility audit (QA swarm I2, axe-core 4.14, 120 page states): all findings fixed except one noted below**
+>
+> | Severity | Finding | Fix |
+> |---|---|---|
+> | High | Focus dropped to `<body>` whenever match results re-rendered (filters, compare, results load, "Everyone is safe"). | `rerender(focusId)` restores focus to the control, or to the results or step heading. |
+> | Medium | Arrow keys on the "anyone in danger?" radio opened the emergency panel (WCAG 3.2.2). | The question is now a button. |
+> | High | `#/navigator` and `#/plan` overflowed horizontally at 320–375px. A round-2 check also found a long URL overflowing `#/privacy`. | `.select` max-width, `min-width: 0` on flex/fieldset children, `overflow-wrap` on views. |
+> | Medium | `aria-current="null"` on 22 medication buttons. | `removeAttribute`, plus a repo-wide test that `setAttribute` is never passed null. |
+> | Serious | Two scrollable tables could not be reached by keyboard. | `tabindex="0"`, `role="region"`, and a label. |
+> | Medium | Safety-bar links were under 24px tall. | `min-height: 24px`. |
+> | Low | Disabled Compare box gave no reason; filter count changes were not announced; `aria-labelledby` pointed at a missing id; timer `aria-label` on a role-less div. | All fixed. |
+> | Known | When the page is scrolled to certain offsets, the sticky emergency bar can partly cover the language links, and axe flags `target-size`. | Not changed. The always-visible emergency bar is a safety feature; revisit with a design change. |
 >
 > The original review follows unchanged. It covered the code at `bb502ba`, before these fixes.
 

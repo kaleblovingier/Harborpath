@@ -38,7 +38,7 @@ Requires Node.js 20 or newer. There are no npm dependencies.
 
 ```bash
 npm start            # http://localhost:3000
-npm test             # 120 tests: API, privacy, geocoding, providers, regions, clinical modules, matching engine, registry
+npm test             # 148 tests: API, privacy, security, accessibility, geocoding, providers, regions, clinical safety, matching engine, registry
 node scripts/smoke.mjs <url>   # post-deploy smoke test (see docs/DEPLOYMENT.md)
 npm run data:build   # refresh data/ from SAMHSA, Census, HRSA, VA, IHS, CMS, and Medicaid
 ```

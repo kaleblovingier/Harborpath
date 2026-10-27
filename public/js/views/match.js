@@ -225,7 +225,7 @@ function emergencyPanel() {
       tel('988', [icon('phone'), t('match.em.988', 'Mental health or suicide crisis: call or text 988')], { class: 'btn btn-secondary' }),
     ),
     h('p', { class: 'fine' }, t('match.em.note', 'HarborPath cannot send help. Matching can wait until everyone is safe.')),
-    h('button', { type: 'button', class: 'link-btn', onclick: () => { emergency = false; rerender(); } },
+    h('button', { type: 'button', class: 'link-btn', onclick: () => { emergency = false; go(stepIndex); } },
       t('match.em.back', 'Everyone is safe: continue finding care')),
   );
 }
@@ -235,15 +235,12 @@ const STEPS = [
   {
     title: () => t('match.s1.title', 'What kind of help are you looking for?'),
     render: () => [
-      choices({
-        legend: t('match.s1.safety', 'First: is anyone in danger right now?'),
-        options: [
-          ['danger', t('match.s1.danger', 'Yes: a possible overdose, or someone may hurt themselves')],
-          ['safe', t('match.s1.safe', 'No, I am looking for care')],
-        ],
-        value: 'safe',
-        onChange: (v) => { if (v === 'danger') { emergency = true; rerender(); } },
-      }),
+      // A button, not a radio: arrow keys move between radio options, and
+      // changing the page on arrow keys would be a surprise (WCAG 3.2.2).
+      h('div', { class: 'danger-check' },
+        h('p', null, t('match.s1.safety', 'First: is anyone in danger right now?')),
+        h('button', { type: 'button', class: 'btn btn-emergency', onclick: () => { emergency = true; rerender(); } },
+          icon('alert'), t('match.s1.danger', 'Yes: a possible overdose, or someone may hurt themselves'))),
       choices({
         legend: t('match.s1.helpWith', 'Help with'),
         options: [
@@ -385,9 +382,23 @@ function customMilesField() {
 // ---------------------------------------------------------------- Rendering
 let root = null;
 
-function rerender() {
+/**
+ * Rebuild the view. Rebuilding destroys the focused control, so focus moves
+ * to `focusId` when given (a control that exists in the new view), or to the
+ * results heading when focus was inside the view, never to <body>.
+ */
+function rerender(focusId) {
   if (!root) return;
+  const hadFocus = root.contains(document.activeElement);
   clear(root);
+  try { renderInto(); } finally {
+    let target = focusId ? document.getElementById(focusId) : null;
+    if (!target && hadFocus && !root.contains(document.activeElement)) target = root.querySelector('h2[tabindex="-1"]');
+    if (target) target.focus();
+  }
+}
+
+function renderInto() {
   if (emergency) {
     root.append(emergencyPanel());
     root.querySelector('#m-emergency')?.focus();
@@ -532,8 +543,8 @@ function resultsView() {
   }
 
   const filters = h('div', { class: 'match-filters', role: 'group', 'aria-label': t('match.filters', 'Filter matches') },
-    toggle(t('match.f.online', 'Telehealth or online only'), results.onlineOnly, (v) => { results.onlineOnly = v; rerender(); }),
-    toggle(t('match.f.covered', 'Only programs that list my coverage'), results.coveredOnly, (v) => { results.coveredOnly = v; rerender(); }),
+    toggle('m-f-online', t('match.f.online', 'Telehealth or online only'), results.onlineOnly, (v) => { results.onlineOnly = v; refilter('m-f-online'); }),
+    toggle('m-f-covered', t('match.f.covered', 'Only programs that list my coverage'), results.coveredOnly, (v) => { results.coveredOnly = v; refilter('m-f-covered'); }),
   );
   wrap.append(filters);
 
@@ -552,8 +563,14 @@ function resultsView() {
   return wrap;
 }
 
-function toggle(text, value, onChange) {
-  const input = h('input', { type: 'checkbox' });
+/** Re-render after a filter change, keep focus on the filter, and say the new count. */
+function refilter(focusId) {
+  rerender(focusId);
+  announce(t('match.count', 'Showing {n} of {total} options, best fit first.', { n: visibleMatches().length, total: results.ranked.matches.length }));
+}
+
+function toggle(id, text, value, onChange) {
+  const input = h('input', { type: 'checkbox', id });
   input.checked = value;
   input.addEventListener('change', () => onChange(input.checked));
   return h('label', { class: 'check' }, input, text);
@@ -608,13 +625,14 @@ function matchCard(m, index) {
   const c = m.candidate;
   const tier = TIERS[m.coverage.tier];
   const id = `m-card-${index}`;
-  const compareBox = h('input', { type: 'checkbox' });
+  const boxId = `m-cmp-${m.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+  const compareBox = h('input', { type: 'checkbox', id: boxId });
   compareBox.checked = results.compare.has(m.id);
   compareBox.disabled = !compareBox.checked && results.compare.size >= MAX_COMPARE;
   compareBox.addEventListener('change', () => {
-    if (compareBox.checked) results.compare.add(m.id); else results.compare.delete(m.id);
-    rerender();
-    document.getElementById('m-compare')?.focus();
+    const adding = compareBox.checked;
+    if (adding) results.compare.add(m.id); else results.compare.delete(m.id);
+    rerender(adding ? 'm-compare' : boxId);
   });
   const address = c.kind === 'facility' && c.via === 'local' ? formatAddress(c.record.address) : null;
   const saveItem = c.kind === 'facility'
@@ -651,7 +669,9 @@ function matchCard(m, index) {
     h('div', { class: 'actions' },
       contactActions(m),
       saveButton(saveItem),
-      h('label', { class: 'check compare-check' }, compareBox, t('match.card.compare', 'Compare'))),
+      h('label', { class: 'check compare-check' }, compareBox, h('span', null, compareBox.disabled
+        ? t('match.card.compareFull', 'Compare (up to 3: remove one first)')
+        : t('match.card.compare', 'Compare')))),
     h('p', { class: 'fine source-note' }, c.kind === 'virtual'
       ? t('match.card.sourceVirtual', 'Source: the program’s own website, read {date}. Not verified by HarborPath; no partnership.', { date: c.source.verifiedAt ?? '?' })
       : t('match.card.sourceSamhsa', 'Source: SAMHSA FindTreatment.gov, searched live. Facility-reported.')),
@@ -678,7 +698,7 @@ function compareSection() {
       h('table', null,
         h('thead', null, h('tr', null, h('td', null), chosen.map((m) => h('th', { scope: 'col' }, m.candidate.name)))),
         h('tbody', null, rows.map(([name, cell]) => h('tr', null, h('th', { scope: 'row' }, name), chosen.map((m) => h('td', null, cell(m)))))))),
-    h('p', { class: 'actions' }, h('button', { type: 'button', class: 'btn btn-small btn-ghost', onclick: () => { results.compare.clear(); rerender(); } }, t('match.cmp.clear', 'Clear comparison'))),
+    h('p', { class: 'actions' }, h('button', { type: 'button', class: 'btn btn-small btn-ghost', onclick: () => { results.compare.clear(); rerender('m-results'); } }, t('match.cmp.clear', 'Clear comparison'))),
   );
 }
 
@@ -740,6 +760,13 @@ export function matchView({ query } = {}) {
     const start = query.get('start');
     if (start === 'virtual') profile.modality = 'virtual';
     if (start === 'affordable') profile.needsFinancialHelp = true;
+    // A preset changes the answers, so earlier results no longer apply.
+    if (start === 'virtual' || start === 'affordable') {
+      stepIndex = 0;
+      results.controller?.abort();
+      results.loading = false;
+      results.ranked = null;
+    }
   }
   root = h('div', { class: 'match-root' });
   rerender();

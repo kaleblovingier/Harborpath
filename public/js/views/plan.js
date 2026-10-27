@@ -563,7 +563,7 @@ function urgeSurfingTimer() {
     },
   }, icon('x'), t('plan.timer.resetBtn', 'Pause / reset'));
 
-  const root = h('div', { class: 'timer', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
+  const root = h('div', { class: 'timer', role: 'group', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
     display,
     h('div', { class: 'actions' }, start3Btn, start5Btn, resetBtn),
     livePrompt,

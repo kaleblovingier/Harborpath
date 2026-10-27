@@ -202,6 +202,7 @@ export default {
   'match.card.verify': 'Falta confirmar ({n})',
   'match.card.howToJoin': 'Cómo inscribirse, según el programa: {text}',
   'match.card.compare': 'Comparar',
+  'match.card.compareFull': 'Comparar (hasta 3: quite uno primero)',
   'match.card.sourceVirtual': 'Fuente: el sitio web del propio programa, consultado el {date}. HarborPath no lo ha verificado; no hay ninguna asociación.',
   'match.card.sourceSamhsa': 'Fuente: FindTreatment.gov de SAMHSA, búsqueda en vivo. Información dada por el centro.',
   'match.cmp.type': 'Tipo',

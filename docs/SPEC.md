@@ -40,9 +40,20 @@ Two workstreams ran as genuinely parallel background agents: Swarm A/E research 
 | E: Virtual treatment | Online programs alongside local care | Research agent + orchestrator | Unified ranking of facilities, statewide telehealth, and online programs; official enrollment links | ◐ Gated on human review |
 | F: UX & conversion | End-to-end journey | Orchestrator | New landing CTAs and the `#/match` flow: assessment → results → compare → next-steps plan (EN + ES) | ✅ |
 | G: Backend | Services and data quality | Orchestrator | `/api/virtual-providers`, registry validation at load time and in CI | ✅ |
-| H: Security & safety | Audit and remediate | Audit agent + orchestrator | [SECURITY_REVIEW.md](SECURITY_REVIEW.md): 14 findings; the High and five Low/Info fixed | ◐ Medium items open |
-| I: QA | Prove it works | Orchestrator | 27 new tests (120 total) plus a headless-browser e2e run ([QA_REPORT.md](QA_REPORT.md)) | ✅ |
+| H: Security & safety | Audit and remediate | Audit agent + orchestrator | [SECURITY_REVIEW.md](SECURITY_REVIEW.md): 14 findings in round 1, 7 in round 2, all fixed | ✅ |
+| I: QA | Prove it works | Orchestrator + QA agent | 55 new tests (148 total), e2e walkthrough, axe-core audit ([QA_REPORT.md](QA_REPORT.md)) | ✅ |
 | J: Deployment | Ship safely | Orchestrator | [DEPLOYMENT.md](DEPLOYMENT.md): checks, smoke tests, rollback | ◐ Not deployed from this session (no credentials) |
+
+### Round 2
+
+Four new swarms ran in parallel: two as isolated git worktrees that the orchestrator reviewed and merged, and two as read-only auditors. The orchestrator also found and fixed two engine logic errors of its own: Medicaid acceptance is state-specific, and facility grant funding does not mean lower cost for the person.
+
+| Swarm | Mission | Mode | Outcome |
+|---|---|---|---|
+| K: Clinical safety | Fix audit findings 2–5 | Worktree, merged after diff review | ✅ Self-report framing, crisis-first card, prescriber-only warning, no uncited percentages |
+| L: Privacy & compliance | Fix findings 6–8, 14 | Worktree, merged; locale conflicts resolved | ✅ Honest privacy page, consumer health data notice, filters kept out of URLs, legacy claim removed |
+| H2: Adversarial security | Break round-1 code | Read-only, with repro scripts | ✅ 7 findings (2 Medium), all fixed with tests |
+| I2: Accessibility & QA | axe-core, keyboard, reflow, functional | Read-only audit | ✅ 4 new-code and 5 pre-existing issues fixed and re-verified in a browser |
 
 ## Interface contracts
 
@@ -113,8 +124,10 @@ Existing endpoints are unchanged; see [ARCHITECTURE.md](ARCHITECTURE.md).
 - [x] Security headers stay identical between the server and `vercel.json` (existing test)
 - [x] Mobile width 375px with no horizontal scroll (e2e)
 - [ ] Human review of the 6 pending registry records ([PROVIDER_DATA.md](PROVIDER_DATA.md#review-workflow))
-- [ ] Open Medium findings in [SECURITY_REVIEW.md](SECURITY_REVIEW.md)
-- [ ] Automated accessibility scan (axe) in CI. Only manual checks have been done so far.
+- [x] All security review findings, both rounds, closed with regression tests
+- [x] axe-core audit of every route; all findings fixed except the documented sticky-bar `target-size` flag
+- [ ] axe in CI (not a project dependency yet)
+- [ ] Legal review of the consumer health data notice
 - [ ] Production deploy and smoke test ([DEPLOYMENT.md](DEPLOYMENT.md))
 
 ## Deliberate omissions
