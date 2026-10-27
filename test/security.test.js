@@ -37,14 +37,19 @@ test('L-9: the limiter caps distinct keys per window', () => {
 });
 
 test('H2-1: a flood of new addresses cannot lock out every new visitor', () => {
-  const limiter = createRateLimiter({ windowMs: 60_000, max: 2, maxKeys: 100, overflowBuckets: 1024 });
-  for (let i = 0; i < 100; i++) limiter.allow(`flood-${i}`);
-  // The attacker now hammers overflow with many more fresh keys...
-  for (let i = 0; i < 2000; i++) limiter.allow(`flood-extra-${i}`);
-  // ...yet most genuinely new visitors still land in an unexhausted bucket.
+  // Production limits: 120 per minute, 10,000 tracked clients.
+  const limiter = createRateLimiter({ windowMs: 60_000, max: 120, maxKeys: 10_000, overflowBuckets: 1024 });
+  for (let i = 0; i < 10_000; i++) limiter.allow(`flood-${i}`);
+  // 20,000 more fresh addresses spread over 1024 buckets average ~20 each,
+  // far below the limit; one shared bucket would have locked everyone out.
+  for (let i = 0; i < 20_000; i++) limiter.allow(`flood-extra-${i}`);
   let allowed = 0;
-  for (let i = 0; i < 200; i++) if (limiter.allow(`visitor-${i}`)) allowed++;
-  assert.ok(allowed > 100, `only ${allowed}/200 new visitors allowed`);
+  for (let i = 0; i < 500; i++) if (limiter.allow(`visitor-${i}`)) allowed++;
+  assert.equal(allowed, 500);
+
+  const single = createRateLimiter({ windowMs: 60_000, max: 120, maxKeys: 10_000, overflowBuckets: 1 });
+  for (let i = 0; i < 10_200; i++) single.allow(`flood-${i}`);
+  assert.equal(single.allow('visitor'), false, 'the old single bucket was exhaustible');
 });
 
 test('H2-2: IPv6 clients are keyed by /64, IPv4-mapped addresses by IPv4', () => {
