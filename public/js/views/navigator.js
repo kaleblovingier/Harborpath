@@ -1,4 +1,5 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
+import { prefillMatch } from './match.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
 
@@ -995,6 +996,40 @@ export function evaluateAsamCare(answers = {}) {
   };
 }
 
+/**
+ * Turn navigator answers into answers for "Find care that fits", so the
+ * person does not have to repeat themselves. Pure, in memory only. Every
+ * value stays editable there; nothing here is a clinical decision.
+ */
+export function matchProfileFromAnswers(answers = {}) {
+  const substances = normalizeSubstances(answers.substances);
+  const SUBSTANCE = { opioids: 'opioid', xylazine: 'opioid', alcohol: 'alcohol', stimulants: 'stimulant', benzos: 'benzodiazepine' };
+  const mapped = [...new Set([...substances].map((s) => SUBSTANCE[s]).filter(Boolean))];
+  const COVERAGE = { MD: 'medicaid', MC: 'medicare', PI: 'private', TRICARE: 'military', ITU: 'ihs' };
+  const POPULATION = { VET: 'veteran', CJ: 'justice', WN: 'women', MN: 'men' };
+  const AGE = { ADOL: 'youth', YA: 'young-adult', SEN: 'senior' };
+  const populations = [];
+  if (POPULATION[answers.population]) populations.push(POPULATION[answers.population]);
+  if (answers.biomedical === 'pregnant') populations.push('pregnant');
+  if (answers.mentalHealth === 'trauma') populations.push('trauma');
+  if (answers.mentalHealth && answers.mentalHealth !== 'none') populations.push('co-occurring');
+  const settings = [];
+  if (answers.structureNeeded === '24_hour') settings.push('residential');
+  else if (answers.structureNeeded === 'structured_day') settings.push('iop');
+  if (answers.withdrawalRisk === 'moderate' || answers.withdrawalRisk === 'severe') settings.push('detox');
+  const lowCost = ['SS', 'PA', 'NP'].includes(answers.payment);
+  return {
+    helpWith: answers.mentalHealth && answers.mentalHealth !== 'none' ? 'both' : 'substance',
+    substances: mapped,
+    settings,
+    coverage: COVERAGE[answers.payment] ?? (lowCost ? 'uninsured' : null),
+    needsFinancialHelp: lowCost,
+    populations: [...new Set(populations)],
+    ageGroup: AGE[answers.population] ?? null,
+    modality: answers.preferTelehealth ? 'virtual' : 'either',
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Interactive Care Navigator View
 // ---------------------------------------------------------------------------
@@ -1265,8 +1300,21 @@ export function careNavigatorView({ query } = {}) {
           'div',
           { class: 'actions' },
           h(
+            'button',
+            {
+              type: 'button',
+              class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large',
+              onclick: () => {
+                prefillMatch(matchProfileFromAnswers(answers));
+                location.replace('#/match');
+              },
+            },
+            icon('compass'),
+            t('nav.cta.rank_for_me', 'Rank programs for my answers'),
+          ),
+          h(
             'a',
-            { class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large', href: result.searchHref },
+            { class: 'btn btn-secondary', href: result.searchHref },
             icon('search'),
             t('nav.cta.search_matching', 'Search matching treatment near me'),
           ),

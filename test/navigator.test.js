@@ -302,3 +302,30 @@ describe('formatAsamHandoffText() — Clinician Handoff & Referral Summary Forma
     assert.match(text, /21 CFR 1306\.07\(b\)/);
   });
 });
+
+describe('matchProfileFromAnswers() — handoff to Find care that fits', () => {
+  it('maps navigator answers to match answers without inventing any', async () => {
+  const { matchProfileFromAnswers } = await import('../public/js/views/navigator.js');
+  const { normalizeProfile } = await import('../public/js/match/engine.js');
+  const p = matchProfileFromAnswers({
+    substances: ['opioids', 'xylazine', 'stimulants'], withdrawalRisk: 'severe', structureNeeded: 'structured_day',
+    payment: 'MD', population: 'VET', biomedical: 'pregnant', mentalHealth: 'trauma', preferTelehealth: true,
+  });
+  assert.deepEqual(p.substances, ['opioid', 'stimulant']);
+  assert.deepEqual(p.settings, ['iop', 'detox']);
+  assert.equal(p.coverage, 'medicaid');
+  assert.equal(p.helpWith, 'both');
+  assert.deepEqual(p.populations.sort(), ['co-occurring', 'pregnant', 'trauma', 'veteran']);
+  assert.equal(p.modality, 'virtual');
+  // Every mapped value survives the engine's own validation unchanged.
+  const n = normalizeProfile(p);
+  assert.deepEqual([n.substances, n.settings, n.coverage, n.populations.length], [p.substances, p.settings, 'medicaid', 4]);
+
+  const empty = matchProfileFromAnswers({});
+  assert.deepEqual([empty.substances, empty.settings, empty.coverage, empty.populations], [[], [], null, []]);
+  const lowCost = matchProfileFromAnswers({ payment: 'SS', population: 'ADOL' });
+  assert.equal(lowCost.coverage, 'uninsured');
+  assert.equal(lowCost.needsFinancialHelp, true);
+  assert.equal(lowCost.ageGroup, 'youth');
+});
+});

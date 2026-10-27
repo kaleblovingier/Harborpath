@@ -2,6 +2,7 @@
 // (views/navigator.js) and the medications guide (views/medications.js).
 // Spread into es.js.
 export default {
+  'nav.cta.rank_for_me': 'Ordenar programas según mis respuestas',
   'nav.disclaimer': 'Esto no es un diagnóstico ni una evaluación clínica. Un profesional clínico con licencia le hará una evaluación.',
   'nav.results.disclaimer_body': 'Este resultado solo refleja lo que usted nos dijo. Solo un profesional clínico con licencia puede decidir qué nivel de atención es el adecuado para usted.',
   'nav.crisis.title': 'Su seguridad es lo primero. Puede recibir ayuda ahora mismo.',

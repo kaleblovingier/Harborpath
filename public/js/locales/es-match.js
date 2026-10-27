@@ -234,6 +234,7 @@ export default {
   'match.plan.scriptLink': 'Use el guion para la llamada de admisión y la guía de la primera visita',
   'match.plan.wait': 'Mientras espera: tenga naloxona a mano y llame cuando quiera a la línea de SAMHSA (1-800-662-4357) o al 988.',
   'match.plan.note': 'Este plan no se guarda en ningún lugar. Imprímalo o use Guardar en los programas que quiera conservar.',
+  'match.prefilled': 'Sus respuestas del navegador de atención ya están completadas. Use Atrás para revisarlas o cambiarlas; no se ha enviado nada.',
   'match.title': 'Atención que se adapta a usted',
   'match.lede': 'Unas preguntas rápidas, todas opcionales, y luego opciones ordenadas según sus necesidades, su cobertura y su ubicación, con una explicación para cada una.',
   'home.hero.fit': 'Encuentre tratamiento que se adapte a sus necesidades, a su seguro y a su vida.',

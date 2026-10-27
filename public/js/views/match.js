@@ -29,6 +29,7 @@ const blankProfile = () => ({
 let profile = blankProfile();
 let stepIndex = 0;
 let emergency = false;
+let prefilled = false;
 
 // ---------------------------------------------------------------- Labels
 // Literal t() calls so the i18n contract test can see every key.
@@ -415,6 +416,8 @@ function renderInto() {
     icon('search'), t('match.showResults', 'See my matches'));
   root.append(
     h('section', { class: 'card wizard', 'aria-labelledby': headingId },
+      prefilled && h('p', { class: 'callout callout-info' },
+        t('match.prefilled', 'Your care navigator answers are filled in. Go Back to review or change anything; nothing has been sent anywhere.')),
       h('p', { class: 'step-progress' }, t('match.progress', 'Step {n} of {total}', { n: stepIndex + 1, total: STEPS.length })),
       h('h2', { id: headingId, tabindex: '-1' }, step.title()),
       step.render(),
@@ -763,6 +766,7 @@ export function matchView({ query } = {}) {
     // A preset changes the answers, so earlier results no longer apply.
     if (start === 'virtual' || start === 'affordable') {
       stepIndex = 0;
+      prefilled = false;
       results.controller?.abort();
       results.loading = false;
       results.ranked = null;
@@ -777,3 +781,18 @@ export function matchView({ query } = {}) {
   );
 }
 
+/**
+ * Start "Find care that fits" with answers someone already gave elsewhere
+ * (the care navigator). In memory only; every answer stays editable. Opens
+ * on the location step, because that is the one thing still needed.
+ */
+export function prefillMatch(partial = {}) {
+  profile = { ...blankProfile(), ...partial, customMiles: null };
+  prefilled = true;
+  emergency = false;
+  stepIndex = 2;
+  results.controller?.abort();
+  results.loading = false;
+  results.ranked = null;
+  results.compare.clear();
+}
