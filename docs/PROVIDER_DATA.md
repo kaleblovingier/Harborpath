@@ -47,12 +47,19 @@ Known conflicts to resolve during review (details are in each record's `notes`):
 
 ## Review workflow
 
-1. Open every URL in the record's `sources` in a browser.
-2. Confirm each field against the live page. Correct or null anything the page does not say, and move it to `unknowns`.
-3. Update each source's `accessedAt` to the review date.
-4. Set `reviewStatus: "approved"`, `reviewedBy` (your name or handle), and `reviewedAt`.
-5. Run `npm test`. The validator must pass.
-6. Re-review every record at least every 12 months, or whenever a visitor reports a problem. Stale records are flagged automatically.
+Use the review tool. It refuses incomplete or invalid approvals and writes nothing when it refuses.
+
+```bash
+node scripts/registry-review.mjs                      # list records and status
+node scripts/registry-review.mjs show boulder-care    # the checklist: every source and field
+# Open every source URL in a browser. Edit data/virtual-providers.json to correct
+# or null anything the pages do not say (move it to "unknowns").
+node scripts/registry-review.mjs approve boulder-care --by "Your Name" --sources-checked
+npm test                                               # validator must pass; then commit
+node scripts/registry-review.mjs revoke boulder-care  # hide a record again at any time
+```
+
+Approval sets `reviewStatus`, `reviewedBy`, and `reviewedAt`, and updates each source's `accessedAt` to the review date. Re-review every record at least every 12 months, or whenever a visitor reports a problem. Stale records are flagged automatically.
 
 ## Reporting inaccurate listings
 

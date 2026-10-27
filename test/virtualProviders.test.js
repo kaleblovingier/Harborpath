@@ -118,3 +118,28 @@ test('malformed records are rejected without throwing, and review notes are not 
   assert.equal(vp.count, 1);
   for (const f of ['notes', 'unknowns', 'reviewedBy', 'reviewStatus']) assert.ok(!(f in served), `${f} leaked`);
 });
+
+test('review tool: approval needs an explicit source check, a reviewer, and a valid record', async () => {
+  const { approve, revoke, describe, ReviewError } = await import('../scripts/registry-review.mjs');
+  const registry = DATA_LOADERS.virtualProviders();
+  const id = registry.providers[0].id;
+  assert.throws(() => approve(registry, id, { by: 'Reviewer' }), ReviewError);
+  assert.throws(() => approve(registry, id, { sourcesChecked: true }), ReviewError);
+  assert.throws(() => approve(registry, id, { by: 'R', sourcesChecked: true, date: '2999-01-01' }), ReviewError);
+  assert.throws(() => approve(registry, 'no-such-id', { by: 'R', sourcesChecked: true }), ReviewError);
+
+  const approved = approve(registry, id, { by: 'Reviewer', sourcesChecked: true, date: '2026-10-27' });
+  const rec = approved.providers.find((p) => p.id === id);
+  assert.equal(rec.reviewStatus, 'approved');
+  assert.ok(rec.sources.every((s) => s.accessedAt === '2026-10-27'));
+  assert.equal(registry.providers[0].reviewStatus, 'pending-review', 'input is not mutated');
+  // An approved record is served; revoking hides it again.
+  assert.equal(createVirtualProviders(approved, { logger: silent }).count, 1);
+  assert.equal(createVirtualProviders(revoke(approved, id), { logger: silent }).count, 0);
+
+  // A record that fails validation is never approved.
+  const broken = structuredClone(registry);
+  broken.providers[0].officialUrl = 'http://insecure.example';
+  assert.throws(() => approve(broken, id, { by: 'R', sourcesChecked: true, date: '2026-10-27' }), /not valid/);
+  assert.match(describe(registry.providers[0]), /Open each source/);
+});
