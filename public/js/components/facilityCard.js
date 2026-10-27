@@ -1,4 +1,4 @@
-import { h, tel, icon, announce, digits } from '../dom.js';
+import { h, tel, icon, announce, digits, safeHref } from '../dom.js';
 import { highlights, localizeServices, DETAIL_ORDER, DETAIL_HIDDEN } from '../codes.js';
 import { isSaved, toggleSaved } from '../state.js';
 import { t, formatNumber, getServiceNames } from '../i18n.js';
@@ -102,7 +102,7 @@ export function treatmentCard(f, { headingLevel = 3 } = {}) {
       f.phone && tel(f.phone, [icon('phone'), t('card.call', 'Call {phone}', { phone: f.phone })], { class: 'btn btn-small btn-primary' }),
       f.intake && digits(f.intake) !== digits(f.phone) && tel(f.intake, [icon('phone'), t('card.intake', 'Intake {phone}', { phone: f.intake })], { class: 'btn btn-small btn-secondary' }),
       f.hotline && digits(f.hotline) !== digits(f.phone) && tel(f.hotline, [icon('phone'), t('card.hotline', '24/7 line {phone}', { phone: f.hotline })], { class: 'btn btn-small btn-secondary' }),
-      f.website && h('a', { class: 'btn btn-small btn-ghost', href: f.website, target: '_blank', rel: 'noopener noreferrer' },
+      safeHref(f.website) && h('a', { class: 'btn btn-small btn-ghost', href: safeHref(f.website), target: '_blank', rel: 'noopener noreferrer' },
         icon('globe'), t('common.website', 'Website'), h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: f.name }))),
       address && h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
         icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
@@ -163,7 +163,7 @@ export function healthCenterCard(c, { headingLevel = 3 } = {}) {
     ),
     h('div', { class: 'actions' },
       c.phone && tel(c.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: c.phone })], { class: 'btn btn-small btn-primary' }),
-      c.website && h('a', { class: 'btn btn-small btn-ghost', href: c.website, target: '_blank', rel: 'noopener noreferrer' },
+      safeHref(c.website) && h('a', { class: 'btn btn-small btn-ghost', href: safeHref(c.website), target: '_blank', rel: 'noopener noreferrer' },
         icon('globe'), t('common.website', 'Website'), h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: c.name }))),
       h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
         icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
@@ -295,7 +295,7 @@ export function providerCard(p, { headingLevel = 3 } = {}) {
       chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
     h('div', { class: 'actions' },
       p.phone && tel(p.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: p.phone })], { class: 'btn btn-small btn-primary' }),
-      web && h('a', { class: 'btn btn-small btn-ghost', href: web, target: '_blank', rel: 'noopener noreferrer' },
+      safeHref(web) && h('a', { class: 'btn btn-small btn-ghost', href: safeHref(web), target: '_blank', rel: 'noopener noreferrer' },
         icon('globe'),
         p.detailsUrl && !p.website ? t('providers.detailsLink', 'Facility details') : t('common.website', 'Website'),
         h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: p.name }))),

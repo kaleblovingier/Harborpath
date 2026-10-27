@@ -2,7 +2,7 @@
 // Medicaid program, and per-state harm reduction and law links. The state is
 // worked out from the location in memory; it is never added to the URL. Links
 // to a state page (#/state/WA) only change the URL when someone follows them.
-import { h, clear, ext, tel, icon, digits } from '../dom.js';
+import { h, clear, ext, tel, icon, digits, safeHref } from '../dom.js';
 import { api } from '../api.js';
 import { t, getLang, formatNumber } from '../i18n.js';
 import { state, subscribe } from '../state.js';
@@ -219,9 +219,9 @@ function agencyCard(agency, title) {
     h('p', null, h('strong', null, agency.name)),
     h('div', { class: 'actions' },
       agency.phone && tel(agency.phone, [icon('phone'), t('regions.callNumber', 'Call {number}', { number: agency.phone })], { class: 'btn btn-small btn-primary' }),
-      agency.url && h('a', { class: 'btn btn-small btn-ghost', href: agency.url, target: '_blank', rel: 'noopener noreferrer' },
+      safeHref(agency.url) && h('a', { class: 'btn btn-small btn-ghost', href: safeHref(agency.url), target: '_blank', rel: 'noopener noreferrer' },
         icon('globe'), t('regions.website', 'Website'), h('span', { class: 'visually-hidden' }, t('regions.newTab', ' (opens in a new tab)'))),
-      agency.helpUrl && h('a', { class: 'btn btn-small btn-ghost', href: agency.helpUrl, target: '_blank', rel: 'noopener noreferrer' },
+      safeHref(agency.helpUrl) && h('a', { class: 'btn btn-small btn-ghost', href: safeHref(agency.helpUrl), target: '_blank', rel: 'noopener noreferrer' },
         icon('info'), t('regions.findHelpPage', 'Find help page'), h('span', { class: 'visually-hidden' }, t('regions.newTab', ' (opens in a new tab)'))),
     ),
     address(agency.address),
@@ -259,11 +259,11 @@ export function stateSections(data, { telehealth } = {}) {
         md.phones?.length > 0 && h('ul', { class: 'list' }, md.phones.map((p) => h('li', null,
           p.label && `${p.label}: `, phoneLink(p.number, p.ext)))),
         h('div', { class: 'actions' },
-          md.applyUrl && h('a', { class: 'btn btn-small btn-primary', href: md.applyUrl, target: '_blank', rel: 'noopener noreferrer' },
+          safeHref(md.applyUrl) && h('a', { class: 'btn btn-small btn-primary', href: safeHref(md.applyUrl), target: '_blank', rel: 'noopener noreferrer' },
             t('regions.medicaidApply', 'Apply or renew'), h('span', { class: 'visually-hidden' }, t('regions.newTab', ' (opens in a new tab)'))),
-          md.eligibilityUrl && md.eligibilityUrl !== md.applyUrl && h('a', { class: 'btn btn-small btn-secondary', href: md.eligibilityUrl, target: '_blank', rel: 'noopener noreferrer' },
+          safeHref(md.eligibilityUrl) && md.eligibilityUrl !== md.applyUrl && h('a', { class: 'btn btn-small btn-secondary', href: safeHref(md.eligibilityUrl), target: '_blank', rel: 'noopener noreferrer' },
             t('regions.medicaidEligibility', 'Who qualifies'), h('span', { class: 'visually-hidden' }, t('regions.newTab', ' (opens in a new tab)'))),
-          md.url && md.url !== md.applyUrl && h('a', { class: 'btn btn-small btn-ghost', href: md.url, target: '_blank', rel: 'noopener noreferrer' },
+          safeHref(md.url) && md.url !== md.applyUrl && h('a', { class: 'btn btn-small btn-ghost', href: safeHref(md.url), target: '_blank', rel: 'noopener noreferrer' },
             icon('globe'), t('regions.website', 'Website'), h('span', { class: 'visually-hidden' }, t('regions.newTab', ' (opens in a new tab)'))),
         ),
       ),
