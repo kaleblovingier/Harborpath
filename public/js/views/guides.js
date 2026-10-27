@@ -88,7 +88,7 @@ export function harmReductionView() {
         'Keep naloxone where others can see it and know how to use it.',
       ]),
       p('Want to map out where your naloxone is kept and who to call in a hard moment? ',
-        h('a', { href: '#/plan' }, 'Build a private, zero-knowledge Personal Safety Plan'), '.'),
+        h('a', { href: '#/plan' }, 'Build a Personal Safety Plan that stays in this browser'), '.'),
     ),
 
     section('checking', 'Check your drugs',

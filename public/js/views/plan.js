@@ -1000,6 +1000,7 @@ export function planView({ query } = {}) {
             onclick: handleClearPlan,
           }, icon('x'), t('plan.btn.clear', 'Clear plan')),
         ),
+        fine(t('privacy.clipboardNote', 'Copied text stays on your clipboard after Quick exit.')),
         copyStatus,
       ),
     ),

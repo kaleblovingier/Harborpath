@@ -691,6 +691,7 @@ tbody th { font-weight: 700; min-width: 200px; }
 
 .saved-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
 .saved-tools:empty { display: none; }
+.saved-tools .help { flex-basis: 100%; }
 .persist { margin-bottom: 8px; }
 
 .ext::after { content: "↗"; display: inline-block; margin-left: 0.15em; font-size: 0.85em; text-decoration: none; }
