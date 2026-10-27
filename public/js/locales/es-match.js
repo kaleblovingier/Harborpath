@@ -77,6 +77,7 @@ export default {
   'match.why.selfPayOnly': 'Solo indica pago directo; no publica el precio',
   'match.why.listedPayments': 'Indica los tipos de pago que acepta (vea abajo)',
   'match.why.reported': 'Informó a SAMHSA que acepta {what}',
+  'match.why.medicaidOtherState': 'Acepta Medicaid, pero está en {state}: Medicaid normalmente solo sirve en el estado que lo otorgó',
   'match.why.statePlan': 'Acepta un plan de salud financiado por el estado (pregunte si el suyo cuenta)',
   'match.why.alternatives': '{coverage} no aparece, pero ofrece {what}',
   'match.why.reportedByProvider': 'Dice en su sitio web que acepta {what}',

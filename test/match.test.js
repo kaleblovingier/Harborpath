@@ -79,6 +79,25 @@ test('coverage tiers: unknown vs not-listed vs possible', () => {
   assert.equal(assessCoverage(med, fac('si', ['SA', 'SI'])).tier, 'possible');
 });
 
+test('Medicaid is state-specific: an out-of-state facility is only "possible"', () => {
+  const profile = normalizeProfile({ coverage: 'medicaid', state: 'WA' });
+  const inState = assessCoverage(profile, fac('wa', ['SA', 'MD'], { state: 'WA' }));
+  const across = assessCoverage(profile, fac('or', ['SA', 'MD'], { state: 'OR' }));
+  assert.equal(inState.tier, 'provider-reported');
+  assert.equal(across.tier, 'possible');
+  assert.deepEqual(across.reasons[0], { code: 'coverage.medicaidOtherState', params: { state: 'OR' } });
+  // Private insurance is not limited this way.
+  assert.equal(assessCoverage(normalizeProfile({ coverage: 'private', state: 'WA' }), fac('or-pi', ['PI'], { state: 'OR' })).tier, 'provider-reported');
+});
+
+test('facility grant funding alone is not an affordability promise', () => {
+  const profile = normalizeProfile({ coverage: 'uninsured' });
+  const grant = assessCoverage(profile, fac('grant', ['SA', 'SAMHSA']));
+  assert.equal(grant.tier, 'possible');
+  assert.ok(grant.verify.some((v) => v.code === 'verify.price'));
+  assert.equal(assessCoverage(profile, fac('sliding', ['SA', 'SS'])).tier, 'provider-reported');
+});
+
 test('uninsured: free and sliding-scale programs rank above cash-only', () => {
   const profile = { coverage: 'uninsured', needsFinancialHelp: true, substances: ['alcohol'] };
   const out = rankMatches(profile, [

@@ -219,10 +219,21 @@ export function assessCoverage(profile, c) {
     const hasInfo = payerCodes.length > 0;
     const payer = COVERAGE_PAYER[cov];
     const alternatives = affordability.filter((a) => a !== 'published-self-pay');
+    // Free care, a sliding fee, or payment assistance are offers to the
+    // person. Grant funding to the facility is not a promise of lower cost.
+    const personalOffers = alternatives.filter((a) => a !== 'public-funding');
+    // Medicaid is run by each state: "accepts Medicaid" at a facility in
+    // another state means that state's program, not the visitor's.
+    const facilityState = c.record?.address?.state ?? null;
+    const otherState = Boolean(profile.state && facilityState && facilityState !== profile.state);
     if (cov === 'uninsured' || (cov === 'unsure' && profile.needsFinancialHelp)) {
-      if (alternatives.length) {
+      if (personalOffers.length) {
         tier = 'provider-reported'; score = codes.has('NP') ? 1 : 0.9;
         reasons.push(reason('coverage.affordable', { options: alternatives }));
+      } else if (alternatives.length) {
+        tier = 'possible'; score = 0.6;
+        reasons.push(reason('coverage.affordable', { options: alternatives }));
+        verify.push(reason('verify.price'));
       } else if (codes.has('CASH')) {
         tier = 'possible'; score = 0.4;
         reasons.push(reason('coverage.selfPayOnly'));
@@ -234,6 +245,9 @@ export function assessCoverage(profile, c) {
       tier = 'unknown'; score = hasInfo ? 0.6 : 0.4;
       if (hasInfo) reasons.push(reason('coverage.listedPayments', { codes: payerCodes }));
       verify.push(reason('verify.coverageUnsure'));
+    } else if (payer && codes.has(payer) && cov === 'medicaid' && otherState) {
+      tier = 'possible'; score = 0.45;
+      reasons.push(reason('coverage.medicaidOtherState', { state: facilityState }));
     } else if (payer && codes.has(payer)) {
       tier = 'provider-reported'; score = 0.85;
       reasons.push(reason('coverage.reported', { coverage: cov }));

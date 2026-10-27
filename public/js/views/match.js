@@ -11,6 +11,8 @@ import { state, subscribe } from '../state.js';
 import { t, formatNumber } from '../i18n.js';
 import { locationPicker } from '../components/locationPicker.js';
 import { saveButton, formatAddress } from '../components/facilityCard.js';
+import { localizeServices } from '../codes.js';
+import { getServiceNames } from '../i18n.js';
 import { rankMatches, searchPlan, fromFacility, fromVirtualProvider } from '../match/engine.js';
 import { pageHeader, p, fine } from './common.js';
 
@@ -137,6 +139,7 @@ function describe(r) {
     case 'coverage.selfPayOnly': return t('match.why.selfPayOnly', 'Lists self-pay only; price not published');
     case 'coverage.listedPayments': return t('match.why.listedPayments', 'Lists the payment types it accepts (see below)');
     case 'coverage.reported': return t('match.why.reported', 'Told SAMHSA it accepts {what}', { what: label('coverage', q.coverage) });
+    case 'coverage.medicaidOtherState': return t('match.why.medicaidOtherState', 'Lists Medicaid, but it is in {state}: Medicaid usually works only in the state that issued it', q);
     case 'coverage.statePlan': return t('match.why.statePlan', 'Lists a state-financed health plan (ask if yours counts)');
     case 'coverage.alternatives': return t('match.why.alternatives', '{coverage} is not listed, but it lists {what}', { coverage: label('coverage', q.coverage), what: list('afford', q.options) });
     case 'coverage.reportedByProvider': return t('match.why.reportedByProvider', 'Says on its website that it accepts {what}', { what: label('coverage', q.coverage) });
@@ -582,7 +585,8 @@ function kindBadge(c) {
 
 function paymentSummary(c) {
   if (c.kind !== 'facility') return null;
-  const pay = (c.record.services ?? []).filter((s) => s.category === 'PAY' || s.category === 'PYAS').flatMap((s) => s.items);
+  const pay = localizeServices({ codes: [], services: [], ...c.record }, getServiceNames())
+    .filter((s) => s.category === 'PAY' || s.category === 'PYAS').flatMap((s) => s.items);
   if (!pay.length) return null;
   return h('p', { class: 'fine' }, t('match.card.payments', 'Payment it lists: {list}', { list: pay.join(' · ') }));
 }
