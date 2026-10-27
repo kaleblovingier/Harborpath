@@ -1,4 +1,4 @@
-import { h, clear, ext, tel, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
 
@@ -371,7 +371,7 @@ export function evaluateTransitionRisk({
           ? 'Keep your naloxone (Narcan) visible and make sure family or friends know where it is.'
           : 'Get free or over-the-counter naloxone nasal spray (SAMHSA code NOE) to keep at home and on your person.',
         isOnMoud
-          ? 'Continue your daily buprenorphine or methadone maintenance—staying on agonist medication cuts fatal overdose risk by 60–80%.'
+          ? 'Continue your daily buprenorphine or methadone maintenance—staying on agonist medication is linked to a much lower risk of dying from an overdose.'
           : 'If you use opioids, starting buprenorphine (BU) or methadone (OTP) protects your receptor tolerance and prevents fatal respiratory arrest.',
         'Never use alone: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590) if no trusted person is nearby.',
       ],
@@ -400,7 +400,7 @@ export function evaluateTransitionRisk({
         ? 'Critical Re-Entry Window: Extremely High Overdose Risk After Release from Jail or Prison'
         : 'Elevated Re-Entry Transition: Maintain Medication Continuity & Overdose Protection';
     physiologicalWhy = isOnMoud
-      ? 'Daily buprenorphine or methadone maintains mu-opioid receptor cross-tolerance and reduces post-release overdose mortality by up to 75%. Ensure uninterrupted prescription or OTP bridge dosing so no gap occurs during re-entry.'
+      ? 'Daily buprenorphine or methadone maintains mu-opioid receptor cross-tolerance, and staying on them after release is linked to far fewer overdose deaths. Ensure uninterrupted prescription or OTP bridge dosing so no gap occurs during re-entry.'
       : 'During incarceration, mu-opioid receptors rapidly resensitize and physiological opioid tolerance drops back toward opioid-naive levels. Returning to a previous “normal” dose—especially with street fentanyl—is the #1 cause of fatal overdose in the first 7–14 days after release.';
     addRecCode('CJ');
     addRecCode('BU');
@@ -485,8 +485,9 @@ export function evaluateTransitionRisk({
 }
 
 /**
- * Pure function that formats a structured plain-text ASAM 4th Edition
- * Clinical Summary & Provider Handoff Note for clipboard copy or printing.
+ * Pure function that formats the person's own self-reported answers, and a
+ * suggested starting point to discuss, as plain text for clipboard copy.
+ * It is not a diagnosis, a clinical assessment, or a level-of-care decision.
  *
  * @param {object} [answers]
  * @param {ReturnType<typeof evaluateAsamCare>} [evaluation]
@@ -503,15 +504,26 @@ export function formatAsamHandoffText(answers = {}, evaluation = evaluateAsamCar
   });
 
   const lines = [
-    'HARBORPATH — ASAM 4TH EDITION CLINICAL CARE SUMMARY & PROVIDER HANDOFF NOTE',
+    t('nav.handoff.title', 'HARBORPATH — MY SELF-REPORTED ANSWERS TO SHARE WITH A CLINICIAN'),
     `Date Generated: ${dateStr}`,
+    t('nav.disclaimer', 'This is not a diagnosis or a clinical assessment. A licensed clinician will assess you.'),
+    t(
+      'nav.handoff.about',
+      'I filled this out myself. It is a list of my own answers and a suggested starting point to discuss. It is organized by the ASAM Criteria dimensions, but it is not an official ASAM tool and only a licensed clinician can decide my level of care.',
+    ),
     'Privacy Note: Generated 100% locally in browser memory. Not stored on any server.',
     '========================================================================',
     '',
-    `RECOMMENDED LEVEL OF CARE: ${evalResult.asamLevel} — ${evalResult.asamTitle}`,
-    `Clinical Rationale: ${evalResult.summary}`,
+    ...(evalResult.crisis
+      ? [
+          t('nav.handoff.crisis', 'SAFETY FIRST: I reported thoughts of self-harm or feeling unsafe. Call or text 988 now. Call 911 if I am in immediate danger.'),
+          '',
+        ]
+      : []),
+    `${t('nav.handoff.starting_point', 'SUGGESTED STARTING POINT TO DISCUSS (not a level-of-care decision)')}: ${evalResult.asamLevel} — ${evalResult.asamTitle}`,
+    `${t('nav.handoff.why', 'Why this was suggested')}: ${evalResult.summary}`,
     '',
-    'PATIENT-REPORTED PROFILE:',
+    'MY SELF-REPORTED ANSWERS:',
     `- Substances Reported: ${substances.length ? substances.join(', ') : 'None specified'}`,
     `- Withdrawal Acuity (Dim 1): ${answers?.withdrawalRisk || 'none'}`,
     `- Biomedical Status (Dim 2): ${answers?.biomedical || 'none'}`,
@@ -524,22 +536,22 @@ export function formatAsamHandoffText(answers = {}, evaluation = evaluateAsamCar
       answers?.population ? `Population: ${answers.population}` : null,
     ].filter(Boolean).join(', ') || 'None specified'}`,
     '',
-    '6-DIMENSION ASAM CLINICAL BREAKDOWN:',
+    'HOW MY ANSWERS MAP TO THE 6 ASAM CRITERIA DIMENSIONS:',
     ...(evalResult.dimensionBreakdown ?? []).map(
       (d) => `- ${d.dimension} (${d.title}): ${d.finding}`,
     ),
     '',
-    'RED-FLAG MEDICAL SAFETY ALERTS:',
+    'SAFETY ALERTS BASED ON MY ANSWERS:',
     ...(evalResult.redFlags?.length
       ? evalResult.redFlags.map((flag) => `! ${flag}`)
       : ['- None flagged based on current selections.']),
     '',
-    'PHYSICIAN CLINICAL NOTES:',
+    'GENERAL INFORMATION (NOT MEDICAL ADVICE):',
     ...(evalResult.clinicalNotes?.length
       ? evalResult.clinicalNotes.map((note) => `* ${note}`)
-      : ['- Standard outpatient or harm reduction support indicated.']),
+      : ['- Outpatient or harm reduction support may be a place to start.']),
     '',
-    'RECOMMENDED SAMHSA DIRECTORY SERVICE CODES:',
+    'SAMHSA DIRECTORY SEARCH FILTERS USED:',
     `- Focused Filter Codes (<= 8): ${codeDescriptions.join(', ') || 'None'}`,
     `- Broad Core Codes: ${(evalResult.broadCodes ?? []).join(', ') || 'None'}`,
     `- HarborPath Search Route: ${evalResult.searchHref}`,
@@ -977,6 +989,9 @@ export function evaluateAsamCare(answers = {}) {
     searchHref,
     broadSearchHref,
     dimensionBreakdown,
+    // True when the person reports thoughts of self-harm or feeling unsafe.
+    // The view then shows a crisis-first card above the level-of-care result.
+    crisis: mentalHealth === 'severe_crisis',
   };
 }
 
@@ -1184,7 +1199,7 @@ export function careNavigatorView({ query } = {}) {
             'p',
             { class: 'callout-title' },
             icon('info'),
-            t('nav.results.notes_title', 'Physician notes for your care pathway'),
+            t('nav.results.notes_title', 'General information about your options (not medical advice)'),
           ),
           ul(result.clinicalNotes),
         )
@@ -1199,12 +1214,49 @@ export function careNavigatorView({ query } = {}) {
       ]),
     );
 
+    // Self-harm or feeling unsafe: safety comes before any program search.
+    const crisisCard = result.crisis
+      ? h(
+          'div',
+          { class: 'callout callout-emergency', role: 'region', 'aria-labelledby': 'nav-crisis-title' },
+          h(
+            'p',
+            { class: 'callout-title', id: 'nav-crisis-title' },
+            icon('alert'),
+            t('nav.crisis.title', 'Your safety comes first. You can get help right now.'),
+          ),
+          p(
+            t(
+              'nav.crisis.body',
+              'You said you are having thoughts of self-harm or feeling unsafe. You do not have to wait for a treatment program. Call or text 988 to talk with a trained crisis counselor now. It is free, confidential, and open 24/7. If you are in immediate danger, call 911.',
+            ),
+          ),
+          h(
+            'p',
+            { class: 'actions' },
+            tel('988', [icon('phone'), t('nav.crisis.call988', 'Call 988 now')], { class: 'btn btn-emergency btn-large' }),
+            sms('988', undefined, [icon('message'), t('hotline.988.text', 'Text 988')], { class: 'btn btn-secondary' }),
+            tel('911', [icon('phone'), t('nav.crisis.call911', 'Call 911 if you are in immediate danger')], { class: 'btn btn-secondary' }),
+          ),
+        )
+      : null;
+
+    if (crisisCard) recommendationContainer.append(crisisCard);
     recommendationContainer.append(
       h(
         'div',
         { class: 'card' },
-        h('p', { class: 'fine' }, t('nav.results.kicker', 'ASAM Criteria (4th Edition) Clinical Care Pathway')),
+        h('p', { class: 'fine' }, t('nav.results.kicker', 'A suggested starting point to discuss, based on your own answers and the ASAM Criteria dimensions')),
         h('h3', { id: 'recommendation-heading' }, `${result.asamLevel} — ${result.asamTitle}`),
+        h(
+          'div',
+          { class: 'callout callout-warn', role: 'note' },
+          p(
+            strong(t('nav.disclaimer', 'This is not a diagnosis or a clinical assessment. A licensed clinician will assess you.')),
+            ' ',
+            t('nav.results.disclaimer_body', 'This result only reflects what you told us. Only a licensed clinician can decide which level of care is right for you.'),
+          ),
+        ),
         p(result.summary),
         redFlagsBlock,
         h('p', { class: 'label' }, t('nav.results.matched_filters', 'Matched SAMHSA treatment filters (max 8 to protect search breadth):')),
@@ -1214,7 +1266,7 @@ export function careNavigatorView({ query } = {}) {
           { class: 'actions' },
           h(
             'a',
-            { class: 'btn btn-primary btn-large', href: result.searchHref },
+            { class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large', href: result.searchHref },
             icon('search'),
             t('nav.cta.search_matching', 'Search matching treatment near me'),
           ),
@@ -1233,14 +1285,14 @@ export function careNavigatorView({ query } = {}) {
                 const handoffText = formatAsamHandoffText(answers, result);
                 try {
                   await navigator.clipboard.writeText(handoffText);
-                  announce(t('nav.announce.copied_handoff', 'Clinical handoff note copied to clipboard'));
+                  announce(t('nav.announce.copied_handoff', 'Your answers were copied to the clipboard'));
                 } catch {
                   announce(t('nav.announce.copy_unavailable', 'Copy is not available in this browser'));
                 }
               },
             },
             icon('copy'),
-            t('nav.cta.copy_handoff', 'Copy clinical handoff note'),
+            t('nav.cta.copy_handoff', 'Copy my answers to share with a clinician'),
           ),
           h(
             'button',
@@ -1250,7 +1302,7 @@ export function careNavigatorView({ query } = {}) {
               onclick: () => window.print(),
             },
             icon('printer'),
-            t('nav.cta.print', 'Print clinical summary'),
+            t('nav.cta.print', 'Print my answers'),
           ),
         ),
         fine(
@@ -1263,7 +1315,7 @@ export function careNavigatorView({ query } = {}) {
         h(
           'details',
           { class: 'facility-details' },
-          h('summary', null, t('nav.results.breakdown_summary', 'View 6-Dimension ASAM clinical summary (for you or your clinician)')),
+          h('summary', null, t('nav.results.breakdown_summary', 'See how your answers map to the 6 ASAM Criteria dimensions')),
           breakdownList,
         ),
       ),
@@ -1631,7 +1683,7 @@ export function careNavigatorView({ query } = {}) {
     'div',
     { class: 'view view-prose' },
     pageHeader(
-      t('nav.title', 'Clinical Care Navigator (ASAM 4th Edition Self-Check)'),
+      t('nav.title', 'Care Navigator: a self-check based on the ASAM Criteria dimensions'),
       t(
         'nav.lede',
         'Not sure whether you need detox, outpatient medication, intensive outpatient, or residential care? Answer as much or as little as you want to match your needs to official SAMHSA treatment filters.',
@@ -1774,7 +1826,7 @@ export function careNavigatorView({ query } = {}) {
     // Live Clinical Recommendation Output
     section(
       'recommendation',
-      t('nav.results.heading', 'Step 2: Your Personalized Clinical Care Pathway'),
+      t('nav.results.heading', 'Step 2: A suggested starting point to discuss with a clinician'),
       recommendationContainer,
     ),
 
