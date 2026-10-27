@@ -37,6 +37,6 @@ There are no secrets. FindTreatment.gov, Census, HRSA, and the other sources nee
 - **Rate limiting:** the in-memory limiter runs per instance. On serverless hosts, add a platform firewall or rate-limit rule for `/api/treatment` and `/api/telehealth` (security review finding 1).
 - **Error monitoring:** no third-party error tracker is used, because it would conflict with the no-third-party CSP and the privacy promises. If one is added, it must run server-side only and must scrub query strings.
 
-## Status of this branch
+## Release status
 
-`claude/harborpath-multi-swarm-dev-59hiy5` has been pushed but **not deployed to production**. Promoting it needs a PR review and merge by the repository owner.
+Rounds 1 and 2 were fast-forwarded to `main` on 2026-10-27 at the owner's request, after 148/148 tests, the e2e walkthrough, and the axe re-scan all passed. If Vercel is connected to the repository, the push to `main` starts the production deploy. Then run `node scripts/smoke.mjs https://harborpath.vercel.app` and confirm that all checks pass, including the live `/api/treatment` call. That call could not be tested from the development sandbox.
