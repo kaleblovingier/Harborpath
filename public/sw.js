@@ -39,6 +39,7 @@ const APP_SHELL = [
   '/js/match/engine.js',
   '/js/locales/es.js',
   '/js/locales/es-match.js',
+  '/js/locales/es-clinical.js',
   '/js/locales/es-services.js',
 ];
 

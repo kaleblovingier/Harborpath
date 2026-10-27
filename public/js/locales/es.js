@@ -2,6 +2,7 @@
 // Uses person-first, trauma-informed terminology aligned with SAMHSA and NIDA en Español.
 
 import esMatch from './es-match.js';
+import esClinical from './es-clinical.js';
 
 export default {
   // ---------------------------------------------------------------- App shell & static HTML
@@ -396,7 +397,7 @@ export default {
   'providers.text.sourceDefault': 'Fuente: Directorio federal de proveedores de salud.',
 
   // ---------------------------------------------------------------- Clinical Care Navigator (navigator.js)
-  'nav.title': 'Navegador Clínico de Atención (Autoevaluación ASAM 4.ª Edición)',
+  'nav.title': 'Navegador de atención: una autoevaluación basada en las dimensiones de los Criterios ASAM',
   'nav.lede': '¿No sabe si necesita desintoxicación médica, medicamentos ambulatorios, tratamiento ambulatorio intensivo o atención residencial? Responda tanto o tan poco como desee para relacionar sus necesidades con los filtros oficiales de SAMHSA.',
   'nav.privacy.title': 'Autoevaluación clínica 100 % privada y sin almacenamiento externo',
   'nav.privacy.body': 'Sus respuestas permanecen únicamente en la memoria temporal de esta pestaña y nunca se envían a ningún servidor, ni se guardan en el disco ni se comparten con nadie. Al cerrar la pestaña o presionar Salida rápida se borra todo de inmediato.',
@@ -486,21 +487,21 @@ export default {
   'nav.pop.CJ': 'Personas involucradas en el sistema judicial',
   'nav.pop.WN': 'Programas enfocados en mujeres',
   'nav.pop.MN': 'Programas enfocados en hombres',
-  'nav.results.heading': 'Paso 2: Su Ruta Clínica Personalizada de Atención',
-  'nav.results.kicker': 'Ruta Clínica basada en los Criterios ASAM (4.ª Edición)',
+  'nav.results.heading': 'Paso 2: Un punto de partida sugerido para conversar con un profesional clínico',
+  'nav.results.kicker': 'Un punto de partida sugerido para conversar, basado en sus propias respuestas y en las dimensiones de los Criterios ASAM',
   'nav.results.codes_label': 'Códigos de filtro de SAMHSA recomendados',
   'nav.results.redflags_aria': 'Alertas importantes de seguridad médica',
   'nav.results.redflags_title': 'Guía importante de seguridad clínica',
-  'nav.results.notes_title': 'Notas médicas para su ruta de atención',
+  'nav.results.notes_title': 'Información general sobre sus opciones (no es consejo médico)',
   'nav.results.matched_filters': 'Filtros de tratamiento de SAMHSA recomendados (máximo 8 para proteger la amplitud de búsqueda):',
   'nav.results.samhsa_hint': 'Consejo: SAMHSA combina los filtros con Y (AND). Si “Buscar tratamiento compatible cerca de mí” muestra pocos resultados en una zona rural, use “Ampliar búsqueda” para buscar primero por su nivel principal de atención.',
-  'nav.results.breakdown_summary': 'Ver resumen clínico ASAM de 6 dimensiones (para usted o su profesional de salud)',
+  'nav.results.breakdown_summary': 'Vea cómo sus respuestas se relacionan con las 6 dimensiones de los Criterios ASAM',
   'nav.cta.call911': 'Llame al 911 ante emergencias médicas',
   'nav.cta.call988': 'Llame o envíe texto a la Línea 988',
   'nav.cta.find_health': 'Buscar atención médica / de heridas de bajo costo',
   'nav.cta.search_matching': 'Buscar tratamiento compatible cerca de mí',
   'nav.cta.search_broad': 'Ampliar búsqueda ({codes})',
-  'nav.cta.print': 'Imprimir resumen clínico',
+  'nav.cta.print': 'Imprimir mis respuestas',
   'nav.announce.updated': 'Recomendación actualizada: {level}',
   'nav.level.4.title': 'Hospitalización con Manejo Médico / Manejo de Abstinencia (Nivel ASAM 3.7-WM / 4.0)',
   'nav.level.4.summary': 'Según su perfil de abstinencia o sus necesidades médicas agudas, la atención médica las 24 horas con supervisión médica y de enfermería en el lugar es el primer paso más seguro para prevenir complicaciones graves, estabilizar los síntomas agudos y hacer la transición directa al tratamiento de mantenimiento.',
@@ -923,9 +924,9 @@ export default {
   'finder.sourceHrsa1': 'Sitios del conjunto de datos del ',
   'finder.sourceHrsa2': '. Los centros de salud atienden a todas las personas, tengan o no seguro, y ofrecen tarifas según los ingresos. Llame para confirmar horarios y servicios.',
 
-  'nav.announce.copied_handoff': 'Nota de transferencia clínica copiada al portapapeles',
+  'nav.announce.copied_handoff': 'Sus respuestas se copiaron al portapapeles',
   'nav.announce.copy_unavailable': 'La función de copiar no está disponible en este navegador',
-  'nav.cta.copy_handoff': 'Copiar nota de transferencia clínica',
+  'nav.cta.copy_handoff': 'Copiar mis respuestas para compartir con un profesional clínico',
   'nav.calc.summary': 'Opcional: ¿No está seguro/a de su riesgo de abstinencia? Use la Autoevaluación Clínica de Abstinencia',
   'nav.calc.privacy_note': 'Calculado 100 % en la memoria de esta pestaña. Use cualquiera de las calculadoras abajo y toque “Aplicar a mi Navegador de Atención arriba” para actualizar la Dimensión 1B.',
   'nav.calc.opioid.legend': 'Autoevaluación de Abstinencia de Opioides (basada en SOWS / COWS) y Momento para Iniciar Buprenorfina',
@@ -984,4 +985,5 @@ export default {
   'meds.regimen.groupLabel': 'Seleccione sustancias o medicamentos en combinación',
   'meds.specialPopulations.title': 'Poblaciones Especiales y Situaciones Clínicas (Embarazo, Salud Hepática/Renal y Cirugía)',
   ...esMatch,
+  ...esClinical,
 };
