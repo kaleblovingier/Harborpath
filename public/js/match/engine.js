@@ -102,16 +102,16 @@ export function normalizeProfile(raw = {}) {
   const pick = (v, allowed) => (allowed.includes(v) ? v : null);
   return {
     helpWith: pick(raw.helpWith, ['substance', 'mental-health', 'both']) ?? 'substance',
-    substances: arr(raw.substances).filter((s) => s in SUBSTANCE_RULES),
-    settings: arr(raw.settings).filter((s) => s in SETTING_CODES),
-    medications: arr(raw.medications).filter((m) => m in MEDICATION_CODES),
+    substances: arr(raw.substances).filter((s) => Object.hasOwn(SUBSTANCE_RULES, s)),
+    settings: arr(raw.settings).filter((s) => Object.hasOwn(SETTING_CODES, s)),
+    medications: arr(raw.medications).filter((m) => Object.hasOwn(MEDICATION_CODES, m)),
     modality: pick(raw.modality, ['in-person', 'virtual', 'either']) ?? 'either',
     coverage: pick(raw.coverage, COVERAGE_TYPES) ?? 'unsure',
     needsFinancialHelp: Boolean(raw.needsFinancialHelp),
     timing: pick(raw.timing, ['daytime', 'evening', 'weekend']),
     ageGroup: pick(raw.ageGroup, Object.keys(AGE_CODES)),
-    language: raw.language && raw.language !== 'en' && raw.language in LANGUAGE_CODES ? raw.language : null,
-    populations: arr(raw.populations).filter((p) => p in POPULATION_CODES),
+    language: raw.language !== 'en' && Object.hasOwn(LANGUAGE_CODES, raw.language ?? '') ? raw.language : null,
+    populations: arr(raw.populations).filter((p) => Object.hasOwn(POPULATION_CODES, p)),
     barriers: arr(raw.barriers).filter((b) => ['transportation', 'childcare', 'housing'].includes(b)),
     state: typeof raw.state === 'string' && /^[A-Z]{2}$/.test(raw.state) ? raw.state : null,
     maxMiles: Number.isFinite(raw.maxMiles) && raw.maxMiles > 0 ? raw.maxMiles : 25,
@@ -159,23 +159,25 @@ const SERVICE_TO_CODES = {
 
 /** A virtual-provider registry record (data/virtual-providers.json). */
 export function fromVirtualProvider(p) {
+  const list = (v) => (Array.isArray(v) ? v : []);
+  const lookup = (table, key) => (Object.hasOwn(table, key) ? table[key] : []);
   const codes = new Set(['TELE', 'OP']);
-  for (const s of p.services ?? []) for (const c of SERVICE_TO_CODES[s] ?? []) codes.add(c);
-  if ((p.conditions ?? []).includes('mental-health')) codes.add('MH');
-  for (const lang of p.languages ?? []) for (const c of LANGUAGE_CODES[lang] ?? []) codes.add(c);
-  const dates = (p.sources ?? []).map((s) => s.accessedAt).filter(Boolean).sort();
+  for (const s of list(p.services)) for (const c of lookup(SERVICE_TO_CODES, s)) codes.add(c);
+  if (list(p.conditions).includes('mental-health')) codes.add('MH');
+  for (const lang of list(p.languages)) for (const c of lookup(LANGUAGE_CODES, lang)) codes.add(c);
+  const dates = list(p.sources).map((s) => s?.accessedAt).filter((d) => typeof d === 'string').sort();
   return {
     id: `vp:${p.id}`,
     kind: 'virtual',
-    name: p.name,
+    name: String(p.name ?? ''),
     subname: null,
     codes,
-    conditions: p.conditions ?? [],
+    conditions: list(p.conditions),
     miles: null,
     telehealth: true,
     virtualOnly: true,
     serviceStates: Array.isArray(p.serviceStates) ? p.serviceStates : null,
-    insuranceClaims: p.insurance?.claims ?? [],
+    insuranceClaims: list(p.insurance?.claims),
     selfPay: p.insurance?.selfPay ?? null,
     networkVerifications: Array.isArray(p.networkVerifications) ? p.networkVerifications : [],
     ageMin: Number.isFinite(p.ageMin) ? p.ageMin : null,
@@ -511,7 +513,7 @@ export function rankMatches(rawProfile, candidates, { now = Date.now() } = {}) {
   }
   matches.sort((a, b) => b.score - a.score
     || (a.candidate.miles ?? Infinity) - (b.candidate.miles ?? Infinity)
-    || a.candidate.name.localeCompare(b.candidate.name));
+    || String(a.candidate.name).localeCompare(String(b.candidate.name)));
   return { profile, matches, excluded };
 }
 

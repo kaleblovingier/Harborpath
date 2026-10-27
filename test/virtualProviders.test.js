@@ -105,3 +105,16 @@ test('GET /api/virtual-providers responds with a disclosure and validates state'
     await new Promise((r) => server.close(r));
   }
 });
+
+test('malformed records are rejected without throwing, and review notes are not served', () => {
+  const hostile = [
+    good({ conditions: 5 }), good({ services: true }), good({ insurance: { claims: 'x' } }),
+    good({ insurance: { claims: [{ payer: 'medicaid', detail: 'x', sourceIndex: 0, states: 'CA' }] } }),
+    good({ name: 42 }), good({ languages: ['constructor'] }), good({ languages: ['__proto__'] }), null, 'x',
+  ];
+  for (const p of hostile) assert.ok(validateProvider(p).length > 0, JSON.stringify(p)?.slice(0, 60));
+  const vp = createVirtualProviders({ providers: [good({ notes: 'internal', unknowns: ['x'] }), ...hostile] }, { logger: silent });
+  const [served] = vp.search(params()).results;
+  assert.equal(vp.count, 1);
+  for (const f of ['notes', 'unknowns', 'reviewedBy', 'reviewStatus']) assert.ok(!(f in served), `${f} leaked`);
+});

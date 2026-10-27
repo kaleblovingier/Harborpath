@@ -56,10 +56,25 @@ export function createCache({ ttlMs = 60 * 60 * 1000, staleMs = 0, maxEntries = 
 
 // Fixed-window request limiter. Keys live only in memory for one window and
 // are never written to logs. Past maxKeys distinct clients in one window, new
-// clients share a single overflow bucket, so a flood of addresses cannot grow
-// memory without bound or slip past the limit.
-const OVERFLOW = '\u0000overflow';
-export function createRateLimiter({ windowMs = 60 * 1000, max = 60, maxKeys = 10_000, now = Date.now } = {}) {
+// clients are hashed into a fixed set of overflow buckets: memory stays
+// bounded, and a flood of addresses cannot lock out every new visitor at once
+// (one shared bucket could). The hash is salted per process so an attacker
+// cannot aim at a particular bucket.
+import { randomBytes } from 'node:crypto';
+
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+
+export function createRateLimiter({
+  windowMs = 60 * 1000, max = 60, maxKeys = 10_000, overflowBuckets = 1024, now = Date.now,
+} = {}) {
+  const salt = randomBytes(8).toString('hex');
   let windowStart = now();
   let counts = new Map();
   return {
@@ -68,7 +83,9 @@ export function createRateLimiter({ windowMs = 60 * 1000, max = 60, maxKeys = 10
         windowStart = now();
         counts = new Map();
       }
-      const key = counts.has(rawKey) || counts.size < maxKeys ? rawKey : OVERFLOW;
+      const key = counts.has(rawKey) || counts.size < maxKeys
+        ? rawKey
+        : `\u0000overflow:${fnv1a(salt + rawKey) % overflowBuckets}`;
       const n = (counts.get(key) ?? 0) + 1;
       counts.set(key, n);
       return n <= max;

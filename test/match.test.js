@@ -235,3 +235,10 @@ test('ranking is deterministic: ties break by distance, then name', () => {
   const out = rankMatches({}, [fac('b', ['SA'], { miles: 3 }), fac('a', ['SA'], { miles: 3 }), fac('c', ['SA'], { miles: 1 })], { now: NOW });
   assert.deepEqual(out.matches.map((m) => m.id), ['ft:c', 'ft:a', 'ft:b']);
 });
+
+test('hostile profile and registry values never throw', () => {
+  const p = normalizeProfile({ substances: ['toString', 'constructor', '__proto__'], language: 'toString', populations: ['hasOwnProperty'], settings: 'x' });
+  assert.deepEqual([p.substances, p.language, p.populations, p.settings], [[], null, [], []]);
+  const odd = fromVirtualProvider({ id: 'x', name: 7, services: 'x', languages: ['constructor'], conditions: null, sources: [{}], insurance: { claims: 'no' } });
+  assert.doesNotThrow(() => rankMatches({ modality: 'virtual' }, [odd, fac('a', ['SA'])], { now: NOW }));
+});

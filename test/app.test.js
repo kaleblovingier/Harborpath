@@ -178,6 +178,8 @@ test('non-GET methods are rejected', async () => {
 
 test('rate limiting kicks in', async () => {
   let last;
-  for (let i = 0; i < 45; i++) last = await fetch(`${base}/api/health`);
+  for (let i = 0; i < 45; i++) last = await fetch(`${base}/api/meta`);
   assert.equal(last.status, 429);
+  // Health probes are never limited, so a busy client cannot fail them.
+  assert.equal((await fetch(`${base}/api/health`)).status, 200);
 });

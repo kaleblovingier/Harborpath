@@ -14,6 +14,12 @@ const SERVICES = new Set([
   'contingency-management', 'peer-support', 'recovery-coaching', 'app-support', 'drug-testing',
 ]);
 const PAYERS = new Set(['medicaid', 'medicare', 'private', 'tricare', 'self-pay']);
+const LANGUAGES = new Set(['en', 'es', 'asl', 'ar', 'zh', 'ht', 'fa', 'fr', 'de', 'el', 'he', 'hi', 'hmn', 'it', 'ja', 'ko', 'pl', 'pt', 'ru', 'tl', 'vi', 'native']);
+// Fields a browser needs. Internal review notes stay on the server.
+const PUBLIC_FIELDS = [
+  'id', 'name', 'officialUrl', 'enrollUrl', 'phone', 'conditions', 'services', 'ageMin', 'serviceStates',
+  'insurance', 'languages', 'enrollmentProcess', 'sources', 'verificationStatus',
+];
 const STATE_RE = /^[A-Z]{2}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -23,12 +29,31 @@ const isHttps = (u) => {
 
 /** Problems with one record, as readable strings. Empty means valid. */
 export function validateProvider(p) {
+  try {
+    return checkProvider(p);
+  } catch (e) {
+    return [`${typeof p?.id === 'string' ? p.id : '(no id)'}: malformed record (${e.message})`];
+  }
+}
+
+const isList = (v) => v === undefined || v === null || Array.isArray(v);
+
+function checkProvider(p) {
   const errors = [];
   const where = p?.id ?? '(no id)';
   const err = (m) => errors.push(`${where}: ${m}`);
   if (!p || typeof p !== 'object') return ['record is not an object'];
-  if (!/^[a-z0-9-]+$/.test(p.id ?? '')) err('id must be kebab-case');
-  if (!p.name) err('name is required');
+  if (typeof p.id !== 'string' || !/^[a-z0-9-]+$/.test(p.id)) err('id must be kebab-case');
+  if (typeof p.name !== 'string' || !p.name.trim()) err('name is required');
+  for (const f of ['phone', 'enrollmentProcess']) {
+    if (p[f] !== null && p[f] !== undefined && typeof p[f] !== 'string') err(`${f} must be a string or null`);
+  }
+  if (p.ageMin !== null && p.ageMin !== undefined && !Number.isInteger(p.ageMin)) err('ageMin must be an integer or null');
+  for (const f of ['conditions', 'services', 'languages', 'sources']) if (!isList(p[f])) err(`${f} must be an array`);
+  if (p.insurance !== undefined && p.insurance !== null && (typeof p.insurance !== 'object' || !isList(p.insurance.claims))) {
+    err('insurance.claims must be an array');
+  }
+  if (errors.length) return errors;
   if (!isHttps(p.officialUrl)) err('officialUrl must be https');
   if (p.enrollUrl !== null && p.enrollUrl !== undefined && !isHttps(p.enrollUrl)) err('enrollUrl must be https');
   if (p.verificationStatus !== 'provider-reported') err('verificationStatus must be "provider-reported"');
@@ -46,6 +71,7 @@ export function validateProvider(p) {
   if (!sources.some((s) => s?.type === 'official')) err('at least one official source is required');
   for (const c of p.conditions ?? []) if (!CONDITIONS.has(c)) err(`unknown condition ${c}`);
   for (const s of p.services ?? []) if (!SERVICES.has(s)) err(`unknown service ${s}`);
+  for (const l of p.languages ?? []) if (!LANGUAGES.has(l)) err(`unknown language ${l}`);
   if (p.serviceStates !== null && p.serviceStates !== undefined) {
     if (!Array.isArray(p.serviceStates)) err('serviceStates must be an array or null');
     else for (const s of p.serviceStates) if (!STATE_RE.test(s) || !describeRegion(s)) err(`bad state ${s}`);
@@ -54,7 +80,10 @@ export function validateProvider(p) {
   claims.forEach((c, i) => {
     if (!PAYERS.has(c?.payer)) err(`insurance.claims[${i}].payer is not recognized`);
     if (!Number.isInteger(c?.sourceIndex) || !sources[c.sourceIndex]) err(`insurance.claims[${i}] must cite a source`);
-    if (c?.states && !c.states.every((s) => STATE_RE.test(s))) err(`insurance.claims[${i}].states is invalid`);
+    if (c?.states !== null && c?.states !== undefined && !(Array.isArray(c.states) && c.states.every((s) => STATE_RE.test(s)))) {
+      err(`insurance.claims[${i}].states is invalid`);
+    }
+    if (c?.detail !== null && c?.detail !== undefined && typeof c.detail !== 'string') err(`insurance.claims[${i}].detail must be a string`);
     if (/in[- ]network/i.test(c?.detail ?? '') && !c?.plan) err(`insurance.claims[${i}] says in-network without naming a plan`);
   });
   const self = p.insurance?.selfPay;
@@ -81,9 +110,9 @@ export function createVirtualProviders(registry, { logger = console } = {}) {
     const errors = validateProvider(p);
     if (errors.length) logger.error(`[virtual-providers] skipped ${errors.join('; ')}`);
     else if (p.reviewStatus !== 'approved') pending++;
-    else valid.push(Object.freeze({ ...p }));
+    else valid.push(Object.freeze(Object.fromEntries(PUBLIC_FIELDS.filter((f) => f in p).map((f) => [f, p[f]]))));
   }
-  valid.sort((a, b) => a.name.localeCompare(b.name));
+  valid.sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
   return {
     count: valid.length,
