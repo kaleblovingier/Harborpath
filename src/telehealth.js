@@ -90,7 +90,7 @@ export async function searchTelehealth(query, { taxonomy, fetchImpl = fetch, cac
   try {
     body = JSON.parse(text);
   } catch {
-    throw new Error(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`);
+    throw new Error(`FindTreatment.gov returned a non-JSON response (${text.length} bytes)`);
   }
   const rows = Array.isArray(body.rows) ? body.rows : [];
   const results = rows

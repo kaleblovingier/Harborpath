@@ -35,7 +35,10 @@ const APP_SHELL = [
   '/js/views/medications.js',
   '/js/views/navigator.js',
   '/js/views/plan.js',
+  '/js/views/match.js',
+  '/js/match/engine.js',
   '/js/locales/es.js',
+  '/js/locales/es-match.js',
   '/js/locales/es-services.js',
 ];
 

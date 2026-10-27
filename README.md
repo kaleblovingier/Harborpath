@@ -4,6 +4,7 @@
 
 A free, privacy-first platform for finding **addiction treatment**, **clinical care navigation**, **evidence-based medications**, **harm reduction tools**, and **safety-net health services** across the United States and U.S. territories (in **English and Español**).
 
+- **Find care that fits (`#/match`):** a short, skippable needs assessment (help type, care setting, medications, location, in-person or online, coverage, cost, and optional preferences), then options ranked by an explainable on-device matching engine. Each result says why it fits, what is not listed, and what still needs confirming. Coverage is graded by evidence (confirmed, provider-reported, possible, not listed, unknown) and is never promised. Includes side-by-side comparison and a printable next-steps plan with insurer questions. Answers never leave the browser. See [docs/SPEC.md](docs/SPEC.md).
 - **Find treatment (`#/treatment`):** live search of SAMHSA’s [FindTreatment.gov](https://findtreatment.gov/), the federal directory of state-licensed facilities. Filter by medication (buprenorphine, methadone, naltrexone, OTPs, alcohol use disorder medication), type of care, payment (Medicaid, sliding scale, free), population served, language, and extras like naloxone or HIV/HCV testing. Includes rural/island reach expansion (up to 250 miles) and statewide telehealth listings.
 - **Clinical Care Navigator (`#/navigator`):** zero-knowledge, 6-dimension **ASAM Criteria (4th Edition)** clinical self-check authored from an Addiction Medicine (MD) perspective. Evaluates withdrawal risk (including alcohol/benzodiazepine seizure risk, opioid stabilization, and xylazine/medetomidine alpha-2 rebound), biomedical conditions (pregnancy/postpartum ACOG standards, acute infections), co-occurring mental health, and housing/recovery environment entirely in browser RAM, and maps directly to SAMHSA service codes. Covers EMTALA and the DEA 72-Hour Rule (`21 CFR § 1306.07(b)`).
 - **Medications & Pharmacology Guide (`#/medications`):** clinical pharmacist (PharmD) guide to FDA-approved Medications for Opioid Use Disorder (buprenorphine, methadone with 2024 `42 CFR Part 8` take-home/telehealth updates, extended-release naltrexone), Buprenorphine Low-Dose Micro-Induction ("Bernese Method") for fentanyl transitions, Medications for Alcohol Use Disorder, stimulant & nicotine pharmacotherapy, overdose reversal pharmacology (4 mg vs 8 mg naloxone, nalmefene, xylazine rescue breathing), and an interactive **Drug & Medication Interaction Explorer**.
@@ -37,7 +38,8 @@ Requires Node.js 20 or newer. There are no npm dependencies.
 
 ```bash
 npm start            # http://localhost:3000
-npm test             # 71 tests: API, privacy guarantees, geocoding, providers, regions, clinical modules
+npm test             # 120 tests: API, privacy, geocoding, providers, regions, clinical modules, matching engine, registry
+node scripts/smoke.mjs <url>   # post-deploy smoke test (see docs/DEPLOYMENT.md)
 npm run data:build   # refresh data/ from SAMHSA, Census, HRSA, VA, IHS, CMS, and Medicaid
 ```
 
@@ -66,6 +68,12 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `public/js/views/populationHelpers.js` | Phase 1 pure functions for population-specific provider matching |
 | `data/` | Compacted public datasets (SAMHSA service codes, Census ZCTAs/places/island places, HRSA health centers, VA facilities, IHS facilities, CMS rural health clinics & emergency hospitals, state agencies & Medicaid), built by `scripts/build-data.mjs` |
 | `test/` | `node:test` suites covering API, privacy headers, geocoding, federal providers, regional directories, and MD/PharmD/SUDP clinical modules |
+| `public/js/match/engine.js` | Shared matching engine: coverage tiers, explainable ranking (pure; runs in the browser) |
+| `data/virtual-providers.json` | Online treatment program registry, served only after human review |
+| `docs/SPEC.md` | Shared spec, interface contracts, workstream status, integration checklist |
+| `docs/PROVIDER_DATA.md` | Provider data model, sources, and review workflow |
+| `docs/SECURITY_REVIEW.md` | Security, privacy, clinical safety, and compliance review, with remediation status |
+| `docs/QA_REPORT.md` / `docs/DEPLOYMENT.md` | Test results and coverage gaps / release, smoke test, and rollback |
 | `docs/ARCHITECTURE.md` | Data flow, API reference, and design decisions |
 | `docs/IMPROVEMENTS.md` | Ranked roadmap to serve more individuals |
 | `docs/AI_NAVIGATOR_SPEC.md` | Privacy-first AI navigator design |

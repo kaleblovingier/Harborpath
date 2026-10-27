@@ -1,6 +1,8 @@
 // Spanish (es-US) interface dictionary for HarborPath.
 // Uses person-first, trauma-informed terminology aligned with SAMHSA and NIDA en Español.
 
+import esMatch from './es-match.js';
+
 export default {
   // ---------------------------------------------------------------- App shell & static HTML
   'app.description': 'Búsqueda gratuita y privada de tratamiento con licencia para el consumo de sustancias, naloxona y herramientas de reducción de daños, centros de salud de bajo costo y apoyo en crisis. Datos oficiales de SAMHSA y HRSA. Sin anuncios ni rastreo.',
@@ -514,7 +516,7 @@ export default {
   'nav.redflag.pregnant': 'Prioridad de Embarazo y Atención Perinatal (Guías ACOG / ASAM): Si está embarazada y consume opioides, las guías clínicas recomiendan ampliamente iniciar o continuar el mantenimiento con buprenorfina (BU) o metadona (MU/OTP) en lugar de una desintoxicación abrupta. La abstinencia de opioides sin supervisión durante el embarazo puede causar sufrimiento fetal, parto prematuro y retorno al consumo.',
   'nav.redflag.acute_infection': 'Advertencia Biomédica Urgente (Fiebre, Herida Grave o Riesgo de Infección Sistémica): Fiebre, escalofríos, enrojecimiento que se extiende, tejido negro/necrótico, dolor en el pecho o falta de aire pueden indicar endocarditis, osteomielitis, sepsis o infección profunda. Busque evaluación hospitalaria inmediata (HI) o atención médica de urgencia (#/health). Bajo la ley EMTALA, las salas de emergencia deben evaluarle y estabilizarle sin importar su seguro o capacidad de pago.',
   'nav.redflag.mental_crisis': 'Apoyo en Crisis Aguda de Salud Mental: Si tiene pensamientos de autolesión, pánico abrumador o psicosis, no tiene que enfrentar esto solo/a. Llame o envíe un texto al 988 (gratis, confidencial, 24/7) o utilice atención de crisis sin cita (WI) y equipos móviles de crisis (PEOFF). La atención integrada de diagnóstico dual (MHSU) trata la salud mental y el consumo de sustancias al mismo tiempo.',
-  'nav.note.opioid_moud': 'Trastorno por Consumo de Opioides y Regla de las 72 Horas de la DEA (21 CFR § 1306.07(b)): Los medicamentos aprobados por la FDA —buprenorfina (BU), metadona (MU/OTP) y naltrexona de liberación prolongada (NU)— reducen el riesgo de sobredosis mortal en más de la mitad. Bajo la norma federal 21 CFR § 1306.07(b), cualquier médico de sala de emergencias u hospital puede administrar o dispensar hasta 72 horas (3 días) de buprenorfina o metadona para aliviar la abstinencia aguda de opioides mientras le conecta con atención continua.',
+  'nav.note.opioid_moud': 'Trastorno por Consumo de Opioides y Regla de las 72 Horas de la DEA (21 CFR § 1306.07(b)): Los medicamentos aprobados por la FDA —buprenorfina (BU), metadona (MU/OTP) y naltrexona de liberación prolongada (NU)— tratan el trastorno por consumo de opioides; continuar con buprenorfina o metadona se asocia con una gran reducción de las muertes por sobredosis (Larochelle et al., Ann Intern Med 2018). Bajo la norma federal 21 CFR § 1306.07(b), cualquier médico de sala de emergencias u hospital puede administrar o dispensar hasta 72 horas (3 días) de buprenorfina o metadona para aliviar la abstinencia aguda de opioides mientras le conecta con atención continua.',
   'nav.note.xylazine': 'Adulteración con Xilacina / Medetomidina (“Tranq”): La xilacina y la medetomidina son sedantes adrenérgicos alfa-2 no opioides. Su abstinencia causa hipertensión de rebote, taquicardia, sudoración y ansiedad intensa que los medicamentos opioides por sí solos no alivian por completo; los médicos suelen añadir agonistas alfa-2 (como clonidina, tizanidina o dexmedetomidina) junto con buprenorfina o metadona.',
   'nav.note.alcohol_maud': 'Medicamentos para el Trastorno por Consumo de Alcohol (MAUD): Una vez manejada de forma segura la abstinencia aguda, los medicamentos aprobados por la FDA —naltrexona (oral o inyección mensual), acamprosato y disulfiram— reducen el consumo excesivo y los antojos, y pueden recetarse en atención primaria o ambulatoria.',
   'nav.note.stimulants': 'Trastorno por Consumo de Estimulantes (Metanfetamina / Cocaína): El Manejo de Contingencias (CMI) —que brinda incentivos tangibles por alcanzar metas de recuperación— combinado con terapia cognitivo-conductual y apoyo entre pares cuenta con la mayor evidencia clínica.',
@@ -981,4 +983,5 @@ export default {
   'meds.regimen.title': 'Verificador de Seguridad de Polifarmacia y Combinación de Múltiples Sustancias',
   'meds.regimen.groupLabel': 'Seleccione sustancias o medicamentos en combinación',
   'meds.specialPopulations.title': 'Poblaciones Especiales y Situaciones Clínicas (Embarazo, Salud Hepática/Renal y Cirugía)',
+  ...esMatch,
 };

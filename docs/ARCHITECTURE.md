@@ -32,6 +32,7 @@ All responses are JSON with `Cache-Control: no-store`.
 | `GET /api/geocode` | `q`: a ZIP, "City, ST", or "City State" | Up to 8 matches. PO-box-only ZIPs fall back to a nearby ZIP with the same 3-digit prefix. |
 | `GET /api/treatment` | `lat`, `lng`, `radius` (5, 10, 25, 50, or 100), `kind` (`sa` or `mh`), `codes` (comma-separated, up to 8), `page` | Codes are combined with AND by SAMHSA. 25 results per page. |
 | `GET /api/health-centers` | `lat`, `lng`, `radius` | The 30 nearest sites plus the total count in range. |
+| `GET /api/virtual-providers` | `state` (optional) | Reviewed online treatment programs available in that state. See `docs/SPEC.md`. |
 | `GET /api/meta` | | Dataset dates for the footer |
 | `GET /api/health` | | Liveness |
 

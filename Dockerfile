@@ -6,9 +6,10 @@ COPY src ./src
 COPY public ./public
 COPY data ./data
 
+# Set TRUST_PROXY=1 only when a reverse proxy in front of this container sets
+# X-Forwarded-For; without a proxy, trusting it would let clients pick their key.
 ENV NODE_ENV=production \
-    PORT=3000 \
-    TRUST_PROXY=1
+    PORT=3000
 
 USER node
 EXPOSE 3000

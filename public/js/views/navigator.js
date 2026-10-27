@@ -640,7 +640,7 @@ export function evaluateAsamCare(answers = {}) {
     clinicalNotes.push(
       t(
         'nav.note.opioid_moud',
-        'Opioid Use Disorder & the DEA 72-Hour Rule (21 CFR § 1306.07(b)): FDA-approved medications—buprenorphine (BU), methadone (MU/OTP), and extended-release naltrexone (NU)—cut fatal overdose risk by more than half. Under federal DEA regulation 21 CFR § 1306.07(b), any Emergency Department or hospital clinician can administer or dispense up to 72 hours (3 days) of buprenorphine or methadone to relieve acute opioid withdrawal while connecting you to ongoing care.',
+        'Opioid Use Disorder & the DEA 72-Hour Rule (21 CFR § 1306.07(b)): FDA-approved medications—buprenorphine (BU), methadone (MU/OTP), and extended-release naltrexone (NU)—treat opioid use disorder; staying on buprenorphine or methadone is linked to a large drop in overdose deaths (Larochelle et al., Ann Intern Med 2018). Under federal DEA regulation 21 CFR § 1306.07(b), any Emergency Department or hospital clinician can administer or dispense up to 72 hours (3 days) of buprenorphine or methadone to relieve acute opioid withdrawal while connecting you to ongoing care.',
       ),
     );
   }

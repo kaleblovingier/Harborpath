@@ -6,12 +6,14 @@ import { harmReductionView, overdoseView, supportView, choosingCareView } from '
 import { careNavigatorView } from './views/navigator.js';
 import { medicationsView } from './views/medications.js';
 import { planView } from './views/plan.js';
+import { matchView } from './views/match.js';
 
 const SITE = 'HarborPath';
 const EXIT_URL = 'https://www.weather.gov/';
 
 const ROUTES = {
   '': [homeView, () => t('route.home', 'Find treatment, harm reduction & health services')],
+  match: [matchView, () => t('route.match', 'Find care that fits')],
   treatment: [treatmentView, () => t('route.treatment', 'Find treatment')],
   navigator: [careNavigatorView, () => t('route.navigator', 'Clinical care navigator (ASAM)')],
   medications: [medicationsView, () => t('route.medications', 'Medications & interactions')],

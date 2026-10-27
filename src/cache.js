@@ -55,16 +55,20 @@ export function createCache({ ttlMs = 60 * 60 * 1000, staleMs = 0, maxEntries = 
 }
 
 // Fixed-window request limiter. Keys live only in memory for one window and
-// are never written to logs.
-export function createRateLimiter({ windowMs = 60 * 1000, max = 60, now = Date.now } = {}) {
+// are never written to logs. Past maxKeys distinct clients in one window, new
+// clients share a single overflow bucket, so a flood of addresses cannot grow
+// memory without bound or slip past the limit.
+const OVERFLOW = '\u0000overflow';
+export function createRateLimiter({ windowMs = 60 * 1000, max = 60, maxKeys = 10_000, now = Date.now } = {}) {
   let windowStart = now();
   let counts = new Map();
   return {
-    allow(key) {
+    allow(rawKey) {
       if (now() - windowStart >= windowMs) {
         windowStart = now();
         counts = new Map();
       }
+      const key = counts.has(rawKey) || counts.size < maxKeys ? rawKey : OVERFLOW;
       const n = (counts.get(key) ?? 0) + 1;
       counts.set(key, n);
       return n <= max;

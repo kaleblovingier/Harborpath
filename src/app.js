@@ -11,6 +11,7 @@ import { createRegions } from './regions.js';
 import { createStateDirectory } from './stateResources.js';
 import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
+import { createVirtualProviders } from './virtualProviders.js';
 import { InputError, RADII_MILES, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
 import { DATA_LOADERS, PUBLIC_DIR } from './data.js';
 
@@ -38,6 +39,7 @@ export const SECURITY_HEADERS = {
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Resource-Policy': 'same-origin',
   'Permissions-Policy': 'geolocation=(self), camera=(), microphone=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
 // Hosts with a CDN (e.g. Vercel) may serve public/ themselves and leave it out
@@ -112,10 +114,14 @@ function acceptedEncodings(header) {
   return out;
 }
 
-function clientKey(req, trustProxy) {
+// The leftmost X-Forwarded-For entry is whatever the client sent, so keying on
+// it lets anyone dodge the limit with a fake header. The rightmost entry was
+// added by the proxy in front of us (Vercel replaces the header entirely), so
+// that is the client address the proxy actually saw.
+export function clientKey(req, trustProxy) {
   if (trustProxy) {
     const fwd = req.headers['x-forwarded-for'];
-    if (typeof fwd === 'string' && fwd) return fwd.split(',')[0].trim();
+    if (typeof fwd === 'string' && fwd) return fwd.split(',').at(-1).trim();
   }
   return req.socket.remoteAddress ?? 'unknown';
 }
@@ -157,6 +163,7 @@ export function createApp({
     ruralHealthClinics: DATA_LOADERS.ruralHealthClinics(),
     meta,
   }));
+  const virtualProviders = once(() => createVirtualProviders(DATA_LOADERS.virtualProviders(), { logger }));
   const staticFiles = loadStatic(fileURLToPath(PUBLIC_DIR));
   // Fresh for 30 minutes, then kept 30 more only to answer if FindTreatment.gov
   // is down: never more than the hour the privacy page promises.
@@ -290,6 +297,8 @@ export function createApp({
             updated: publicMeta.healthCenters.updated,
           });
         }
+        case '/api/virtual-providers':
+          return json(req, res, 200, virtualProviders().search(params));
         case '/api/providers':
           return json(req, res, 200, providers().search(params, readLocation(params)));
         case '/api/nearby-summary': {

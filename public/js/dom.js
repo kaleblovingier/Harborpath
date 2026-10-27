@@ -41,8 +41,16 @@ export function langNote(href) {
   return h('span', { class: 'lang-note' }, t('common.inEnglish', ' (in English)'));
 }
 
+/** Only web, phone, SMS, email, and in-app links; anything else is dropped. */
+export function safeHref(href) {
+  const s = String(href ?? '').trim();
+  return /^(https?:\/\/|tel:|sms:|mailto:|#)/i.test(s) ? s : null;
+}
+
 /** External link: new tab, no referrer, marked for screen readers. */
 export function ext(href, ...children) {
+  href = safeHref(href);
+  if (!href) return h('span', null, ...children);
   const english = !isLocalizedUrl(href);
   return h('a', { href, target: '_blank', rel: 'noopener noreferrer', class: 'ext', hreflang: english ? 'en' : null },
     ...children, langNote(href), h('span', { class: 'visually-hidden' }, t('common.newTab', ' (opens in a new tab)')));

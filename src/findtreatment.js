@@ -131,7 +131,7 @@ async function fetchListing(url, { fetchImpl, timeoutMs }) {
     return JSON.parse(text);
   } catch {
     // The API answers malformed queries with a plain-text message and HTTP 200.
-    throw new UpstreamError(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`, { retryable: false });
+    throw new UpstreamError(`FindTreatment.gov returned a non-JSON response (${text.length} bytes)`, { retryable: false });
   }
 }
 
