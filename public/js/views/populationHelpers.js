@@ -1,64 +1,92 @@
 /**
- * Population-specific helpers for HarborPath Clinical Care Navigator.
- * Pure functions that return recommended SAMHSA service codes and
- * pre-built treatment search links. All client-side; no PHI transmitted.
- * Supports expanding usefulness to more individuals (pregnancy, youth,
- * justice-involved, older adults, stimulants, xylazine, co-occurring MH).
+ * Population helpers for the Care Navigator.
+ * Thin wrappers around evaluatePregnancyCare / evaluateYouthCare /
+ * evaluateReentryCare / evaluateXylazineCare in navigator.js.
+ * Each search link uses at most 2 SAMHSA codes (FindTreatment ANDs them).
+ * No doses, no DOM, no network, no storage.
  */
+import {
+  evaluatePregnancyCare,
+  evaluateYouthCare,
+  evaluateReentryCare,
+  evaluateXylazineCare,
+} from './navigator.js';
 
-export function recommendForPregnancy() {
+function linksFrom(result) {
   return {
-    codes: ['PW', 'HI', 'DT', 'MD', 'SS'],
-    searchHref: '#/treatment?codes=PW,HI,DT,MD,SS',
-    guidance: 'Pregnancy/postpartum: Prioritize specialty programs (PW), hospital inpatient if needed (HI), withdrawal management (DT), and Medicaid/sliding scale. Follow ACOG standards.',
+    codes: result.recommendedCodes,
+    searchHref: result.searchHref,
+    searchLinks: result.searchLinks,
+    guidance: result.headline,
+    urgency: result.urgency,
+    emergency: result.emergency,
+    emergencyStep: result.emergencyStep,
+    actionSteps: result.actionSteps,
   };
 }
 
-export function recommendForYouth() {
-  return {
-    codes: ['ADOL', 'YA', 'IOP', 'RES', 'TELE'],
-    searchHref: '#/treatment?codes=ADOL,YA,IOP,RES,TELE',
-    guidance: 'Adolescents/young adults: Age-specific residential, IOP, or telehealth options. Confirm consent and family involvement policies.',
-  };
+/** @param {Parameters<typeof evaluatePregnancyCare>[0]} [input] */
+export function recommendForPregnancy(input = { stage: 'pregnant', substances: ['opioids'] }) {
+  return linksFrom(evaluatePregnancyCare(input));
 }
 
-export function recommendForJusticeInvolved() {
-  return {
-    codes: ['CJ', 'OTP', 'BU', 'OP', 'NOE'],
-    searchHref: '#/treatment?codes=CJ,OTP,BU,OP,NOE',
-    guidance: 'Justice-involved/reentry: High overdose risk post-release. Prioritize MOUD (OTP/BU), outpatient, and naloxone education (NOE).',
-  };
+/** @param {Parameters<typeof evaluateYouthCare>[0]} [input] */
+export function recommendForYouth(input = { age: 16, substances: ['opioids'] }) {
+  return linksFrom(evaluateYouthCare(input));
 }
 
+/** @param {Parameters<typeof evaluateReentryCare>[0]} [input] */
+export function recommendForJusticeInvolved(input = {}) {
+  return linksFrom(evaluateReentryCare(input));
+}
+
+/**
+ * Older adults (SEN). Prefer outpatient + co-occurring care.
+ * Medicare/Medicaid are payment filters, not SAMHSA service codes here.
+ */
 export function recommendForOlderAdults() {
   return {
-    codes: ['SEN', 'OP', 'MD', 'MHSU'],
-    searchHref: '#/treatment?codes=SEN,OP,MD,MHSU',
-    guidance: 'Older adults: Medical comorbidity-aware outpatient care, Medicare/Medicaid, and co-occurring mental health support.',
+    codes: ['SEN', 'MHSU'],
+    searchHref: '#/treatment?codes=SEN,MHSU',
+    searchLinks: [
+      { label: 'Programs for older adults with mental health support', codes: ['SEN', 'MHSU'], href: '#/treatment?codes=SEN,MHSU' },
+      { label: 'Outpatient care for older adults', codes: ['SEN', 'OP'], href: '#/treatment?codes=SEN,OP' },
+    ],
+    guidance:
+      'Older adults: ask about other health conditions, falls, and how new medicine fits with what you already take. Bring a full medicine list to the first visit.',
   };
 }
 
+/** Stimulant use: contingency management has the strongest evidence. No FDA-approved agonist yet. */
 export function recommendForStimulants() {
   return {
-    codes: ['CMI', 'OP', 'TELE', 'MHSU'],
-    searchHref: '#/treatment?codes=CMI,OP,TELE,MHSU',
-    guidance: 'Stimulant use: Contingency management (CMI), outpatient, and telehealth. No agonist medication currently approved.',
+    codes: ['CMI'],
+    searchHref: '#/treatment?codes=CMI',
+    searchLinks: [
+      { label: 'Contingency management', codes: ['CMI'], href: '#/treatment?codes=CMI' },
+      { label: 'Outpatient care', codes: ['OP'], href: '#/treatment?codes=OP' },
+    ],
+    guidance:
+      'For meth or cocaine, contingency management (small rewards for negative tests) has the strongest evidence. There’s no FDA-approved medicine yet. Ask about same-day outpatient starts.',
   };
 }
 
-export function recommendForXylazine() {
-  return {
-    codes: ['BU', 'OTP', 'DT', 'NOE'],
-    searchHref: '#/treatment?codes=BU,OTP,DT,NOE',
-    guidance: 'Xylazine/medetomidine: Address alpha-2 rebound with clonidine/tizanidine alongside MOUD. Include naloxone and wound care education.',
-  };
+/** @param {Parameters<typeof evaluateXylazineCare>[0]} [input] */
+export function recommendForXylazine(input = { inSupply: 'maybe' }) {
+  return linksFrom(evaluateXylazineCare(input));
 }
 
+/** Co-occurring mental health and substance use. */
 export function recommendForCoOccurring() {
   return {
-    codes: ['MHSU', 'TRMA', 'IOP', 'OP'],
-    searchHref: '#/treatment?codes=MHSU,TRMA,IOP,OP',
-    guidance: 'Co-occurring serious mental illness: Integrated dual-diagnosis programs, trauma-informed care, and appropriate level of intensity.',
+    codes: ['MHSU'],
+    searchHref: '#/treatment?codes=MHSU',
+    searchLinks: [
+      { label: 'Programs for substance use and mental health together', codes: ['MHSU'], href: '#/treatment?codes=MHSU' },
+      { label: 'Trauma-informed care', codes: ['TRMA'], href: '#/treatment?codes=TRMA' },
+    ],
+    guidance:
+      'Programs that treat mental health and substance use together work better than treating only one. Ask if they keep your mental health medicine going while you start substance use care.',
   };
 }
 
