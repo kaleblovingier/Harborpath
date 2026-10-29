@@ -363,17 +363,37 @@ export function evaluateTransitionRisk({
     addRecCode('OP');
     return {
       riskBand: 'baseline',
-      headline: 'Baseline Transition Profile — Keep Naloxone & Overdose Prevention Tools Ready',
-      physiologicalWhy:
+      headline: t(
+        'nav.trans.baseline.headline',
+        'Baseline Transition Profile — Keep Naloxone & Overdose Prevention Tools Ready',
+      ),
+      physiologicalWhy: t(
+        'nav.trans.baseline.why',
         'Opioid receptor tolerance remains relatively steady during consistent daily agonist medication (buprenorphine or methadone), but drops rapidly within days of any pause in opioid use, hospitalization, incarceration, or detox.',
+      ),
       actionSteps: [
         carriesNaloxone
-          ? 'Keep your naloxone (Narcan) visible and make sure family or friends know where it is.'
-          : 'Get free or over-the-counter naloxone nasal spray (SAMHSA code NOE) to keep at home and on your person.',
+          ? t(
+            'nav.trans.step.naloxoneKeep',
+            'Keep your naloxone (Narcan) visible and make sure family or friends know where it is.',
+          )
+          : t(
+            'nav.trans.step.naloxoneGet',
+            'Get free or over-the-counter naloxone nasal spray (SAMHSA code NOE) to keep at home and on your person.',
+          ),
         isOnMoud
-          ? 'Continue your daily buprenorphine or methadone maintenance—staying on agonist medication is linked to a much lower risk of dying from an overdose.'
-          : 'If you use opioids, starting buprenorphine (BU) or methadone (OTP) protects your receptor tolerance and prevents fatal respiratory arrest.',
-        'Never use alone: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590) if no trusted person is nearby.',
+          ? t(
+            'nav.trans.step.stayMoud',
+            'Continue your daily buprenorphine or methadone maintenance—staying on agonist medication is linked to a much lower risk of dying from an overdose.',
+          )
+          : t(
+            'nav.trans.step.startMoud',
+            'If you use opioids, starting buprenorphine (BU) or methadone (OTP) protects your receptor tolerance and prevents fatal respiratory arrest.',
+          ),
+        t(
+          'nav.trans.step.nua',
+          'Never use alone: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590) if no trusted person is nearby.',
+        ),
       ],
       recommendedCodes,
       searchHref: `#/treatment?codes=${recommendedCodes.join(',')}`,
@@ -397,11 +417,23 @@ export function evaluateTransitionRisk({
   if (normEvent === 'post_release') {
     headline =
       riskBand === 'critical'
-        ? 'Critical Re-Entry Window: Extremely High Overdose Risk After Release from Jail or Prison'
-        : 'Elevated Re-Entry Transition: Maintain Medication Continuity & Overdose Protection';
+        ? t(
+          'nav.trans.release.headline.critical',
+          'Critical Re-Entry Window: Extremely High Overdose Risk After Release from Jail or Prison',
+        )
+        : t(
+          'nav.trans.release.headline.elevated',
+          'Elevated Re-Entry Transition: Maintain Medication Continuity & Overdose Protection',
+        );
     physiologicalWhy = isOnMoud
-      ? 'Daily buprenorphine or methadone maintains mu-opioid receptor cross-tolerance, and staying on them after release is linked to far fewer overdose deaths. Ensure uninterrupted prescription or OTP bridge dosing so no gap occurs during re-entry.'
-      : 'During incarceration, mu-opioid receptors rapidly resensitize and physiological opioid tolerance drops back toward opioid-naive levels. Returning to a previous “normal” dose—especially with street fentanyl—is the #1 cause of fatal overdose in the first 7–14 days after release.';
+      ? t(
+        'nav.trans.release.why.moud',
+        'Daily buprenorphine or methadone maintains mu-opioid receptor cross-tolerance, and staying on them after release is linked to far fewer overdose deaths. Ensure uninterrupted prescription or OTP bridge dosing so no gap occurs during re-entry.',
+      )
+      : t(
+        'nav.trans.release.why',
+        'During incarceration, mu-opioid receptors rapidly resensitize and physiological opioid tolerance drops back toward opioid-naive levels. Returning to a previous “normal” dose—especially with street fentanyl—is the #1 cause of fatal overdose in the first 7–14 days after release.',
+      );
     addRecCode('CJ');
     addRecCode('BU');
     addRecCode('NOE');
@@ -409,11 +441,23 @@ export function evaluateTransitionRisk({
   } else if (normEvent === 'post_overdose') {
     headline =
       riskBand === 'critical'
-        ? 'Critical Post-Overdose Window: Highest Immediate Risk of Repeat Overdose'
-        : 'Post-Overdose Stabilization: Continue Agonist Protection & Multi-Dose Naloxone';
+        ? t(
+          'nav.trans.od.headline.critical',
+          'Critical Post-Overdose Window: Highest Immediate Risk of Repeat Overdose',
+        )
+        : t(
+          'nav.trans.od.headline.elevated',
+          'Post-Overdose Stabilization: Continue Agonist Protection & Multi-Dose Naloxone',
+        );
     physiologicalWhy = isOnMoud
-      ? 'Continuing daily buprenorphine or methadone stabilizes opioid receptors after a non-fatal overdose. Still use extreme caution: high-potency fentanyl analogs and xylazine/medetomidine (“tranq”) can cause profound sedation even with tolerance.'
-      : 'A recent non-fatal overdose indicates high-potency fentanyl/xylazine exposure or reduced respiratory reserve. After naloxone reversal or an ER visit without maintenance medication, unbound opioid receptors and acute withdrawal cravings drive a spike in fatal repeat overdoses within 48 hours to 7 days.';
+      ? t(
+        'nav.trans.od.why.moud',
+        'Continuing daily buprenorphine or methadone stabilizes opioid receptors after a non-fatal overdose. Still use extreme caution: high-potency fentanyl analogs and xylazine/medetomidine (“tranq”) can cause profound sedation even with tolerance.',
+      )
+      : t(
+        'nav.trans.od.why',
+        'A recent non-fatal overdose indicates high-potency fentanyl/xylazine exposure or reduced respiratory reserve. After naloxone reversal or an ER visit without maintenance medication, unbound opioid receptors and acute withdrawal cravings drive a spike in fatal repeat overdoses within 48 hours to 7 days.',
+      );
     addRecCode('NOE');
     addRecCode('BU');
     addRecCode('PEER');
@@ -421,11 +465,23 @@ export function evaluateTransitionRisk({
   } else if (normEvent === 'post_detox_hospital') {
     headline =
       riskBand === 'critical'
-        ? 'Critical Post-Detox / Hospital Discharge Alert: Rapid Loss of Opioid Tolerance'
-        : 'Post-Discharge Care Continuity: Protect Receptor Tolerance with Ongoing MOUD';
+        ? t(
+          'nav.trans.detox.headline.critical',
+          'Critical Post-Detox / Hospital Discharge Alert: Rapid Loss of Opioid Tolerance',
+        )
+        : t(
+          'nav.trans.detox.headline.elevated',
+          'Post-Discharge Care Continuity: Protect Receptor Tolerance with Ongoing MOUD',
+        );
     physiologicalWhy = isOnMoud
-      ? 'Staying on daily buprenorphine or methadone after hospital or residential discharge protects your mu-opioid receptor tolerance while you transition to outpatient care.'
-      : 'Completing detox, inpatient withdrawal management, or a hospital stay without ongoing buprenorphine or methadone resets your physiological opioid tolerance within 3 to 7 days. Taking even a fraction of your pre-hospital dose can stop breathing within minutes.';
+      ? t(
+        'nav.trans.detox.why.moud',
+        'Staying on daily buprenorphine or methadone after hospital or residential discharge protects your mu-opioid receptor tolerance while you transition to outpatient care.',
+      )
+      : t(
+        'nav.trans.detox.why',
+        'Completing detox, inpatient withdrawal management, or a hospital stay without ongoing buprenorphine or methadone resets your physiological opioid tolerance within 3 to 7 days. Taking even a fraction of your pre-hospital dose can stop breathing within minutes.',
+      );
     addRecCode('BU');
     addRecCode('OTP');
     addRecCode('NOE');
@@ -433,11 +489,23 @@ export function evaluateTransitionRisk({
   } else if (normEvent === 'post_naltrexone') {
     headline =
       riskBand === 'critical'
-        ? 'Critical Post-Naltrexone (Vivitrol) Receptor Supersensitivity Window'
-        : 'Post-Naltrexone Transition: Bridge Safely to Agonist Protection & Carry Naloxone';
+        ? t(
+          'nav.trans.ntx.headline.critical',
+          'Critical Post-Naltrexone (Vivitrol) Receptor Supersensitivity Window',
+        )
+        : t(
+          'nav.trans.ntx.headline.elevated',
+          'Post-Naltrexone Transition: Bridge Safely to Agonist Protection & Carry Naloxone',
+        );
     physiologicalWhy = isOnMoud
-      ? 'Transitioning onto daily buprenorphine or methadone restores steady mu-opioid receptor protection after stopping naltrexone.'
-      : 'Extended-release naltrexone (Vivitrol) blocks opioid receptors for 28–35 days (oral naltrexone for 24–72 hours) while completely eliminating opioid tolerance. Attempting to “override” the blockade or using opioids as the shot wears off exposes hypersensitive, unblocked receptors to fatal respiratory depression.';
+      ? t(
+        'nav.trans.ntx.why.moud',
+        'Transitioning onto daily buprenorphine or methadone restores steady mu-opioid receptor protection after stopping naltrexone.',
+      )
+      : t(
+        'nav.trans.ntx.why',
+        'Extended-release naltrexone (Vivitrol) blocks opioid receptors for 28–35 days (oral naltrexone for 24–72 hours) while completely eliminating opioid tolerance. Attempting to “override” the blockade or using opioids as the shot wears off exposes hypersensitive, unblocked receptors to fatal respiratory depression.',
+      );
     addRecCode('BU');
     addRecCode('NOE');
     addRecCode('TELE');
@@ -445,33 +513,39 @@ export function evaluateTransitionRisk({
   }
 
   if (!isOnMoud) {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.trans.step.startToday',
       'Start or restart buprenorphine (BU) or methadone (OTP) today: under the federal DEA 72-Hour Rule (21 CFR § 1306.07(b)) and telehealth rules (TELE), emergency rooms and bridge clinics can provide immediate same-day medication.',
-    );
+    ));
   } else {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.trans.step.noGap',
       'Prevent any gap in your daily buprenorphine or methadone: if your prescription or clinic transfer is delayed after release or discharge, an Emergency Department can dispense up to 72 hours of bridge medication under 21 CFR § 1306.07(b).',
-    );
+    ));
   }
 
   if (!carriesNaloxone) {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.trans.step.naloxone2',
       'Get at least 2 doses of naloxone (Narcan) immediately (SAMHSA code NOE): high-potency fentanyl often requires repeat doses every 2–3 minutes.',
-    );
+    ));
   } else {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.trans.step.naloxoneReach',
       'Keep multiple doses of naloxone within arm’s reach and tell someone you trust before using.',
-    );
+    ));
   }
 
-  actionSteps.push(
+  actionSteps.push(t(
+    'nav.trans.step.nuaSlow',
     'Never use alone during a transition window: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590), and if you do use, test a tiny fraction first (“start low, go slow”).',
-  );
+  ));
 
   if (normEvent === 'post_release') {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.trans.step.cjPeer',
       'Ask for justice-involved re-entry navigation and peer recovery specialists (SAMHSA codes CJ, PEER) who can help with Medicaid reactivation, ID, housing, and same-day MOUD.',
-    );
+    ));
   }
 
   return {
@@ -492,6 +566,7 @@ export function evaluateTransitionRisk({
 // FindTreatment filters are ANDed, so each search link uses at most 2 codes;
 // searchHref is the first (most specific) link.
 // urgency: 'call911' | 'call988' | 'same_day' | 'soon' | 'routine'
+// All user-facing strings go through t() (Spanish + .plain variants).
 // ---------------------------------------------------------------------------
 
 const URGENCY_RANK = { routine: 0, soon: 1, same_day: 2, call988: 3, call911: 4 };
@@ -527,10 +602,15 @@ function finishPopulationResult({ population, urgency, emergency, headline, acti
   };
 }
 
-const LINE_911 = 'Call 911 now.';
-const LINE_988 = 'Call or text 988 now (24/7, free). If you might act on these thoughts soon, call 911.';
-const LINE_NALOXONE =
-  "If someone may be overdosing, call 911. Give naloxone if you have it. It's safe even if you're not sure. Stay with them and help them breathe.";
+const line911 = () => t('nav.pop.line.911', 'Call 911 now.');
+const line988 = () => t(
+  'nav.pop.line.988',
+  'Call or text 988 now (24/7, free). If you might act on these thoughts soon, call 911.',
+);
+const lineNaloxone = () => t(
+  'nav.pop.line.naloxone',
+  "If someone may be overdosing, call 911. Give naloxone if you have it. It's safe even if you're not sure. Stay with them and help them breathe.",
+);
 
 /**
  * Pregnancy and postpartum route (ACOG / ASAM).
@@ -560,28 +640,34 @@ export function evaluatePregnancyCare({
   if (w.seizure || w.chestPainOrTroubleBreathing) {
     urgency = 'call911';
     emergency = 'call911';
-    actionSteps.push(`${LINE_911} A seizure, chest pain, or trouble breathing during or after pregnancy is an emergency.`);
+    actionSteps.push(t(
+      'nav.pop.preg.step.911',
+      '{call911} A seizure, chest pain, or trouble breathing during or after pregnancy is an emergency.',
+      { call911: line911() },
+    ));
   } else if (!isPostpartum && (w.bleeding || w.contractions || w.lessFetalMovement || w.severeHeadacheOrVision)) {
     urgency = 'same_day';
     emergency = 'labor_and_delivery_now';
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.preg.step.ld',
       'Go to labor and delivery or an emergency department now. Bleeding, contractions, the baby moving less, or a bad headache or vision changes need to be checked right away. If you can’t get there safely, call 911.',
-    );
+    ));
   } else if (isPostpartum && (w.bleeding || w.severeHeadacheOrVision)) {
     urgency = 'same_day';
     emergency = 'same_day';
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.preg.step.ppBleed',
       'Heavy bleeding or a bad headache or vision changes after giving birth can be dangerous. Go to an emergency department today, or call 911 if it’s severe.',
-    );
+    ));
   }
   if (w.suicidal) {
     urgency = maxUrgency(urgency, 'call988');
     // 911 and go-now-to-L&D stay first (in-person care covers both); otherwise 988 leads.
     if (emergency === 'call911' || emergency === 'labor_and_delivery_now') {
-      actionSteps.push(LINE_988);
+      actionSteps.push(line988());
     } else {
       emergency = 'call988';
-      actionSteps.unshift(LINE_988);
+      actionSteps.unshift(line988());
     }
   }
 
@@ -590,62 +676,85 @@ export function evaluatePregnancyCare({
   if (subs.has('opioids')) {
     actionSteps.push(
       isPostpartum
-        ? 'Stay on buprenorphine or methadone after birth. Overdose deaths are highest in the months after delivery, especially 7 to 12 months postpartum.'
-        : 'Buprenorphine or methadone is the recommended care in pregnancy (ACOG, ASAM). Detox or stopping suddenly raises the risk of returning to use and overdose. Don’t stop on your own.',
+        ? t(
+          'nav.pop.preg.step.opioidsPp',
+          'Stay on buprenorphine or methadone after birth. Overdose deaths are highest in the months after delivery, especially 7 to 12 months postpartum.',
+        )
+        : t(
+          'nav.pop.preg.step.opioids',
+          'Buprenorphine or methadone is the recommended care in pregnancy (ACOG, ASAM). Detox or stopping suddenly raises the risk of returning to use and overdose. Don’t stop on your own.',
+        ),
     );
     if (onAgonist) {
-      actionSteps.push('Keep taking your medicine as prescribed. Your prescriber may need to change the dose as pregnancy goes on. That’s normal.');
+      actionSteps.push(t(
+        'nav.pop.preg.step.keepMed',
+        'Keep taking your medicine as prescribed. Your prescriber may need to change the dose as pregnancy goes on. That’s normal.',
+      ));
     }
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.preg.step.breastfeed',
       'Buprenorphine and methadone are generally compatible with breastfeeding when you’re stable in treatment. Ask your care team.',
-    );
-    actionSteps.push(
+    ));
+    actionSteps.push(t(
+      'nav.pop.preg.step.tellTeam',
       'Tell your delivery team about your medicine ahead of time so they can plan pain control and care for your baby after birth.',
-    );
-    actionSteps.push(LINE_NALOXONE);
+    ));
+    actionSteps.push(lineNaloxone());
     urgency = maxUrgency(urgency, onAgonist ? 'soon' : 'same_day');
     searchLinks.push(
-      makeSearchLink('Buprenorphine for pregnant and postpartum people', ['PW', 'BU']),
-      makeSearchLink('Methadone clinics for pregnant and postpartum people', ['PW', 'OTP']),
+      makeSearchLink(t('nav.pop.link.pwBu', 'Buprenorphine for pregnant and postpartum people'), ['PW', 'BU']),
+      makeSearchLink(t('nav.pop.link.pwOtp', 'Methadone clinics for pregnant and postpartum people'), ['PW', 'OTP']),
     );
   }
 
   if (subs.has('alcohol') || subs.has('benzos')) {
     urgency = maxUrgency(urgency, 'same_day');
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.preg.step.alcohol',
       'Withdrawal from alcohol, benzos, or other sedatives during pregnancy needs hospital-level care. Don’t stop suddenly. Call your prenatal provider or go to an emergency department today.',
+    ));
+    searchLinks.push(
+      makeSearchLink(t('nav.pop.link.pwDt', 'Medically supervised withdrawal'), ['PW', 'DT']),
+      makeSearchLink(t('nav.pop.link.hi', 'Hospital inpatient care'), ['HI']),
     );
-    searchLinks.push(makeSearchLink('Medically supervised withdrawal', ['PW', 'DT']), makeSearchLink('Hospital inpatient care', ['HI']));
   }
 
   if (subs.has('stimulants')) {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.preg.step.stim',
       'For meth or cocaine, contingency management (small rewards for negative tests) has the strongest evidence. There’s no FDA-approved medicine yet.',
-    );
-    searchLinks.push(makeSearchLink('Contingency management', ['PW', 'CMI']));
+    ));
+    searchLinks.push(makeSearchLink(t('nav.pop.link.pwCmi', 'Contingency management'), ['PW', 'CMI']));
   }
 
   if (subs.has('nicotine')) {
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.preg.step.nicotine',
       'Quitting smoking helps you and the baby at any point. Call 1-800-QUIT-NOW for free coaching, and ask your prescriber whether nicotine replacement is right for you.',
-    );
+    ));
   }
 
-  actionSteps.push(
+  actionSteps.push(t(
+    'nav.pop.preg.step.posc',
     'Hospitals may make a Plan of Safe Care, a support plan for you and your baby. Ask the hospital social worker how it works where you live.',
-  );
+  ));
 
   if (isPostpartum && Number.isFinite(monthsPostpartum) && monthsPostpartum <= 12) {
-    actionSteps.push('Ask about postpartum depression screening. Postpartum Support International: 1-800-944-4773 (call or text).');
+    actionSteps.push(t(
+      'nav.pop.preg.step.psi',
+      'Ask about postpartum depression screening. Postpartum Support International: 1-800-944-4773 (call or text).',
+    ));
   }
 
-  searchLinks.push(makeSearchLink('Programs for pregnant and postpartum people', ['PW']));
+  searchLinks.push(makeSearchLink(t('nav.pop.link.pw', 'Programs for pregnant and postpartum people'), ['PW']));
 
   return finishPopulationResult({
     population: 'pregnancy',
     urgency,
     emergency,
-    headline: isPostpartum ? 'After birth: stay protected and connected to care' : 'Pregnancy: treatment protects you and your baby',
+    headline: isPostpartum
+      ? t('nav.pop.preg.headline.pp', 'After birth: stay protected and connected to care')
+      : t('nav.pop.preg.headline', 'Pregnancy: treatment protects you and your baby'),
     actionSteps,
     searchLinks,
   });
@@ -672,55 +781,98 @@ export function evaluateYouthCare({ age, substances = [], suicidal = false, over
   if (suicidal) {
     urgency = 'call988';
     emergency = 'call988';
-    actionSteps.push(LINE_988);
+    actionSteps.push(line988());
   }
 
   if (subs.has('opioids')) {
     urgency = maxUrgency(urgency, overdoseRecent ? 'same_day' : 'soon');
     if (overdoseRecent) {
-      actionSteps.push('After an overdose, the risk of another one is high. Try to get care today, and keep naloxone with you.');
+      actionSteps.push(t(
+        'nav.pop.youth.step.od',
+        'After an overdose, the risk of another one is high. Try to get care today, and keep naloxone with you.',
+      ));
     }
     actionSteps.push(
       group === 'teen' || group === 'child'
-        ? 'Pediatric experts (AAP) recommend offering medicine for opioid use disorder to teens. Buprenorphine is FDA-approved from age 16, and doctors can prescribe it to younger teens when it’s right for them. Call to ask if a program starts buprenorphine for people under 18.'
-        : 'Buprenorphine, methadone, and extended-release naltrexone all work for young adults. Starting medicine early lowers overdose risk.',
+        ? t(
+          'nav.pop.youth.step.opioidsTeen',
+          'Pediatric experts (AAP) recommend offering medicine for opioid use disorder to teens. Buprenorphine is FDA-approved from age 16, and doctors can prescribe it to younger teens when it’s right for them. Call to ask if a program starts buprenorphine for people under 18.',
+        )
+        : t(
+          'nav.pop.youth.step.opioidsYa',
+          'Buprenorphine, methadone, and extended-release naltrexone all work for young adults. Starting medicine early lowers overdose risk.',
+        ),
     );
     if (group === 'teen' || group === 'child') {
-      actionSteps.push('Methadone clinics have extra federal rules for people under 18, including parent or guardian consent. Call to ask.');
+      actionSteps.push(t(
+        'nav.pop.youth.step.methadoneTeen',
+        'Methadone clinics have extra federal rules for people under 18, including parent or guardian consent. Call to ask.',
+      ));
     }
-    actionSteps.push(LINE_NALOXONE);
-    searchLinks.push(makeSearchLink('Youth programs with buprenorphine (call to ask)', [ageCode, 'BU']));
+    actionSteps.push(lineNaloxone());
+    searchLinks.push(makeSearchLink(
+      t('nav.pop.link.youthBu', 'Youth programs with buprenorphine (call to ask)'),
+      [ageCode, 'BU'],
+    ));
   }
 
   if (subs.has('stimulants')) {
-    actionSteps.push('For meth or cocaine, contingency management has the strongest evidence.');
-    searchLinks.push(makeSearchLink('Contingency management', [ageCode, 'CMI']));
+    actionSteps.push(t(
+      'nav.pop.youth.step.stim',
+      'For meth or cocaine, contingency management has the strongest evidence.',
+    ));
+    searchLinks.push(makeSearchLink(t('nav.pop.link.cmi', 'Contingency management'), [ageCode, 'CMI']));
   }
 
   if (subs.has('nicotine')) {
     actionSteps.push(
       group === 'young_adult' || group === 'adult'
-        ? 'For vaping or smoking, text DITCHVAPE to 88709 (This is Quitting, free) or call 1-800-QUIT-NOW. Nicotine replacement can help.'
-        : 'For vaping, text DITCHVAPE to 88709 (This is Quitting, free and made for teens).',
+        ? t(
+          'nav.pop.youth.step.nicotineYa',
+          'For vaping or smoking, text DITCHVAPE to 88709 (This is Quitting, free) or call 1-800-QUIT-NOW. Nicotine replacement can help.',
+        )
+        : t(
+          'nav.pop.youth.step.nicotineTeen',
+          'For vaping, text DITCHVAPE to 88709 (This is Quitting, free and made for teens).',
+        ),
     );
   }
 
   actionSteps.push(
     group === 'teen' || group === 'child'
-      ? 'Your treatment records have extra privacy protection under federal law (42 CFR Part 2). Rules on whether a parent has to agree differ by state, so ask the program.'
-      : 'Your treatment records have extra privacy protection under federal law (42 CFR Part 2).',
+      ? t(
+        'nav.pop.youth.step.privacyTeen',
+        'Your treatment records have extra privacy protection under federal law (42 CFR Part 2). Rules on whether a parent has to agree differ by state, so ask the program.',
+      )
+      : t(
+        'nav.pop.youth.step.privacy',
+        'Your treatment records have extra privacy protection under federal law (42 CFR Part 2).',
+      ),
   );
-  if (group === 'young_adult') searchLinks.push(makeSearchLink('Peer support for young adults', ['YAD', 'PEER']));
-  if (ageCode) searchLinks.push(makeSearchLink(group === 'young_adult' ? 'Young adult programs' : 'Teen programs', [ageCode]));
+  if (group === 'young_adult') {
+    searchLinks.push(makeSearchLink(t('nav.pop.link.yadPeer', 'Peer support for young adults'), ['YAD', 'PEER']));
+  }
+  if (ageCode) {
+    searchLinks.push(makeSearchLink(
+      group === 'young_adult'
+        ? t('nav.pop.link.yad', 'Young adult programs')
+        : t('nav.pop.link.teen', 'Teen programs'),
+      [ageCode],
+    ));
+  }
 
   return finishPopulationResult({
     population: 'youth',
     urgency,
     emergency,
     headline:
-      group === 'young_adult' ? 'Care made for young adults' : group === 'adult' ? 'Care options' : 'Care made for teens and families',
+      group === 'young_adult'
+        ? t('nav.pop.youth.headline.ya', 'Care made for young adults')
+        : group === 'adult'
+          ? t('nav.pop.youth.headline.adult', 'Care options')
+          : t('nav.pop.youth.headline.teen', 'Care made for teens and families'),
     actionSteps,
-    searchLinks: searchLinks.length ? searchLinks : [makeSearchLink('Treatment programs', [])],
+    searchLinks: searchLinks.length ? searchLinks : [makeSearchLink(t('nav.pop.link.any', 'Treatment programs'), [])],
   });
 }
 
@@ -747,39 +899,54 @@ export function evaluateReentryCare({
   let urgency = 'soon';
 
   if (usesOpioids) {
-    const tr = evaluateTransitionRisk({ event: 'post_release', daysSince: daysSinceRelease, medication, hasNaloxone });
+    const tr = evaluateTransitionRisk({ event: 'post_release', daysSince: daysSinceRelease, onMoud: medication === 'agonist', hasNaloxone });
     urgency = tr.riskBand === 'critical' ? 'same_day' : 'soon';
     if (status === 'pre_release') {
-      actionSteps.push(
+      actionSteps.push(t(
+        'nav.pop.reentry.step.pre',
         'Before release, ask to start or keep buprenorphine or methadone and to leave with a prescription or a clinic appointment. Also ask for naloxone to take with you.',
-      );
+      ));
     }
     actionSteps.push(
-      'Overdose risk is highest in the first two weeks after release, because tolerance drops while you’re inside.',
+      t(
+        'nav.pop.reentry.step.risk',
+        'Overdose risk is highest in the first two weeks after release, because tolerance drops while you’re inside.',
+      ),
       ...tr.actionSteps,
     );
     searchLinks.push(
-      makeSearchLink('Buprenorphine for people leaving jail or prison', ['CJ', 'BU']),
-      makeSearchLink('Methadone clinics', ['CJ', 'OTP']),
+      makeSearchLink(t('nav.pop.link.cjBu', 'Buprenorphine for people leaving jail or prison'), ['CJ', 'BU']),
+      makeSearchLink(t('nav.pop.link.cjOtp', 'Methadone clinics'), ['CJ', 'OTP']),
     );
   }
 
   actionSteps.push(
-    'Under federal disability law (the ADA), courts, jails, and probation generally can’t make you stop prescribed buprenorphine or methadone. If someone tells you to, ask for it in writing and contact a legal aid program.',
-    'Apply for Medicaid as soon as you can. Many states let you apply before release, and some cover care in the 90 days before release.',
+    t(
+      'nav.pop.reentry.step.ada',
+      'Under federal disability law (the ADA), courts, jails, and probation generally can’t make you stop prescribed buprenorphine or methadone. If someone tells you to, ask for it in writing and contact a legal aid program.',
+    ),
+    t(
+      'nav.pop.reentry.step.medicaid',
+      'Apply for Medicaid as soon as you can. Many states let you apply before release, and some cover care in the 90 days before release.',
+    ),
   );
   if (needsHousing) {
-    actionSteps.push('Recovery housing can give you a safe place to start. Ask if they accept people on buprenorphine or methadone.');
-    searchLinks.push(makeSearchLink('Recovery housing', ['HH']));
+    actionSteps.push(t(
+      'nav.pop.reentry.step.housing',
+      'Recovery housing can give you a safe place to start. Ask if they accept people on buprenorphine or methadone.',
+    ));
+    searchLinks.push(makeSearchLink(t('nav.pop.link.hh', 'Recovery housing'), ['HH']));
   }
-  searchLinks.push(makeSearchLink('Programs for people involved with the justice system', ['CJ']));
-  if (!hasNaloxone) searchLinks.push(makeSearchLink('Naloxone and overdose education', ['NOE']));
+  searchLinks.push(makeSearchLink(t('nav.pop.link.cj', 'Programs for people involved with the justice system'), ['CJ']));
+  if (!hasNaloxone) searchLinks.push(makeSearchLink(t('nav.pop.link.noe', 'Naloxone and overdose education'), ['NOE']));
 
   return finishPopulationResult({
     population: 'justice_involved',
     urgency,
     emergency: null,
-    headline: status === 'pre_release' ? 'Plan your care before release' : 'After release: protect yourself in the first weeks',
+    headline: status === 'pre_release'
+      ? t('nav.pop.reentry.headline.pre', 'Plan your care before release')
+      : t('nav.pop.reentry.headline', 'After release: protect yourself in the first weeks'),
     actionSteps,
     searchLinks,
   });
@@ -804,52 +971,64 @@ export function evaluateXylazineCare({ inSupply = 'maybe', wound = {}, severeWit
     urgency = 'call911';
     emergency = 'call911';
     actionSteps.push(
-      LINE_NALOXONE,
-      'Tranq is usually mixed with fentanyl, so naloxone still matters. Naloxone doesn’t reverse tranq, so the person may stay sleepy after they start breathing. The goal is breathing, not waking up. Give rescue breaths and put them on their side.',
+      lineNaloxone(),
+      t(
+        'nav.pop.tranq.step.naloxoneNote',
+        'Tranq is usually mixed with fentanyl, so naloxone still matters. Naloxone doesn’t reverse tranq, so the person may stay sleepy after they start breathing. The goal is breathing, not waking up. Give rescue breaths and put them on their side.',
+      ),
     );
   }
 
   if (wd.boneOrTendonVisible || wd.blackOrDeadTissue || wd.spreadingRednessOrFever) {
     urgency = maxUrgency(urgency, 'same_day');
     emergency = emergency ?? 'same_day';
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.tranq.step.woundBad',
       'Get wound care today at an emergency department or urgent care. Spreading redness, fever, dark or dead tissue, or bone showing can mean a serious infection. If you feel very sick or confused, call 911.',
-    );
+    ));
   } else if (wd.present) {
     urgency = maxUrgency(urgency, 'soon');
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.tranq.step.wound',
       'Tranq wounds can show up anywhere on the body, not just where you inject. Keep them clean, moist, and covered, and don’t inject into or near a wound. Syringe service programs and clinics often give free wound care.',
-    );
+    ));
   }
 
   if (severeWithdrawal) {
     urgency = maxUrgency(urgency, 'same_day');
     emergency = emergency ?? 'same_day';
-    actionSteps.push(
+    actionSteps.push(t(
+      'nav.pop.tranq.step.wd',
       'Withdrawal from tranq, especially medetomidine, can be severe and may need hospital care. Go to an emergency department today and tell them tranq may be involved.',
+    ));
+    searchLinks.push(
+      makeSearchLink(t('nav.pop.link.hi', 'Hospital inpatient care'), ['HI']),
+      makeSearchLink(t('nav.pop.link.dt', 'Medically supervised withdrawal'), ['DT']),
     );
-    searchLinks.push(makeSearchLink('Hospital inpatient care', ['HI']), makeSearchLink('Medically supervised withdrawal', ['DT']));
   }
 
   if (inSupply !== 'no') {
     actionSteps.push(
-      'Never use alone. Call Never Use Alone at 1-800-484-3731 if no one is with you.',
-      'Xylazine test strips can check your supply. Ask a syringe service program.',
-      'Buprenorphine or methadone lowers overdose risk even when tranq is in the supply. Tell your prescriber about tranq so they can plan for withdrawal.',
+      t('nav.pop.tranq.step.nua', 'Never use alone. Call Never Use Alone at 1-800-484-3731 if no one is with you.'),
+      t('nav.pop.tranq.step.strips', 'Xylazine test strips can check your supply. Ask a syringe service program.'),
+      t(
+        'nav.pop.tranq.step.moud',
+        'Buprenorphine or methadone lowers overdose risk even when tranq is in the supply. Tell your prescriber about tranq so they can plan for withdrawal.',
+      ),
     );
   }
 
   searchLinks.push(
-    makeSearchLink('Buprenorphine', ['BU']),
-    makeSearchLink('Methadone clinics', ['OTP']),
-    makeSearchLink('Naloxone and overdose education', ['NOE']),
+    makeSearchLink(t('nav.pop.link.bu', 'Buprenorphine'), ['BU']),
+    makeSearchLink(t('nav.pop.link.otp', 'Methadone clinics'), ['OTP']),
+    makeSearchLink(t('nav.pop.link.noe', 'Naloxone and overdose education'), ['NOE']),
   );
 
   return finishPopulationResult({
     population: 'xylazine',
     urgency,
     emergency,
-    headline: 'Tranq (xylazine or medetomidine): stay safer and get care',
+    headline: t('nav.pop.tranq.headline', 'Tranq (xylazine or medetomidine): stay safer and get care'),
     actionSteps,
     searchLinks,
   });
