@@ -75,3 +75,15 @@ There is no build step: native ES modules under `public/js/`.
 - `views/`: page content. Guidance is sourced inline from SAMHSA, CDC, FDA, NIDA, NIAAA, and HRSA.
 - `content/hotlines.js`: national support lines, the single source for every page that lists them
 - `codes.js`: plain-language filter groups and badge rules on top of SAMHSA service codes
+
+## Safety checks
+
+The client has no build step, so one missing module or misspelled import stops the whole app from loading in the browser, even while every server test passes. That once happened when a commit replaced `public/js/views/navigator.js` with the literal text `$(cat /tmp/navigator_updated.js)`. These `npm test` suites guard against it, and CI (`.github/workflows/ci.yml`) runs them on every push to `main` and every pull request against `main`, on Node 20 and 22:
+
+| Suite | What it checks |
+| --- | --- |
+| `test/client-modules.test.js` | Walks every module under `public/js`, parses static `import … from`, `export … from`, and literal dynamic `import('…')`, and fails if a relative target file is missing, if a specifier is bare or lacks `.js`, or if a named import (or `default`) is not exported by its target. Also checks that `index.html` loads `/js/app.js`. |
+| `test/file-integrity.test.js` | For tracked text files under `public/`, `src/`, `test/`, and `scripts/`: fails on files that start with an unexpanded shell substitution (`$(cat …`, a backtick `cat`, a bare `$VAR`, a heredoc marker), on empty files, on any imported `.js` module under 50 bytes, and on `.js`/`.json` files in `public/` or `src/` that do not parse (`node --check`, `JSON.parse`). |
+| `test/smoke.test.js` | Boots the real app handler on a random port and requests `index.html` plus every path in `APP_SHELL` in `public/sw.js`, requiring HTTP 200, a non-trivial body, and a JavaScript content type for `.js` files. It also walks the import graph from `app.js` and fails if a reachable module is missing from `APP_SHELL`, because offline mode would then break. |
+
+The checks use regexes and Node built-ins only, with no dependencies. When you add a client module, import it with a relative `.js` path and add it to `APP_SHELL` if the app imports it.
