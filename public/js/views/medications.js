@@ -921,6 +921,8 @@ export function matchFormulationPreferences({ disorder = 'all', frequency = 'all
 
 const SEVERITY_RANK = { none: 0, info: 1, moderate: 2, high: 3, critical: 4 };
 
+export const evaluateRegimenSafety = evaluatePolypharmacyRegimen;
+
 export function evaluatePolypharmacyRegimen(substances = []) {
   const list = Array.isArray(substances)
     ? substances

@@ -6,17 +6,6 @@ let activePlanState = null;
 let activePlanReset = null;
 let activeTimerReset = null;
 
-export function getPlanState() {
-  return activePlanState ? { ...activePlanState } : null;
-}
-
-export function resetPlanState() {
-  if (typeof activePlanReset === 'function') {
-    activePlanReset();
-  }
-  activePlanState = null;
-}
-
 /**
  * The 6 core evidence-based pillars of the Stanley-Brown Safety Planning Intervention (SPI),
  * adapted for substance use, overdose prevention, and harm reduction.
@@ -1090,8 +1079,7 @@ export function planView({ query } = {}) {
 
   async function handleCopyCfrHandout() {
     const text = [
-      '
-  =====================================================',
+      '============================================================',
       '42 CFR PART 2 PATIENT PRIVACY RIGHTS HANDOUT',
       'HHS & SAMHSA Final Rule (89 FR 12472 — Full Compliance 2026)',
       '============================================================',
@@ -1123,8 +1111,7 @@ export function planView({ query } = {}) {
       // ignore clipboard error
     }
   }
-=======
-  activePlanState = plan;
+  activePlanState = inMemoryPlanState;
   activePlanReset = () => {
     handleClearPlan();
     if (typeof activeTimerReset === 'function') {
