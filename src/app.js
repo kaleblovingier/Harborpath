@@ -13,6 +13,7 @@ import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
 import { InputError, RADII_MILES, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
 import { DATA_LOADERS, PUBLIC_DIR } from './data.js';
+import { createPrivacyLogger, sanitizeSearchParams } from './privacy.js';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -163,6 +164,7 @@ export function createApp({
   const treatmentCache = createCache({ ttlMs: 30 * 60 * 1000, staleMs: 30 * 60 * 1000, maxEntries: 1000 });
   const inflight = new Map();
   const limiter = createRateLimiter(rateLimit);
+  const safeLogger = createPrivacyLogger(logger);
 
   const srcMeta = (key) => ({
     count: meta.sources?.[key]?.count ?? null,
@@ -241,7 +243,7 @@ export function createApp({
     if (!limiter.allow(clientKey(req, trustProxy))) {
       return json(req, res, 429, { error: 'Too many searches in a short time. Please wait a minute and try again.' });
     }
-    const params = url.searchParams;
+    const { cleanParams: params } = sanitizeSearchParams(url.pathname, url.searchParams);
     try {
       switch (url.pathname) {
         case '/api/health':
@@ -277,7 +279,7 @@ export function createApp({
           const query = parseTreatmentQuery(params, taxonomy);
           const result = await searchTreatment(query, { taxonomy, fetchImpl, cache: treatmentCache, inflight, ...upstream });
           // Route only: never the query string, which holds a location.
-          if (result.stale) logger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
+          if (result.stale) safeLogger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
           return json(req, res, 200, { ...result, source: 'SAMHSA FindTreatment.gov' });
         }
         case '/api/health-centers': {
@@ -321,7 +323,7 @@ export function createApp({
     } catch (err) {
       if (err instanceof InputError) return json(req, res, 400, { error: err.message });
       // Log the route and failure only: never the query string, which holds a location.
-      logger.error(`[api] ${url.pathname} failed: ${err.message}`);
+      safeLogger.error(`[api] ${url.pathname} failed: ${err.message}`);
       return json(req, res, 502, {
         error: 'The national treatment directory is not responding right now.',
         fallbackUrl: 'https://findtreatment.gov/',
