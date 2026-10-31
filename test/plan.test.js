@@ -9,6 +9,9 @@ import {
   buildIntakeCallScript,
   formatSafetyPlanText,
   planView,
+  getPlanState,
+  setPlanState,
+  resetPlanState,
 } from '../public/js/views/plan.js';
 
 test('COUNSELING_MODALITIES exports all 7 evidence-based SUDP counseling approaches with required fields', () => {
@@ -338,5 +341,187 @@ test('planView renders zero-knowledge builder, urge-surfing toolkit, intake scri
     assert.ok(links.length >= COUNSELING_MODALITIES.length);
   } finally {
     globalThis.document = prevDoc;
+  }
+});
+
+
+test('getPlanState, setPlanState, and resetPlanState manage ephemeral RAM safety plan with alias synchronization', () => {
+  resetPlanState();
+  const initial = getPlanState();
+  assert.equal(typeof initial, 'object');
+  assert.equal(initial.goal, '');
+  assert.equal(initial.warningSigns, '');
+  assert.equal(initial.copingStrategies, '');
+  assert.equal(initial.socialDistractions, '');
+  assert.equal(initial.supportNetwork, '');
+  assert.equal(initial.professionals, '');
+  assert.equal(initial.environmentalSafety, '');
+  assert.equal(initial.naloxoneLocation, '');
+  assert.equal(initial.notes, '');
+
+  // Update Stanley-Brown fields and verify synchronization to legacy aliases
+  setPlanState({
+    goal: 'Keep myself safe tonight and attend recovery meeting tomorrow',
+    warningSigns: 'Restlessness, hollow feeling in chest, skipping meals',
+    copingStrategies: 'Urge surfing for 10 minutes, 4-7-8 breathing, drinking cold water',
+    socialDistractions: 'Downtown library, coffee shop, gym, walk in the park',
+    supportNetwork: 'Maria (peer coach): 555-0144; Jordan (sponsor): 555-0177',
+    professionals: 'Dr. Rivera (MOUD clinic): 555-0120; Mobile Crisis: 988',
+    environmentalSafety: 'Medication locked in safe box; never using alone',
+    naloxoneLocation: 'Top drawer by front door and front backpack pouch',
+    notes: 'I have survived tough days before. A slip does not erase my worth.',
+  });
+
+  const updated = getPlanState();
+  assert.equal(updated.goal, 'Keep myself safe tonight and attend recovery meeting tomorrow');
+  assert.equal(updated.warningSigns, 'Restlessness, hollow feeling in chest, skipping meals');
+  assert.equal(updated.triggers, updated.warningSigns);
+  assert.equal(updated.copingStrategies, 'Urge surfing for 10 minutes, 4-7-8 breathing, drinking cold water');
+  assert.equal(updated.copingSteps, updated.copingStrategies);
+  assert.equal(updated.socialDistractions, 'Downtown library, coffee shop, gym, walk in the park');
+  assert.equal(updated.supportNetwork, 'Maria (peer coach): 555-0144; Jordan (sponsor): 555-0177');
+  assert.equal(updated.trustedContacts, updated.supportNetwork);
+  assert.equal(updated.professionals, 'Dr. Rivera (MOUD clinic): 555-0120; Mobile Crisis: 988');
+  assert.equal(updated.professionalContacts, updated.professionals);
+  assert.equal(updated.environmentalSafety, 'Medication locked in safe box; never using alone');
+  assert.equal(updated.saferEnvironment, updated.environmentalSafety);
+  assert.equal(updated.naloxoneLocation, 'Top drawer by front door and front backpack pouch');
+  assert.equal(updated.notes, 'I have survived tough days before. A slip does not erase my worth.');
+
+  // Formatted plain text includes all Stanley-Brown sections and required crisis numbers
+  const formatted = formatSafetyPlanText(updated);
+  assert.match(formatted, /1\. MY GOAL RIGHT NOW/);
+  assert.match(formatted, /2\. MY TRIGGERS & HIGH-RISK SITUATIONS/);
+  assert.match(formatted, /3\. EARLY WARNING SIGNS I AM STRUGGLING/);
+  assert.match(formatted, /4\. COPING STEPS THAT WORK FOR ME/);
+  assert.match(formatted, /5\. SOCIAL DISTRACTIONS & SAFE PLACES/);
+  assert.match(formatted, /6\. TRUSTED PEOPLE & SUPPORTS/);
+  assert.match(formatted, /7\. PROFESSIONALS & CRISIS ESCALATION CONTACTS/);
+  assert.match(formatted, /8\. WAYS TO MAKE MY ENVIRONMENT SAFER/);
+  assert.match(formatted, /9\. WHERE MY NALOXONE/);
+  assert.match(formatted, /877-696-1996/);
+  assert.match(formatted, /800-972-0590/);
+  assert.match(formatted, /988/);
+  assert.match(formatted, /911/);
+
+  // resetPlanState wipes back to clean state
+  resetPlanState();
+  const reset = getPlanState();
+  assert.equal(reset.goal, '');
+  assert.equal(reset.warningSigns, '');
+  assert.equal(reset.copingStrategies, '');
+  assert.equal(reset.socialDistractions, '');
+  assert.equal(reset.supportNetwork, '');
+  assert.equal(reset.professionals, '');
+  assert.equal(reset.environmentalSafety, '');
+  assert.equal(reset.naloxoneLocation, '');
+  assert.equal(reset.notes, '');
+});
+
+test('Urge Surfing Timer provides 3-min, 5-min, and 10-min pacing options with accessible visual breathing guide', () => {
+  resetPlanState();
+  const prevDoc = globalThis.document;
+  try {
+    class MockNode {
+      constructor(tag) {
+        this.tagName = tag.toUpperCase();
+        this.className = '';
+        this.dataset = {};
+        this.attributes = {};
+        this.listeners = {};
+        this.children = [];
+        this.value = '';
+        this._textContent = '';
+        this.isConnected = true;
+      }
+      get firstChild() {
+        return this.children[0] ?? null;
+      }
+      get textContent() {
+        if (this.children.length === 0) return this._textContent;
+        return this._textContent + this.children.map((c) => (typeof c === 'string' ? c : c.textContent)).join('');
+      }
+      set textContent(v) {
+        this._textContent = String(v ?? '');
+        this.children = [];
+      }
+      setAttribute(k, v) {
+        this.attributes[k] = String(v);
+      }
+      removeAttribute(k) {
+        delete this.attributes[k];
+      }
+      addEventListener(evt, fn) {
+        this.listeners[evt] = fn;
+      }
+      append(...items) {
+        for (const item of items) {
+          if (typeof item === 'string') {
+            const textNode = new MockNode('#text');
+            textNode._textContent = item;
+            textNode.parent = this;
+            this.children.push(textNode);
+          } else if (item) {
+            item.parent = this;
+            this.children.push(item);
+          }
+        }
+      }
+      remove() {
+        if (!this.parent) return;
+        const idx = this.parent.children.indexOf(this);
+        if (idx >= 0) this.parent.children.splice(idx, 1);
+      }
+      findAll(pred, acc = []) {
+        if (pred(this)) acc.push(this);
+        for (const ch of this.children) {
+          if (ch instanceof MockNode) ch.findAll(pred, acc);
+        }
+        return acc;
+      }
+    }
+
+    globalThis.Node = MockNode;
+    globalThis.document = {
+      createElement: (tag) => new MockNode(tag),
+      createElementNS: (_ns, tag) => new MockNode(tag),
+      getElementById: () => null,
+    };
+
+    const root = planView();
+
+    // Verify 3-min, 5-min, and 10-min buttons exist in the timer
+    const start3 = root.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('3-minute'));
+    const start5 = root.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('5-minute'));
+    const start10 = root.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('10-minute'));
+    assert.equal(start3.length, 1);
+    assert.equal(start5.length, 1);
+    assert.equal(start10.length, 1);
+
+    // Verify visual breathing pacer guide exists with circle and label
+    const pacerGuides = root.findAll((n) => n.className.includes('pacer-guide'));
+    assert.ok(pacerGuides.length >= 1);
+    const pacerCircles = root.findAll((n) => n.className.includes('pacer-circle'));
+    assert.ok(pacerCircles.length >= 1);
+    const pacerLabels = root.findAll((n) => n.className.includes('pacer-label'));
+    assert.ok(pacerLabels.length >= 1);
+
+    // Verify 42 CFR Part 2 printable handout card and actions exist
+    const cfrHandouts = root.findAll((n) => n.className.includes('print-handout'));
+    assert.ok(cfrHandouts.length >= 1);
+    assert.match(cfrHandouts[0].textContent, /42 CFR Part 2/);
+    assert.match(cfrHandouts[0].textContent, /89 FR 12472/);
+    assert.match(cfrHandouts[0].textContent, /Shield against police/i);
+    assert.match(cfrHandouts[0].textContent, /Special protection for counseling notes/i);
+    assert.match(cfrHandouts[0].textContent, /Patient control of consent/i);
+    assert.match(cfrHandouts[0].textContent, /EKRA/);
+
+    const printHandoutBtns = cfrHandouts[0].findAll(
+      (n) => n.tagName === 'BUTTON' && n.textContent.includes('Print confidentiality handout'),
+    );
+    assert.equal(printHandoutBtns.length, 1);
+  } finally {
+    globalThis.document = prevDoc;
+    resetPlanState();
   }
 });
