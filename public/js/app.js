@@ -63,6 +63,10 @@ export const LAZY_LOADERS = {
     viewCache.set('plan', m.planView);
     return m.planView;
   }),
+  assessment: () => import('./views/assessment.js').then((m) => {
+    viewCache.set('assessment', m.assessmentView);
+    return m.assessmentView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -80,6 +84,7 @@ const ROUTE_TITLES = {
   overdose: () => t('route.overdose', 'Overdose response'),
   health: () => t('route.health', 'Health services'),
   plan: () => t('route.plan', 'Safety plan & first visit'),
+  assessment: () => t('route.assessment', 'Withdrawal assessment (COWS & CIWA-Ar)'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -107,6 +112,7 @@ export function preloadAllLazyViews() {
     preloadRoute('guided'),
     preloadRoute('medications'),
     preloadRoute('plan'),
+    preloadRoute('assessment'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -224,6 +230,7 @@ export function runQuickExitResets() {
   import('./views/health.js').then((m) => m.resetHealthState?.()).catch(() => {});
   import('./views/states.js').then((m) => m.resetStatesState?.()).catch(() => {});
   import('./views/plan.js').then((m) => m.resetPlanState?.()).catch(() => {});
+  import('./views/assessment.js').then((m) => m.resetAssessmentState?.()).catch(() => {});
 }
 
 function quickExit() {

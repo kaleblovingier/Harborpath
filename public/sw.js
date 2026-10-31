@@ -45,6 +45,7 @@ const APP_SHELL = [
   '/js/views/insuranceHelpers.js',
   '/js/views/insuranceWidget.js',
   '/js/views/plan.js',
+  '/js/views/assessment.js',
   '/js/views/match.js',
   '/js/match/engine.js',
   '/js/locales/es.js',

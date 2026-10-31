@@ -165,4 +165,15 @@ export default {
   'plan.rights.brokeringDesc': 'Es un delito federal que cualquier programa o intermediario pague o reciba comisiones ilegales, pasajes aéreos o alquiler gratuito a cambio de derivarle a un centro específico.',
   'plan.rights.complaintTitle': 'Derecho a notificación de filtraciones y a presentar quejas: ',
   'plan.rights.complaintDesc': 'Los programas deben notificarle si ocurre una filtración de su privacidad. Usted tiene derecho a presentar una queja formal ante la Oficina de Derechos Civiles (OCR) del HHS o ante SAMHSA sin temor a represalias.',
+
+  // Clinical Withdrawal Assessment (views/assessment.js)
+  'route.assessment': 'Evaluación de abstinencia (COWS y CIWA-Ar)',
+  'assessment.title': 'Evaluación Clínica de Abstinencia (COWS y CIWA-Ar)',
+  'assessment.lede': 'Monitoreo clínico validado de abstinencia para opioides (COWS) y alcohol (CIWA-Ar). Evalúa la preparación para la inducción de buprenorfina, umbrales de desintoxicación médica y evaluación hospitalaria de emergencia.',
+  'assessment.privacy.title': 'Garantía de Privacidad en Memoria RAM Efímera',
+  'assessment.privacy.body': 'Las respuestas clínicas, puntuaciones y notas existen estrictamente en la memoria RAM temporal de su navegador y no se escriben en el almacenamiento del dispositivo ni en consultas de URL. Se limpian al pulsar Salida Rápida, Reiniciar o cerrar esta pestaña.',
+  'assessment.tabs.label': 'Escala de evaluación de abstinencia',
+  'assessment.copied': 'Informe de evaluación copiado al portapapeles.',
+  'assessment.copy_failed': 'No se pudo copiar el informe al portapapeles.',
+  'assessment.cleared': 'Estado de la evaluación limpiado de la memoria.',
 };
