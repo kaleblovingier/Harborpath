@@ -5,7 +5,7 @@ import { locationPicker } from './locationPicker.js';
 import { treatmentCard, healthCenterCard } from './facilityCard.js';
 import { treatmentReach, healthCenterReach } from './reach.js';
 import { statePanel } from './stateResources.js';
-import { t, tp, formatNumber } from '../i18n.js';
+import { t, tp, formatNumber, getLang } from '../i18n.js';
 
 const MAX_FILTERS = 8;
 
@@ -41,6 +41,56 @@ export function skeleton(n = 3) {
   ));
 }
 
+export function harmReductionSupplyBanner() {
+  const isEs = getLang() === 'es';
+  return h('div', {
+    class: 'callout callout-info harm-reduction-callout',
+    role: 'region',
+    'aria-label': isEs
+      ? 'Vías de acceso a suministros de reducción de daños y prevención de sobredosis'
+      : 'Harm reduction supply access pathways & overdose prevention',
+  },
+    h('p', { class: 'callout-title' },
+      icon('shield'),
+      isEs
+        ? 'Vías de acceso rápido: Suministros de reducción de daños y naloxona'
+        : 'Quick access: Harm reduction supplies, naloxone & test strips',
+    ),
+    h('p', null,
+      isEs
+        ? 'Si busca naloxona, tiras reactivas o jeringas estériles, existen vías comunitarias gratuitas y sin barreras además de las clínicas de tratamiento:'
+        : 'If you are looking for naloxone, test strips, or sterile supplies, free community options exist alongside licensed clinics:'),
+    h('ul', null,
+      h('li', null,
+        h('strong', null, isEs ? 'Programas de Servicios de Jeringas (SSP): ' : 'Syringe Services Programs (SSPs): '),
+        isEs
+          ? 'Proporcionan jeringas nuevas, eliminación segura, tiras para fentanilo/xilacina y naloxona gratuita sin preguntas ni citas. Encuentre un programa en el '
+          : 'Provide sterile syringes, safe sharps disposal, fentanyl/xylazine test strips, and free naloxone with zero judgment or appointments. Find one in the ',
+        ext('https://nasen.org/directory/', isEs ? 'Directorio nacional NASEN' : 'NASEN Syringe Access Directory'),
+        '.'),
+      h('li', null,
+        h('strong', null, isEs ? 'Máquinas expendedoras comunitarias y unidades móviles: ' : 'Community naloxone vending machines & mobile vans: '),
+        isEs
+          ? 'Muchas ciudades y condados ofrecen máquinas expendedoras 24/7 sin costo ni identificación en bibliotecas, estaciones de bomberos y centros de salud, además de camionetas móviles comunitarias.'
+          : 'Many counties offer 24/7 exterior vending machines (free, zero ID or registration required) outside health departments, fire stations, and transit centers, as well as mobile outreach vans.'),
+      h('li', null,
+        h('strong', null, isEs ? 'Envío discreto por correo (NEXT Distro): ' : 'Mail-based anonymous delivery (NEXT Distro): '),
+        isEs
+          ? 'Si no cuenta con un programa presencial cercano, solicite naloxona gratuita por correo en un paquete sin marcas a través de '
+          : 'If you lack nearby in-person access, request free mail-delivered naloxone and supplies in plain, unmarked packaging via ',
+        ext('https://nextdistro.org/naloxone', 'NEXT Distro'),
+        '.'),
+      h('li', null,
+        h('strong', null, isEs ? 'Tarjetas de acción imprimibles y leyes de protección: ' : 'Printable action cards & Good Samaritan protections: '),
+        isEs
+          ? 'Consulte la guía paso a paso de las leyes del Buen Samaritano al llamar al 911 e imprima tarjetas de respuesta rápida en la '
+          : 'Review step-by-step 911 Good Samaritan overdose legal immunities and print pocket action cards in the ',
+        h('a', { href: '#/harm-reduction' }, isEs ? 'Guía de reducción de daños' : 'Harm Reduction Hub'),
+        '.'),
+    ),
+  );
+}
+
 /**
  * Search SAMHSA's directory. kind: 'sa' (substance use) or 'mh' (mental health).
  */
@@ -61,6 +111,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     role: 'region',
     'aria-label': t('finder.activeFiltersRegion', 'Active search filters'),
   });
+  const harmNoticeSlot = h('div', { class: 'finder-harm-reduction-slot' });
   const filterCount = h('span', { class: 'count' });
   const limitNote = h('p', { class: 'help', hidden: true },
     t('finder.maxFilters', 'You can combine up to {n} filters.', { n: MAX_FILTERS }));
@@ -93,6 +144,10 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     limitNote.hidden = !full;
     filterCount.textContent = selected.size ? String(selected.size) : '';
     clear(activeChips);
+    clear(harmNoticeSlot);
+    if (selected.has('NOE')) {
+      harmNoticeSlot.append(harmReductionSupplyBanner());
+    }
     if (selected.size) {
       activeChips.append(
         ...[...selected].map((code) => h('button', {
@@ -157,6 +212,24 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
           ),
         );
       }
+      if (selected.has('NOE')) {
+        const isEs = getLang() === 'es';
+        list.append(h('div', { class: 'callout callout-info harm-empty-help' },
+          h('p', { class: 'callout-title' }, icon('shield'),
+            isEs ? 'Opciones comunitarias y gratuitas de naloxona y suministros:' : 'Free community harm reduction supplies & naloxone options:'),
+          h('ul', null,
+            h('li', null,
+              isEs ? 'Los Programas de Servicios de Jeringas (SSP) ofrecen suministros estériles, tiras reactivas y naloxona sin citas ni costo. ' : 'Syringe Services Programs (SSPs) provide sterile supplies, test strips, and free naloxone without appointments. ',
+              ext('https://nasen.org/directory/', isEs ? 'Directorio nacional NASEN' : 'Find an SSP on the NASEN Directory'), '.'),
+            h('li', null,
+              isEs ? 'Envío gratuito y confidencial de naloxona por correo a través de ' : 'Free mail-based naloxone delivered confidentially via ',
+              ext('https://nextdistro.org/naloxone', 'NEXT Distro'), '.'),
+            h('li', null,
+              isEs ? 'Máquinas expendedoras 24/7 y camionetas móviles comunitarias. Conozca más en el ' : 'Community naloxone vending machines and mobile outreach vans offer 24/7 barrier-free supplies. Learn more in the ',
+              h('a', { href: '#/harm-reduction' }, isEs ? 'Centro de reducción de daños' : 'Harm Reduction Hub'), '.'),
+          ),
+        ));
+      }
       list.append(h('div', { class: 'empty' },
         h('p', null, selected.size
           ? t('finder.noneFiltered', 'No listings match every filter you picked. Try removing a filter or searching a wider area.')
@@ -192,6 +265,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
 
   const resultsContainer = h('div', { class: 'results', 'aria-busy': 'false' },
     activeChips,
+    harmNoticeSlot,
     statusLine,
     list,
     more,
