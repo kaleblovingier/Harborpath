@@ -888,12 +888,25 @@ tbody th { font-weight: 700; min-width: 200px; }
 .verification-script-card,
 .asam-summary-card,
 .xylazine-action-card,
+.naloxone-action-card,
 .rural-territory-reach-card {
   border-left: 4px solid var(--brand);
   margin-bottom: 18px;
 }
 .xylazine-action-card {
   border-left-color: var(--danger);
+}
+.naloxone-action-card {
+  border-left-color: var(--brand);
+}
+.pathway-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+.pathway-access-card {
+  border-left: 3px solid var(--brand);
 }
 .plain-language-box {
   border-left: 4px solid var(--brand);
@@ -915,7 +928,7 @@ tbody th { font-weight: 700; min-width: 200px; }
   a { color: #000; }
   .ext::after { content: ""; }
   .no-print, .quick-exit { display: none !important; }
-  .print-handout, .verification-script-card, .asam-summary-card, .xylazine-action-card, .rural-territory-reach-card {
+  .print-handout, .verification-script-card, .asam-summary-card, .xylazine-action-card, .naloxone-action-card, .rural-territory-reach-card {
     background: #fff !important;
     color: #000 !important;
     border: 1.5pt solid #000 !important;
@@ -927,7 +940,8 @@ tbody th { font-weight: 700; min-width: 200px; }
   .print-handout a[href^="https://"]::after,
   .verification-script-card a[href^="https://"]::after,
   .asam-summary-card a[href^="https://"]::after,
-  .xylazine-action-card a[href^="https://"]::after {
+  .xylazine-action-card a[href^="https://"]::after,
+  .naloxone-action-card a[href^="https://"]::after {
     content: " (" attr(href) ")";
     font-size: 8.5pt;
     word-break: break-all;

@@ -12,6 +12,7 @@
 .verification-script-card,
 .asam-summary-card,
 .xylazine-action-card,
+.naloxone-action-card,
 .rural-territory-reach-card {
   position: relative;
   border: 1.5px solid var(--border);
@@ -24,6 +25,10 @@
 
 .xylazine-action-card {
   border-left-color: var(--danger);
+}
+
+.naloxone-action-card {
+  border-left-color: var(--brand);
 }
 
 .plain-language-box {
@@ -126,6 +131,7 @@
   .verification-script-card,
   .asam-summary-card,
   .xylazine-action-card,
+  .naloxone-action-card,
   .rural-territory-reach-card,
   .safety-plan-preview {
     border: 1.5pt solid #000000 !important;
@@ -171,7 +177,8 @@
   .print-handout a[href^="https://"]::after,
   .verification-script-card a[href^="https://"]::after,
   .asam-summary-card a[href^="https://"]::after,
-  .xylazine-action-card a[href^="https://"]::after {
+  .xylazine-action-card a[href^="https://"]::after,
+  .naloxone-action-card a[href^="https://"]::after {
     content: " (" attr(href) ")";
     font-size: 8.5pt;
     word-break: break-all;
