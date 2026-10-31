@@ -241,6 +241,7 @@ export function runQuickExitResets() {
   import('./components/sensoryMode.js').then((m) => m.resetSensoryMode?.()).catch(() => {});
   import('./components/emergencyDrawer.js').then((m) => m.closeEmergencyDrawer?.()).catch(() => {});
   import('./components/stateLegalCard.js').then((m) => m.resetStateLegalCardState?.()).catch(() => {});
+  import('./components/overdosePacing.js').then((m) => m.resetOverdosePacer?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
