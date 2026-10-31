@@ -723,6 +723,56 @@ textarea.input {
 .timer.timer-done { background: var(--danger-soft); }
 .timer.timer-done .timer-live { color: var(--danger-strong); }
 
+.pacer-guide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 6px 0;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.pacer-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid var(--brand);
+  transition: transform 0.8s ease-in-out, background-color 0.8s ease-in-out;
+  flex-shrink: 0;
+}
+.pacer-guide.pacer-inhale .pacer-circle {
+  transform: scale(1.35);
+  background-color: var(--brand-soft);
+  border-color: var(--brand-strong);
+}
+.pacer-guide.pacer-hold .pacer-circle {
+  transform: scale(1.35);
+  background-color: var(--brand);
+}
+.pacer-guide.pacer-exhale .pacer-circle {
+  transform: scale(0.85);
+  background-color: transparent;
+  border-color: var(--brand);
+}
+.pacer-guide.pacer-pause .pacer-circle {
+  transform: scale(0.85);
+  background-color: transparent;
+  border-color: var(--border);
+}
+.pacer-label {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--brand-strong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pacer-circle {
+    transition: none;
+    transform: none !important;
+  }
+}
+
 /* ------------------------------------------------------------ Guides */
 .toc { margin: 8px 0 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .toc-title { font-weight: 700; margin-bottom: 4px; }
@@ -851,7 +901,7 @@ tbody th { font-weight: 700; min-width: 200px; }
 
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
-  .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button,
+  .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,
   #self-check, #safety-plan > form, #safety-plan > .callout, .safety-plan-preview .actions,
   .safety-plan-preview .field-status, #asam-recommendation-card .actions, .state-panel .actions,
   .wizard-nav, .match-filters, .compare-check, .match-summary .actions { display: none !important; }
