@@ -65,6 +65,7 @@ export const api = {
   states: (signal) => getJson('/api/states', null, signal),
   state: (code, signal) =>
     getJson('/api/state', { code: typeof code === 'object' && code !== null ? code.code : code }, signal),
+  virtualProviders: ({ state } = {}, signal) => getJson('/api/virtual-providers', { state }, signal),
   telehealth: ({ state, lat, lng, kind, codes = [], page = 1 } = {}, signal) =>
     getJson('/api/telehealth', {
       state,

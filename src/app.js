@@ -11,6 +11,7 @@ import { createRegions } from './regions.js';
 import { createStateDirectory } from './stateResources.js';
 import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
+import { createVirtualProviders } from './virtualProviders.js';
 import { InputError, RADII_MILES, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
 import { DATA_LOADERS, PUBLIC_DIR } from './data.js';
 import { createPrivacyLogger, sanitizeSearchParams } from './privacy.js';
@@ -39,6 +40,7 @@ export const SECURITY_HEADERS = {
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Resource-Policy': 'same-origin',
   'Permissions-Policy': 'geolocation=(self), camera=(), microphone=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
 // Hosts with a CDN (e.g. Vercel) may serve public/ themselves and leave it out
@@ -113,12 +115,48 @@ function acceptedEncodings(header) {
   return out;
 }
 
-function clientKey(req, trustProxy) {
-  if (trustProxy) {
+/**
+ * The rate-limit key for a request.
+ *
+ * The leftmost X-Forwarded-For entries are whatever the client sent, so keying
+ * on them lets anyone dodge the limit with a fake header. Each trusted proxy
+ * appends the address it saw, so with `trustProxy` hops the client is the
+ * entry that many places from the right (Vercel replaces the header with one
+ * entry; one load balancer is 1 hop; a CDN in front of it makes 2).
+ */
+export function clientKey(req, trustProxy) {
+  const hops = trustProxy === true ? 1 : Number.isInteger(trustProxy) && trustProxy > 0 ? trustProxy : 0;
+  let addr = null;
+  if (hops) {
     const fwd = req.headers['x-forwarded-for'];
-    if (typeof fwd === 'string' && fwd) return fwd.split(',')[0].trim();
+    if (typeof fwd === 'string') {
+      const parts = fwd.split(',').map((s) => s.trim());
+      addr = parts.length >= hops ? parts[parts.length - hops] || null : null;
+    }
   }
-  return req.socket.remoteAddress ?? 'unknown';
+  return networkKey(addr ?? req.socket?.remoteAddress ?? 'unknown');
+}
+
+/**
+ * IPv4 addresses key as themselves. IPv6 keys by /64: one subscriber usually
+ * holds a whole /64, so keying on full addresses would hand each client 2^64
+ * fresh keys.
+ */
+export function networkKey(addr) {
+  let s = String(addr).trim().toLowerCase().replace(/%.*$/, '');
+  const mapped = s.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/);
+  if (mapped) return mapped[1];
+  if (!s.includes(':')) return s;
+  const halves = s.split('::');
+  if (halves.length > 2) return s;
+  const groups = (part) => (part ? part.split(':').flatMap((g) => (g.includes('.') ? ['0', '0'] : [g])) : []);
+  const head = groups(halves[0]);
+  const tail = halves.length === 2 ? groups(halves[1]) : [];
+  const fill = halves.length === 2 ? 8 - head.length - tail.length : 0;
+  if (fill < 0 || (halves.length === 1 && head.length !== 8)) return s;
+  if (![...head, ...tail].every((g) => /^[0-9a-f]{1,4}$/.test(g))) return s;
+  const full = [...head, ...Array(fill).fill('0'), ...tail];
+  return `${full.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, '')).join(':')}::/64`;
 }
 
 export function createApp({
@@ -158,6 +196,7 @@ export function createApp({
     ruralHealthClinics: DATA_LOADERS.ruralHealthClinics(),
     meta,
   }));
+  const virtualProviders = once(() => createVirtualProviders(DATA_LOADERS.virtualProviders(), { logger }));
   const staticFiles = loadStatic(fileURLToPath(PUBLIC_DIR));
   // Fresh for 30 minutes, then kept 30 more only to answer if FindTreatment.gov
   // is down: never more than the hour the privacy page promises.
@@ -240,14 +279,14 @@ export function createApp({
   }
 
   async function handleApi(req, res, url) {
+    // Liveness checks (container health probes) must never be rate limited.
+    if (url.pathname === '/api/health') return json(req, res, 200, { ok: true });
     if (!limiter.allow(clientKey(req, trustProxy))) {
       return json(req, res, 429, { error: 'Too many searches in a short time. Please wait a minute and try again.' });
     }
     const { cleanParams: params } = sanitizeSearchParams(url.pathname, url.searchParams);
     try {
       switch (url.pathname) {
-        case '/api/health':
-          return json(req, res, 200, { ok: true });
         case '/api/meta':
           return json(req, res, 200, publicMeta);
         case '/api/geocode':
@@ -292,6 +331,8 @@ export function createApp({
             updated: publicMeta.healthCenters.updated,
           });
         }
+        case '/api/virtual-providers':
+          return json(req, res, 200, virtualProviders().search(params));
         case '/api/providers':
           return json(req, res, 200, providers().search(params, readLocation(params)));
         case '/api/nearby-summary': {
@@ -344,7 +385,14 @@ export function createApp({
       res.writeHead(400, SECURITY_HEADERS);
       return res.end();
     }
-    if (url.pathname.startsWith('/api/')) return handleApi(req, res, url);
-    return serveStatic(req, res, url.pathname);
+    try {
+      if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
+      return serveStatic(req, res, url.pathname);
+    } catch (err) {
+      // Last resort: never let one request crash the process.
+      logger.error(`[http] ${url.pathname} failed: ${err?.message}`);
+      if (!res.headersSent) res.writeHead(500, SECURITY_HEADERS);
+      res.end();
+    }
   };
 }

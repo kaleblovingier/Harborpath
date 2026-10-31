@@ -56,16 +56,21 @@ export function homeView() {
   return h('div', { class: 'view view-home' },
     h('section', { class: 'hero' },
       h('h1', { id: 'page-title', tabindex: '-1' },
-        t('home.hero.title', 'Find care and stay safer, on your terms.')),
+        t('home.hero.fit', 'Find treatment that fits your needs, your insurance, and your life.')),
       h('p', { class: 'lede' },
         t('home.hero.lede', 'Search licensed addiction treatment, clinical care navigation, medication guides, harm reduction tools, and low-cost health care near you. Free and private, with no sign-up, ads, or tracking.')),
       h('div', { class: 'card hero-search' },
         locationPicker(),
         h('div', { class: 'hero-actions' },
-          h('button', { type: 'button', class: 'btn btn-primary', onclick: go('#/treatment') }, icon('search'), t('home.cta.treatment', 'Treatment near me')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/navigator') }, icon('compass'), t('home.cta.navigator', 'Care navigator (ASAM)')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/treatment?codes=NOE') }, icon('shield'), t('home.cta.naloxone', 'Naloxone near me')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/health') }, icon('heart'), t('home.cta.clinics', 'Low-cost clinics & VA/IHS')),
+          h('button', { type: 'button', class: 'btn btn-primary', onclick: go('#/match') }, icon('search'), t('home.cta.find', 'Find treatment')),
+          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=virtual') }, icon('globe'), t('home.cta.online', 'Explore online treatment')),
+          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=affordable') }, icon('heart'), t('home.cta.affordable', 'Find affordable care')),
+          h('button', { type: 'button', class: 'btn btn-emergency', onclick: go('#/crisis') }, icon('phone'), t('home.cta.helpNow', 'Get help now')),
+        ),
+        h('p', { class: 'hero-more' },
+          h('a', { href: '#/treatment' }, t('home.cta.directory', 'Search the full treatment directory')), ' · ',
+          h('a', { href: '#/treatment?codes=NOE' }, t('home.cta.naloxone', 'Naloxone near me')), ' · ',
+          h('a', { href: '#/health' }, t('home.cta.clinics', 'Low-cost clinics & VA/IHS')),
         ),
       ),
     ),
@@ -125,7 +130,7 @@ export function homeView() {
         h('li', null, icon('ban'), h('h3', null, t('home.promise.nopaid.title', 'No paid placement')),
           p(t('home.promise.nopaid.body', 'No ads, sponsored listings, or referral fees. We never sell leads or route calls to a private call center.'))),
         h('li', null, icon('lock'), h('h3', null, t('home.promise.privacy.title', 'Private by design')),
-          p(t('home.promise.privacy.body', 'No accounts, cookies, analytics, or third-party scripts. Your location is rounded and never stored; clinical tools run 100% in your browser’s memory.'))),
+          p(t('home.promise.privacy.body', 'No accounts, cookies, analytics, or third-party scripts. Your location is rounded to about 1 km before it leaves your device, HarborPath’s code does not store your searches, and answers to the clinical tools stay in your browser’s memory.'))),
         h('li', null, icon('hand'), h('h3', null, t('home.promise.meet.title', 'Meets you where you are')),
           p(t('home.promise.meet.body', 'Whether you want to stop, cut back, start medication, or just stay safer tonight, there is something here for you.'))),
       ),
@@ -448,6 +453,7 @@ export function savedView() {
           announce(t('saved.cleared', 'Saved list cleared'));
         },
       }, icon('x'), t('saved.clear', 'Clear list')),
+      h('small', { class: 'help' }, t('privacy.clipboardNote', 'Copied text stays on your clipboard after Quick exit.')),
     );
     listEl.append(...items.map(renderSavedCard));
   }
@@ -495,6 +501,11 @@ export function crisisView() {
 }
 
 // ---------------------------------------------------------------- Privacy
+// Every statement here must stay exactly true. HarborPath's own code does not
+// log searches, but requests travel as URL query strings, so the hosting
+// platform's access logs can hold them with the visitor's IP address.
+const ISSUES_URL = 'https://github.com/kaleblovingier/Harborpath/issues';
+
 export function privacyView() {
   return h('div', { class: 'view view-prose' },
     pageHeader(
@@ -506,23 +517,55 @@ export function privacyView() {
         [strong(t('privacy.collect.1.lead', 'No accounts, cookies, analytics, ads, or tracking pixels. ')),
           t('privacy.collect.1.body', 'The site loads no third-party scripts, fonts, or maps.')],
         [strong(t('privacy.collect.2.lead', 'Location is rounded. ')),
-          t('privacy.collect.2.body', 'When you search, your area is rounded to about 1 km (0.01°) before it is sent anywhere. HarborPath forwards treatment searches to SAMHSA’s FindTreatment.gov with that rounded location. Health center, VA, IHS, rural clinic, hospital, and ZIP lookups are answered on our own server.')],
-        [strong(t('privacy.collect.3.lead', 'Nothing is logged with your location. ')),
-          t('privacy.collect.3.body', 'Our server does not record search terms, ZIP codes, or coordinates. Rounded searches may be cached in memory for up to an hour so repeat searches are fast.')],
+          t('privacy.collect.2.body', 'If you use your device’s location, it is rounded to about 1 km (0.01°) on your device before it is sent. A ZIP code or place name you type is sent to our server to look it up. HarborPath forwards treatment searches to SAMHSA’s FindTreatment.gov with a rounded location. Health center, VA, IHS, rural clinic, hospital, and ZIP lookups are answered on our own server.')],
+        [strong(t('privacy.collect.3.lead', 'Our code does not log your searches. ')),
+          t('privacy.collect.3.body', 'HarborPath’s own server code does not log or store search terms, ZIP codes, coordinates, or service filters. Searches are sent as part of the web address (URL query parameters), so our hosting provider (for example, Vercel) may keep standard access logs that include those addresses and your IP address. Rounded searches may be cached in server memory for up to an hour so repeat searches are fast.')],
         [strong(t('privacy.collect.4.lead', 'Clinical tools & saved places stay on your device. ')),
-          t('privacy.collect.4.body', 'The ASAM Care Navigator and Personal Safety Plan run 100% in your browser’s memory and are never sent to us. Saved places stay in memory unless you choose to keep them on this device.')],
+          t('privacy.collect.4.body', 'Your answers in the ASAM Care Navigator and Personal Safety Plan are kept in your browser’s memory and are not sent to our server. If you then search for treatment, only that search (a rounded location and service filters) is sent. Saved places stay in memory unless you choose to keep them on this device.')],
       ])),
     section('outbound', t('privacy.outbound.title', 'When you leave HarborPath'),
       p(t('privacy.outbound.body', 'Links to other sites open in a new tab without telling that site you came from HarborPath. Those sites, including map links for directions, have their own privacy practices.'))),
     section('safety', t('privacy.safety.title', 'Staying safe on a shared device'),
       ul([
         [strong(t('privacy.safety.1.lead', 'Quick exit: ')),
-          t('privacy.safety.1.body', 'press the Quick exit button or the Escape key twice. HarborPath erases what it stored (including saved places, language preference, and any offline copy) and replaces this page with a weather site.')],
+          t('privacy.safety.1.body', 'press the Quick exit button or the Escape key twice. HarborPath erases what it stored in this browser (its memory, local storage, saved places, language preference, and any offline copy) and replaces this page with a weather site. It cannot erase your browser history, anything you copied to the clipboard, or files you downloaded or printed.')],
         t('privacy.safety.2', 'HarborPath keeps a single entry in your browser’s back history, so pressing Back after a quick exit does not return here.'),
+        t('privacy.safety.filters', 'Search filters, such as a type of service, are kept out of the address bar. The name of the page you are on, such as “Find treatment,” can still appear in your history.'),
         t('privacy.safety.3', 'Your browser may still show HarborPath in its history list. For more privacy, use a private or incognito window, or clear your history afterward.'),
         t('privacy.safety.4', 'If someone may be monitoring your device, consider using a different phone or computer, such as one at a library.'),
       ]),
       offlineControlCard()),
+    section('health-data', t('privacy.chd.title', 'Consumer health data privacy notice'),
+      p(t('privacy.chd.intro', 'Searching for addiction treatment or other health services can reveal health information. This notice describes what actually happens to that information. It is written with Washington’s My Health My Data Act and similar state consumer health data laws in mind. It is not a claim that HarborPath complies with any particular law.')),
+      h('h3', null, t('privacy.chd.collect.title', 'What is collected and where it goes')),
+      ul([
+        [strong(t('privacy.chd.stored.lead', 'Stored by HarborPath: nothing about you. ')),
+          t('privacy.chd.stored.body', 'There are no accounts, profiles, or stored records about individuals. Our server code does not write searches to logs, files, or a database.')],
+        [strong(t('privacy.chd.server.lead', 'Sent to our server with each search: ')),
+          t('privacy.chd.server.body', 'the ZIP code or place name you type, or your location rounded to about 1 km on your device, plus the search distance and any service filters you choose (for example, buprenorphine or pregnancy services). Like every website, our server also receives your IP address and browser type with each request. Searches are held only in server memory: rounded searches in a cache for up to an hour, and IP addresses in a rate limiter, usually for about a minute, to prevent abuse.')],
+        [strong(t('privacy.chd.samhsa.lead', 'Shared with SAMHSA’s FindTreatment.gov: ')),
+          t('privacy.chd.samhsa.body', 'for treatment searches, our server sends the rounded location and service filters to FindTreatment.gov, the federal directory run by SAMHSA. Your IP address and browser details are not forwarded.')],
+        [strong(t('privacy.chd.host.lead', 'Kept by our hosting provider: ')),
+          t('privacy.chd.host.body', 'HarborPath runs on a hosting platform (for example, Vercel). Because searches are sent as part of the web address, the host’s standard access logs may record them together with your IP address. HarborPath does not control those logs. They are kept under the host’s own retention policy.')],
+        [strong(t('privacy.chd.device.lead', 'Kept on your device: ')),
+          t('privacy.chd.device.body', 'your language choice and, only if you turn them on, your saved list and an offline copy of the site. Quick exit erases these.')],
+      ]),
+      h('h3', null, t('privacy.chd.purpose.title', 'Why it is used')),
+      p(t('privacy.chd.purpose.body', 'Only to answer the search you asked for, keep the service running, and protect it from abuse.')),
+      h('h3', null, t('privacy.chd.share.title', 'Selling and sharing')),
+      ul([
+        t('privacy.chd.share.sell', 'HarborPath does not sell consumer health data or any other data.'),
+        t('privacy.chd.share.ads', 'HarborPath does not share data with advertisers or data brokers. There are no ads, analytics, tracking pixels, or third-party scripts.'),
+        t('privacy.chd.share.only', 'Data goes only to the places listed above, and only to provide the search you asked for.'),
+      ]),
+      h('h3', null, t('privacy.chd.rights.title', 'Access and deletion requests')),
+      p(t('privacy.chd.rights.body', 'You can ask what data HarborPath has about you, or ask for it to be deleted. Because HarborPath keeps no accounts and no stored records about individuals, there is normally nothing linked to you to look up or delete. Searches held in server memory expire within an hour. Hosting provider access logs are kept under the host’s retention policy. To erase what HarborPath stored in this browser, use Quick exit.')),
+      h('h3', null, t('privacy.chd.contact.title', 'Contact')),
+      p(t('privacy.chd.contact.body', 'To ask a question or make a privacy request, open an issue on the HarborPath project page on GitHub: '),
+        ext(ISSUES_URL, 'github.com/kaleblovingier/Harborpath/issues'), '.'),
+      h('div', { class: 'callout callout-warn' },
+        p(strong(t('privacy.chd.contact.warnLead', 'GitHub issues are public. ')),
+          t('privacy.chd.contact.warn', 'Do not post personal or health information there, such as your name, address, contact details, diagnosis, or substance use.')))),
     section('not-medical', t('privacy.medical.title', 'Not medical advice'),
       p(t('privacy.medical.body', 'HarborPath shares general information from public health and clinical sources (SAMHSA, ASAM, HRSA, CMS, VA, IHS, CDC, FDA, NIDA, and NIAAA). It is not a substitute for care from a medical professional. In an emergency, call 911.'))),
   );

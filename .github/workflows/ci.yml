@@ -8,6 +8,7 @@ on:
       - 'feat/**'
       - 'swarm/**'
   pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -56,5 +57,8 @@ jobs:
       - name: Data Integrity & Build Verification
         run: npm run build --if-present
 
+      # Zero runtime dependencies: nothing to install.
+      # npm test includes the client module graph, file integrity, clinical,
+      # i18n, privacy, UX/accessibility, and E2E smoke tests.
       - name: Full Unit, Clinical, i18n, and E2E Smoke Test Suite
         run: npm test

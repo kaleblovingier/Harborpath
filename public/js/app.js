@@ -27,8 +27,8 @@ export const SYNC_VIEWS = {
   privacy: privacyView,
 };
 
-// Heavy clinical and educational views are dynamically imported on demand,
-// cached in memory, and preloaded during browser idle time or link hover/focus.
+// Heavy clinical, matching, and educational views are dynamically imported on
+// demand, cached in memory, and preloaded during browser idle time or link hover/focus.
 export const viewCache = new Map();
 const pendingLoads = new Map();
 
@@ -43,6 +43,10 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  match: () => import('./views/match.js').then((m) => {
+    viewCache.set('match', m.matchView);
+    return m.matchView;
+  }),
   navigator: () => import('./views/navigator.js').then((m) => {
     viewCache.set('navigator', m.careNavigatorView);
     return m.careNavigatorView;
@@ -63,6 +67,7 @@ export const LAZY_LOADERS = {
 
 const ROUTE_TITLES = {
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
+  match: () => t('route.match', 'Find care that fits'),
   treatment: () => t('route.treatment', 'Find treatment'),
   navigator: () => t('route.navigator', 'Clinical care navigator (ASAM)'),
   medications: () => t('route.medications', 'Medications & interactions'),
@@ -92,6 +97,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('match'),
     preloadRoute('navigator'),
     preloadRoute('medications'),
     preloadRoute('plan'),
@@ -99,10 +105,35 @@ export function preloadAllLazyViews() {
   ]);
 }
 
-function parseHash(hashStr = typeof location !== 'undefined' ? location.hash : '') {
-  const raw = hashStr.replace(/^#\/?/, '');
+function splitHref(hash) {
+  const raw = String(hash).replace(/^#\/?/, '');
   const [path, qs = ''] = raw.split('?');
   return { path: path.replace(/\/$/, ''), query: new URLSearchParams(qs) };
+}
+
+// Filters such as `?codes=PW,OTP` or `?tab=mental` can reveal health details,
+// so they are kept out of the address bar, back history, and session restore.
+// Internal links hand their filters over in memory (see the click handler).
+// When a URL with filters is opened directly or set by code, the filters are
+// read once and the visible URL is immediately replaced with the bare route.
+// `carried` keeps them in memory so a re-render of the same route (for
+// example, after a language change) does not lose them.
+let carried = null;
+
+function parseHash(hashStr) {
+  if (typeof hashStr === 'string') return splitHref(hashStr);
+  const currentHash = typeof location !== 'undefined' ? location.hash : '';
+  const { path, query } = splitHref(currentHash);
+  if ([...query.keys()].length) {
+    carried = { path, query };
+    if (typeof history !== 'undefined' && typeof history.replaceState === 'function') {
+      history.replaceState(history.state, '', `#/${path}`);
+    }
+    return { path, query };
+  }
+  if (carried && carried.path === path) return { path, query: carried.query };
+  carried = null;
+  return { path, query };
 }
 
 export function resolveRoute(path, query) {
@@ -219,7 +250,10 @@ if (hasDom) {
     const a = e.target.closest('a[href^="#/"], a[href="#"]');
     if (!a) return;
     e.preventDefault();
-    const href = a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href');
+    const { path, query } = splitHref(a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href'));
+    // Explicit navigation replaces any filters carried from an earlier link.
+    carried = [...query.keys()].length ? { path, query } : null;
+    const href = `#/${path}`;
     if (href === location.hash || (href === '#/' && !location.hash)) render();
     else location.replace(href);
   });
@@ -228,7 +262,7 @@ if (hasDom) {
   const handleLinkPreload = (e) => {
     const a = e.target?.closest?.('a[href^="#/"]');
     if (!a) return;
-    const { path } = parseHash(a.getAttribute('href') || '');
+    const { path } = splitHref(a.getAttribute('href') || '');
     if (LAZY_LOADERS[path]) preloadRoute(path).catch(() => {});
   };
   document.addEventListener('pointerenter', handleLinkPreload, { capture: true, passive: true });

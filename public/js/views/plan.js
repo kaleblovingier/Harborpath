@@ -408,7 +408,7 @@ export function formatSafetyPlanText(plan = {}) {
   const sections = [
     '============================================================',
     'HARBORPATH PERSONAL SAFETY & RECOVERY ACTION PLAN',
-    'Private, zero-knowledge plan — kept in your control.',
+    'Private plan, written in your browser and kept in your control.',
     '============================================================',
     '',
     formatBlock('1. MY GOAL RIGHT NOW', safePlan.goal),
@@ -563,7 +563,7 @@ function urgeSurfingTimer() {
     },
   }, icon('x'), t('plan.timer.resetBtn', 'Pause / reset'));
 
-  const root = h('div', { class: 'timer', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
+  const root = h('div', { class: 'timer', role: 'group', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
     display,
     h('div', { class: 'actions' }, start3Btn, start5Btn, resetBtn),
     livePrompt,
@@ -874,7 +874,7 @@ export function planView({ query } = {}) {
       t('plan.title', 'Safety planning, counseling & what to expect'),
       t(
         'plan.lede',
-        'Build a private, zero-knowledge personal safety and recovery action plan, ride out a craving with an urge-surfing timer, get a word-for-word clinic call script, and see what really happens at intake.',
+        'Build a private personal safety and recovery action plan in your browser, ride out a craving with an urge-surfing timer, get a word-for-word clinic call script, and see what really happens at intake.',
       ),
     ),
     emergencyCallout(),
@@ -889,10 +889,10 @@ export function planView({ query } = {}) {
     // 1. Zero-Knowledge Interactive Personal Safety & Recovery Action Plan Builder
     section('safety-plan', t('plan.section.safetyPlan', 'Personal safety & recovery action plan'),
       h('div', { class: 'callout callout-info' },
-        h('p', { class: 'callout-title' }, icon('lock'), t('plan.zeroKnowledge.title', '100% in browser memory — never saved or transmitted')),
+        h('p', { class: 'callout-title' }, icon('lock'), t('plan.zeroKnowledge.title', 'Stays in this browser tab: HarborPath does not save or send it')),
         p(t(
           'plan.zeroKnowledge.desc',
-          'Everything you type or select below stays strictly in temporary browser RAM. Nothing is sent to a server, stored in cookies, or written to disk unless you choose to copy or print it. Clicking Quick Exit (or pressing Escape twice) wipes it immediately.',
+          'What you type or select below stays in this browser tab’s memory. HarborPath does not send it to a server or save it in cookies or site storage. Copying or printing it is up to you. Quick exit (or pressing Escape twice) clears it from this page, but cannot clear your clipboard or anything you printed.',
         )),
       ),
 
@@ -1000,6 +1000,7 @@ export function planView({ query } = {}) {
             onclick: handleClearPlan,
           }, icon('x'), t('plan.btn.clear', 'Clear plan')),
         ),
+        fine(t('privacy.clipboardNote', 'Copied text stays on your clipboard after Quick exit.')),
         copyStatus,
       ),
     ),

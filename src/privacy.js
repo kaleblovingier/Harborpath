@@ -16,6 +16,7 @@ export const ROUTE_PARAM_ALLOWLIST = Object.freeze({
   '/api/telehealth': Object.freeze(['state', 'kind', 'codes', 'page', 'lat', 'lng']),
   '/api/treatment': Object.freeze(['lat', 'lng', 'radius', 'kind', 'codes', 'page', 'payer']),
   '/api/health-centers': Object.freeze(['lat', 'lng', 'radius']),
+  '/api/virtual-providers': Object.freeze(['state']),
   '/api/providers': Object.freeze(['type', 'lat', 'lng', 'radius', 'filter']),
   '/api/nearby-summary': Object.freeze(['lat', 'lng', 'radius']),
 });
