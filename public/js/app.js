@@ -231,6 +231,8 @@ export function runQuickExitResets() {
   import('./views/states.js').then((m) => m.resetStatesState?.()).catch(() => {});
   import('./views/plan.js').then((m) => m.resetPlanState?.()).catch(() => {});
   import('./views/assessment.js').then((m) => m.resetAssessmentState?.()).catch(() => {});
+  import('./components/sensoryMode.js').then((m) => m.resetSensoryMode?.()).catch(() => {});
+  import('./components/emergencyDrawer.js').then((m) => m.closeEmergencyDrawer?.()).catch(() => {});
 }
 
 function quickExit() {

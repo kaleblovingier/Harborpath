@@ -29,6 +29,8 @@ const APP_SHELL = [
   '/js/components/providers.js',
   '/js/components/reach.js',
   '/js/components/stateResources.js',
+  '/js/components/sensoryMode.js',
+  '/js/components/emergencyDrawer.js',
   '/js/content/hotlines.js',
   '/js/views/common.js',
   '/js/views/core.js',
