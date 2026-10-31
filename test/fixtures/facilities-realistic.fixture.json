@@ -1,0 +1,482 @@
+{
+  "page": 1,
+  "totalPages": 1,
+  "recordCount": 5,
+  "rows": [
+    {
+      "_irow": 1,
+      "name1": "Harborview Comprehensive Opioid Treatment Program",
+      "name2": "UW Medicine Harborview Medical Center — Addictions Program",
+      "street1": "325 Ninth Avenue",
+      "street2": "Ground West Clinic",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98104",
+      "phone": "206-744-9600",
+      "intake1": "206-744-9657",
+      "hotline1": "866-789-1511",
+      "website": "https://www.uwmedicine.org/locations/addictions-program-harborview",
+      "latitude": "47.6042",
+      "longitude": "-122.3244",
+      "miles": 0.8,
+      "type_facility": "SA",
+      "services": [
+        {
+          "f1": "Type of Care",
+          "f2": "TC",
+          "f3": "Substance use treatment; Detoxification"
+        },
+        {
+          "f1": "Service Setting",
+          "f2": "SET",
+          "f3": "Outpatient; Outpatient methadone/buprenorphine or naltrexone treatment; Regular outpatient treatment; Outpatient detoxification"
+        },
+        {
+          "f1": "Opioid Medications used in Treatment",
+          "f2": "OM",
+          "f3": "Methadone used in Treatment; Buprenorphine used in Treatment; Naltrexone used in Treatment"
+        },
+        {
+          "f1": "Type of Opioid Treatment",
+          "f2": "OT",
+          "f3": "Federally-certified Opioid Treatment Program; Methadone maintenance; Buprenorphine maintenance; Prescribes buprenorphine; Prescribes naltrexone"
+        },
+        {
+          "f1": "Pharmacotherapies",
+          "f2": "PHR",
+          "f3": "Methadone; Buprenorphine with naloxone; Buprenorphine without naloxone; Buprenorphine (extended-release, injectable); Naltrexone (oral); Naltrexone (extended-release, injectable); Nicotine replacement; Medications for Hepatitis C treatment"
+        },
+        {
+          "f1": "Treatment Approaches",
+          "f2": "TAP",
+          "f3": "Brief intervention; Cognitive behavioral therapy; Motivational interviewing; Relapse prevention; Substance use disorder counseling; Trauma-related counseling"
+        },
+        {
+          "f1": "Facility Operation (e.g., Private, Public)",
+          "f2": "FOP",
+          "f3": "Local, county, or community government"
+        },
+        {
+          "f1": "License/Certification/Accreditation",
+          "f2": "LCA",
+          "f3": "State substance use treatment agency; State department of health; The Joint Commission; SAMHSA certification for opioid treatment program (OTP); Drug Enforcement Agency (DEA)"
+        },
+        {
+          "f1": "Payment/Insurance/Funding Accepted",
+          "f2": "PAY",
+          "f3": "Federal, or any government funding for substance use treatment programs; Medicare; Medicaid; Private health insurance; Cash or self-payment; State-financed health insurance plan other than Medicaid"
+        },
+        {
+          "f1": "Payment Assistance Available",
+          "f2": "PYAS",
+          "f3": "Payment assistance (check with facility for details); Sliding fee scale (fee is based on income and other factors)"
+        },
+        {
+          "f1": "Special Programs/Groups Offered",
+          "f2": "SG",
+          "f3": "Pregnant/postpartum women; Adult women; Adult men; Clients with co-occurring mental and substance use disorders; Clients with HIV or AIDS"
+        },
+        {
+          "f1": "Transitional Services",
+          "f2": "TRSRV",
+          "f3": "Aftercare/continuing care; Discharge Planning; Naloxone and overdose education"
+        },
+        {
+          "f1": "Recovery Support Services",
+          "f2": "RSS",
+          "f3": "Housing services; Assistance with obtaining social services; Recovery coach; Mentoring/peer support"
+        },
+        {
+          "f1": "Age Groups Accepted",
+          "f2": "AGE",
+          "f3": "Young Adults; Adults; Seniors"
+        },
+        {
+          "f1": "Sex Accepted",
+          "f2": "SN",
+          "f3": "Female; Male"
+        },
+        {
+          "f1": "Language Services",
+          "f2": "SL",
+          "f3": "Spanish; Sign language services for the deaf and hard of hearing"
+        }
+      ]
+    },
+    {
+      "_irow": 2,
+      "name1": "Cascade Medical Center Inpatient Detox & Stabilization",
+      "name2": "Acute Withdrawal Management Unit",
+      "street1": "1145 Broadway",
+      "street2": "Suite 400",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98122",
+      "phone": "206-320-2000",
+      "intake1": "206-320-2450",
+      "hotline1": "206-461-3222",
+      "website": "https://www.cascademedicaldetox.org",
+      "latitude": "47.6124",
+      "longitude": "-122.3212",
+      "miles": 1.4,
+      "type_facility": "SA",
+      "services": [
+        {
+          "f1": "Type of Care",
+          "f2": "TC",
+          "f3": "Substance use treatment; Detoxification; Mental health treatment"
+        },
+        {
+          "f1": "Service Setting",
+          "f2": "SET",
+          "f3": "Hospital inpatient/24-hour hospital inpatient; Hospital inpatient detoxification; Hospital inpatient treatment"
+        },
+        {
+          "f1": "Hospitals",
+          "f2": "HOSP",
+          "f3": "General Hospital (including VA hospital)"
+        },
+        {
+          "f1": "Opioid Medications used in Treatment",
+          "f2": "OM",
+          "f3": "Buprenorphine used in Treatment; Methadone used in Treatment; Naltrexone used in Treatment"
+        },
+        {
+          "f1": "Type of Alcohol Use Disorder Treatment",
+          "f2": "AUT",
+          "f3": "This facility administers/prescribes medication for alcohol use disorder"
+        },
+        {
+          "f1": "Type of Opioid Treatment",
+          "f2": "OT",
+          "f3": "Buprenorphine detoxification; Methadone detoxification; Use methadone/buprenorphine for pain management or emergency dosing; Lofexidine or Clonidine detoxification"
+        },
+        {
+          "f1": "Detoxification (medical withdrawal) Services",
+          "f2": "DETOX",
+          "f3": "Alcohol Detoxification; Benzodiazepines Detoxification; Opioids detoxification; Methamphetamines detoxification; Medication routinely used during detoxification"
+        },
+        {
+          "f1": "Pharmacotherapies",
+          "f2": "PHR",
+          "f3": "Buprenorphine with naloxone; Clonidine; Lofexidine; Acamprosate (Campral); Naltrexone (oral); Medication for mental disorders; Nicotine replacement"
+        },
+        {
+          "f1": "Treatment Approaches",
+          "f2": "TAP",
+          "f3": "Brief intervention; Cognitive behavioral therapy; Integrated Mental and Substance Use Disorder treatment; Motivational interviewing"
+        },
+        {
+          "f1": "Emergency Mental Health Services",
+          "f2": "EMS",
+          "f3": "Psychiatric emergency onsite services; Psychiatric emergency walk-in services"
+        },
+        {
+          "f1": "Facility Operation (e.g., Private, Public)",
+          "f2": "FOP",
+          "f3": "Private non-profit organization"
+        },
+        {
+          "f1": "License/Certification/Accreditation",
+          "f2": "LCA",
+          "f3": "State department of health; Hospital licensing authority; The Joint Commission"
+        },
+        {
+          "f1": "Payment/Insurance/Funding Accepted",
+          "f2": "PAY",
+          "f3": "Medicare; Medicaid; Federal military insurance (e.g., TRICARE); Private health insurance; Cash or self-payment"
+        },
+        {
+          "f1": "Special Programs/Groups Offered",
+          "f2": "SG",
+          "f3": "Clients with co-occurring mental and substance use disorders; Seniors or older adults; Veterans"
+        },
+        {
+          "f1": "Transitional Services",
+          "f2": "TRSRV",
+          "f3": "Discharge Planning; Naloxone and overdose education; Outcome follow-up after discharge"
+        },
+        {
+          "f1": "Age Groups Accepted",
+          "f2": "AGE",
+          "f3": "Young Adults; Adults; Seniors"
+        },
+        {
+          "f1": "Sex Accepted",
+          "f2": "SN",
+          "f3": "Female; Male"
+        }
+      ]
+    },
+    {
+      "_irow": 3,
+      "name1": "Rainier Dual-Diagnosis Residential & Trauma Recovery",
+      "name2": "Rainier Behavioral Health Services",
+      "street1": "4400 Rainier Avenue South",
+      "street2": "",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98118",
+      "phone": "206-722-4400",
+      "intake1": "206-722-4410",
+      "hotline1": null,
+      "website": "https://www.rainierrecoverywa.org",
+      "latitude": "47.5631",
+      "longitude": "-122.2875",
+      "miles": 4.2,
+      "type_facility": "SA",
+      "services": [
+        {
+          "f1": "Type of Care",
+          "f2": "TC",
+          "f3": "Substance use treatment; Transitional housing, halfway house, or sober home; Mental health treatment"
+        },
+        {
+          "f1": "Service Setting",
+          "f2": "SET",
+          "f3": "Residential/24-hour residential; Long-term residential; Short-term residential; Intensive outpatient treatment"
+        },
+        {
+          "f1": "Opioid Medications used in Treatment",
+          "f2": "OM",
+          "f3": "Buprenorphine used in Treatment; Naltrexone used in Treatment"
+        },
+        {
+          "f1": "Type of Opioid Treatment",
+          "f2": "OT",
+          "f3": "Accepts clients using MAT but prescribed elsewhere; Relapse prevention with naltrexone"
+        },
+        {
+          "f1": "Treatment Approaches",
+          "f2": "TAP",
+          "f3": "Cognitive behavioral therapy; Dialectical behavior therapy; Motivational interviewing; Trauma-related counseling; Relapse prevention; Substance use disorder counseling; 12-step facilitation"
+        },
+        {
+          "f1": "Facility Operation (e.g., Private, Public)",
+          "f2": "FOP",
+          "f3": "Private non-profit organization"
+        },
+        {
+          "f1": "License/Certification/Accreditation",
+          "f2": "LCA",
+          "f3": "State substance use treatment agency; State mental health department; Commission on Accreditation of Rehabilitation Facilities (CARF)"
+        },
+        {
+          "f1": "Payment/Insurance/Funding Accepted",
+          "f2": "PAY",
+          "f3": "Federal, or any government funding for substance use treatment programs; Medicaid; State-financed health insurance plan other than Medicaid; SAMHSA funding/block grants"
+        },
+        {
+          "f1": "Payment Assistance Available",
+          "f2": "PYAS",
+          "f3": "Sliding fee scale (fee is based on income and other factors); Payment assistance (check with facility for details)"
+        },
+        {
+          "f1": "Special Programs/Groups Offered",
+          "f2": "SG",
+          "f3": "Clients with co-occurring mental and substance use disorders; Clients who have experienced trauma; Clients who have experienced intimate partner violence, domestic violence; Persons with post-traumatic stress disorder (PTSD); Adult women; Adult men"
+        },
+        {
+          "f1": "Transitional Services",
+          "f2": "TRSRV",
+          "f3": "Aftercare/continuing care; Discharge Planning; Naloxone and overdose education"
+        },
+        {
+          "f1": "Recovery Support Services",
+          "f2": "RSS",
+          "f3": "Self-help groups; Housing services; Recovery coach; Mentoring/peer support; Employment counseling or training"
+        },
+        {
+          "f1": "Age Groups Accepted",
+          "f2": "AGE",
+          "f3": "Young Adults; Adults"
+        },
+        {
+          "f1": "Sex Accepted",
+          "f2": "SN",
+          "f3": "Female; Male"
+        }
+      ]
+    },
+    {
+      "_irow": 4,
+      "name1": "Puget Sound Telehealth & Outpatient Recovery Clinic",
+      "name2": "Northwest Virtual & Community Care",
+      "street1": "1904 Third Avenue",
+      "street2": "Suite 810",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98101",
+      "phone": "206-555-0190",
+      "intake1": "206-555-0191",
+      "hotline1": null,
+      "website": "https://www.pugetsoundtelehealth.org",
+      "latitude": "47.6114",
+      "longitude": "-122.3385",
+      "miles": 0.5,
+      "type_facility": "SA",
+      "services": [
+        {
+          "f1": "Type of Care",
+          "f2": "TC",
+          "f3": "Substance use treatment; Mental health treatment"
+        },
+        {
+          "f1": "Service Setting",
+          "f2": "SET",
+          "f3": "Outpatient; Regular outpatient treatment; Intensive outpatient treatment; Outpatient methadone/buprenorphine or naltrexone treatment"
+        },
+        {
+          "f1": "Opioid Medications used in Treatment",
+          "f2": "OM",
+          "f3": "Buprenorphine used in Treatment; Naltrexone used in Treatment"
+        },
+        {
+          "f1": "Type of Alcohol Use Disorder Treatment",
+          "f2": "AUT",
+          "f3": "This facility administers/prescribes medication for alcohol use disorder"
+        },
+        {
+          "f1": "Type of Opioid Treatment",
+          "f2": "OT",
+          "f3": "Buprenorphine maintenance; Prescribes buprenorphine; Prescribes naltrexone; Relapse prevention with naltrexone"
+        },
+        {
+          "f1": "Pharmacotherapies",
+          "f2": "PHR",
+          "f3": "Buprenorphine with naloxone; Buprenorphine (extended-release, injectable); Naltrexone (oral); Naltrexone (extended-release, injectable); Acamprosate (Campral); Disulfiram; Medication for mental disorders"
+        },
+        {
+          "f1": "Treatment Approaches",
+          "f2": "TAP",
+          "f3": "Cognitive behavioral therapy; Motivational interviewing; Telemedicine/telehealth therapy; Trauma-related counseling; Substance use disorder counseling; Individual psychotherapy"
+        },
+        {
+          "f1": "Facility Operation (e.g., Private, Public)",
+          "f2": "FOP",
+          "f3": "Private non-profit organization"
+        },
+        {
+          "f1": "License/Certification/Accreditation",
+          "f2": "LCA",
+          "f3": "State substance use treatment agency; State department of health; National Committee for Quality Assurance (NCQA)"
+        },
+        {
+          "f1": "Payment/Insurance/Funding Accepted",
+          "f2": "PAY",
+          "f3": "Private health insurance; Medicaid; Medicare; Federal military insurance (e.g., TRICARE); Cash or self-payment; State-financed health insurance plan other than Medicaid"
+        },
+        {
+          "f1": "Special Programs/Groups Offered",
+          "f2": "SG",
+          "f3": "Veterans; Active duty military; Members of military families; Clients with co-occurring mental and substance use disorders; Clients who have experienced trauma; Young adults"
+        },
+        {
+          "f1": "Transitional Services",
+          "f2": "TRSRV",
+          "f3": "Aftercare/continuing care; Naloxone and overdose education"
+        },
+        {
+          "f1": "Recovery Support Services",
+          "f2": "RSS",
+          "f3": "Mentoring/peer support; Recovery coach"
+        },
+        {
+          "f1": "Age Groups Accepted",
+          "f2": "AGE",
+          "f3": "Young Adults; Adults; Seniors"
+        },
+        {
+          "f1": "Sex Accepted",
+          "f2": "SN",
+          "f3": "Female; Male"
+        },
+        {
+          "f1": "Language Services",
+          "f2": "SL",
+          "f3": "Spanish; Sign language services for the deaf and hard of hearing"
+        }
+      ]
+    },
+    {
+      "_irow": 5,
+      "name1": "Salish Youth & Family Behavioral Health Center",
+      "name2": "Adolescent & Family Recovery Services",
+      "street1": "2100 24th Avenue South",
+      "street2": "Suite 200",
+      "city": "Seattle",
+      "state": "WA",
+      "zip": "98144",
+      "phone": "206-555-0240",
+      "intake1": "206-555-0245",
+      "hotline1": "206-555-0299",
+      "website": "https://www.salishyouthfamily.org",
+      "latitude": "47.5841",
+      "longitude": "-122.3016",
+      "miles": 2.6,
+      "type_facility": "SA",
+      "services": [
+        {
+          "f1": "Type of Care",
+          "f2": "TC",
+          "f3": "Substance use treatment; Treatment for co-occurring disorders plus serious emotional disturbance (SED) in children"
+        },
+        {
+          "f1": "Service Setting",
+          "f2": "SET",
+          "f3": "Outpatient; Regular outpatient treatment; Intensive outpatient treatment"
+        },
+        {
+          "f1": "Treatment Approaches",
+          "f2": "TAP",
+          "f3": "Brief intervention; Cognitive behavioral therapy; Contingency management/motivational incentives; Couples/family therapy; Motivational interviewing; Substance use disorder counseling; Trauma-related counseling"
+        },
+        {
+          "f1": "Facility Operation (e.g., Private, Public)",
+          "f2": "FOP",
+          "f3": "Private non-profit organization"
+        },
+        {
+          "f1": "License/Certification/Accreditation",
+          "f2": "LCA",
+          "f3": "State substance use treatment agency; State mental health department; Council on Accreditation (COA); Federally Qualified Health Center"
+        },
+        {
+          "f1": "Payment/Insurance/Funding Accepted",
+          "f2": "PAY",
+          "f3": "Federal, or any government funding for substance use treatment programs; IHS/Tribal/Urban (ITU) funds; Medicaid; State-financed health insurance plan other than Medicaid; SAMHSA funding/block grants"
+        },
+        {
+          "f1": "Payment Assistance Available",
+          "f2": "PYAS",
+          "f3": "Payment assistance (check with facility for details); Sliding fee scale (fee is based on income and other factors)"
+        },
+        {
+          "f1": "Special Programs/Groups Offered",
+          "f2": "SG",
+          "f3": "Adolescents; Young adults; Children/adolescents with serious emotional disturbance (SED); Clients who have experienced trauma"
+        },
+        {
+          "f1": "Education and Counseling Services",
+          "f2": "ECS",
+          "f3": "Substance use disorder education; Individual counseling; Group counseling; Family counseling; Vocational training or educational support (for example, high school coursework, GED preparation, etc.)"
+        },
+        {
+          "f1": "Age Groups Accepted",
+          "f2": "AGE",
+          "f3": "Children/Adolescents; Young Adults; Adults"
+        },
+        {
+          "f1": "Sex Accepted",
+          "f2": "SN",
+          "f3": "Female; Male"
+        },
+        {
+          "f1": "Language Services",
+          "f2": "SL",
+          "f3": "Spanish; American Indian or Alaska Native languages"
+        }
+      ]
+    }
+  ]
+}
