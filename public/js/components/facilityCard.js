@@ -1,9 +1,19 @@
 import { h, tel, icon, announce, digits } from '../dom.js';
-import { highlights, localizeServices, DETAIL_ORDER, DETAIL_HIDDEN } from '../codes.js';
+import { highlights, localizeServices, DETAIL_ORDER, DETAIL_HIDDEN, TREATMENT_FILTERS, MENTAL_HEALTH_FILTERS } from '../codes.js';
 import { isSaved, toggleSaved } from '../state.js';
 import { t, formatNumber, getServiceNames } from '../i18n.js';
 
 const isApple = typeof navigator !== 'undefined' && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+
+function resolveFilterLabel(code, labelFor) {
+  if (labelFor instanceof Map && labelFor.has(code)) return labelFor.get(code);
+  if (labelFor && typeof labelFor === 'object' && !(labelFor instanceof Map) && code in labelFor) return labelFor[code];
+  for (const group of [...TREATMENT_FILTERS, ...MENTAL_HEALTH_FILTERS]) {
+    const found = group.options.find((o) => o.code === code);
+    if (found) return found.label;
+  }
+  return code;
+}
 
 export function formatAddress(a) {
   if (!a) return '';
@@ -42,6 +52,7 @@ export function copyButton(text, name) {
   return h('button', {
     type: 'button',
     class: 'btn btn-small btn-ghost',
+    'aria-label': t('card.copyLabel', 'Copy details for {name}', { name }),
     onclick: async (e) => {
       const btn = e.currentTarget;
       try {
@@ -75,7 +86,7 @@ export function treatmentText(f) {
   ].filter(Boolean).join('\n');
 }
 
-export function treatmentCard(f, { headingLevel = 3 } = {}) {
+export function treatmentCard(f, { headingLevel = 3, requestedCodes, labelFor } = {}) {
   if (f?.kind === 'provider') return providerCard(f, { headingLevel });
   const address = formatAddress(f.address);
   const chips = highlights(f);
@@ -87,6 +98,45 @@ export function treatmentCard(f, { headingLevel = 3 } = {}) {
       return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
     });
 
+  const hasNearMatch = (Array.isArray(f.matchedCodes) && f.matchedCodes.length > 0)
+    || (Array.isArray(requestedCodes) && requestedCodes.length > 0);
+  const facilityCodes = new Set(f.codes ?? []);
+  const matchedList = Array.isArray(f.matchedCodes)
+    ? f.matchedCodes
+    : (Array.isArray(requestedCodes) ? requestedCodes.filter((c) => facilityCodes.has(c)) : []);
+  const matchedSet = new Set(matchedList);
+  const reqCodes = Array.isArray(requestedCodes) && requestedCodes.length > 0
+    ? requestedCodes
+    : matchedList;
+
+  const nearMatchBanner = hasNearMatch && reqCodes.length > 0 && h('div', {
+    class: 'near-match-banner',
+    role: 'region',
+    'aria-label': t('card.nearMatchLabel', 'Selected filter match summary'),
+  },
+    h('p', { class: 'near-match-count' },
+      t('card.matchedCount', 'Matches {matched} of {total} selected filters', {
+        matched: matchedSet.size,
+        total: reqCodes.length,
+      }),
+    ),
+    h('ul', { class: 'chips near-match-chips' },
+      reqCodes.map((code) => {
+        const label = resolveFilterLabel(code, labelFor);
+        const isMatch = matchedSet.has(code);
+        return h('li', {
+          class: `chip ${isMatch ? 'badge-matched' : 'badge-unmatched'}`,
+          'aria-label': isMatch
+            ? t('card.filterMatched', 'Matched filter: {label}', { label })
+            : t('card.filterUnmatched', 'Not listed: {label}', { label }),
+        },
+          icon(isMatch ? 'check' : 'x'),
+          label,
+        );
+      }),
+    ),
+  );
+
   return h('article', { class: 'card facility', 'aria-labelledby': `f-${f.id}` },
     h('div', { class: 'facility-head' },
       h('div', null,
@@ -95,22 +145,46 @@ export function treatmentCard(f, { headingLevel = 3 } = {}) {
       ),
       distance(f.miles),
     ),
+    nearMatchBanner,
     address && h('p', { class: 'address' }, icon('pin'), address),
     chips.length > 0 && h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
       chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
     h('div', { class: 'actions' },
-      f.phone && tel(f.phone, [icon('phone'), t('card.call', 'Call {phone}', { phone: f.phone })], { class: 'btn btn-small btn-primary' }),
-      f.intake && digits(f.intake) !== digits(f.phone) && tel(f.intake, [icon('phone'), t('card.intake', 'Intake {phone}', { phone: f.intake })], { class: 'btn btn-small btn-secondary' }),
-      f.hotline && digits(f.hotline) !== digits(f.phone) && tel(f.hotline, [icon('phone'), t('card.hotline', '24/7 line {phone}', { phone: f.hotline })], { class: 'btn btn-small btn-secondary' }),
-      f.website && h('a', { class: 'btn btn-small btn-ghost', href: f.website, target: '_blank', rel: 'noopener noreferrer' },
+      f.phone && tel(f.phone, [icon('phone'), t('card.call', 'Call {phone}', { phone: f.phone })], {
+        class: 'btn btn-small btn-primary',
+        'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: f.name, phone: f.phone }),
+      }),
+      f.intake && digits(f.intake) !== digits(f.phone) && tel(f.intake, [icon('phone'), t('card.intake', 'Intake {phone}', { phone: f.intake })], {
+        class: 'btn btn-small btn-secondary',
+        'aria-label': t('card.intakeLabel', 'Call intake for {name} at {phone}', { name: f.name, phone: f.intake }),
+      }),
+      f.hotline && digits(f.hotline) !== digits(f.phone) && tel(f.hotline, [icon('phone'), t('card.hotline', '24/7 line {phone}', { phone: f.hotline })], {
+        class: 'btn btn-small btn-secondary',
+        'aria-label': t('card.hotlineLabel', 'Call 24/7 line for {name} at {phone}', { name: f.name, phone: f.hotline }),
+      }),
+      f.website && h('a', {
+        class: 'btn btn-small btn-ghost',
+        href: f.website,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': `${t('common.website', 'Website')}${t('common.websiteFor', ' for {name} (opens in a new tab)', { name: f.name })}`,
+      },
         icon('globe'), t('common.website', 'Website'), h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: f.name }))),
-      address && h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
+      address && h('a', {
+        class: 'btn btn-small btn-ghost',
+        href: directionsUrl(address),
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': t('card.directionsLabel', 'Directions to {name} (opens a map in a new tab)', { name: f.name }),
+      },
         icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
       saveButton({ ...f, kind: 'treatment' }),
       copyButton(treatmentText(f), f.name),
     ),
     services.length > 0 && h('details', { class: 'facility-details' },
-      h('summary', null, t('card.allServices', 'All listed services')),
+      h('summary', {
+        'aria-label': t('card.allServicesLabel', 'All listed services for {name}', { name: f.name }),
+      }, t('card.allServices', 'All listed services')),
       h('dl', { class: 'service-list' },
         services.map((s) => [h('dt', null, s.label), h('dd', null, s.items.join(' · '))])),
       h('p', { class: 'fine' }, t('card.servicesNote', 'Listed by the facility in SAMHSA’s national directory. Call to confirm availability, cost, and wait times.')),
@@ -162,10 +236,25 @@ export function healthCenterCard(c, { headingLevel = 3 } = {}) {
       c.hours && h('li', { class: 'chip chip-neutral' }, t('hc.hours', '{hours} hrs/week', { hours: formatNumber(Math.round(c.hours)) })),
     ),
     h('div', { class: 'actions' },
-      c.phone && tel(c.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: c.phone })], { class: 'btn btn-small btn-primary' }),
-      c.website && h('a', { class: 'btn btn-small btn-ghost', href: c.website, target: '_blank', rel: 'noopener noreferrer' },
+      c.phone && tel(c.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: c.phone })], {
+        class: 'btn btn-small btn-primary',
+        'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: c.name, phone: c.phone }),
+      }),
+      c.website && h('a', {
+        class: 'btn btn-small btn-ghost',
+        href: c.website,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': `${t('common.website', 'Website')}${t('common.websiteFor', ' for {name} (opens in a new tab)', { name: c.name })}`,
+      },
         icon('globe'), t('common.website', 'Website'), h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: c.name }))),
-      h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
+      h('a', {
+        class: 'btn btn-small btn-ghost',
+        href: directionsUrl(address),
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': t('card.directionsLabel', 'Directions to {name} (opens a map in a new tab)', { name: c.name }),
+      },
         icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
       saveButton({ ...c, kind: 'health-center' }),
       copyButton(healthCenterText(c), c.name),
@@ -294,18 +383,35 @@ export function providerCard(p, { headingLevel = 3 } = {}) {
     chips.length > 0 && h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
       chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
     h('div', { class: 'actions' },
-      p.phone && tel(p.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: p.phone })], { class: 'btn btn-small btn-primary' }),
-      web && h('a', { class: 'btn btn-small btn-ghost', href: web, target: '_blank', rel: 'noopener noreferrer' },
+      p.phone && tel(p.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: p.phone })], {
+        class: 'btn btn-small btn-primary',
+        'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: tidyName(p.name), phone: p.phone }),
+      }),
+      web && h('a', {
+        class: 'btn btn-small btn-ghost',
+        href: web,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': `${p.detailsUrl && !p.website ? t('providers.detailsLink', 'Facility details') : t('common.website', 'Website')}${t('common.websiteFor', ' for {name} (opens in a new tab)', { name: tidyName(p.name) })}`,
+      },
         icon('globe'),
         p.detailsUrl && !p.website ? t('providers.detailsLink', 'Facility details') : t('common.website', 'Website'),
         h('span', { class: 'visually-hidden' }, t('common.websiteFor', ' for {name} (opens in a new tab)', { name: p.name }))),
-      address && h('a', { class: 'btn btn-small btn-ghost', href: directionsUrl(address), target: '_blank', rel: 'noopener noreferrer' },
+      address && h('a', {
+        class: 'btn btn-small btn-ghost',
+        href: directionsUrl(address),
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': t('card.directionsLabel', 'Directions to {name} (opens a map in a new tab)', { name: tidyName(p.name) }),
+      },
         icon('directions'), t('card.directions', 'Directions'), h('span', { class: 'visually-hidden' }, t('card.directionsNewTab', ' (opens a map in a new tab)'))),
       saveButton(savedPayload),
       copyButton(providerText(p), p.name),
     ),
     hasDetails && h('details', { class: 'facility-details' },
-      h('summary', null, t('providers.moreInfo', 'Program details & hours')),
+      h('summary', {
+        'aria-label': t('providers.moreInfoLabel', 'Program details & hours for {name}', { name: tidyName(p.name) }),
+      }, t('providers.moreInfo', 'Program details & hours')),
       h('dl', { class: 'service-list' },
         p.serviceType && [h('dt', null, t('providers.field.type', 'Facility type')), h('dd', null, p.serviceType)],
         p.hours && [h('dt', null, t('providers.field.hours', 'Hours')), h('dd', null, p.hours)],
