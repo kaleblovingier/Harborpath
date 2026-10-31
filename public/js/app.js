@@ -223,6 +223,7 @@ export function runQuickExitResets() {
   import('./views/harmReduction.js').then((m) => m.resetHarmReductionState?.()).catch(() => {});
   import('./views/health.js').then((m) => m.resetHealthState?.()).catch(() => {});
   import('./views/states.js').then((m) => m.resetStatesState?.()).catch(() => {});
+  import('./views/plan.js').then((m) => m.resetPlanState?.()).catch(() => {});
 }
 
 function quickExit() {

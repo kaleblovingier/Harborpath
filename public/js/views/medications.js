@@ -442,7 +442,7 @@ export const INTERACTIONS = [
   },
 ];
 
-const BERNESE_EXAMPLE_SCHEDULE = [
+export const BERNESE_EXAMPLE_SCHEDULE = [
   {
     day: 'Day 1',
     bupDose: '0.5 mg once or twice daily (e.g., quarter of a 2 mg film)',
@@ -487,7 +487,7 @@ const BERNESE_EXAMPLE_SCHEDULE = [
   },
 ];
 
-const REVERSAL_COMPARISON = [
+export const REVERSAL_COMPARISON = [
   {
     product: 'Naloxone 4 mg Nasal Spray (Narcan, RiVive, generics — OTC)',
     onset: '2–3 minutes',
@@ -514,7 +514,7 @@ const REVERSAL_COMPARISON = [
   },
 ];
 
-const PRESCRIBER_QUESTIONS = [
+export const PRESCRIBER_QUESTIONS = [
   'What are all of my medication options (buprenorphine, methadone, extended-release naltrexone, acamprosate, topiramate, or gabapentin), and which fits my health history and daily schedule best?',
   'If I have been using street fentanyl, can we use a low-dose / micro-induction ("Bernese Method") schedule or comfort medications (clonidine, Lofexidine, hydroxyzine, ondansetron, trazodone) so I don’t get sick with precipitated withdrawal?',
   'Would a weekly or monthly extended-release injection (like Sublocade, Brixadi, or Vivitrol) be covered by my insurance or Medicaid so I don’t have to worry about daily pills or films?',
@@ -875,6 +875,289 @@ export function evaluateRegimenSafety(selectedIds = []) {
     alerts,
     matchedInteractions,
     actionSteps: [...actionSteps],
+  };
+}
+
+/**
+ * Clinical evidence-based washout periods and receptor clearance intervals
+ * from ASAM, SAMHSA, and American College of Medical Toxicology guidelines.
+ */
+export const WASHOUT_GUIDELINES = {
+  naltrexone: {
+    targetName: 'Naltrexone (Oral ReVia / Injectable Vivitrol)',
+    sources: {
+      short_acting_opioid: {
+        fromName: 'Short-acting full opioid (heroin, oxycodone, morphine, hydrocodone)',
+        minHours: 168,
+        recommendedDays: '7–10 days',
+        opioidFreeRequired: true,
+        cowsThreshold: null,
+        guidance: 'Requires complete opioid-free interval of 7–10 days before oral naltrexone or XR-naltrexone (Vivitrol). A naloxone challenge or negative urine screen is advised before injection to prevent violent precipitated withdrawal.',
+      },
+      fentanyl: {
+        fromName: 'Fentanyl (illicit street fentanyl / analogues)',
+        minHours: 240,
+        recommendedDays: '10–14+ days',
+        opioidFreeRequired: true,
+        cowsThreshold: null,
+        guidance: 'Fentanyl is lipophilic and clears unpredictably from body fat. Wait at least 10–14 days opioid-free before naltrexone or Vivitrol.',
+      },
+      methadone: {
+        fromName: 'Methadone',
+        minHours: 240,
+        recommendedDays: '10–14+ days',
+        opioidFreeRequired: true,
+        cowsThreshold: null,
+        guidance: 'Methadone has a 24–36+ hour terminal elimination half-life. Wait at least 10–14 days after the last methadone dose before starting naltrexone.',
+      },
+      buprenorphine: {
+        fromName: 'Buprenorphine (Suboxone, Subutex, Sublocade)',
+        minHours: 168,
+        recommendedDays: '7–14 days',
+        opioidFreeRequired: true,
+        cowsThreshold: null,
+        guidance: 'Buprenorphine binds tightly to mu receptors with slow dissociation. Wait 7–14 days after sublingual buprenorphine before starting naltrexone.',
+      },
+    },
+  },
+  buprenorphine_traditional: {
+    targetName: 'Buprenorphine Standard Induction',
+    sources: {
+      short_acting_opioid: {
+        fromName: 'Short-acting full opioid (heroin, oxycodone, morphine)',
+        minHours: 12,
+        recommendedDays: '12–24 hours',
+        opioidFreeRequired: false,
+        requiresWithdrawal: true,
+        cowsThreshold: 8,
+        guidance: 'Wait 12–24 hours until objective mild-to-moderate withdrawal begins (COWS score >= 8–12) before starting standard 2–4 mg buprenorphine.',
+      },
+      methadone: {
+        fromName: 'Methadone',
+        minHours: 36,
+        recommendedDays: '36–72 hours',
+        opioidFreeRequired: false,
+        requiresWithdrawal: true,
+        cowsThreshold: 12,
+        guidance: 'Taper methadone dose to <= 30 mg/day, then wait 36–72+ hours until moderate withdrawal (COWS >= 12–16) before standard buprenorphine.',
+      },
+      fentanyl: {
+        fromName: 'Fentanyl (illicit street fentanyl)',
+        minHours: 48,
+        recommendedDays: '48–72+ hours (or Bernese method: 0 hours)',
+        opioidFreeRequired: false,
+        requiresWithdrawal: true,
+        cowsThreshold: 12,
+        alternativeStrategy: 'low_dose_micro_induction',
+        guidance: 'Traditional start requires 48–72+ hours wait due to lipophilic fentanyl storage, carrying significant precipitated withdrawal risk. A Low-Dose Micro-Induction ("Bernese Method") is clinically preferred (0-hour wait, cross-taper).',
+      },
+    },
+  },
+  alcohol_after_disulfiram: {
+    targetName: 'Alcohol Consumption After Disulfiram',
+    sources: {
+      disulfiram: {
+        fromName: 'Disulfiram (Antabuse)',
+        minHours: 336,
+        recommendedDays: '14 days',
+        opioidFreeRequired: false,
+        requiresWithdrawal: false,
+        guidance: 'Disulfiram irreversibly inhibits aldehyde dehydrogenase. Wait at least 14 days after the last dose before consuming any alcohol to avoid acute acetaldehyde toxicity.',
+      },
+      metronidazole: {
+        fromName: 'Metronidazole / Tinidazole',
+        minHours: 72,
+        recommendedDays: '3 days',
+        opioidFreeRequired: false,
+        requiresWithdrawal: false,
+        guidance: 'Wait at least 72 hours (3 days) after completing metronidazole before consuming alcohol.',
+      },
+    },
+  },
+  opioid_after_naltrexone: {
+    targetName: 'Full-Agonist Opioids After Naltrexone (Elective Surgery)',
+    sources: {
+      oral_naltrexone: {
+        fromName: 'Oral Naltrexone (ReVia)',
+        minHours: 72,
+        recommendedDays: '72 hours (3 days)',
+        opioidFreeRequired: false,
+        guidance: 'Oral naltrexone receptor blockade clears over 48–72 hours. Elective surgery requiring opioid analgesia should be scheduled at least 72 hours after the last oral dose.',
+      },
+      injectable_naltrexone: {
+        fromName: 'Injectable XR-Naltrexone (Vivitrol)',
+        minHours: 672,
+        recommendedDays: '28–30 days',
+        opioidFreeRequired: false,
+        guidance: 'XR-naltrexone suppresses opioid response for 28–30 days. Coordinate with the surgical and anesthesiology team for multimodal non-opioid pain plans.',
+      },
+    },
+  },
+};
+
+/**
+ * Calculates evidence-based washout duration, required clinical waiting interval,
+ * COWS withdrawal thresholds, and precipitated withdrawal prevention guidance.
+ */
+export function calculateWashout(arg1, arg2) {
+  let fromRaw, toRaw;
+  if (typeof arg1 === 'object' && arg1 !== null) {
+    fromRaw = arg1.currentSubstance ?? arg1.from ?? '';
+    toRaw = arg1.targetMedication ?? arg1.to ?? '';
+  } else {
+    fromRaw = arg1 ?? '';
+    toRaw = arg2 ?? '';
+  }
+
+  const norm = (s) => String(s || '').trim().toLowerCase().replace(/[- /_]+/g, '_');
+  const from = norm(fromRaw);
+  const to = norm(toRaw);
+
+  // Normalize targets
+  let targetGroup = null;
+  if (to.includes('naltrexone') || to.includes('vivitrol')) {
+    targetGroup = 'naltrexone';
+  } else if (to.includes('bup') || to.includes('suboxone')) {
+    targetGroup = 'buprenorphine_traditional';
+  } else if (to.includes('alcohol') && (from.includes('disulfiram') || from.includes('metro'))) {
+    targetGroup = 'alcohol_after_disulfiram';
+  } else if (to.includes('opioid') || to.includes('fentanyl') || to.includes('morphine') || to.includes('surgery')) {
+    targetGroup = 'opioid_after_naltrexone';
+  }
+
+  // Normalize sources
+  let sourceKey = null;
+  if (from.includes('fentanyl')) sourceKey = 'fentanyl';
+  else if (from.includes('methadone')) sourceKey = 'methadone';
+  else if (from.includes('bup') || from.includes('suboxone')) sourceKey = 'buprenorphine';
+  else if (from.includes('disulfiram') || from.includes('antabuse')) sourceKey = 'disulfiram';
+  else if (from.includes('metronidazole') || from.includes('metro')) sourceKey = 'metronidazole';
+  else if (from.includes('oral') && from.includes('naltrexone')) sourceKey = 'oral_naltrexone';
+  else if (from.includes('inject') || from.includes('vivitrol')) sourceKey = 'injectable_naltrexone';
+  else if (from.includes('naltrexone')) sourceKey = 'oral_naltrexone';
+  else if (from.includes('heroin') || from.includes('oxy') || from.includes('hydro') || from.includes('morphine') || from.includes('opioid')) {
+    sourceKey = 'short_acting_opioid';
+  }
+
+  const guideline = targetGroup && sourceKey ? WASHOUT_GUIDELINES[targetGroup]?.sources?.[sourceKey] : null;
+
+  if (guideline) {
+    return {
+      requiresWashout: true,
+      target: WASHOUT_GUIDELINES[targetGroup].targetName,
+      source: guideline.fromName,
+      minimumHours: guideline.minHours,
+      recommendedDays: guideline.recommendedDays,
+      opioidFreeRequired: Boolean(guideline.opioidFreeRequired),
+      requiresWithdrawal: Boolean(guideline.requiresWithdrawal),
+      cowsThreshold: guideline.cowsThreshold ?? null,
+      alternativeStrategy: guideline.alternativeStrategy ?? null,
+      clinicalGuidance: guideline.guidance,
+    };
+  }
+
+  // Default: no known mandatory washout conflict
+  return {
+    requiresWashout: false,
+    target: toRaw || 'Unspecified Target',
+    source: fromRaw || 'Unspecified Current Substance',
+    minimumHours: 0,
+    recommendedDays: '0 days',
+    opioidFreeRequired: false,
+    requiresWithdrawal: false,
+    cowsThreshold: null,
+    alternativeStrategy: null,
+    clinicalGuidance: 'No mandatory multi-day receptor washout interval identified for this combination. Confirm with your clinical pharmacist or prescriber.',
+  };
+}
+
+/**
+ * Evaluates sedative load and calculates cumulative respiratory depression risk score
+ * across single or polypharmacy depressant regimens.
+ */
+export function scoreRespiratoryRisk(selectedIds = []) {
+  const ids = [...new Set(Array.from(selectedIds || []).map((id) => String(id).trim()))];
+  const weights = {
+    opioids_fentanyl: { weight: 3.5, label: 'Full-Agonist Opioids (fentanyl, heroin, oxycodone)' },
+    methadone: { weight: 3.5, label: 'Methadone (full agonist)' },
+    buprenorphine: { weight: 1.5, label: 'Buprenorphine (partial agonist ceiling alone)' },
+    benzos_sedatives: { weight: 2.5, label: 'Benzodiazepines / Sedative-Hypnotics (GABA-A)' },
+    alcohol: { weight: 2.5, label: 'Alcohol' },
+    xylazine_medetomidine: { weight: 2.5, label: 'Xylazine / Medetomidine (central alpha-2 agonist)' },
+    gabapentinoids: { weight: 1.5, label: 'Gabapentinoids (gabapentin, pregabalin)' },
+  };
+
+  const matchedDepressants = [];
+  let rawScore = 0;
+  for (const id of ids) {
+    if (weights[id]) {
+      matchedDepressants.push({ id, ...weights[id] });
+      rawScore += weights[id].weight;
+    }
+  }
+
+  const depressantCount = matchedDepressants.length;
+  // Non-linear synergy multipliers: multiple depressants compound fatal breathing arrest risk
+  let multiplier = 1.0;
+  if (depressantCount >= 3) {
+    multiplier = 2.0; // Critical multi-depressant synergy
+  } else if (depressantCount === 2) {
+    multiplier = 1.5; // High synergy
+  }
+
+  const finalScore = Number((rawScore * multiplier).toFixed(1));
+
+  let riskLevel = 'none';
+  if (depressantCount === 0) {
+    riskLevel = 'none';
+  } else if (finalScore < 3.0) {
+    riskLevel = 'low';
+  } else if (finalScore < 5.5) {
+    riskLevel = 'moderate';
+  } else if (finalScore < 8.0) {
+    riskLevel = 'high';
+  } else {
+    riskLevel = 'critical';
+  }
+
+  const riskFactors = [];
+  const hasFullOpioid = ids.includes('opioids_fentanyl') || ids.includes('methadone');
+  const hasAnyOpioid = hasFullOpioid || ids.includes('buprenorphine');
+  const hasGaba = ids.includes('benzos_sedatives') || ids.includes('alcohol');
+  const hasXylazine = ids.includes('xylazine_medetomidine');
+
+  if (hasFullOpioid && hasGaba) {
+    riskFactors.push('Synergistic brainstem respiratory depression (mu-opioid + GABA-A potentiated sedation).');
+  }
+  if (hasXylazine && hasAnyOpioid) {
+    riskFactors.push('Xylazine central alpha-2 depression blunts blood pressure and heart rate; naloxone alone does not reverse non-opioid xylazine sedation.');
+  }
+  if (ids.includes('gabapentinoids') && hasAnyOpioid) {
+    riskFactors.push('Gabapentinoid reversal of opioid tolerance and compounding medullary breathing suppression.');
+  }
+  if (depressantCount >= 3) {
+    riskFactors.push('Triple+ depressant synergy: compounding risk of fatal respiratory arrest.');
+  }
+
+  const harmReductionActions = [];
+  if (hasAnyOpioid || depressantCount >= 1) {
+    harmReductionActions.push('Keep multiple 4 mg naloxone (Narcan) nasal sprays immediately accessible.');
+    harmReductionActions.push('Call Never Use Alone at 1-800-484-3731 or ensure someone is with you when using.');
+  }
+  if (hasGaba || hasXylazine) {
+    harmReductionActions.push('Perform rescue breathing (1 breath every 5 seconds) if breathing is shallow or stopped—essential for non-opioid sedatives.');
+  }
+  if (riskLevel === 'critical' || riskLevel === 'high') {
+    harmReductionActions.push('In an emergency if someone is unresponsive or blue/gray, call 911 immediately and administer naloxone.');
+  }
+
+  return {
+    score: finalScore,
+    riskLevel,
+    depressantCount,
+    depressants: matchedDepressants.map((d) => d.id),
+    riskFactors,
+    harmReductionActions,
   };
 }
 

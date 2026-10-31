@@ -2,6 +2,34 @@ import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
 
+let activePlanState = null;
+let activePlanReset = null;
+let activeTimerReset = null;
+
+export function getPlanState() {
+  return activePlanState ? { ...activePlanState } : null;
+}
+
+export function resetPlanState() {
+  if (typeof activePlanReset === 'function') {
+    activePlanReset();
+  }
+  activePlanState = null;
+}
+
+/**
+ * The 6 core evidence-based pillars of the Stanley-Brown Safety Planning Intervention (SPI),
+ * adapted for substance use, overdose prevention, and harm reduction.
+ */
+export const STANLEY_BROWN_STEPS = [
+  { step: 1, id: 'warning_signs', label: 'Warning Signs', field: 'warningSigns' },
+  { step: 2, id: 'internal_coping', label: 'Internal Coping Strategies', field: 'copingSteps' },
+  { step: 3, id: 'social_distraction', label: 'Social Distractions & People', field: 'trustedContacts' },
+  { step: 4, id: 'trusted_supports', label: 'Trusted Family / Friends', field: 'trustedContacts' },
+  { step: 5, id: 'crisis_professionals', label: 'Professionals & 24/7 Crisis Support', field: 'crisisLines' },
+  { step: 6, id: 'environmental_safety', label: 'Making the Environment Safe', field: 'saferEnvironment' },
+];
+
 /**
  * Evidence-based behavioral health & SUD counseling modalities with SAMHSA directory codes.
  */
@@ -464,7 +492,41 @@ function hasSuggestionInText(currentText, item) {
  * Interactive guided Urge Surfing & Paced Breathing timer component.
  * Cleans up its interval automatically when disconnected from the DOM and respects prefers-reduced-motion.
  */
-function urgeSurfingTimer() {
+export function getTimerCoaching(remainingSeconds, totalSeconds, { reducedMotion = null } = {}) {
+  const elapsed = totalSeconds - remainingSeconds;
+  const isReduced = reducedMotion !== null
+    ? Boolean(reducedMotion)
+    : (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (remainingSeconds <= 0) {
+    return t(
+      'plan.timer.done',
+      'Wave surfed. Notice how your body feels now compared to when you started. You made it through these minutes—drink some water or take one safe next step.',
+    );
+  }
+  if (elapsed < 30) {
+    return t(
+      'plan.timer.phase1',
+      'Settle your feet on the floor. Notice where the urge sits in your body without fighting it. Breathe in gently for 4 seconds, out slowly for 6 to 8 seconds.',
+    );
+  }
+  if (elapsed < 90) {
+    return isReduced
+      ? t('plan.timer.phase2.calm', 'Keep a steady, slow exhale. Picture the craving as a wave passing beneath you—you do not have to act on a thought.')
+      : t('plan.timer.phase2', 'Inhale slowly (1-2-3-4)… exhale softly (1-2-3-4-5-6). Let your shoulders drop as the wave crests.');
+  }
+  if (remainingSeconds > 45) {
+    return t(
+      'plan.timer.phase3',
+      'You are over the halfway mark. Name 3 things you can see in the room right now and keep lengthening your out-breath.',
+    );
+  }
+  return t(
+    'plan.timer.phase4',
+    'Final stretch—the peak is passing. Unclench your jaw and hands, and take two more slow, deep breaths.',
+  );
+}
+
+export function urgeSurfingTimer() {
   let totalSeconds = 180;
   let remaining = 180;
   let interval = null;
@@ -485,35 +547,7 @@ function urgeSurfingTimer() {
   }
 
   function coachingForRemaining(rem, total) {
-    const elapsed = total - rem;
-    const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (rem <= 0) {
-      return t(
-        'plan.timer.done',
-        'Wave surfed. Notice how your body feels now compared to when you started. You made it through these minutes—drink some water or take one safe next step.',
-      );
-    }
-    if (elapsed < 30) {
-      return t(
-        'plan.timer.phase1',
-        'Settle your feet on the floor. Notice where the urge sits in your body without fighting it. Breathe in gently for 4 seconds, out slowly for 6 to 8 seconds.',
-      );
-    }
-    if (elapsed < 90) {
-      return reducedMotion
-        ? t('plan.timer.phase2.calm', 'Keep a steady, slow exhale. Picture the craving as a wave passing beneath you—you do not have to act on a thought.')
-        : t('plan.timer.phase2', 'Inhale slowly (1-2-3-4)… exhale softly (1-2-3-4-5-6). Let your shoulders drop as the wave crests.');
-    }
-    if (rem > 45) {
-      return t(
-        'plan.timer.phase3',
-        'You are over the halfway mark. Name 3 things you can see in the room right now and keep lengthening your out-breath.',
-      );
-    }
-    return t(
-      'plan.timer.phase4',
-      'Final stretch—the peak is passing. Unclench your jaw and hands, and take two more slow, deep breaths.',
-    );
+    return getTimerCoaching(rem, total);
   }
 
   function start(seconds) {
@@ -568,6 +602,12 @@ function urgeSurfingTimer() {
     h('div', { class: 'actions' }, start3Btn, start5Btn, resetBtn),
     livePrompt,
   );
+  activeTimerReset = () => {
+    stopTimer();
+    remaining = totalSeconds;
+    display.textContent = fmt(remaining);
+    livePrompt.textContent = t('plan.timer.reset', 'Timer paused and reset. Start again whenever you are ready.');
+  };
   return root;
 }
 
@@ -865,6 +905,14 @@ export function planView({ query } = {}) {
     renderPreview();
     announce(t('plan.cleared', 'Cleared your safety plan from browser memory.'));
   }
+
+  activePlanState = plan;
+  activePlanReset = () => {
+    handleClearPlan();
+    if (typeof activeTimerReset === 'function') {
+      activeTimerReset();
+    }
+  };
 
   syncChipStates();
   renderPreview();
