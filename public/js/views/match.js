@@ -21,9 +21,54 @@ let uid = 0;
 
 const blankProfile = () => ({
   helpWith: 'substance', substances: [], settings: [], medications: [], modality: 'either',
+  telehealthFormat: 'any', lowBarrier: false,
   coverage: null, needsFinancialHelp: false, timing: null, ageGroup: null, language: null,
   populations: [], barriers: [], customMiles: null,
 });
+
+const BUP_CODES = ['BU', 'UB', 'BUM', 'BWN', 'BWON', 'BERI', 'BSDM'];
+
+export function isBupTele(c) {
+  if (!c) return false;
+  if (c.kind === 'virtual' || (Array.isArray(c.services) && Array.isArray(c.conditions))) {
+    const svcs = c.record?.services ?? c.record?.record?.services ?? c.services ?? [];
+    const tele = c.telehealth !== undefined ? c.telehealth : true;
+    return Boolean(tele && svcs.includes('moud-buprenorphine'));
+  }
+  const rawCodes = c.codes ?? c.record?.codes ?? [];
+  const codes = rawCodes instanceof Set ? rawCodes : new Set(rawCodes);
+  const hasTele = c.telehealth || codes.has('TELE');
+  const hasBup = BUP_CODES.some((code) => codes.has(code));
+  return Boolean(hasTele && hasBup);
+}
+
+export function isAudioPhone(c) {
+  if (!c) return false;
+  const isVirt = c.kind === 'virtual' || (Array.isArray(c.services) && Array.isArray(c.conditions));
+  if (isVirt) {
+    const phone = c.record?.phone ?? c.record?.record?.phone ?? c.phone;
+    const enroll = c.record?.enrollmentProcess ?? c.record?.record?.enrollmentProcess ?? c.enrollmentProcess ?? '';
+    return Boolean(phone || /phone/i.test(enroll));
+  }
+  const rawCodes = c.codes ?? c.record?.codes ?? [];
+  const codes = rawCodes instanceof Set ? rawCodes : new Set(rawCodes);
+  const hasTele = c.telehealth || codes.has('TELE');
+  const phone = c.record?.intake ?? c.record?.phone ?? c.intake ?? c.phone;
+  return Boolean(hasTele && phone);
+}
+
+export function isLowBarrier(c) {
+  if (!c) return false;
+  const isVirt = c.kind === 'virtual' || (Array.isArray(c.services) && Array.isArray(c.conditions));
+  if (isVirt) {
+    const proc = c.record?.enrollmentProcess ?? c.record?.record?.enrollmentProcess ?? c.enrollmentProcess ?? '';
+    return /same[- ]day|phone|within|instant|minutes/i.test(proc);
+  }
+  const rawCodes = c.codes ?? c.record?.codes ?? [];
+  const codes = rawCodes instanceof Set ? rawCodes : new Set(rawCodes);
+  const intake = c.record?.intake ?? c.intake;
+  return Boolean(intake) || codes.has('WI') || codes.has('ISC') || codes.has('BIA') || codes.has('BU') || codes.has('UB');
+}
 
 // One answer set per page load, in memory. Quick exit unloads the page.
 let profile = blankProfile();
@@ -280,6 +325,14 @@ const STEPS = [
         onChange: (v) => { profile.medications = v; },
       }),
       p(h('a', { href: '#/navigator' }, t('match.s2.navigator', 'Unsure what level of care fits? Try the private care navigator.'))),
+      choices({
+        legend: t('match.s2.intakeLegend', 'Intake barriers (optional)'),
+        hint: t('match.s2.intakeHint', 'Low-barrier intake prioritizes same-day or next-day enrollment with no requirement to attend counseling before receiving medication.'),
+        multiple: true,
+        options: [['yes', t('match.s2.lowBarrier', 'Low-barrier intake (rapid start, no pre-treatment counseling barriers)')]],
+        value: profile.lowBarrier ? ['yes'] : [],
+        onChange: (v) => { profile.lowBarrier = v.includes('yes'); },
+      }),
     ],
   },
   {
@@ -295,6 +348,17 @@ const STEPS = [
         ],
         value: profile.modality,
         onChange: (v) => { profile.modality = v; },
+      }),
+      choices({
+        legend: t('match.s3.formatLegend', 'Telehealth visit format (broadband access)'),
+        hint: t('match.s3.formatHint', 'Audio-only phone appointments do not require high-speed internet, smartphones, or computers—essential for broadband-insecure rural and tribal areas.'),
+        options: [
+          ['any', t('match.s3.formatAny', 'Either video or phone (standard)')],
+          ['phone', t('match.s3.formatPhone', 'Audio-only phone appointments (rural & tribal broadband-friendly)')],
+          ['video', t('match.s3.formatVideo', 'Synchronous video appointments (requires camera & broadband)')],
+        ],
+        value: profile.telehealthFormat,
+        onChange: (v) => { profile.telehealthFormat = v; },
       }),
       customMilesField(),
       fine(t('match.s3.privacy', 'A ZIP code or city is enough. Your location is rounded to about 1 km before it is sent, and HarborPath does not save it.')),
@@ -446,7 +510,7 @@ function go(i) {
 }
 
 // ---------------------------------------------------------------- Results
-const results = { controller: null, loading: false, ranked: null, error: null, pending: 0, virtualNote: null, compare: new Set(), onlineOnly: false, coveredOnly: false };
+const results = { controller: null, loading: false, ranked: null, error: null, pending: 0, virtualNote: null, compare: new Set(), onlineOnly: false, coveredOnly: false, bupTeleOnly: false, audioOnly: false, lowBarrierOnly: false };
 
 async function loadMatches() {
   results.controller?.abort();
@@ -497,8 +561,16 @@ async function loadMatches() {
 
 function visibleMatches() {
   return (results.ranked?.matches ?? []).filter((m) =>
-    (!results.onlineOnly || m.candidate.telehealth)
-    && (!results.coveredOnly || ['confirmed', 'provider-reported'].includes(m.coverage.tier)));
+  {
+    const c = m.candidate;
+    if (results.onlineOnly && !c.telehealth) return false;
+    if (results.coveredOnly && !['confirmed', 'provider-reported'].includes(m.coverage.tier)) return false;
+    if (results.bupTeleOnly && !isBupTele(c)) return false;
+    if (results.audioOnly && !isAudioPhone(c)) return false;
+    if (results.lowBarrierOnly && !isLowBarrier(c)) return false;
+    return true;
+  });
+
 }
 
 function answersSummary() {
@@ -542,9 +614,13 @@ function resultsView() {
       p(t('match.partialHelp', 'You can also search FindTreatment.gov or call the free SAMHSA helpline at '), tel('18006624357', '1-800-662-4357'), '.')));
   }
 
+  wrap.append(telehealthGuide());
   const filters = h('div', { class: 'match-filters', role: 'group', 'aria-label': t('match.filters', 'Filter matches') },
     toggle('m-f-online', t('match.f.online', 'Telehealth or online only'), results.onlineOnly, (v) => { results.onlineOnly = v; refilter('m-f-online'); }),
     toggle('m-f-covered', t('match.f.covered', 'Only programs that list my coverage'), results.coveredOnly, (v) => { results.coveredOnly = v; refilter('m-f-covered'); }),
+    toggle('m-f-buptele', t('match.f.buptele', 'DEA/SAMHSA buprenorphine tele-prescribing'), results.bupTeleOnly, (v) => { results.bupTeleOnly = v; refilter('m-f-buptele'); }),
+    toggle('m-f-audio', t('match.f.audio', 'Audio-only phone appointments (rural & tribal)'), results.audioOnly, (v) => { results.audioOnly = v; refilter('m-f-audio'); }),
+    toggle('m-f-lowbarrier', t('match.f.lowbarrier', 'Low-barrier intake (rapid start, no counseling hurdles)'), results.lowBarrierOnly, (v) => { results.lowBarrierOnly = v; refilter('m-f-lowbarrier'); }),
   );
   wrap.append(filters);
 
@@ -652,11 +728,19 @@ function matchCard(m, index) {
     h('ul', { class: 'chips' },
       h('li', { class: `chip tier tier-${tier.tone}` }, tier.text()),
       c.telehealth && h('li', { class: 'chip chip-care' }, t('match.chip.telehealth', 'Telehealth')),
+      isBupTele(c) && h('li', { class: 'chip chip-care chip-buptele' }, t('match.chip.deaBup', 'DEA/SAMHSA tele-prescribing')),
+      isAudioPhone(c) && h('li', { class: 'chip chip-extra chip-audio' }, t('match.chip.audio', 'Audio-only phone available')),
+      isLowBarrier(c) && h('li', { class: 'chip chip-care chip-lowbarrier' }, t('match.chip.lowBarrier', 'Low-barrier intake')),
       m.coverage.affordability.map((a) => h('li', { class: 'chip chip-pay' }, capitalize(label('afford', a)))),
     ),
     m.reasons.length > 0 && h('div', { class: 'why' },
       h('h4', null, t('match.card.why', 'Why it may fit')),
-      h('ul', { class: 'list' }, m.reasons.map((r) => h('li', null, describe(r))))),
+      h('ul', { class: 'list' }, [
+        ...m.reasons.map((r) => h('li', null, describe(r))),
+        isBupTele(c) && h('li', null, t('match.why.deaBup', 'Eligible for DEA/SAMHSA buprenorphine tele-prescribing: initiation and refills via telehealth without a mandatory in-person visit')),
+        isAudioPhone(c) && h('li', null, t('match.why.audioPhone', 'Offers audio-only phone visits: suitable for broadband-insecure rural and tribal areas')),
+        isLowBarrier(c) && h('li', null, t('match.why.lowBarrier', 'Low-barrier intake: rapid enrollment; counseling encouraged but not required to start medication')),
+      ].filter(Boolean))),
     m.missing.length > 0 && h('div', { class: 'why why-missing' },
       h('h4', null, t('match.card.missing', 'Not listed')),
       h('ul', { class: 'list' }, m.missing.map((r) => h('li', null, describe(r))))),
@@ -685,6 +769,9 @@ function compareSection() {
     [t('match.cmp.type', 'Type'), (m) => kindBadge(m.candidate)],
     [t('match.cmp.distance', 'Distance'), (m) => (m.candidate.miles === null ? '—' : t('card.distance', '{miles} mi', { miles: formatNumber(m.candidate.miles, { maximumFractionDigits: 1 }) }))],
     [t('match.cmp.telehealth', 'Telehealth'), (m) => (m.candidate.telehealth ? t('match.yes', 'Yes') : t('match.notListed', 'Not listed'))],
+    [t('match.cmp.deaBup', 'DEA/SAMHSA tele-prescribing'), (m) => (isBupTele(m.candidate) ? t('match.cmp.deaBupYes', 'Yes (Buprenorphine flexibilities)') : t('match.notListed', 'Not listed'))],
+    [t('match.cmp.format', 'Visit format'), (m) => (isAudioPhone(m.candidate) ? t('match.cmp.formatBoth', 'Video or audio-only phone') : (m.candidate.telehealth ? t('match.cmp.formatVideo', 'Video') : t('match.cmp.formatInPerson', 'In-person')))],
+    [t('match.cmp.lowBarrier', 'Low-barrier intake'), (m) => (isLowBarrier(m.candidate) ? t('match.cmp.lowBarrierYes', 'Yes (rapid start / phone intake)') : t('match.cmp.lowBarrierCall', 'Call to confirm'))],
     [t('match.cmp.coverage', 'Your coverage'), (m) => TIERS[m.coverage.tier].text()],
     [t('match.cmp.cost', 'Lower-cost options'), (m) => (m.coverage.affordability.length ? capitalize(list('afford', m.coverage.affordability)) : t('match.notListed', 'Not listed'))],
     [t('match.cmp.fit', 'Fits your needs'), (m) => m.reasons.filter((r) => r.code.startsWith('clinical.')).map(describe).join('; ') || '—'],
@@ -703,6 +790,14 @@ function compareSection() {
 }
 
 // ---------------------------------------------------------------- Notes & plan
+function telehealthGuide() {
+  if (profile.modality === 'in-person') return null;
+  return h('div', { class: 'callout callout-info telehealth-flex-guide' },
+    h('p', { class: 'callout-title' }, icon('phone'), t('match.telehealthGuide.title', 'Cross-State Telehealth & DEA/SAMHSA Flexibilities')),
+    p(t('match.telehealthGuide.body', 'Under federal DEA and SAMHSA flexibilities, clinicians can evaluate and prescribe buprenorphine via telehealth without an in-person visit. Audio-only telephone visits provide access in broadband-insecure rural and tribal areas. Under SAMHSA rules, counseling cannot be an arbitrary barrier to starting life-saving medication.')),
+  );
+}
+
 function virtualNote() {
   if (profile.modality === 'in-person' || profile.helpWith === 'mental-health') return null;
   const hasVirtual = results.ranked.matches.some((m) => m.candidate.kind === 'virtual');
@@ -732,7 +827,13 @@ function actionPlan(shown) {
     h('h2', { id: 'm-plan' }, t('match.plan.title', 'Your next steps')),
     h('ol', { class: 'checklist' },
       h('li', null, t('match.plan.contact', 'Contact your top choices: {names}.', { names: picked.map((m) => m.candidate.name).join('; ') })),
-      h('li', null, t('match.plan.ask', 'Ask each one about:'), h('ul', { class: 'list' }, [...questions.values()].map((q) => h('li', null, q)))),
+      h('li', null, t('match.plan.ask', 'Ask each one about:'),
+        h('ul', { class: 'list' },
+          h('li', null, t('match.plan.qDea', 'Under DEA/SAMHSA flexibilities, can I begin buprenorphine by telehealth without an initial in-person visit?')),
+          h('li', null, t('match.plan.qAudio', 'Do you offer audio-only phone visits if I have limited cell service or broadband?')),
+          h('li', null, t('match.plan.qIntake', 'How fast is your intake, and can I start medication before completing counseling sessions?')),
+          ...[...questions.values()].map((q) => h('li', null, q)),
+        )),
       ['private', 'medicaid', 'medicare', 'military'].includes(cov) && h('li', null,
         t('match.plan.insurer', 'Call the member services number on your insurance card and ask:'),
         h('ul', { class: 'list' },
