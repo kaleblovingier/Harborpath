@@ -1,6 +1,17 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
+import {
+  ALL_POPULATION_RECOMMENDERS,
+  evaluatePopulationPathways,
+  recommendForPregnancy,
+  recommendForYouth,
+  recommendForJusticeInvolved,
+  recommendForXylazine,
+  recommendForOlderAdults,
+  recommendForStimulants,
+  recommendForCoOccurring,
+} from './populationHelpers.js';
 
 // Valid SAMHSA filter codes for Dimension 6 validation and chip display
 const PAYMENT_OPTIONS = [
@@ -157,6 +168,108 @@ function normalizeSubstances(raw) {
     return new Set(raw.split(',').map((s) => s.toLowerCase().trim()).filter(Boolean));
   }
   return new Set();
+}
+
+// Ephemeral in-memory handoff state kept strictly in browser RAM (never written
+// to localStorage, sessionStorage, cookies, or URL query parameters).
+let currentNavigatorState = null;
+const resetCallbacks = new Set();
+
+function clonePathway(pathway) {
+  if (!pathway || typeof pathway !== 'object') return pathway;
+  return {
+    ...pathway,
+    codes: Array.isArray(pathway.codes) ? [...pathway.codes] : [],
+    clinicalActions: Array.isArray(pathway.clinicalActions) ? [...pathway.clinicalActions] : [],
+  };
+}
+
+function cloneNavigatorState(snap) {
+  if (!snap || typeof snap !== 'object') return null;
+  return {
+    ...snap,
+    answers: snap.answers
+      ? {
+          ...snap.answers,
+          substances: [...normalizeSubstances(snap.answers.substances)],
+        }
+      : {},
+    recommendation: snap.recommendation
+      ? {
+          ...snap.recommendation,
+          codes: Array.isArray(snap.recommendation.codes) ? [...snap.recommendation.codes] : [],
+          broadCodes: Array.isArray(snap.recommendation.broadCodes) ? [...snap.recommendation.broadCodes] : [],
+          redFlags: Array.isArray(snap.recommendation.redFlags) ? [...snap.recommendation.redFlags] : [],
+          clinicalNotes: Array.isArray(snap.recommendation.clinicalNotes) ? [...snap.recommendation.clinicalNotes] : [],
+          populationPathways: Array.isArray(snap.recommendation.populationPathways)
+            ? snap.recommendation.populationPathways.map(clonePathway)
+            : [],
+        }
+      : null,
+    populationPathways: Array.isArray(snap.populationPathways)
+      ? snap.populationPathways.map(clonePathway)
+      : [],
+    codes: Array.isArray(snap.codes) ? [...snap.codes] : [],
+    broadCodes: Array.isArray(snap.broadCodes) ? [...snap.broadCodes] : [],
+    updatedAt: snap.updatedAt ?? Date.now(),
+  };
+}
+
+export function getNavigatorHandoffState() {
+  return cloneNavigatorState(currentNavigatorState);
+}
+
+export function setNavigatorHandoffState(next) {
+  if (!next || typeof next !== 'object') {
+    currentNavigatorState = null;
+    return null;
+  }
+  const rawAnswers = next.answers ?? {};
+  const normalizedAnswers = {
+    ...rawAnswers,
+    substances: [...normalizeSubstances(rawAnswers.substances)],
+  };
+  const recommendation =
+    next.recommendation ??
+    (Object.keys(rawAnswers).length > 0 ? evaluateAsamCare(normalizedAnswers) : null);
+  const populationPathways = Array.isArray(next.populationPathways)
+    ? next.populationPathways.map(clonePathway)
+    : Array.isArray(recommendation?.populationPathways)
+      ? recommendation.populationPathways.map(clonePathway)
+      : [];
+  const codes = Array.isArray(next.codes)
+    ? [...next.codes].slice(0, 8)
+    : Array.isArray(recommendation?.codes)
+      ? [...recommendation.codes].slice(0, 8)
+      : [];
+  const broadCodes = Array.isArray(next.broadCodes)
+    ? [...next.broadCodes]
+    : Array.isArray(recommendation?.broadCodes)
+      ? [...recommendation.broadCodes]
+      : [];
+
+  currentNavigatorState = {
+    ...next,
+    answers: normalizedAnswers,
+    recommendation,
+    populationPathways,
+    codes,
+    broadCodes,
+    updatedAt: typeof next.updatedAt === 'number' ? next.updatedAt : Date.now(),
+  };
+  return getNavigatorHandoffState();
+}
+
+export function resetNavigatorState() {
+  currentNavigatorState = null;
+  for (const cb of [...resetCallbacks]) {
+    try {
+      cb();
+    } catch {
+      // ignore listener errors during reset
+    }
+  }
+  currentNavigatorState = null;
 }
 
 /**
@@ -588,15 +701,22 @@ export function formatAsamHandoffText(answers = {}, evaluation = evaluateAsamCar
  */
 export function evaluateAsamCare(answers = {}) {
   const substances = normalizeSubstances(answers.substances);
+  if (answers.xylazine) substances.add('xylazine');
+  if (answers.stimulants) substances.add('stimulants');
+
   const withdrawalRisk = ['none', 'mild', 'moderate', 'severe'].includes(answers.withdrawalRisk)
     ? answers.withdrawalRisk
     : 'none';
   const biomedical = ['none', 'pregnant', 'chronic', 'acute_infection'].includes(answers.biomedical)
     ? answers.biomedical
-    : 'none';
+    : answers.pregnant || answers.pregnancy
+      ? 'pregnant'
+      : 'none';
   const mentalHealth = ['none', 'mild_moderate', 'severe_crisis', 'trauma'].includes(answers.mentalHealth)
     ? answers.mentalHealth
-    : 'none';
+    : answers.coOccurring
+      ? 'mild_moderate'
+      : 'none';
   const environment = ['supportive', 'unstable', 'unhoused'].includes(answers.environment)
     ? answers.environment
     : 'supportive';
@@ -604,7 +724,15 @@ export function evaluateAsamCare(answers = {}) {
     ? answers.structureNeeded
     : 'flexible';
   const payment = VALID_PAYMENTS.has(answers.payment) ? answers.payment : '';
-  const population = VALID_POPULATIONS.has(answers.population) ? answers.population : '';
+  const population = VALID_POPULATIONS.has(answers.population)
+    ? answers.population
+    : answers.justice || answers.justiceInvolved || answers.reentry
+      ? 'CJ'
+      : answers.youth || answers.adolescent
+        ? 'ADOL'
+        : answers.older || answers.olderAdults
+          ? 'SEN'
+          : '';
   const preferTelehealth = Boolean(answers.preferTelehealth);
 
   const hasOpioids = substances.has('opioids');
@@ -978,6 +1106,18 @@ export function evaluateAsamCare(answers = {}) {
     },
   ];
 
+  const {
+    pathways: populationPathways,
+    combinedCodes: populationCombinedCodes,
+    priorityAlerts: populationPriorityAlerts,
+  } = evaluatePopulationPathways({
+    ...answers,
+    substances,
+    biomedical,
+    mentalHealth,
+    population,
+  });
+
   return {
     asamLevel,
     asamTitle,
@@ -992,6 +1132,16 @@ export function evaluateAsamCare(answers = {}) {
     // True when the person reports thoughts of self-harm or feeling unsafe.
     // The view then shows a crisis-first card above the level-of-care result.
     crisis: mentalHealth === 'severe_crisis',
+    populationPathways,
+    populationCombinedCodes,
+    populationPriorityAlerts,
+    levelCode: asamLevel,
+    levelTitle: asamTitle,
+    levelSummary: summary,
+    urgentFlags: redFlags,
+    dimensionNotes: dimensionBreakdown,
+    whyFit: summary,
+    whatNext: clinicalNotes,
   };
 }
 
@@ -1156,8 +1306,20 @@ export function careNavigatorView({ query } = {}) {
     'aria-live': 'polite',
   });
 
-  function updateRecommendation(shouldAnnounce = false) {
+  function updateRecommendation(shouldAnnounce = false, { skipHandoffStore = false } = {}) {
     const result = evaluateAsamCare(answers);
+    if (!skipHandoffStore) {
+      setNavigatorHandoffState({
+        answers: {
+          ...answers,
+          substances: [...answers.substances],
+        },
+        recommendation: result,
+        populationPathways: result.populationPathways,
+        codes: result.codes,
+        broadCodes: result.broadCodes,
+      });
+    }
     clear(recommendationContainer);
 
     const codeChips = h(
@@ -1202,6 +1364,102 @@ export function careNavigatorView({ query } = {}) {
             t('nav.results.notes_title', 'General information about your options (not medical advice)'),
           ),
           ul(result.clinicalNotes),
+        )
+      : null;
+
+    const populationPathwaysBlock = result.populationPathways?.length
+      ? h(
+          'div',
+          {
+            class: 'callout callout-info',
+            role: 'region',
+            'aria-label': t('nav.pop_pathways.aria', 'Priority population care pathways'),
+          },
+          h(
+            'p',
+            { class: 'callout-title' },
+            icon('compass'),
+            t('nav.pop_pathways.heading', 'Priority Population Care Pathways Matched to Your Answers'),
+          ),
+          p(
+            t(
+              'nav.pop_pathways.intro',
+              'Specialized clinical pathways and SAMHSA filter sets tailored to your answers (kept in your browser’s memory):',
+            ),
+          ),
+          h(
+            'div',
+            { class: 'resource-list' },
+            ...result.populationPathways.map((pathway) =>
+              h(
+                'div',
+                { class: 'resource', 'data-population-pathway': pathway.id },
+                h('h4', null, pathway.title),
+                p(pathway.guidance),
+                Array.isArray(pathway.clinicalActions) && pathway.clinicalActions.length
+                  ? ul(pathway.clinicalActions)
+                  : null,
+                h(
+                  'ul',
+                  { class: 'chips' },
+                  (pathway.codes ?? []).map((code) => {
+                    const meta = CODE_META[code] ?? { label: code, tone: 'extra' };
+                    return h('li', { class: `chip chip-${meta.tone}` }, `${meta.label} (${code})`);
+                  }),
+                ),
+                h(
+                  'p',
+                  { class: 'actions' },
+                  h(
+                    'a',
+                    {
+                      class: 'btn btn-secondary btn-small',
+                      href: pathway.searchHref,
+                      onclick: () => {
+                        setNavigatorHandoffState({
+                          answers: {
+                            ...answers,
+                            substances: [...answers.substances],
+                          },
+                          recommendation: result,
+                          populationPathways: [pathway],
+                          codes: pathway.codes,
+                          broadCodes: (pathway.codes ?? []).slice(0, 2),
+                        });
+                      },
+                    },
+                    icon('search'),
+                    t('nav.pop_pathways.search_btn', 'Search this pathway ({codes})', {
+                      codes: (pathway.codes ?? []).join(', '),
+                    }),
+                  ),
+                  pathway.healthNetwork &&
+                    h(
+                      'a',
+                      {
+                        class: 'btn btn-ghost btn-small',
+                        href: '#/health',
+                        onclick: () => {
+                          setNavigatorHandoffState({
+                            answers: {
+                              ...answers,
+                              substances: [...answers.substances],
+                            },
+                            recommendation: result,
+                            populationPathways: [pathway],
+                            codes: pathway.codes,
+                            broadCodes: (pathway.codes ?? []).slice(0, 2),
+                            healthNetwork: pathway.healthNetwork,
+                          });
+                        },
+                      },
+                      icon('heart'),
+                      t('nav.pop_pathways.health_btn', 'Find safety-net medical & wound care'),
+                    ),
+                ),
+              ),
+            ),
+          ),
         )
       : null;
 
@@ -1266,13 +1524,43 @@ export function careNavigatorView({ query } = {}) {
           { class: 'actions' },
           h(
             'a',
-            { class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large', href: result.searchHref },
+            {
+              class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large',
+              href: result.searchHref,
+              onclick: () => {
+                setNavigatorHandoffState({
+                  answers: {
+                    ...answers,
+                    substances: [...answers.substances],
+                  },
+                  recommendation: result,
+                  populationPathways: result.populationPathways,
+                  codes: result.codes,
+                  broadCodes: result.broadCodes,
+                });
+              },
+            },
             icon('search'),
             t('nav.cta.search_matching', 'Search matching treatment near me'),
           ),
           h(
             'a',
-            { class: 'btn btn-secondary', href: result.broadSearchHref },
+            {
+              class: 'btn btn-secondary',
+              href: result.broadSearchHref,
+              onclick: () => {
+                setNavigatorHandoffState({
+                  answers: {
+                    ...answers,
+                    substances: [...answers.substances],
+                  },
+                  recommendation: result,
+                  populationPathways: result.populationPathways,
+                  codes: result.broadCodes,
+                  broadCodes: result.broadCodes,
+                });
+              },
+            },
             icon('compass'),
             t('nav.cta.search_broad', 'Broaden search ({codes})', { codes: result.broadCodes.join(', ') || 'All' }),
           ),
@@ -1312,6 +1600,7 @@ export function careNavigatorView({ query } = {}) {
           ),
         ),
         clinicalNotesBlock,
+        populationPathwaysBlock,
         h(
           'details',
           { class: 'facility-details' },
@@ -1635,49 +1924,177 @@ export function careNavigatorView({ query } = {}) {
     },
   });
 
+  function findInput(lbl) {
+    return lbl?.querySelector?.('input') ?? lbl?.children?.find?.((c) => c?.tagName === 'INPUT') ?? null;
+  }
+
+  function syncFormControlsFromAnswers() {
+    for (const lbl of substanceCheckboxes) {
+      const inp = findInput(lbl);
+      if (inp) inp.checked = answers.substances.has(inp.value);
+    }
+    const syncRadios = (labels, currentVal) => {
+      for (const lbl of labels) {
+        const inp = findInput(lbl);
+        if (inp) inp.checked = inp.value === currentVal;
+      }
+    };
+    syncRadios(withdrawalRadios, answers.withdrawalRisk);
+    syncRadios(biomedicalRadios, answers.biomedical);
+    syncRadios(mentalHealthRadios, answers.mentalHealth);
+    syncRadios(environmentRadios, answers.environment);
+    syncRadios(structureRadios, answers.structureNeeded);
+    paymentSelect.value = answers.payment;
+    populationSelect.value = answers.population;
+    telehealthCheckbox.checked = answers.preferTelehealth;
+  }
+
+  function performFormReset({ announceReset = false, skipHandoffStore = false } = {}) {
+    answers.substances.clear();
+    answers.withdrawalRisk = 'none';
+    answers.biomedical = 'none';
+    answers.mentalHealth = 'none';
+    answers.environment = 'supportive';
+    answers.structureNeeded = 'flexible';
+    answers.payment = '';
+    answers.population = '';
+    answers.preferTelehealth = false;
+    syncFormControlsFromAnswers();
+    updateRecommendation(announceReset, { skipHandoffStore });
+  }
+
+  resetCallbacks.add(() => performFormReset({ announceReset: false, skipHandoffStore: true }));
+
   const resetBtn = h(
     'button',
     {
       type: 'button',
       class: 'btn btn-ghost btn-small',
       onclick: () => {
-        answers.substances.clear();
-        answers.withdrawalRisk = 'none';
-        answers.biomedical = 'none';
-        answers.mentalHealth = 'none';
-        answers.environment = 'supportive';
-        answers.structureNeeded = 'flexible';
-        answers.payment = '';
-        answers.population = '';
-        answers.preferTelehealth = false;
-
-        for (const lbl of substanceCheckboxes) {
-          const inp = lbl.querySelector('input');
-          if (inp) inp.checked = false;
-        }
-        const resetRadios = (labels, defaultVal) => {
-          for (const lbl of labels) {
-            const inp = lbl.querySelector('input');
-            if (inp) inp.checked = inp.value === defaultVal;
-          }
-        };
-        resetRadios(withdrawalRadios, 'none');
-        resetRadios(biomedicalRadios, 'none');
-        resetRadios(mentalHealthRadios, 'none');
-        resetRadios(environmentRadios, 'supportive');
-        resetRadios(structureRadios, 'flexible');
-        paymentSelect.value = '';
-        populationSelect.value = '';
-        telehealthCheckbox.checked = false;
-        updateRecommendation(true);
+        performFormReset({ announceReset: true, skipHandoffStore: true });
+        currentNavigatorState = null;
       },
     },
     icon('x'),
     t('nav.cta.reset', 'Reset all answers'),
   );
 
+  function applyPopulationPathwayToNavigator(pathwayId) {
+    if (pathwayId === 'pregnancy') {
+      answers.biomedical = 'pregnant';
+    } else if (pathwayId === 'youth') {
+      answers.population = 'ADOL';
+    } else if (pathwayId === 'justice') {
+      answers.population = 'CJ';
+    } else if (pathwayId === 'xylazine') {
+      answers.substances.add('opioids');
+      answers.substances.add('xylazine');
+    } else if (pathwayId === 'older') {
+      answers.population = 'SEN';
+    } else if (pathwayId === 'stimulants') {
+      answers.substances.add('stimulants');
+    } else if (pathwayId === 'coOccurring') {
+      if (answers.mentalHealth === 'none') answers.mentalHealth = 'mild_moderate';
+    }
+    syncFormControlsFromAnswers();
+    updateRecommendation(true);
+  }
+
+  const priorityPathwayItems = [
+    recommendForPregnancy(),
+    recommendForYouth(),
+    recommendForJusticeInvolved(),
+    recommendForXylazine(),
+    recommendForOlderAdults(),
+    recommendForStimulants(),
+    recommendForCoOccurring(),
+  ];
+
+  const priorityPopulationsSection = section(
+    'priority-populations',
+    t('nav.pop_section.heading', 'Priority Population Care Pathways (Pregnancy, Youth, Reentry & Xylazine)'),
+    p(
+      t(
+        'nav.pop_section.intro',
+        'Select a priority population pathway below to apply its clinical filters to your Care Navigator or jump directly to matching treatment and safety-net health care:',
+      ),
+    ),
+    h(
+      'div',
+      { class: 'resource-list' },
+      ...priorityPathwayItems.map((pathway) =>
+        h(
+          'div',
+          { class: 'card resource', 'data-priority-pathway': pathway.id },
+          h('h3', null, pathway.title),
+          p(pathway.guidance),
+          ul(pathway.clinicalActions),
+          h(
+            'p',
+            { class: 'actions' },
+            h(
+              'button',
+              {
+                type: 'button',
+                class: 'btn btn-secondary btn-small',
+                onclick: () => applyPopulationPathwayToNavigator(pathway.id),
+              },
+              icon('check'),
+              t('nav.pop_section.apply_btn', 'Apply to my Care Navigator'),
+            ),
+            h(
+              'a',
+              {
+                class: 'btn btn-secondary btn-small',
+                href: pathway.searchHref,
+                onclick: () => {
+                  setNavigatorHandoffState({
+                    answers: {
+                      ...answers,
+                      substances: [...answers.substances],
+                    },
+                    populationPathways: [pathway],
+                    codes: pathway.codes,
+                    broadCodes: (pathway.codes ?? []).slice(0, 2),
+                  });
+                },
+              },
+              icon('search'),
+              t('nav.pop_pathways.search_btn', 'Search this pathway ({codes})', {
+                codes: (pathway.codes ?? []).join(', '),
+              }),
+            ),
+            pathway.healthNetwork &&
+              h(
+                'a',
+                {
+                  class: 'btn btn-ghost btn-small',
+                  href: '#/health',
+                  onclick: () => {
+                    setNavigatorHandoffState({
+                      answers: {
+                        ...answers,
+                        substances: [...answers.substances],
+                      },
+                      populationPathways: [pathway],
+                      codes: pathway.codes,
+                      broadCodes: (pathway.codes ?? []).slice(0, 2),
+                      healthNetwork: pathway.healthNetwork,
+                    });
+                  },
+                },
+                icon('heart'),
+                t('nav.pop_pathways.health_btn', 'Find safety-net medical & wound care'),
+              ),
+          ),
+        ),
+      ),
+    ),
+  );
+
   // Initial render of the recommendation card
-  updateRecommendation(false);
+  const renderRecommendation = updateRecommendation;
+  renderRecommendation(false);
 
   return h(
     'div',
@@ -1829,6 +2246,8 @@ export function careNavigatorView({ query } = {}) {
       t('nav.results.heading', 'Step 2: A suggested starting point to discuss with a clinician'),
       recommendationContainer,
     ),
+
+    priorityPopulationsSection,
 
     // MD-authored Know Your Rights: Hospital & Emergency Bridge Care
     section(
