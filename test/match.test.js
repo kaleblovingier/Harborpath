@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { isBupTele, isAudioPhone, isLowBarrier } from '../public/js/views/match.js';
+import { isBupTele as isBupReach, isAudioPhone as isAudioReach, isLowBarrier as isLowBarrierReach } from '../public/js/components/reach.js';
 import {
   rankMatches, scoreCandidate, assessCoverage, normalizeProfile, fromFacility, fromVirtualProvider, searchPlan,
 } from '../public/js/match/engine.js';
@@ -241,4 +243,75 @@ test('hostile profile and registry values never throw', () => {
   assert.deepEqual([p.substances, p.language, p.populations, p.settings], [[], null, [], []]);
   const odd = fromVirtualProvider({ id: 'x', name: 7, services: 'x', languages: ['constructor'], conditions: null, sources: [{}], insurance: { claims: 'no' } });
   assert.doesNotThrow(() => rankMatches({ modality: 'virtual' }, [odd, fac('a', ['SA'])], { now: NOW }));
+});
+
+test('DEA/SAMHSA buprenorphine tele-prescribing flexibilities matching', () => {
+  const teleBup = fac('bup-tele', ['SA', 'OP', 'BU', 'TELE']);
+  const inPersonBup = fac('bup-inperson', ['SA', 'OP', 'BU']);
+  const teleOnly = fac('tele-not-bup', ['SA', 'OP', 'TELE']);
+  const vpBup = virtual({ services: ['counseling', 'moud-buprenorphine'] });
+  const vpNonBup = virtual({ services: ['counseling'] });
+
+  assert.equal(isBupTele(teleBup.record), true);
+  assert.equal(isBupTele(teleBup), true);
+  assert.equal(isBupReach(teleBup.record), true);
+  assert.equal(isBupTele(inPersonBup.record), false);
+  assert.equal(isBupTele(teleOnly.record), false);
+  assert.equal(isBupTele(vpBup), true);
+  assert.equal(isBupTele(vpNonBup), false);
+});
+
+test('differentiates audio-only phone appointments for broadband-insecure rural and tribal areas', () => {
+  const telePhone = fac('phone-tele', ['SA', 'OP', 'TELE'], { phone: '509-555-0111', intake: '509-555-0122' });
+  const inPersonPhone = fac('phone-inperson', ['SA', 'OP'], { phone: '509-555-0111' });
+  const vpPhone = virtual({ record: { phone: '888-608-0836', enrollmentProcess: 'Call to enroll by phone' } });
+
+  assert.equal(isAudioPhone(telePhone.record), true);
+  assert.equal(isAudioPhone(telePhone), true);
+  assert.equal(isAudioReach(telePhone.record), true);
+  assert.equal(isAudioPhone(inPersonPhone.record), false);
+  assert.equal(isAudioPhone(vpPhone), true);
+});
+
+test('highlights low-barrier intake criteria (same-day start, no arbitrary counseling barriers)', () => {
+  const intakeFacility = fac('intake-fac', ['SA', 'OP'], { intake: '206-555-0199' });
+  const walkinFacility = fac('walkin-fac', ['SA', 'OP', 'WI']);
+  const interimFacility = fac('interim-fac', ['SA', 'OP', 'ISC']);
+  const bupFacility = fac('bup-fac', ['SA', 'OP', 'BU']);
+  const plainFacility = fac('plain-fac', ['SA', 'OP']);
+  const sameDayVp = virtual({ record: { enrollmentProcess: 'A provider meets the patient and can send a prescription the same day.' } });
+  const slowVp = virtual({ record: { enrollmentProcess: 'Wait 3 weeks for an initial appointment.' } });
+
+  assert.equal(isLowBarrier(intakeFacility.record), true);
+  assert.equal(isLowBarrier(walkinFacility.record), true);
+  assert.equal(isLowBarrier(interimFacility.record), true);
+  assert.equal(isLowBarrier(bupFacility.record), true);
+  assert.equal(isLowBarrier(plainFacility.record), false);
+  assert.equal(isLowBarrier(sameDayVp), true);
+  assert.equal(isLowBarrier(slowVp), false);
+  assert.equal(isLowBarrierReach(intakeFacility.record), true);
+});
+
+test('zero-PII in-RAM filtering preserves distance tie-breaking', () => {
+  const candidates = [
+    fac('far-bup', ['SA', 'TELE', 'BU'], { miles: 35 }),
+    fac('near-bup', ['SA', 'TELE', 'BU'], { miles: 5 }),
+    fac('mid-bup', ['SA', 'TELE', 'BU'], { miles: 15 }),
+    fac('mid-bup-2', ['SA', 'TELE', 'BU'], { miles: 15 }),
+    fac('no-bup', ['SA', 'TELE'], { miles: 2 }),
+  ];
+
+  const filtered = candidates.filter((c) => isBupTele(c));
+  assert.equal(filtered.length, 4);
+
+  filtered.sort((a, b) => {
+    const ma = Number.isFinite(a.miles) ? a.miles : Infinity;
+    const mb = Number.isFinite(b.miles) ? b.miles : Infinity;
+    return (ma - mb) || String(a.name).localeCompare(String(b.name));
+  });
+
+  assert.equal(filtered[0].id, 'ft:near-bup');
+  assert.equal(filtered[1].candidate?.miles ?? filtered[1].miles, 15);
+  assert.equal(filtered[2].candidate?.miles ?? filtered[2].miles, 15);
+  assert.equal(filtered[3].id, 'ft:far-bup');
 });
