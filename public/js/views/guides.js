@@ -3,6 +3,9 @@ import { overdoseGuide } from '../components/overdose.js';
 import { HOTLINES } from '../content/hotlines.js';
 import { offlineControlCard } from './core.js';
 import { pageHeader, section, p, fine, ul, strong, resourceList, hotlineGrid, tocNav, emergencyCallout } from './common.js';
+import { choosingCareView, QUESTIONS, RED_FLAGS } from './choosingCare.js';
+
+export { choosingCareView, QUESTIONS, RED_FLAGS };
 
 // ---------------------------------------------------------------- Overdose
 export function overdoseView() {
@@ -256,75 +259,6 @@ export function supportView() {
             ['Replacement therapy', 'Medication for opioid use disorder'],
           ].map(([a, b]) => h('tr', null, h('td', null, a), h('td', null, b))))),
       ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------- Choosing care
-const QUESTIONS = [
-  'Is the program licensed by the state, and is it accredited (for example, by CARF or The Joint Commission)?',
-  'Do you offer, or allow, medications like buprenorphine, methadone, or naltrexone? Can I keep taking medication I already use?',
-  'Do you treat mental health conditions at the same time?',
-  'What does treatment involve each day, and what therapies do you use?',
-  'Who is on staff? Is there a doctor or nurse practitioner who specializes in addiction?',
-  'How is my treatment plan made, and how often is it updated?',
-  'What will it cost? Do you take my insurance or Medicaid, or offer a sliding scale?',
-  'Can my family be involved if I want them to be?',
-  'What happens if I return to use during treatment?',
-  'What support do you offer after I leave?',
-];
-
-const RED_FLAGS = [
-  'Offers free travel, free rent, gift cards, or cash to enter a program, or says your insurance pays for “everything”.',
-  'Pressures you to commit or travel today, or will not tell you the facility’s name and address before you agree.',
-  'A “helpline” that won’t say who it works for, or routes every caller to the same few facilities.',
-  'Promises guaranteed results or a “cure”.',
-  'Discourages or refuses FDA-approved medications for opioid or alcohol use disorder.',
-  'Asks mostly about your insurance and very little about your health.',
-];
-
-export function choosingCareView() {
-  return h('div', { class: 'view view-prose' },
-    pageHeader('Choosing quality care',
-      'Good treatment is personal, evidence-based, and honest about cost. Here is how to tell the difference.'),
-    tocNav([['quality', 'Signs of quality'], ['questions', 'Questions to ask'], ['red-flags', 'Red flags'], ['verify', 'Verify a program']]),
-
-    section('quality', 'Signs of quality treatment',
-      ul([
-        [strong('Licensed and accredited. '), 'The program and its clinicians are licensed by the state. Accreditation from groups like CARF or The Joint Commission is a plus.'],
-        [strong('Offers FDA-approved medications '), 'for opioid and alcohol use disorder, or works closely with someone who does. Compare options in our ',
-          h('a', { href: '#/medications' }, 'Pharmacist Medication & Interaction Hub'), '.'],
-        [strong('Uses proven therapies, '), 'such as cognitive behavioral therapy (CBT), motivational interviewing, and contingency management. ',
-          h('a', { href: '#/plan' }, 'See how each counseling therapy works'), '.'],
-        [strong('Treats the whole person, '), 'including mental health, physical health, and needs like housing and work. Not sure what level of care fits? Try the ',
-          h('a', { href: '#/navigator' }, 'ASAM Clinical Care Navigator'), '.'],
-        [strong('Builds a plan with you, '), 'involves family if you want, and plans for support after you leave.'],
-      ]),
-      fine('Adapted from ', ext('https://www.samhsa.gov/find-support/learn-about-treatment/finding-quality-treatment', 'SAMHSA: Finding quality treatment'), '.'),
-    ),
-
-    section('questions', 'Questions to ask when you call',
-      h('ol', { class: 'checklist' }, QUESTIONS.map((q) => h('li', null, q))),
-      p(
-        h('button', { type: 'button', class: 'btn btn-secondary', onclick: () => window.print() }, icon('printer'), 'Print these questions'),
-        ' ',
-        h('a', { class: 'btn btn-primary', href: '#/plan' }, 'Build a custom clinic call script'),
-      ),
-    ),
-
-    section('red-flags', 'Red flags: scams and patient brokering',
-      p('Some businesses earn money by steering people into programs, and the care that follows can be poor or unsafe. Paying kickbacks for referrals to recovery homes, treatment facilities, or labs is a federal crime (EKRA, 18 U.S.C. § 220).'),
-      h('ul', { class: 'flag-list' }, RED_FLAGS.map((f) => h('li', null, icon('alert'), f))),
-      p('Think you’ve seen fraud? Report it to the ', ext('https://oig.hhs.gov/fraud/report-fraud/', 'HHS Office of Inspector General'), ' or your state attorney general.'),
-    ),
-
-    section('verify', 'Verify a program',
-      resourceList([
-        { name: 'FindTreatment.gov', href: 'https://findtreatment.gov/', desc: 'Every listing in HarborPath’s treatment search comes from this federal directory of state-licensed facilities. Open “All listed services” on a listing to see its licenses and accreditations.' },
-        { name: 'CARF provider search', href: 'https://carf.org/find-provider/', desc: 'Check whether a program is CARF-accredited.' },
-        { name: 'LegitScript certification', href: 'https://www.legitscript.com/certification/addiction-treatment-certification/', desc: 'Certification for treatment providers that advertise online.' },
-        { name: 'Shatterproof Treatment Atlas', href: 'https://treatmentatlas.org/', desc: 'Compare facilities on quality measures and patient reviews.' },
-      ]),
     ),
   );
 }
