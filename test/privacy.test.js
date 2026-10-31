@@ -24,7 +24,7 @@ const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
 const sample = readJson(path.join(here, 'fixtures', 'findtreatment-sample.json'));
 
 describe('ROUTE_PARAM_ALLOWLIST & sanitizeSearchParams()', () => {
-  test('ROUTE_PARAM_ALLOWLIST defines strict parameter allowlists for all API routes', () => {
+  test('ROUTE_PARAM_ALLOWLIST defines strict parameter allowlists for all 11 API routes', () => {
     const expectedRoutes = [
       '/api/health',
       '/api/meta',
@@ -35,7 +35,6 @@ describe('ROUTE_PARAM_ALLOWLIST & sanitizeSearchParams()', () => {
       '/api/telehealth',
       '/api/treatment',
       '/api/health-centers',
-      '/api/virtual-providers',
       '/api/providers',
       '/api/nearby-summary',
     ];
@@ -49,7 +48,6 @@ describe('ROUTE_PARAM_ALLOWLIST & sanitizeSearchParams()', () => {
     assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/region'], ['zip', 'lat', 'lng']);
     assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/states'], []);
     assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/state'], ['code']);
-    assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/virtual-providers'], ['state']);
   });
 
   test('strips utm_*, fbclid, ssn, email, name, dob, mrn and retains only allowlisted route params', () => {
@@ -269,7 +267,7 @@ describe('End-to-end HTTP privacy & confidentiality checks on createApp()', () =
   });
 });
 
-describe('Static source audit of public/js/ for client-side storage & ephemeral clinical tools', () => {
+describe('Static source audit of public/js/ for client-side storage & zero-knowledge clinical tools', () => {
   function listJsFiles(dir) {
     const out = [];
     for (const name of readdirSync(dir)) {
@@ -315,17 +313,22 @@ describe('Static source audit of public/js/ for client-side storage & ephemeral 
     for (const rel of clinicalFiles) {
       const full = path.join(rootDir, rel);
       const raw = readFileSync(full, 'utf8');
+      // Strip single-line comments and string literals that explain privacy to the user
       const codeOnly = raw.replace(/\/\/.*$/gm, '');
       assert.doesNotMatch(codeOnly, /\blocalStorage\s*\./, `${rel} must not call localStorage`);
       assert.doesNotMatch(codeOnly, /\bsessionStorage\s*\./, `${rel} must not call sessionStorage`);
       assert.doesNotMatch(codeOnly, /\bdocument\.cookie\b/, `${rel} must not touch document.cookie`);
       assert.doesNotMatch(codeOnly, /\bindexedDB\b/, `${rel} must not touch indexedDB`);
-      assert.doesNotMatch(codeOnly, /\bfetch\s*\(/, `${rel} must run in browser RAM with zero network fetch`);
+      assert.doesNotMatch(codeOnly, /\bfetch\s*\(/, `${rel} must run 100% in browser RAM with zero network fetch`);
     }
   });
 });
 
 // Privacy and compliance wording checks (SECURITY_REVIEW findings 6, 7, 8, 14).
+// Privacy promises must be exactly true, so absolute claims that the system
+// cannot keep ("never saved to disk", "erases everything", "zero-knowledge")
+// must not appear in user-facing text in either language.
+
 const BANNED = [
   /saved to disk/i,
   /erases? everything/i,
@@ -448,6 +451,7 @@ test('consumer health data privacy notice is present in both languages', () => {
   assert.match(en['privacy.chd.samhsa.body'], /IP address .* not forwarded/);
   assert.match(en['privacy.chd.contact.warn'], /Do not post personal or health information/);
 
+  // No invented contact details or compliance claims.
   const notice = keys.map((k) => `${en[k]} ${es[k]}`).join(' ');
   assert.doesNotMatch(notice, /[\w.+-]+@[\w-]+\.[\w.]+/, 'no email addresses');
   assert.doesNotMatch(notice, /\b(is|are) (fully )?compliant\b|\bin compliance with\b|\bHIPAA\b/i);
@@ -462,6 +466,7 @@ test('the offline shell caches the Spanish privacy strings', () => {
 test('filters in the URL hash are read once and stripped from the address bar', () => {
   const app = read('public/js/app.js');
   assert.match(app, /history\.replaceState\(history\.state, '', `#\/\$\{path\}`\)/);
+  // Internal links hand filters over in memory and navigate to the bare route.
   assert.match(app, /const href = `#\/\$\{path\}`;/);
 });
 

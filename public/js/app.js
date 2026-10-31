@@ -27,8 +27,8 @@ export const SYNC_VIEWS = {
   privacy: privacyView,
 };
 
-// Heavy clinical, matching, and educational views are dynamically imported on
-// demand, cached in memory, and preloaded during browser idle time or link hover/focus.
+// Heavy clinical, matching, guided triage, and educational views are dynamically
+// imported on demand, cached in memory, and preloaded during browser idle time or link hover/focus.
 export const viewCache = new Map();
 const pendingLoads = new Map();
 
@@ -51,6 +51,10 @@ export const LAZY_LOADERS = {
     viewCache.set('navigator', m.careNavigatorView);
     return m.careNavigatorView;
   }),
+  guided: () => import('./views/guidedNavigator.js').then((m) => {
+    viewCache.set('guided', m.guidedNavigatorView);
+    return m.guidedNavigatorView;
+  }),
   medications: () => import('./views/medications.js').then((m) => {
     viewCache.set('medications', m.medicationsView);
     return m.medicationsView;
@@ -70,6 +74,7 @@ const ROUTE_TITLES = {
   match: () => t('route.match', 'Find care that fits'),
   treatment: () => t('route.treatment', 'Find treatment'),
   navigator: () => t('route.navigator', 'Clinical care navigator (ASAM)'),
+  guided: () => t('route.guided', 'Guided navigator & triage'),
   medications: () => t('route.medications', 'Medications & interactions'),
   'harm-reduction': () => t('route.harm', 'Harm reduction'),
   overdose: () => t('route.overdose', 'Overdose response'),
@@ -99,14 +104,17 @@ export function preloadAllLazyViews() {
   return Promise.all([
     preloadRoute('match'),
     preloadRoute('navigator'),
+    preloadRoute('guided'),
     preloadRoute('medications'),
     preloadRoute('plan'),
     preloadRoute('harm-reduction'),
   ]);
 }
 
-function splitHref(hash) {
-  const raw = String(hash).replace(/^#\/?/, '');
+let carried = null;
+
+export function splitHref(hash) {
+  const raw = String(hash ?? '').replace(/^#\/?/, '');
   const [path, qs = ''] = raw.split('?');
   return { path: path.replace(/\/$/, ''), query: new URLSearchParams(qs) };
 }
@@ -118,9 +126,7 @@ function splitHref(hash) {
 // read once and the visible URL is immediately replaced with the bare route.
 // `carried` keeps them in memory so a re-render of the same route (for
 // example, after a language change) does not lose them.
-let carried = null;
-
-function parseHash(hashStr) {
+export function parseHash(hashStr) {
   if (typeof hashStr === 'string') return splitHref(hashStr);
   const currentHash = typeof location !== 'undefined' ? location.hash : '';
   const { path, query } = splitHref(currentHash);
@@ -208,8 +214,19 @@ async function render() {
 }
 
 // ---------------------------------------------------------------- Quick exit
-function quickExit() {
+export function runQuickExitResets() {
   wipeAll();
+  import('./views/navigator.js').then((m) => m.resetNavigatorState?.()).catch(() => {});
+  import('./views/insuranceHelpers.js').then((m) => m.resetInsuranceState?.()).catch(() => {});
+  import('./views/guidedNavigator.js').then((m) => m.resetGuidedNavigatorState?.()).catch(() => {});
+  import('./views/medications.js').then((m) => m.resetMedicationsState?.()).catch(() => {});
+  import('./views/harmReduction.js').then((m) => m.resetHarmReductionState?.()).catch(() => {});
+  import('./views/health.js').then((m) => m.resetHealthState?.()).catch(() => {});
+  import('./views/states.js').then((m) => m.resetStatesState?.()).catch(() => {});
+}
+
+function quickExit() {
+  runQuickExitResets();
   if (!hasDom) return;
   document.title = 'Weather';
   document.body.replaceChildren();
@@ -251,7 +268,6 @@ if (hasDom) {
     if (!a) return;
     e.preventDefault();
     const { path, query } = splitHref(a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href'));
-    // Explicit navigation replaces any filters carried from an earlier link.
     carried = [...query.keys()].length ? { path, query } : null;
     const href = `#/${path}`;
     if (href === location.hash || (href === '#/' && !location.hash)) render();
@@ -262,7 +278,7 @@ if (hasDom) {
   const handleLinkPreload = (e) => {
     const a = e.target?.closest?.('a[href^="#/"]');
     if (!a) return;
-    const { path } = splitHref(a.getAttribute('href') || '');
+    const { path } = parseHash(a.getAttribute('href') || '');
     if (LAZY_LOADERS[path]) preloadRoute(path).catch(() => {});
   };
   document.addEventListener('pointerenter', handleLinkPreload, { capture: true, passive: true });

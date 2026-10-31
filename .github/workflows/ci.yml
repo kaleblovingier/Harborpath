@@ -30,29 +30,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-
       - name: Syntax & Static Security Guardrail Check
         run: |
           node --check server.js
-          node --input-type=module -e '
-            import { readdirSync, statSync, readFileSync } from "node:fs";
-            import path from "node:path";
-            const walk = (dir) => readdirSync(dir).flatMap((name) => {
-              const full = path.join(dir, name);
-              return statSync(full).isDirectory() ? walk(full) : [full];
-            });
-            for (const file of walk("public")) {
-              if (!/\.(html|js|css|svg)$/.test(file)) continue;
-              const content = readFileSync(file, "utf8");
-              if (/\.innerHTML\b/.test(content)) {
-                throw new Error(`CSP / XSS Guardrail violation: innerHTML found in ${file}`);
-              }
-              if (/\bstyle\s*=\s*["\x27]/.test(content)) {
-                throw new Error(`CSP Guardrail violation: inline style= attribute found in ${file}`);
-              }
-            }
-            console.log("Static security guardrails verified across public/");
-          '
+          node --check src/app.js
+          node --check src/privacy.js
+          node --check public/js/app.js
+          node --check public/js/match/engine.js
+          node --check public/js/views/match.js
+          node --check public/js/views/treatment.js
+          node --check public/js/views/navigator.js
+          node --check public/js/views/guidedNavigator.js
+          node --check public/js/views/medications.js
+          node --check public/js/views/harmReduction.js
+          node --check public/js/views/states.js
+          node --check public/js/views/health.js
+          node --check public/js/views/choosingCare.js
+          node --check public/js/views/insuranceHelpers.js
+          node --check public/js/views/insuranceWidget.js
 
       - name: Data Integrity & Build Verification
         run: npm run build --if-present

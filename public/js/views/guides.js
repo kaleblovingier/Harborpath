@@ -5,6 +5,7 @@ import { offlineControlCard } from './core.js';
 import { pageHeader, section, p, fine, ul, strong, resourceList, hotlineGrid, tocNav, emergencyCallout } from './common.js';
 import { choosingCareView, QUESTIONS, RED_FLAGS } from './choosingCare.js';
 
+// Choosing care guidance includes EKRA (18 U.S.C. § 220) anti-brokering and MHPAEA parity protections (see ./choosingCare.js).
 export { choosingCareView, QUESTIONS, RED_FLAGS };
 
 // ---------------------------------------------------------------- Overdose

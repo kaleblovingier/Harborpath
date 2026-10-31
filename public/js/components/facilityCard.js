@@ -137,7 +137,6 @@ export function treatmentCard(f, { headingLevel = 3, requestedCodes, labelFor } 
     ),
   );
 
-  const safeWebsite = safeHref(f.website);
   return h('article', { class: 'card facility', 'aria-labelledby': `f-${f.id}` },
     h('div', { class: 'facility-head' },
       h('div', null,
@@ -163,9 +162,9 @@ export function treatmentCard(f, { headingLevel = 3, requestedCodes, labelFor } 
         class: 'btn btn-small btn-secondary',
         'aria-label': t('card.hotlineLabel', 'Call 24/7 line for {name} at {phone}', { name: f.name, phone: f.hotline }),
       }),
-      safeWebsite && h('a', {
+      safeHref(f.website) && h('a', {
         class: 'btn btn-small btn-ghost',
-        href: safeWebsite,
+        href: safeHref(f.website),
         target: '_blank',
         rel: 'noopener noreferrer',
         'aria-label': `${t('common.website', 'Website')}${t('common.websiteFor', ' for {name} (opens in a new tab)', { name: f.name })}`,
@@ -220,7 +219,6 @@ export function tidyName(s) {
 export function healthCenterCard(c, { headingLevel = 3 } = {}) {
   const address = `${c.street}, ${c.city}, ${c.state} ${c.zip}`;
   const org = c.org ? tidyName(c.org) : null;
-  const safeWebsite = safeHref(c.website);
   return h('article', { class: 'card facility', 'aria-labelledby': `hc-${c.id}` },
     h('div', { class: 'facility-head' },
       h('div', null,
@@ -242,9 +240,9 @@ export function healthCenterCard(c, { headingLevel = 3 } = {}) {
         class: 'btn btn-small btn-primary',
         'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: c.name, phone: c.phone }),
       }),
-      safeWebsite && h('a', {
+      safeHref(c.website) && h('a', {
         class: 'btn btn-small btn-ghost',
-        href: safeWebsite,
+        href: safeHref(c.website),
         target: '_blank',
         rel: 'noopener noreferrer',
         'aria-label': `${t('common.website', 'Website')}${t('common.websiteFor', ' for {name} (opens in a new tab)', { name: c.name })}`,
@@ -348,7 +346,6 @@ export function providerCard(p, { headingLevel = 3 } = {}) {
   const address = formatAddress(p.address ?? p);
   const sub = p.alias || (p.org && p.org.toLowerCase() !== p.name.toLowerCase() ? tidyName(p.org) : null) || p.subname;
   const web = p.website || p.detailsUrl;
-  const safeWeb = safeHref(web);
   const chips = providerChips(p);
   const hasDetails = Boolean(p.servicesText || p.hours || p.serviceType);
 
@@ -390,9 +387,9 @@ export function providerCard(p, { headingLevel = 3 } = {}) {
         class: 'btn btn-small btn-primary',
         'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: tidyName(p.name), phone: p.phone }),
       }),
-      safeWeb && h('a', {
+      safeHref(web) && h('a', {
         class: 'btn btn-small btn-ghost',
-        href: safeWeb,
+        href: safeHref(web),
         target: '_blank',
         rel: 'noopener noreferrer',
         'aria-label': `${p.detailsUrl && !p.website ? t('providers.detailsLink', 'Facility details') : t('common.website', 'Website')}${t('common.websiteFor', ' for {name} (opens in a new tab)', { name: tidyName(p.name) })}`,
