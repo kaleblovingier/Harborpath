@@ -981,4 +981,22 @@ export default {
   'meds.regimen.title': 'Verificador de Seguridad de Polifarmacia y Combinación de Múltiples Sustancias',
   'meds.regimen.groupLabel': 'Seleccione sustancias o medicamentos en combinación',
   'meds.specialPopulations.title': 'Poblaciones Especiales y Situaciones Clínicas (Embarazo, Salud Hepática/Renal y Cirugía)',
+
+  // ---------------------------------------------------------------- Relaxed Near-Match & Accessibility (UX Upgrade)
+  'finder.activeFiltersRegion': 'Filtros de búsqueda activos',
+  'finder.filtersRegion': 'Filtros de búsqueda',
+  'finder.relaxedRegion': 'Coincidencias parciales más cercanas',
+  'finder.relaxedHeading': 'Sin coincidencia exacta para los {n} filtros — mostrando las coincidencias parciales más cercanas',
+  'finder.relaxedBody': 'Ningún centro dentro de {miles} millas registró los {n} filtros seleccionados a la vez. Estos centros cercanos coinciden con la mayoría de los filtros que eligió; llame antes para confirmar servicios adicionales.',
+  'card.matchedCount': 'Coincide con {matched} de {total} filtros seleccionados',
+  'card.nearMatchLabel': 'Resumen de coincidencia con los filtros seleccionados',
+  'card.filterMatched': 'Filtro coincidente: {label}',
+  'card.filterUnmatched': 'No registrado: {label}',
+  'card.copyLabel': 'Copiar detalles de {name}',
+  'card.callLabel': 'Llamar a {name} al {phone}',
+  'card.intakeLabel': 'Llamar a admisión de {name} al {phone}',
+  'card.hotlineLabel': 'Llamar a la línea 24/7 de {name} al {phone}',
+  'card.directionsLabel': 'Cómo llegar a {name} (abre un mapa en una pestaña nueva)',
+  'card.allServicesLabel': 'Todos los servicios registrados de {name}',
+  'providers.moreInfoLabel': 'Detalles y horarios del programa de {name}',
 };

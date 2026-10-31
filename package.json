@@ -10,6 +10,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "build": "node scripts/build-check.mjs",
+    "lint": "node scripts/build-check.mjs --lint",
     "test": "node --test",
     "data:build": "node scripts/build-data.mjs"
   }

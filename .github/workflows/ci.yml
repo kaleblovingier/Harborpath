@@ -2,7 +2,11 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - 'agent/**'
+      - 'feat/**'
+      - 'swarm/**'
   pull_request:
   workflow_dispatch:
 
@@ -11,14 +15,46 @@ permissions:
 
 jobs:
   test:
+    name: Validate & Test (Node.js ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node: [20, 22]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      # Zero runtime dependencies: nothing to install.
-      - run: npm test
+
+      - name: Syntax & Static Security Guardrail Check
+        run: |
+          node --check server.js
+          node --input-type=module -e '
+            import { readdirSync, statSync, readFileSync } from "node:fs";
+            import path from "node:path";
+            const walk = (dir) => readdirSync(dir).flatMap((name) => {
+              const full = path.join(dir, name);
+              return statSync(full).isDirectory() ? walk(full) : [full];
+            });
+            for (const file of walk("public")) {
+              if (!/\.(html|js|css|svg)$/.test(file)) continue;
+              const content = readFileSync(file, "utf8");
+              if (/\.innerHTML\b/.test(content)) {
+                throw new Error(`CSP / XSS Guardrail violation: innerHTML found in ${file}`);
+              }
+              if (/\bstyle\s*=\s*["\x27]/.test(content)) {
+                throw new Error(`CSP Guardrail violation: inline style= attribute found in ${file}`);
+              }
+            }
+            console.log("Static security guardrails verified across public/");
+          '
+
+      - name: Data Integrity & Build Verification
+        run: npm run build --if-present
+
+      - name: Full Unit, Clinical, i18n, and E2E Smoke Test Suite
+        run: npm test

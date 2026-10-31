@@ -1,43 +1,27 @@
 // Client for SAMHSA's FindTreatment.gov listing API, the federal directory of
 // state-licensed substance use and mental health treatment facilities.
 // Docs: FindTreatment.gov API Documentation v1.12 (BHSIS, Aug 2026).
-import { readLatLng } from './geo.js';
+import {
+  ACCREDITATION_CODES,
+  InputError,
+  KINDS,
+  PAYMENT_CODES,
+  RADII_MILES,
+  createTreatmentSearchSchema,
+} from './schema.js';
 import { clean, normalizeWebsite, stableId, toFiniteNumber } from './util.js';
 
+export { ACCREDITATION_CODES, InputError, KINDS, PAYMENT_CODES, RADII_MILES };
 export const UPSTREAM_URL = 'https://findtreatment.gov/locator/exportsAsJson/v2';
 export const PAGE_SIZE = 25;
-// 200 and 250 serve rural areas; FindTreatment.gov accepts any distance in meters
-// (checked live in October 2026 from Jordan, MT: 7 listings within 100 miles,
-// 52 within 200, 81 within 250).
-export const RADII_MILES = [5, 10, 25, 50, 100, 200, 250];
-export const KINDS = ['sa', 'mh'];
 const METERS_PER_MILE = 1609.344;
-const MAX_CODES = 8;
-const MAX_PAGE = 40;
 
-export class InputError extends Error {}
+const PAYMENT_CODE_SET = new Set(PAYMENT_CODES);
+const ACCREDITATION_CODE_SET = new Set(ACCREDITATION_CODES);
 
 /** Validate and normalize raw query-string params into a search request. */
 export function parseTreatmentQuery(params, taxonomy) {
-  const loc = readLatLng(params);
-  if (!loc) throw new InputError('A valid location is required.');
-
-  const radiusMiles = Number(params.get('radius') ?? 25);
-  if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
-
-  const kind = (params.get('kind') ?? 'sa').toLowerCase();
-  if (!KINDS.includes(kind)) throw new InputError('kind must be "sa" or "mh"');
-
-  const page = Number(params.get('page') ?? 1);
-  if (!Number.isInteger(page) || page < 1 || page > MAX_PAGE) throw new InputError('page is out of range');
-
-  const codes = [...new Set((params.get('codes') ?? '').split(',').map((c) => c.trim()).filter(Boolean))];
-  if (codes.length > MAX_CODES) throw new InputError(`At most ${MAX_CODES} filters at once`);
-  for (const c of codes) {
-    if (!taxonomy.hasService(c)) throw new InputError(`Unknown service code: ${c}`);
-  }
-
-  return { ...loc, radiusMiles, kind, page, codes: codes.sort() };
+  return createTreatmentSearchSchema(taxonomy).parse(params);
 }
 
 export function buildUpstreamUrl({ lat, lng, radiusMiles, kind, page, codes }) {
@@ -56,9 +40,9 @@ export function buildUpstreamUrl({ lat, lng, radiusMiles, kind, page, codes }) {
 
 /** Turn one upstream row into the shape the HarborPath client renders. */
 export function normalizeFacility(row, taxonomy) {
-  const codes = new Set();
+  const codes = new Set(Array.isArray(row?.codes) ? row.codes : []);
   const services = [];
-  for (const svc of Array.isArray(row.services) ? row.services : []) {
+  for (const svc of Array.isArray(row?.services) ? row.services : []) {
     const category = clean(svc.f2);
     const items = String(svc.f3 ?? '')
       .split(';')
@@ -66,39 +50,44 @@ export function normalizeFacility(row, taxonomy) {
       .filter(Boolean);
     if (!category || !items.length) continue;
     for (const item of items) {
-      const code = taxonomy.codeFor(category, item);
+      const code = taxonomy?.codeFor(category, item);
       if (code) codes.add(code);
     }
     services.push({
       category,
-      label: taxonomy.categoryName(category) ?? clean(svc.f1)?.replace(/\s*\(e\.g\.[^)]*\)/, '') ?? category,
+      label: taxonomy?.categoryName(category) ?? clean(svc.f1)?.replace(/\s*\(e\.g\.[^)]*\)/, '') ?? category,
       items,
     });
   }
 
   const address = {
-    street1: clean(row.street1),
-    street2: clean(row.street2),
-    city: clean(row.city),
-    state: clean(row.state),
-    zip: clean(row.zip),
+    street1: clean(row?.street1),
+    street2: clean(row?.street2),
+    city: clean(row?.city),
+    state: clean(row?.state),
+    zip: clean(row?.zip),
   };
-  const phone = clean(row.phone);
+  const phone = clean(row?.phone);
+  const sortedCodes = [...codes].sort();
+  const paymentCodes = sortedCodes.filter((c) => PAYMENT_CODE_SET.has(c));
+  const accreditationCodes = sortedCodes.filter((c) => ACCREDITATION_CODE_SET.has(c));
 
   return {
-    id: stableId(row.name1, address.street1, address.zip, phone),
-    name: clean(row.name1) ?? 'Unnamed facility',
-    subname: clean(row.name2),
+    id: stableId(row?.name1, address.street1, address.zip, phone),
+    name: clean(row?.name1) ?? 'Unnamed facility',
+    subname: clean(row?.name2),
     address,
     phone,
-    intake: clean(row.intake1),
-    hotline: clean(row.hotline1),
-    website: normalizeWebsite(row.website),
-    lat: toFiniteNumber(row.latitude),
-    lng: toFiniteNumber(row.longitude),
-    miles: toFiniteNumber(row.miles),
-    facilityType: clean(row.type_facility),
-    codes: [...codes].sort(),
+    intake: clean(row?.intake1),
+    hotline: clean(row?.hotline1),
+    website: normalizeWebsite(row?.website),
+    lat: toFiniteNumber(row?.latitude),
+    lng: toFiniteNumber(row?.longitude),
+    miles: toFiniteNumber(row?.miles),
+    facilityType: clean(row?.type_facility),
+    codes: sortedCodes,
+    paymentCodes,
+    accreditationCodes,
     services,
   };
 }

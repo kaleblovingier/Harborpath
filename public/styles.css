@@ -21,7 +21,7 @@
   --info-soft: #e8f0fa;
   --ok: #1f6b3a;
   --ok-soft: #e4f3e8;
-  --focus: #1f6fe0;
+  --focus: #0b5cab;
   --shadow: 0 1px 2px rgb(20 40 45 / 0.06), 0 4px 16px rgb(20 40 45 / 0.06);
   --radius: 14px;
   --radius-sm: 9px;
@@ -86,7 +86,7 @@ a { color: var(--brand); text-underline-offset: 0.18em; }
 a:hover { color: var(--brand-strong); }
 
 :focus-visible {
-  outline: 3px solid var(--focus);
+  outline: 3px solid var(--focus, #0b5cab);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -417,6 +417,44 @@ textarea.input {
 .empty .callout { text-align: left; }
 .empty-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
 
+/* ------------------------------------------------------------ Relaxed Near-Match Fallback */
+.relaxed-matches {
+  margin-bottom: 20px;
+}
+.relaxed-header {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+.near-match-banner {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--brand);
+  border-radius: var(--radius-sm);
+}
+.near-match-count {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.near-match-banner .chips {
+  margin-bottom: 0;
+}
+.badge-matched {
+  background: var(--ok-soft);
+  color: var(--ok);
+  border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent);
+  font-weight: 700;
+}
+.badge-unmatched {
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  font-weight: 500;
+}
+
 /* ------------------------------------------------------------ Reach & State Resources */
 .reach { text-align: left; }
 .reach .telehealth-list { margin-top: 14px; }
@@ -605,11 +643,44 @@ textarea.input {
 .service-list dt { font-weight: 700; font-size: 0.9rem; }
 .service-list dd { margin: 0 0 8px; font-size: 0.9rem; color: var(--muted); }
 
+@media (max-width: 640px) {
+  .active-filters {
+    gap: 8px;
+  }
+  .chip-removable {
+    min-height: 40px;
+    padding: 6px 12px;
+  }
+  .facility .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .facility .actions .btn {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+}
+
 .skeleton { min-height: 140px; }
 .sk { background: var(--surface-2); border-radius: 6px; height: 14px; margin-bottom: 12px; animation: pulse 1.4s ease-in-out infinite; }
 .sk-title { height: 20px; width: 55%; }
 .sk-line { width: 85%; }
 .sk-line.short { width: 40%; }
+.sk-badges,
+.sk-badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.sk-pill {
+  display: inline-block;
+  width: 84px;
+  height: 24px;
+  margin-bottom: 0;
+  border-radius: 999px;
+}
 @keyframes pulse { 50% { opacity: 0.5; } }
 
 /* ------------------------------------------------------------ Tabs */
