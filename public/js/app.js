@@ -67,6 +67,10 @@ export const LAZY_LOADERS = {
     viewCache.set('assessment', m.assessmentView);
     return m.assessmentView;
   }),
+  readiness: () => import('./views/readiness.js').then((m) => {
+    viewCache.set('readiness', m.readinessView);
+    return m.readinessView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -85,6 +89,7 @@ const ROUTE_TITLES = {
   health: () => t('route.health', 'Health services'),
   plan: () => t('route.plan', 'Safety plan & first visit'),
   assessment: () => t('route.assessment', 'Withdrawal assessment (COWS & CIWA-Ar)'),
+  readiness: () => t('route.readiness', 'Readiness & stages of change'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -113,6 +118,7 @@ export function preloadAllLazyViews() {
     preloadRoute('medications'),
     preloadRoute('plan'),
     preloadRoute('assessment'),
+    preloadRoute('readiness'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -231,8 +237,13 @@ export function runQuickExitResets() {
   import('./views/states.js').then((m) => m.resetStatesState?.()).catch(() => {});
   import('./views/plan.js').then((m) => m.resetPlanState?.()).catch(() => {});
   import('./views/assessment.js').then((m) => m.resetAssessmentState?.()).catch(() => {});
+  import('./views/readiness.js').then((m) => m.resetReadinessState?.()).catch(() => {});
   import('./components/sensoryMode.js').then((m) => m.resetSensoryMode?.()).catch(() => {});
   import('./components/emergencyDrawer.js').then((m) => m.closeEmergencyDrawer?.()).catch(() => {});
+  import('./components/stateLegalCard.js').then((m) => m.resetStateLegalCardState?.()).catch(() => {});
+  if (typeof document !== 'undefined') {
+    document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
+  }
 }
 
 function quickExit() {
@@ -311,6 +322,58 @@ if (hasDom) {
     toggle.setAttribute('aria-expanded', String(open));
     nav.classList.toggle('open', open);
   });
+
+  const sensoryBtn = document.getElementById('btn-sensory-mode');
+  if (sensoryBtn) {
+    import('./components/sensoryMode.js').then((m) => {
+      const updateSensory = (active) => {
+        sensoryBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        sensoryBtn.classList.toggle('active', active);
+      };
+      m.subscribeSensoryMode(updateSensory);
+      updateSensory(m.getSensoryMode());
+      sensoryBtn.addEventListener('click', () => {
+        m.toggleSensoryMode();
+      });
+    }).catch(() => {});
+  }
+
+  const emergencyBtn = document.getElementById('btn-emergency-drawer');
+  if (emergencyBtn) {
+    emergencyBtn.addEventListener('click', () => {
+      import('./components/emergencyDrawer.js').then((m) => {
+        if (m.isEmergencyDrawerOpen()) {
+          m.closeEmergencyDrawer();
+          emergencyBtn.setAttribute('aria-expanded', 'false');
+        } else {
+          m.openEmergencyDrawer(emergencyBtn);
+          emergencyBtn.setAttribute('aria-expanded', 'true');
+        }
+      }).catch(() => {});
+    });
+
+    if (typeof MutationObserver !== 'undefined') {
+      const syncEmergencyAria = () => {
+        const wrapper = document.getElementById('emergency-drawer-wrapper');
+        const isOpen = Boolean(wrapper && !wrapper.hidden && wrapper.classList.contains('open'));
+        emergencyBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      };
+      const drawerObserver = new MutationObserver(syncEmergencyAria);
+      const drawerWrapper = document.getElementById('emergency-drawer-wrapper');
+      if (drawerWrapper) {
+        drawerObserver.observe(drawerWrapper, { attributes: true, attributeFilter: ['hidden', 'class'] });
+      } else if (document.body) {
+        const bodyObserver = new MutationObserver(() => {
+          const w = document.getElementById('emergency-drawer-wrapper');
+          if (w) {
+            bodyObserver.disconnect();
+            drawerObserver.observe(w, { attributes: true, attributeFilter: ['hidden', 'class'] });
+          }
+        });
+        bodyObserver.observe(document.body, { childList: true });
+      }
+    }
+  }
 
   subscribe(updateSavedCount);
   updateSavedCount();

@@ -1,6 +1,7 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { stateHref, stateSections } from '../components/stateResources.js';
 import { telehealthList } from '../components/reach.js';
+import { stateLegalCard, resetStateLegalCardState } from '../components/stateLegalCard.js';
 import { regionsApi } from '../regionsApi.js';
 import { state } from '../state.js';
 import { t, getLang } from '../i18n.js';
@@ -231,6 +232,7 @@ export function resetStatesState() {
   statesViewState.filterQuery = '';
   statesViewState.plainLanguage = false;
   statesViewState.lastStateCode = '';
+  resetStateLegalCardState();
   if (typeof activeStatesReset === 'function') {
     activeStatesReset();
   }
@@ -497,6 +499,11 @@ export function stateDetailView({ code } = {}) {
         stateCode: cleanCode,
         plainLanguage: statesViewState.plainLanguage,
       });
+      const legalCard = stateLegalCard(data.legal, {
+        stateCode: cleanCode,
+        stateName: data.region?.name,
+        plainLanguage: statesViewState.plainLanguage,
+      });
       clear(container).append(
         pageHeader(
           t('regions.panelTitle', 'Resources in {state}', { state: data.region.name }),
@@ -504,6 +511,7 @@ export function stateDetailView({ code } = {}) {
           p(h('a', { href: '#/states' }, t('regions.backToStates', '← All states and territories'))),
         ),
         equityCard,
+        legalCard,
         ...stateSections(data, { telehealth }),
       );
     })
