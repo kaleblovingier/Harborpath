@@ -93,7 +93,7 @@ a:hover { color: var(--brand-strong); }
 
 .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 16px; }
 
-.visually-hidden {
+.visually-hidden, .sr-only {
   position: absolute !important;
   width: 1px; height: 1px;
   padding: 0; margin: -1px;
@@ -1155,7 +1155,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   border-left: 5px solid var(--warn);
 }
 
-.good-samaritan-card {
+.good-samaritan-card, .state-legal-card {
   border-left: 5px solid var(--danger);
   background: var(--danger-soft);
 }
@@ -1294,12 +1294,161 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 14px;
 }
 
+/* ------------------------------------------------------------ Header Sensory & Emergency Buttons */
+.btn-sensory-mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn-sensory-mode:hover {
+  background: var(--surface-2);
+  color: var(--brand-strong);
+}
+.btn-sensory-mode[aria-pressed="true"],
+.btn-sensory-mode.active {
+  background: var(--brand);
+  color: var(--on-brand);
+  border-color: var(--brand-strong);
+}
+
+.btn-emergency-drawer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger-strong);
+  font: 700 0.95rem var(--font);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+.btn-emergency-drawer:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+.btn-emergency-drawer[aria-expanded="true"] {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------ State Legal & Harm Reduction Protections */
+.state-legal-card {
+  border-left: 4px solid var(--brand);
+}
+.state-legal-notice {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin: 12px 0 16px;
+}
+.legal-block {
+  margin: 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.legal-block:last-of-type {
+  border-bottom: none;
+}
+.legal-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.legal-immunity-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+.legal-immunity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+.legal-immunity-item.is-protected {
+  border-color: var(--brand);
+}
+.legal-immunity-item.is-protected .icon {
+  color: var(--brand);
+}
+.legal-immunity-item.is-unprotected {
+  border-color: var(--muted);
+  opacity: 0.85;
+}
+.legal-immunity-item.is-unprotected .icon {
+  color: var(--warn);
+}
+.statute-box {
+  margin: 8px 0 4px;
+  padding: 6px 10px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--brand);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+}
+.statute-box cite {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--brand-strong);
+}
+.legal-statute-notes {
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+.legal-details-toggle {
+  margin: 8px 0;
+}
+.legal-statute-details-panel {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.legal-statute-details-panel[hidden] {
+  display: none !important;
+}
+.details-panel-title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,
   #self-check, #safety-plan > form, #safety-plan > .callout, .safety-plan-preview .actions,
   .safety-plan-preview .field-status, #asam-recommendation-card .actions, .state-panel .actions,
-  .wizard-nav, .match-filters, .compare-check, .match-summary .actions, .assessment-actions, .emergency-drawer-wrapper, .emergency-drawer-backdrop, .emergency-drawer-close, .emergency-drawer-footer, .sensory-mode-toggle, .btn-emergency-drawer { display: none !important; }
+  .wizard-nav, .match-filters, .compare-check, .match-summary .actions, .assessment-actions, .emergency-drawer-wrapper, .emergency-drawer-backdrop, .emergency-drawer-close, .emergency-drawer-footer, .sensory-mode-toggle, .btn-emergency-drawer, .btn-sensory-mode, .legal-details-toggle { display: none !important; }
   .why-verify > ul { display: block; }
   body { background: #fff; color: #000; font-size: 11pt; }
   .view { padding: 0; }
