@@ -781,6 +781,221 @@ textarea.input {
   }
 }
 
+/* ------------------------------------------------------------ Overdose Rescue Pacing Assistant */
+.overdose-pacer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: var(--shadow-sm);
+}
+.pacer-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.pacer-header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pacer-main-heading {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.pacer-header-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.pacer-stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.pacer-step-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font: 600 0.92rem/1.2 var(--font);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.pacer-step-tab:hover {
+  background: var(--surface-hover);
+  border-color: var(--brand);
+}
+.pacer-step-tab.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.pacer-step-tab.completed {
+  border-color: var(--success);
+}
+.pacer-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+.pacer-step-tab.active .pacer-step-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.pacer-step-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pacer-step-heading-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pacer-step-title {
+  margin: 4px 0 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+.pacer-step-headline {
+  margin: 0;
+  font-weight: 600;
+  color: var(--muted);
+}
+.pacer-instruction-list {
+  padding-left: 1.4em;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.5;
+}
+.pacer-btn {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 10px 18px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pacer-step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+.pacer-metronome-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pacer-metronome-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  font-size: 1.05rem;
+}
+.pacer-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pacer-breath-count-value {
+  font-size: 1.4rem;
+  color: var(--brand-strong);
+  font-variant-numeric: tabular-nums;
+}
+.pacer-metronome-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pacer-clock-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.pacer-clock-digits-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pacer-clock-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.pacer-elapsed-display {
+  margin: 0;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.pacer-clock-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+.pacer-second-dose-box {
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pacer-reduced-motion .pacer-circle {
+  transition: none !important;
+  transform: none !important;
+}
+.pacer-emergency-call-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+}
+.pacer-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
 /* ------------------------------------------------------------ Guides */
 .toc { margin: 8px 0 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .toc-title { font-weight: 700; margin-bottom: 4px; }
