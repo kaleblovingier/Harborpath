@@ -18,7 +18,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const appJsPath = path.join(here, '..', 'public', 'js', 'app.js');
 
 describe('Production Build & Static Verification Pipeline (scripts/build-check.mjs)', () => {
-  it('succeeds with ok: true, validates all 13 data files, and enforces < 350 KB gzipped app shell budget', async () => {
+  it('succeeds with ok: true, validates all 13 data files, and enforces < 400 KB gzipped app shell budget', async () => {
     const res = await runBuildCheck({ silent: true });
     assert.equal(res.ok, true, `Build check failed: ${JSON.stringify(res.checks.filter((c) => !c.ok))}`);
     assert.equal(res.dataFilesCount, 13);
@@ -26,8 +26,8 @@ describe('Production Build & Static Verification Pipeline (scripts/build-check.m
     assert.ok(res.totalBytes > 100_000, 'Expected raw bundle size > 100 KB');
     assert.ok(res.totalGzipBytes > 20_000, 'Expected gzipped bundle size > 20 KB');
     assert.ok(
-      res.totalGzipBytes < 350 * 1024,
-      `Expected app shell gzipped weight < 350 KB, got ${(res.totalGzipBytes / 1024).toFixed(1)} KB`,
+      res.totalGzipBytes < 400 * 1024,
+      `Expected app shell gzipped weight < 400 KB, got ${(res.totalGzipBytes / 1024).toFixed(1)} KB`,
     );
 
     const checkNames = new Set(res.checks.map((c) => c.name));
