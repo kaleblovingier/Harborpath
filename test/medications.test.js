@@ -9,6 +9,12 @@ import {
   REGIMEN_AGENTS,
   SPECIAL_POPULATIONS_PHARM,
   evaluateRegimenSafety,
+  evaluatePolypharmacyRegimen,
+  getMedicationsState,
+  resetMedicationsState,
+  NALTREXONE_WASHOUT_GUIDANCE,
+  NON_OPIOID_PAIN_ALTERNATIVES,
+  calculateNaltrexoneWashout,
   filterMedications,
   filterInteractions,
   medicationsView,
@@ -376,3 +382,162 @@ describe('REGIMEN_AGENTS, evaluateRegimenSafety() & SPECIAL_POPULATIONS_PHARM', 
   });
 });
 
+describe('evaluatePolypharmacyRegimen, Ephemeral State & Naltrexone Washout Engine', () => {
+  it('exports evaluatePolypharmacyRegimen with identical or enhanced results compared to evaluateRegimenSafety', () => {
+    assert.equal(typeof evaluatePolypharmacyRegimen, 'function');
+    assert.equal(evaluateRegimenSafety, evaluatePolypharmacyRegimen);
+
+    // Quadruple depressant synergy: Opioid + Benzo + Alcohol + Gabapentin
+    const quad = evaluatePolypharmacyRegimen(['opioids_fentanyl', 'benzos_sedatives', 'alcohol', 'gabapentinoids']);
+    assert.equal(quad.riskLevel, 'critical');
+    assert.equal(quad.depressantCount, 4);
+    assert.ok(quad.depressantScore >= 7.0);
+    assert.ok(quad.alerts.some((a) => a.id === 'triple-depressant-synergy'));
+    assert.ok(quad.alerts.some((a) => a.id === 'quadruple-depressant-synergy'));
+    assert.ok(quad.actionSteps.some((s) => /renal function|kidney/i.test(s)));
+    assert.ok(quad.actionSteps.some((s) => /FDA Boxed Warning|withhold/i.test(s)));
+
+    // Alpha-2 rebound alert for Xylazine / Medetomidine
+    const tranq = evaluatePolypharmacyRegimen(['opioids_fentanyl', 'xylazine_medetomidine']);
+    assert.equal(tranq.alpha2ReboundRisk, true);
+    assert.ok(tranq.alerts.some((a) => a.id === 'xylazine-alpha2-rebound-alert'));
+    assert.ok(tranq.actionSteps.some((s) => /clonidine|tizanidine|dexmedetomidine/i.test(s)));
+    assert.ok(tranq.actionSteps.some((s) => /wound care|ulcer/i.test(s)));
+
+    // Accepts substance aliases and objects
+    const aliasRes = evaluatePolypharmacyRegimen(['fentanyl', 'xanax', 'alcohol']);
+    assert.equal(aliasRes.riskLevel, 'critical');
+    assert.equal(aliasRes.depressantCount, 3);
+
+    const objRes = evaluatePolypharmacyRegimen([{ id: 'methadone' }, { id: 'qtc_meds' }]);
+    assert.equal(objRes.riskLevel, 'high');
+    assert.ok(objRes.alerts.some((a) => a.id === 'methadone-qtc-cyp-synergy'));
+  });
+
+  it('exports NALTREXONE_WASHOUT_GUIDANCE and calculateNaltrexoneWashout with correct clinical timelines', () => {
+    assert.ok(Array.isArray(NALTREXONE_WASHOUT_GUIDANCE));
+    assert.equal(NALTREXONE_WASHOUT_GUIDANCE.length, 4);
+
+    // Fentanyl washout requires 10-14+ days due to lipophilicity
+    const fent = calculateNaltrexoneWashout('fentanyl');
+    assert.equal(fent.opioidId, 'fentanyl');
+    assert.equal(fent.minDays, 10);
+    assert.equal(fent.maxDays, 14);
+    assert.match(fent.washoutWindow, /10–14\+ days/);
+    assert.match(fent.lipophilicity, /adipose|fat/i);
+    assert.ok(fent.testingChecklist.length >= 2);
+
+    // Short-acting requires 7-10 days
+    const shortAct = calculateNaltrexoneWashout('short_acting');
+    assert.equal(shortAct.minDays, 7);
+    assert.equal(shortAct.maxDays, 10);
+
+    // Methadone requires 10-14+ days
+    const meth = calculateNaltrexoneWashout('methadone');
+    assert.equal(meth.minDays, 10);
+    assert.equal(meth.maxDays, 14);
+
+    // Buprenorphine requires 7-10 days (30+ days depot)
+    const bup = calculateNaltrexoneWashout('buprenorphine');
+    assert.equal(bup.minDays, 7);
+    assert.equal(bup.maxDays, 10);
+    assert.match(bup.washoutWindow, /30\+/);
+
+    // NON_OPIOID_PAIN_ALTERNATIVES covers all 4 multimodal categories
+    assert.ok(Array.isArray(NON_OPIOID_PAIN_ALTERNATIVES));
+    assert.equal(NON_OPIOID_PAIN_ALTERNATIVES.length, 4);
+    assert.ok(NON_OPIOID_PAIN_ALTERNATIVES.some((p) => /Acetaminophen/i.test(p.agents)));
+    assert.ok(NON_OPIOID_PAIN_ALTERNATIVES.some((p) => /Nerve Blocks/i.test(p.category)));
+    assert.ok(NON_OPIOID_PAIN_ALTERNATIVES.some((p) => /Ketamine/i.test(p.agents)));
+  });
+
+  it('maintains getMedicationsState() and resetMedicationsState() strictly in browser RAM', () => {
+    resetMedicationsState();
+    const initial = getMedicationsState();
+    assert.equal(initial.activeCategory, 'all');
+    assert.equal(initial.activeSubstance, 'all');
+    assert.equal(initial.plainLanguage, false);
+    assert.equal(initial.washoutOpioid, 'fentanyl');
+    assert.deepEqual(initial.selectedRegimen, []);
+  });
+
+  it('renders naltrexone washout calculator and printable handout buttons in medicationsView DOM', () => {
+    class FakeNode {
+      constructor(tag) {
+        this.tagName = tag.toUpperCase();
+        this.className = '';
+        this.id = '';
+        this.dataset = {};
+        this.attributes = new Map();
+        this.children = [];
+        this.listeners = new Map();
+        this.textContent = '';
+        this.value = '';
+      }
+      setAttribute(k, v) {
+        this.attributes.set(k, String(v));
+        if (k === 'id') this.id = String(v);
+        if (k === 'class') this.className = String(v);
+      }
+      getAttribute(k) { return this.attributes.get(k) ?? null; }
+      removeAttribute(k) { this.attributes.delete(k); }
+      addEventListener(type, fn) { this.listeners.set(type, fn); }
+      append(...nodes) {
+        for (const n of nodes) {
+          if (n instanceof FakeNode) {
+            n.parentNode = this;
+            this.children.push(n);
+          } else {
+            const tNode = new FakeNode('#text');
+            tNode.textContent = String(n);
+            tNode.parentNode = this;
+            this.children.push(tNode);
+          }
+        }
+      }
+      get firstChild() { return this.children[0] ?? null; }
+    }
+    FakeNode.prototype.remove = function remove() {
+      if (!this.parentNode) return;
+      const i = this.parentNode.children.indexOf(this);
+      if (i !== -1) this.parentNode.children.splice(i, 1);
+    };
+
+    const prevNode = globalThis.Node;
+    const prevDoc = globalThis.document;
+    globalThis.Node = FakeNode;
+    globalThis.document = {
+      createElement: (tag) => new FakeNode(tag),
+      createElementNS: (_ns, tag) => new FakeNode(tag),
+      getElementById: () => null,
+    };
+
+    try {
+      const root = medicationsView();
+      const allNodes = [];
+      const walk = (n) => {
+        allNodes.push(n);
+        for (const c of n.children || []) walk(c);
+      };
+      walk(root);
+
+      const washoutSec = allNodes.find((n) => n.id === 'naltrexone-washout');
+      assert.ok(washoutSec, 'Expected #naltrexone-washout section in medicationsView');
+
+      const washoutOutput = allNodes.find((n) => n.id === 'naltrexone-washout-output');
+      assert.ok(washoutOutput, 'Expected #naltrexone-washout-output in medicationsView');
+
+      const printNaltrexone = allNodes.find((n) => n.id === 'print-naltrexone-handout-btn');
+      assert.ok(printNaltrexone, 'Expected #print-naltrexone-handout-btn button');
+
+      const printBernese = allNodes.find((n) => n.id === 'print-bernese-handout-btn');
+      assert.ok(printBernese, 'Expected #print-bernese-handout-btn button');
+
+      const plainToggle = allNodes.find((n) => n.id === 'meds-plain-language-toggle');
+      assert.ok(plainToggle, 'Expected #meds-plain-language-toggle button');
+    } finally {
+      globalThis.Node = prevNode;
+      globalThis.document = prevDoc;
+    }
+  });
+});
