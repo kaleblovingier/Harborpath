@@ -833,6 +833,22 @@ tbody th { font-weight: 700; min-width: 200px; }
 .excluded summary { cursor: pointer; font-weight: 700; }
 .action-plan h2 { margin-top: 0; }
 
+/* ------------------------------------------------------------ Equity, Xylazine & Printable Clinical Handouts */
+.print-handout,
+.verification-script-card,
+.asam-summary-card,
+.xylazine-action-card,
+.rural-territory-reach-card {
+  border-left: 4px solid var(--brand);
+  margin-bottom: 18px;
+}
+.xylazine-action-card {
+  border-left-color: var(--danger);
+}
+.plain-language-box {
+  border-left: 4px solid var(--brand);
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button,
@@ -848,4 +864,22 @@ tbody th { font-weight: 700; min-width: 200px; }
   .safety-plan-preview-body dd { color: #000; }
   a { color: #000; }
   .ext::after { content: ""; }
+  .no-print, .quick-exit { display: none !important; }
+  .print-handout, .verification-script-card, .asam-summary-card, .xylazine-action-card, .rural-territory-reach-card {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1.5pt solid #000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  a.tel[href^="tel:"]::after { content: " (" attr(href) ")"; font-size: 9pt; }
+  .print-handout a[href^="https://"]::after,
+  .verification-script-card a[href^="https://"]::after,
+  .asam-summary-card a[href^="https://"]::after,
+  .xylazine-action-card a[href^="https://"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+    word-break: break-all;
+  }
 }

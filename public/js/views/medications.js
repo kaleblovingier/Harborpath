@@ -1,6 +1,42 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+
+const tr = (en, es) => (getLang() === 'es' ? es : en);
+
+const medicationsState = {
+  activeCategory: 'all',
+  activeSubstance: 'all',
+  medicationSearch: '',
+  interactionSearch: '',
+  selectedRegimen: new Set(),
+  plainLanguage: false,
+};
+
+let activeMedicationsReset = null;
+
+export function getMedicationsState() {
+  return {
+    activeCategory: medicationsState.activeCategory,
+    activeSubstance: medicationsState.activeSubstance,
+    medicationSearch: medicationsState.medicationSearch,
+    interactionSearch: medicationsState.interactionSearch,
+    selectedRegimen: [...medicationsState.selectedRegimen],
+    plainLanguage: Boolean(medicationsState.plainLanguage),
+  };
+}
+
+export function resetMedicationsState() {
+  medicationsState.activeCategory = 'all';
+  medicationsState.activeSubstance = 'all';
+  medicationsState.medicationSearch = '';
+  medicationsState.interactionSearch = '';
+  medicationsState.selectedRegimen.clear();
+  medicationsState.plainLanguage = false;
+  if (typeof activeMedicationsReset === 'function') {
+    activeMedicationsReset();
+  }
+}
 
 export const MEDICATION_CATEGORIES = [
   { id: 'all', label: 'All medications' },
@@ -976,6 +1012,65 @@ export function medicationsView({ query } = {}) {
   let activeCategory = initialCategory;
   let activeSubstance = initialSubstance;
   let interactionSearch = '';
+  medicationsState.activeCategory = activeCategory;
+  medicationsState.activeSubstance = activeSubstance;
+  medicationsState.medicationSearch = '';
+  medicationsState.interactionSearch = '';
+  medicationsState.selectedRegimen.clear();
+
+  const plainSummarySlot = h('div', { id: 'meds-plain-summary-slot' });
+  const plainToggleBtn = h('button', {
+    type: 'button',
+    id: 'meds-plain-language-toggle',
+    class: 'preset',
+    'aria-pressed': String(Boolean(medicationsState.plainLanguage)),
+    onclick: () => {
+      medicationsState.plainLanguage = !medicationsState.plainLanguage;
+      plainToggleBtn.setAttribute('aria-pressed', String(medicationsState.plainLanguage));
+      if (medicationsState.plainLanguage) plainToggleBtn.setAttribute('aria-current', 'true');
+      else plainToggleBtn.removeAttribute('aria-current');
+      renderPlainSummary();
+      announce(medicationsState.plainLanguage
+        ? tr('Plain-language summary enabled.', 'Resumen en lenguaje sencillo activado.')
+        : tr('Standard clinical detail enabled.', 'Detalle clínico estándar activado.'));
+    },
+  }, icon('info'), ' ', tr('Plain-language summary (6th-grade reading level)', 'Resumen en lenguaje sencillo'));
+
+  function renderPlainSummary() {
+    clear(plainSummarySlot);
+    if (!medicationsState.plainLanguage) return;
+    plainSummarySlot.append(
+      h('div', {
+        class: 'callout callout-info plain-language-box',
+        role: 'region',
+        'aria-label': tr('Plain-language medication summary', 'Resumen de medicamentos en lenguaje sencillo'),
+      },
+        h('p', { class: 'callout-title' },
+          icon('pill'),
+          tr('In plain words: How addiction medications & the "Bernese Method" work', 'En palabras sencillas: Cómo funcionan los medicamentos y el "Método Bernese"')),
+        ul([
+          [
+            strong(tr('Buprenorphine (Suboxone, Sublocade, Brixadi): ', 'Buprenorfina (Suboxone, Sublocade, Brixadi): ')),
+            tr('Calms opioid cravings and withdrawal and cuts fatal overdose risk in half. Any doctor, nurse practitioner, or telehealth clinic can prescribe it.', 'Calma los antojos y la abstinencia de opioides y reduce a la mitad el riesgo de sobredosis mortal.'),
+          ],
+          [
+            strong(tr('Why street fentanyl needs a "Low-Dose / Bernese Method" start: ', 'Por qué el fentanilo callejero requiere el "Método Bernese" de dosis bajas: ')),
+            tr('Street fentanyl hides in body fat for days. Taking a full Suboxone film too soon pushes fentanyl off your brain receptors all at once and makes you violently sick. With a doctor’s Low-Dose ("Bernese Method") schedule, you start with tiny crumbs (0.25–0.5 mg) while slowly stopping fentanyl—so you switch over gently without getting sick.', 'El fentanilo se acumula en la grasa corporal. Con el Método Bernese supervisado por un médico, se empieza con microdosis (0.25–0.5 mg) para hacer la transición sin abstinencia brusca.'),
+          ],
+          [
+            strong(tr('Methadone (at OTP clinics): ', 'Metadona (en clínicas OTP): ')),
+            tr('Can be started on Day 1 with zero risk of sudden precipitated withdrawal—often the strongest match for heavy fentanyl use. Under 2024 federal rules, clinics can give take-home bottles much faster.', 'Se puede iniciar desde el primer día sin riesgo de abstinencia precipitada.'),
+          ],
+          [
+            strong(tr('Alcohol medications (Naltrexone & Acamprosate): ', 'Medicamentos para el alcohol (Naltrexona y Acamprosato): ')),
+            tr('Naltrexone (daily pill or monthly shot) lowers the urge to drink and is safe to start even if you are still drinking. Acamprosate calms the brain after you stop drinking and is safe for people with liver disease.', 'La naltrexona reduce las ganas de beber y el acamprosato protege el cerebro y es seguro en enfermedad hepática.'),
+          ],
+        ]),
+      ),
+    );
+  }
+
+  renderPlainSummary();
 
   const medPanel = h('div', {
     class: 'results-list',
@@ -986,6 +1081,7 @@ export function medicationsView({ query } = {}) {
   const catButtons = [];
 
   function renderMedications(shouldAnnounce = false) {
+    medicationsState.activeCategory = activeCategory;
     for (const btn of catButtons) {
       const selected = btn.dataset.category === activeCategory;
       btn.setAttribute('aria-selected', String(selected));
@@ -1055,6 +1151,8 @@ export function medicationsView({ query } = {}) {
   });
 
   function renderInteractions(shouldAnnounce = false) {
+    medicationsState.activeSubstance = activeSubstance;
+    medicationsState.interactionSearch = interactionSearch;
     for (const b of subButtons) {
       const on = b.dataset.substance === activeSubstance;
       if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
@@ -1119,6 +1217,7 @@ export function medicationsView({ query } = {}) {
   });
 
   function renderRegimenChecker(shouldAnnounce = false) {
+    medicationsState.selectedRegimen = new Set(selectedRegimen);
     for (const pill of regimenPills) {
       const checked = selectedRegimen.has(pill.dataset.agentId);
       pill.setAttribute('aria-pressed', String(checked));
@@ -1208,12 +1307,36 @@ export function medicationsView({ query } = {}) {
 
   renderRegimenChecker(false);
 
+  activeMedicationsReset = () => {
+    activeCategory = 'all';
+    activeSubstance = 'all';
+    interactionSearch = '';
+    ixSearchInput.value = '';
+    selectedRegimen.clear();
+    plainToggleBtn.setAttribute('aria-pressed', 'false');
+    plainToggleBtn.removeAttribute('aria-current');
+    renderPlainSummary();
+    renderMedications(false);
+    renderInteractions(false);
+    renderRegimenChecker(false);
+  };
+
   return h('div', { class: 'view view-medications' },
     pageHeader(
       t('meds.title', 'Medications & Pharmacology Guide'),
       t('meds.lede', 'Plain-language clinical pharmacist guidance on FDA-approved medications for opioid, alcohol, stimulant, and nicotine use disorders, low-dose fentanyl transition protocols, overdose reversal science, and drug interactions.'),
     ),
     emergencyCallout(),
+    h('div', { class: 'actions no-print' },
+      plainToggleBtn,
+      h('button', {
+        type: 'button',
+        class: 'btn btn-secondary btn-small',
+        onclick: () => window.print(),
+      }, icon('printer'), tr('Print Bernese Method & Pharmacist Handout', 'Imprimir folleto de Método Bernese y preguntas')),
+      fine(tr('Selections and reading mode stay in your browser’s memory and are cleared on Quick exit.', 'Las selecciones y el modo de lectura se mantienen en la memoria de su navegador y se borran con Salida rápida.')),
+    ),
+    plainSummarySlot,
     tocNav([
       ['quick-find', 'Find medication providers'],
       ['profiles', 'Medication guide'],
@@ -1283,6 +1406,14 @@ export function medicationsView({ query } = {}) {
         ),
       ),
       fine('Clinical note: Every person’s tolerance and supply differ. This table is an educational example from peer-reviewed addiction medicine protocols—work with a prescriber, telehealth bridge clinic, or pharmacist to tailor your exact schedule and get non-opioid comfort medications (clonidine, lofexidine, ondansetron, hydroxyzine, trazodone).'),
+      p({ class: 'actions no-print' },
+        h('button', {
+          type: 'button',
+          id: 'print-bernese-handout-btn',
+          class: 'btn btn-secondary btn-small',
+          onclick: () => window.print(),
+        }, icon('printer'), tr('Print Low-Dose Micro-Induction ("Bernese Method") & Pharmacist Handout', 'Imprimir folleto de microinducción ("Método Bernese") y preguntas')),
+      ),
     ),
 
     section('otp-rules', t('meds.otp.title', 'Methadone Access & the 2024 SAMHSA 42 CFR Part 8 Final Rule'),

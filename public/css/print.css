@@ -1,0 +1,179 @@
+/* HarborPath Clinical Handout & Print Stylesheet (public/css/print.css)
+ * Styles printable clinical handouts:
+ * - .print-handout
+ * - .verification-script-card
+ * - .asam-summary-card
+ * - .xylazine-action-card
+ * - .rural-territory-reach-card
+ * - .safety-plan-preview
+ */
+
+.print-handout,
+.verification-script-card,
+.asam-summary-card,
+.xylazine-action-card,
+.rural-territory-reach-card {
+  position: relative;
+  border: 1.5px solid var(--border);
+  border-left: 4px solid var(--brand);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 18px 20px;
+  margin: 16px 0;
+}
+
+.xylazine-action-card {
+  border-left-color: var(--danger);
+}
+
+.plain-language-box {
+  border-left: 4px solid var(--brand);
+}
+
+@media print {
+  @page {
+    margin: 0.55in;
+  }
+
+  /* Hide navigation chrome, interactive filter bars, quick-exit buttons, and non-print controls */
+  .safety-bar,
+  .quick-exit,
+  .site-header,
+  .site-nav,
+  .nav-toggle,
+  .lang-switch,
+  [data-lang-switch],
+  .site-footer,
+  .skip-link,
+  .filters,
+  .finder-search,
+  .presets,
+  .tabs,
+  .toc,
+  .saved-tools,
+  .persist,
+  .results-more,
+  .no-print,
+  .actions .btn-ghost,
+  .actions button,
+  .callout-emergency .actions,
+  .timer button,
+  #self-check,
+  #safety-plan > form,
+  #safety-plan > .callout,
+  .safety-plan-preview .actions,
+  .safety-plan-preview .field-status,
+  #asam-recommendation-card .actions,
+  .state-panel .actions,
+  .wizard-nav,
+  .match-filters,
+  .compare-check,
+  .match-summary .actions,
+  #regimen-safety-checker .presets,
+  #interactions .finder-search {
+    display: none !important;
+  }
+
+  /* Crisp black-on-white clinical typography */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .wrap,
+  .view,
+  .view-prose,
+  .view-medications {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  h1, h2, h3, h4, dt, th, strong {
+    color: #000000 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p, li, dd, td, .lede, .fine, .help, .subname {
+    color: #000000 !important;
+  }
+
+  /* Clinical handout cards: avoid awkward page splits */
+  .card,
+  .step,
+  .callout,
+  .print-handout,
+  .verification-script-card,
+  .asam-summary-card,
+  .xylazine-action-card,
+  .rural-territory-reach-card,
+  .safety-plan-preview,
+  .table-wrap,
+  tr {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .print-handout,
+  .verification-script-card,
+  .asam-summary-card,
+  .xylazine-action-card,
+  .rural-territory-reach-card,
+  .safety-plan-preview {
+    border: 1.5pt solid #000000 !important;
+    padding: 12pt 14pt !important;
+    margin: 10pt 0 !important;
+  }
+
+  .table-wrap {
+    overflow: visible !important;
+    border: 1pt solid #000000 !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 9.5pt;
+  }
+
+  th,
+  td {
+    border: 0.75pt solid #333333 !important;
+    padding: 6pt 8pt !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
+  /* Ensure phone numbers and external URLs remain clearly visible on paper */
+  a {
+    color: #000000 !important;
+    text-decoration: underline;
+  }
+
+  .ext::after {
+    content: "";
+  }
+
+  a.tel[href^="tel:"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    font-weight: 600;
+  }
+
+  .print-handout a[href^="https://"]::after,
+  .verification-script-card a[href^="https://"]::after,
+  .asam-summary-card a[href^="https://"]::after,
+  .xylazine-action-card a[href^="https://"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+    word-break: break-all;
+  }
+}
