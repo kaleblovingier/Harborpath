@@ -9,6 +9,7 @@ import { createHealthCenterIndex } from './healthCenters.js';
 import { createProviderSearch } from './providers.js';
 import { createRegions } from './regions.js';
 import { createStateDirectory } from './stateResources.js';
+import { filterStatesByProtection, getJurisdictionSummary, getLegalProtections } from './legalRegistry.js';
 import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
 import { createVirtualProviders } from './virtualProviders.js';
@@ -308,6 +309,38 @@ export function createApp({
           const resources = stateDirectory().get(params.get('code'));
           if (!resources) return json(req, res, 404, { error: 'Unknown state or territory' });
           return json(req, res, 200, resources);
+        }
+        case '/api/legal': {
+          const isFts = params.get('fts') === '1' || params.get('fts') === 'true';
+          const isSsp = params.get('ssp') === '1' || params.get('ssp') === 'true';
+          const isSummary = params.get('summary') === '1' || params.get('summary') === 'true';
+
+          if (isSummary) {
+            const rawState = params.get('state');
+            const summary = rawState ? getJurisdictionSummary(rawState) : null;
+            if (!summary) {
+              return json(req, res, 400, { error: 'Invalid or missing state code' });
+            }
+            return json(req, res, 200, summary);
+          }
+
+          if (isFts || isSsp) {
+            const filters = {};
+            if (isFts) filters.ftsLegal = true;
+            if (isSsp) filters.sspLegal = true;
+            return json(req, res, 200, filterStatesByProtection(filters));
+          }
+
+          if (params.has('state')) {
+            const rawState = params.get('state');
+            const protections = rawState ? getLegalProtections(rawState) : null;
+            if (!protections) {
+              return json(req, res, 400, { error: 'Invalid or missing state code' });
+            }
+            return json(req, res, 200, protections);
+          }
+
+          return json(req, res, 400, { error: 'Invalid or missing state code' });
         }
         case '/api/telehealth': {
           const query = parseTelehealthQuery(params, { taxonomy, anchorFor: regions().anchor });
