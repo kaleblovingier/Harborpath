@@ -13,7 +13,11 @@
 .asam-summary-card,
 .xylazine-action-card,
 .naloxone-action-card,
-.rural-territory-reach-card {
+.rural-territory-reach-card,
+.emergency-drawer-card,
+.naloxone-pacing-card,
+.overdose-matrix-card,
+.good-samaritan-card {
   position: relative;
   border: 1.5px solid var(--border);
   border-left: 4px solid var(--brand);
@@ -42,6 +46,12 @@
 
   /* Hide navigation chrome, interactive filter bars, quick-exit buttons, and non-print controls */
   .safety-bar,
+  .emergency-drawer-wrapper,
+  .emergency-drawer-backdrop,
+  .emergency-drawer-close,
+  .emergency-drawer-footer,
+  .sensory-mode-toggle,
+  .btn-emergency-drawer,
   .quick-exit,
   .site-header,
   .site-nav,
