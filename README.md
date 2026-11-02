@@ -29,9 +29,9 @@ Searching for substance use help is sensitive health information, so HarborPath:
 - loads **no third-party scripts, fonts, maps, analytics, or cookies**, enforced by an identical `default-src 'self'` Content Security Policy in `src/app.js` and `vercel.json`;
 - **rounds every location to about 1 km** before it leaves the browser and again on the server, and never writes locations to logs, storage, or the URL;
 - geocodes ZIP codes and cities (across all 50 states, DC, Puerto Rico, Guam, USVI, American Samoa, and the Northern Mariana Islands) **on its own server** from Census data, so no third-party geocoder sees what people type;
-- evaluates the **ASAM Care Navigator**, **Phase 1 Population Pathways**, **Insurance Compatibility Engine**, **Guided Navigator**, and **Personal Safety Plan** in browser RAM without transmitting answers to any server;
+- evaluates the **ASAM Care Navigator**, **Phase 1 Population Pathways**, **Insurance Compatibility Engine**, **Guided Navigator**, **Personal Safety Plan**, **Perinatal Care**, **Veterans Health Care**, **Adolescent Legal Care**, and **Poly-Substance Clinical Differential** in browser RAM without transmitting answers to any server;
 - keeps saved places and offline copies off by default unless the visitor explicitly opts in on their device;
-- has a **Quick exit** (button or `Esc` twice) that deterministically resets in-RAM state (`wipeAll()`, `resetNavigatorState`, `resetInsuranceState`, `resetGuidedNavigatorState`), clears language preferences and any offline Service Worker cache, and occupies a single back-history entry.
+- has a **Quick exit** (button or `Esc` twice) that deterministically resets in-RAM state across all stateful modules (`runQuickExitResets()`), clears language preferences and any offline Service Worker cache, and occupies a single back-history entry.
 
 ## Run it
 

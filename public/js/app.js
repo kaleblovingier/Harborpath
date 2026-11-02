@@ -75,13 +75,21 @@ export const LAZY_LOADERS = {
     viewCache.set('perinatal', m.perinatalView);
     return m.perinatalView;
   }),
+  veterans: () => import('./views/veterans.js').then((m) => {
+    viewCache.set('veterans', m.veteransView);
+    return m.veteransView;
+  }),
+  adolescent: () => import('./views/adolescentCare.js').then((m) => {
+    viewCache.set('adolescent', m.adolescentCareView);
+    return m.adolescentCareView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
   'choosing-care': () => loadGuidesModule().then((m) => m.choosingCareView),
 };
 
-const ROUTE_TITLES = {
+export const ROUTE_TITLES = {
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
   match: () => t('route.match', 'Find care that fits'),
   treatment: () => t('route.treatment', 'Find treatment'),
@@ -95,6 +103,8 @@ const ROUTE_TITLES = {
   assessment: () => t('route.assessment', 'Withdrawal assessment (COWS & CIWA-Ar)'),
   readiness: () => t('route.readiness', 'Readiness & stages of change'),
   perinatal: () => t('route.perinatal', 'Perinatal care & pregnancy support'),
+  veterans: () => t('route.veterans', 'Veterans & military health care'),
+  adolescent: () => t('route.adolescent', 'Adolescent care & legal guide'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -125,6 +135,8 @@ export function preloadAllLazyViews() {
     preloadRoute('assessment'),
     preloadRoute('readiness'),
     preloadRoute('perinatal'),
+    preloadRoute('veterans'),
+    preloadRoute('adolescent'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -249,8 +261,12 @@ export function runQuickExitResets() {
   import('./components/stateLegalCard.js').then((m) => m.resetStateLegalCardState?.()).catch(() => {});
   import('./components/overdosePacing.js').then((m) => m.resetOverdosePacer?.()).catch(() => {});
   import('./views/perinatal.js').then((m) => m.resetPerinatalState?.()).catch(() => {});
+  import('./views/veterans.js').then((m) => m.resetVeteransState?.()).catch(() => {});
+  import('./views/adolescentCare.js').then((m) => m.resetAdolescentState?.()).catch(() => {});
+  import('./components/clinicalDifferential.js').then((m) => m.resetDifferentialState?.()).catch(() => {});
   import('./components/testStripCalculator.js').then((m) => m.resetTestStripState?.()).catch(() => {});
   import('./components/mutualAidFinder.js').then((m) => m.resetMutualAidState?.()).catch(() => {});
+  import('./components/sessionBookmarks.js').then((m) => m.resetBookmarksViewState?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }

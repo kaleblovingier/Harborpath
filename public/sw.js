@@ -39,6 +39,7 @@ const APP_SHELL = [
   '/js/components/emergencyDrawer.js',
   '/js/components/stateLegalCard.js',
   '/js/components/mutualAidFinder.js',
+  '/js/components/sessionBookmarks.js',
   '/js/content/hotlines.js',
   '/js/content/reversalFormulations.js',
   '/js/views/common.js',
@@ -73,6 +74,9 @@ const ELECTIVE_SHELL = [
   '/js/match/engine.js',
   '/js/views/perinatal.js',
   '/js/components/testStripCalculator.js',
+  '/js/views/veterans.js',
+  '/js/views/adolescentCare.js',
+  '/js/components/clinicalDifferential.js',
 ];
 
 self.addEventListener('install', (event) => {
