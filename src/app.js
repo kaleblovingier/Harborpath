@@ -7,7 +7,7 @@ import { createCache, createRateLimiter } from './cache.js';
 import { createGeocoder, readLatLng } from './geo.js';
 import { createHealthCenterIndex } from './healthCenters.js';
 import { createProviderSearch } from './providers.js';
-import { createRegions } from './regions.js';
+import { createRegions, describeRegion, getBorderingStates } from './regions.js';
 import { createStateDirectory } from './stateResources.js';
 import { filterStatesByProtection, getJurisdictionSummary, getLegalProtections, LEGAL_DISCLAIMER } from './legalRegistry.js';
 import { createTaxonomy } from './taxonomy.js';
@@ -301,7 +301,11 @@ export function createApp({
             const { lat, lng } = readLocation(params);
             found = regions().forPoint(lat, lng);
           }
-          return json(req, res, 200, { region: found?.region ?? null, nearby: found?.nearby ?? [] });
+          const borderingStates = found?.borderingStates ?? (found?.region ? getBorderingStates(found.region.code).map((c) => {
+            const r = describeRegion(c);
+            return { code: c, name: r?.name ?? c };
+          }) : []);
+          return json(req, res, 200, { region: found?.region ?? null, nearby: found?.nearby ?? [], borderingStates });
         }
         case '/api/states':
           return json(req, res, 200, { states: stateDirectory().list(), sources: stateDirectory().sources });
@@ -389,10 +393,15 @@ export function createApp({
           const prov = providers().summary({ lat, lng, radiusMiles });
           const reg = regions().forPoint(lat, lng);
           const stateInfo = reg?.region ? stateDirectory().get(reg.region.code) : null;
+          const borderingStates = reg?.borderingStates ?? (reg?.region ? getBorderingStates(reg.region.code).map((c) => {
+            const r = describeRegion(c);
+            return { code: c, name: r?.name ?? c };
+          }) : []);
           return json(req, res, 200, {
             radiusMiles,
             region: reg?.region ?? null,
             nearbyRegions: reg?.nearby ?? [],
+            borderingStates,
             agency: stateInfo?.agency ?? null,
             medicaid: stateInfo?.medicaid ?? null,
             networks: {

@@ -17,6 +17,7 @@
 //   with other states reported as `nearby` when the point is close to a line.
 
 import { decodeTable, isTable } from './columns.js';
+import { DATA_LOADERS } from './data.js';
 import { haversineMiles } from './geo.js';
 
 /** [code, name, type, NEXT Distro page slug] for every jurisdiction with resources. */
@@ -78,6 +79,175 @@ export const FIPS_TO_CODE = {
   '54': 'WV', '55': 'WI', '56': 'WY', '60': 'AS', '66': 'GU', '69': 'MP', '72': 'PR', '78': 'VI',
 };
 
+/**
+ * Direct land/river adjacency map for all 50 states + DC + island jurisdictions.
+ * Fast O(1) in-memory lookup table.
+ */
+export const BORDERING_STATES = Object.freeze({
+  AL: Object.freeze(['FL', 'GA', 'MS', 'TN']),
+  AK: Object.freeze([]),
+  AZ: Object.freeze(['CA', 'CO', 'NV', 'NM', 'UT']),
+  AR: Object.freeze(['LA', 'MS', 'MO', 'OK', 'TN', 'TX']),
+  CA: Object.freeze(['AZ', 'NV', 'OR']),
+  CO: Object.freeze(['AZ', 'KS', 'NE', 'NM', 'OK', 'UT', 'WY']),
+  CT: Object.freeze(['MA', 'NY', 'RI']),
+  DE: Object.freeze(['MD', 'NJ', 'PA']),
+  DC: Object.freeze(['MD', 'VA']),
+  FL: Object.freeze(['AL', 'GA']),
+  GA: Object.freeze(['AL', 'FL', 'NC', 'SC', 'TN']),
+  HI: Object.freeze([]),
+  ID: Object.freeze(['MT', 'NV', 'OR', 'UT', 'WA', 'WY']),
+  IL: Object.freeze(['IA', 'IN', 'KY', 'MO', 'WI']),
+  IN: Object.freeze(['IL', 'KY', 'MI', 'OH']),
+  IA: Object.freeze(['IL', 'MN', 'MO', 'NE', 'SD', 'WI']),
+  KS: Object.freeze(['CO', 'MO', 'NE', 'OK']),
+  KY: Object.freeze(['IL', 'IN', 'MO', 'OH', 'TN', 'VA', 'WV']),
+  LA: Object.freeze(['AR', 'MS', 'TX']),
+  ME: Object.freeze(['NH']),
+  MD: Object.freeze(['DC', 'DE', 'PA', 'VA', 'WV']),
+  MA: Object.freeze(['CT', 'NH', 'NY', 'RI', 'VT']),
+  MI: Object.freeze(['IN', 'OH', 'WI']),
+  MN: Object.freeze(['IA', 'ND', 'SD', 'WI']),
+  MS: Object.freeze(['AL', 'AR', 'LA', 'TN']),
+  MO: Object.freeze(['IA', 'IL', 'KY', 'TN', 'AR', 'OK', 'KS', 'NE']),
+  MT: Object.freeze(['ID', 'ND', 'SD', 'WY']),
+  NE: Object.freeze(['CO', 'IA', 'KS', 'MO', 'SD', 'WY']),
+  NV: Object.freeze(['AZ', 'CA', 'ID', 'OR', 'UT']),
+  NH: Object.freeze(['MA', 'ME', 'VT']),
+  NJ: Object.freeze(['DE', 'NY', 'PA']),
+  NM: Object.freeze(['AZ', 'CO', 'OK', 'TX', 'UT']),
+  NY: Object.freeze(['CT', 'MA', 'NJ', 'PA', 'VT']),
+  NC: Object.freeze(['GA', 'SC', 'TN', 'VA']),
+  ND: Object.freeze(['MN', 'MT', 'SD']),
+  OH: Object.freeze(['IN', 'KY', 'MI', 'PA', 'WV']),
+  OK: Object.freeze(['AR', 'CO', 'KS', 'MO', 'NM', 'TX']),
+  OR: Object.freeze(['CA', 'ID', 'NV', 'WA']),
+  PA: Object.freeze(['DE', 'MD', 'NJ', 'NY', 'OH', 'WV']),
+  RI: Object.freeze(['CT', 'MA']),
+  SC: Object.freeze(['GA', 'NC']),
+  SD: Object.freeze(['IA', 'MN', 'MT', 'ND', 'NE', 'WY']),
+  TN: Object.freeze(['AL', 'AR', 'GA', 'KY', 'MO', 'MS', 'NC', 'VA']),
+  TX: Object.freeze(['AR', 'LA', 'NM', 'OK']),
+  UT: Object.freeze(['AZ', 'CO', 'ID', 'NM', 'NV', 'WY']),
+  VT: Object.freeze(['MA', 'NH', 'NY']),
+  VA: Object.freeze(['DC', 'KY', 'MD', 'NC', 'TN', 'WV']),
+  WA: Object.freeze(['ID', 'OR']),
+  WV: Object.freeze(['KY', 'MD', 'OH', 'PA', 'VA']),
+  WI: Object.freeze(['IA', 'IL', 'MI', 'MN']),
+  WY: Object.freeze(['CO', 'ID', 'MT', 'NE', 'SD', 'UT']),
+  // Island jurisdictions & territories (empty borders)
+  PR: Object.freeze([]),
+  GU: Object.freeze([]),
+  VI: Object.freeze([]),
+  AS: Object.freeze([]),
+  MP: Object.freeze([]),
+  FM: Object.freeze([]),
+  MH: Object.freeze([]),
+  PW: Object.freeze([]),
+});
+
+/**
+ * Return array of adjacent state postal codes for a state or district.
+ * Island jurisdictions (HI, PR, GU, VI, AS, MP) return [].
+ * Invalid or unrecognized codes safely return [].
+ *
+ * @param {string} stateCode
+ * @returns {string[]}
+ */
+export function getBorderingStates(stateCode) {
+  if (typeof stateCode !== 'string') return [];
+  const code = stateCode.trim().toUpperCase();
+  const list = BORDERING_STATES[code];
+  return list ? [...list] : [];
+}
+
+let _stateAgencies = null;
+let _stateMedicaid = null;
+let _zipStates = null;
+
+function getStateAgencies(options = {}) {
+  if (options.agencies) return options.agencies;
+  return (_stateAgencies ??= DATA_LOADERS.stateAgencies());
+}
+
+function getStateMedicaid(options = {}) {
+  if (options.medicaid) return options.medicaid;
+  return (_stateMedicaid ??= DATA_LOADERS.stateMedicaid());
+}
+
+function getZipStates(options = {}) {
+  if (options.zipStates) return options.zipStates;
+  return (_zipStates ??= DATA_LOADERS.zipStates());
+}
+
+/**
+ * Return list of bordering states enriched with behavioral health agency
+ * and Medicaid portal details for cross-border care continuity.
+ *
+ * @param {string|number} stateCodeOrZip 2-letter state code or 5-digit ZIP code
+ * @param {object} [options]
+ * @param {object} [options.agencies]
+ * @param {object} [options.medicaid]
+ * @param {object} [options.zipStates]
+ * @returns {Array<{ code: string, name: string, agencyName: string|null, agency: string|null, agencyDetails: object|null, medicaidPortal: string|null, medicaidAgency: string|null, medicaidUrl: string|null, medicaidApplyUrl: string|null, medicaid: object|null }>}
+ */
+export function resolveBorderRegions(stateCodeOrZip, options = {}) {
+  if (!stateCodeOrZip) return [];
+  let code = typeof stateCodeOrZip === 'string' ? stateCodeOrZip.trim().toUpperCase() : String(stateCodeOrZip).trim();
+  if (/^\d{5}/.test(code)) {
+    const zip = code.slice(0, 5);
+    const zs = getZipStates(options);
+    code = zs[zip]?.[0] ?? inRanges(FIVE_DIGIT_RANGES, zip) ?? inRanges(PREFIX_RANGES, zip.slice(0, 3));
+  }
+  if (!code) return [];
+  const borderCodes = getBorderingStates(code);
+  if (!borderCodes.length) return [];
+
+  const agencyData = getStateAgencies(options);
+  const medicaidData = getStateMedicaid(options);
+
+  return borderCodes.map((c) => {
+    const reg = describeRegion(c);
+    const sa = agencyData[c]?.sa ?? null;
+    const md = medicaidData[c] ?? null;
+    return {
+      code: c,
+      name: reg?.name ?? c,
+      agencyName: sa?.name ?? null,
+      agency: sa?.name ?? null,
+      agencyDetails: sa,
+      medicaidPortal: md?.applyUrl ?? md?.url ?? null,
+      medicaidAgency: md?.agency ?? null,
+      medicaidUrl: md?.url ?? null,
+      medicaidApplyUrl: md?.applyUrl ?? null,
+      medicaid: md
+        ? {
+            agency: md.agency,
+            url: md.url,
+            eligibilityUrl: md.eligibilityUrl,
+            applyUrl: md.applyUrl,
+            phones: md.phones,
+          }
+        : null,
+    };
+  });
+}
+
+/**
+ * Determine if a ZIP code is located on a state border (crosses border or in border community).
+ *
+ * @param {string|number} rawZip
+ * @param {object} [options]
+ * @returns {boolean}
+ */
+export function isBorderZip(rawZip, options = {}) {
+  const zip = String(rawZip ?? '').trim().slice(0, 5);
+  if (!/^\d{5}$/.test(zip)) return false;
+  const zs = getZipStates(options);
+  const entry = zs[zip];
+  return Array.isArray(entry) && entry.length > 1;
+}
+
 // USPS 3-digit ZIP prefix -> state, as inclusive ranges. Prefixes the USPS has
 // not assigned fall inside a state's range or between ranges; either way they
 // have no deliverable addresses, so the only effect is on garbage input.
@@ -136,7 +306,7 @@ export function isRegionCode(code) {
  * zcta: column table or { zip: [lat, lng] }; zipStates: { zip: [primary, ...also] } (data/zip-states.json)
  */
 export function createRegions({ zcta, zipStates = {} }) {
-  /** { region, nearby } for a ZIP, or null when the ZIP is malformed or unassigned. */
+  /** { region, nearby, borderingStates } for a ZIP, or null when the ZIP is malformed or unassigned. */
   function forZip(raw) {
     const zip = String(raw ?? '').trim().slice(0, 5);
     if (!/^\d{5}$/.test(zip)) return null;
@@ -144,7 +314,15 @@ export function createRegions({ zcta, zipStates = {} }) {
     const code = census?.[0] ?? inRanges(FIVE_DIGIT_RANGES, zip) ?? inRanges(PREFIX_RANGES, zip.slice(0, 3));
     const region = code && describeRegion(code);
     if (!region) return null;
-    return { region, nearby: (census?.slice(1) ?? []).map(describeRegion).filter(Boolean) };
+    const borderingStates = getBorderingStates(region.code).map((c) => {
+      const reg = describeRegion(c);
+      return { code: c, name: reg?.name ?? c };
+    });
+    return {
+      region,
+      nearby: (census?.slice(1) ?? []).map(describeRegion).filter(Boolean),
+      borderingStates,
+    };
   }
 
   // Flat arrays keep the nearest-ZIP scan cache-friendly: about 34,000 entries,
@@ -187,7 +365,7 @@ export function createRegions({ zcta, zipStates = {} }) {
     return found.sort((a, b) => a.miles - b.miles);
   }
 
-  /** { region, nearby } for a coordinate, or null when it is far from any U.S. ZIP area. */
+  /** { region, nearby, borderingStates } for a coordinate, or null when it is far from any U.S. ZIP area. */
   function forPoint(lat, lng) {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
     const near = nearestZips(lat, lng);
@@ -201,7 +379,11 @@ export function createRegions({ zcta, zipStates = {} }) {
       const other = forZip(z.zip)?.region;
       if (other && other.code !== best.region.code) nearby.set(other.code, other);
     }
-    return { region: best.region, nearby: [...nearby.values()] };
+    const borderingStates = getBorderingStates(best.region.code).map((c) => {
+      const reg = describeRegion(c);
+      return { code: c, name: reg?.name ?? c };
+    });
+    return { region: best.region, nearby: [...nearby.values()], borderingStates };
   }
 
   /**
