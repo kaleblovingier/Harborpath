@@ -2,6 +2,14 @@ import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { HOTLINES } from '../content/hotlines.js';
 import { getLang } from '../i18n.js';
 import {
+  testStripCalculator,
+  getTestStripState,
+  resetTestStripState,
+  calculateDilutionRatio,
+  DILUTION_PROTOCOLS,
+  TEST_STRIP_INTERPRETATIONS,
+} from '../components/testStripCalculator.js';
+import {
   pageHeader,
   section,
   p,
@@ -358,6 +366,7 @@ export function getHarmReductionState() {
 export function resetHarmReductionState() {
   harmReductionState.plainLanguage = false;
   harmReductionState.supplyFilter = 'all';
+  resetTestStripState();
   if (typeof activeHarmReset === 'function') {
     activeHarmReset();
   }
@@ -719,6 +728,7 @@ export function harmReductionView() {
     ),
 
     section('checking', tr('Fentanyl & xylazine test strips (Drug checking)', 'Tiras reactivas para fentanilo y xilacina'),
+      testStripCalculator(),
       p(tr(
         'Fentanyl, xylazine, and medetomidine turn up frequently in counterfeit pressed pills, street powders, and stimulants. Test strips are inexpensive, fast, and available from syringe programs and vending machines.',
         'El fentanilo y la xilacina aparecen frecuentemente en pastillas prensadas falsificadas, polvos y estimulantes. Las tiras reactivas son rápidas y están disponibles en programas de jeringas y máquinas expendedoras.',
@@ -861,3 +871,12 @@ export function harmReductionView() {
     ),
   );
 }
+
+export {
+  testStripCalculator,
+  getTestStripState,
+  resetTestStripState,
+  calculateDilutionRatio,
+  DILUTION_PROTOCOLS,
+  TEST_STRIP_INTERPRETATIONS,
+};
