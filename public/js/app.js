@@ -95,6 +95,18 @@ export const LAZY_LOADERS = {
     viewCache.set('workplace-rights', m.workplaceRightsView);
     return m.workplaceRightsView;
   }),
+  'tribal-health': () => import('./views/tribalHealth.js').then((m) => {
+    viewCache.set('tribal-health', m.tribalHealthView);
+    return m.tribalHealthView;
+  }),
+  'lgbtq-care': () => import('./views/lgbtqCare.js').then((m) => {
+    viewCache.set('lgbtq-care', m.lgbtqCareView);
+    return m.lgbtqCareView;
+  }),
+  'wound-care': () => import('./views/woundInfectious.js').then((m) => {
+    viewCache.set('wound-care', m.woundInfectiousView);
+    return m.woundInfectiousView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -120,6 +132,9 @@ export const ROUTE_TITLES = {
   reentry: () => t('route.reentry', 'Reentry & criminal legal health'),
   'older-adults': () => t('route.olderAdults', 'Older adults & Medicare SUD'),
   'workplace-rights': () => t('route.workplaceRights', 'Workplace rights, FMLA & ADA'),
+  'tribal-health': () => t('route.tribalHealth', 'Indigenous & tribal health'),
+  'lgbtq-care': () => t('route.lgbtqCare', 'LGBTQ+ & gender-affirming SUD care'),
+  'wound-care': () => t('route.woundCare', 'Wound care & infection prevention'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -155,6 +170,9 @@ export function preloadAllLazyViews() {
     preloadRoute('reentry'),
     preloadRoute('older-adults'),
     preloadRoute('workplace-rights'),
+    preloadRoute('tribal-health'),
+    preloadRoute('lgbtq-care'),
+    preloadRoute('wound-care'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -289,6 +307,10 @@ export function runQuickExitResets() {
   import('./views/olderAdults.js').then((m) => m.resetOlderAdultsState?.()).catch(() => {});
   import('./views/workplaceRights.js').then((m) => m.resetWorkplaceState?.()).catch(() => {});
   import('./components/recoveryCapital.js').then((m) => m.resetRecoveryCapitalState?.()).catch(() => {});
+  import('./views/tribalHealth.js').then((m) => m.resetTribalHealthState?.()).catch(() => {});
+  import('./views/lgbtqCare.js').then((m) => m.resetLgbtqState?.()).catch(() => {});
+  import('./views/woundInfectious.js').then((m) => m.resetWoundState?.()).catch(() => {});
+  import('./components/safetyNetNavigator.js').then((m) => m.resetSafetyNetState?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }

@@ -117,6 +117,15 @@ export const HOTLINES = {
       get text() { return { number: '18338526262', label: t('hotline.maternal.text', 'Text 1-833-852-6262') }; },
       get web() { return t('url.hotline.maternal', 'https://mchb.hrsa.gov/national-maternal-mental-health-hotline'); },
     },
+    {
+      id: 'stronghearts',
+      spanish: false,
+      name: 'StrongHearts Native Helpline',
+      get desc() { return t('hotline.stronghearts.desc', 'Confidential, culturally centered 24/7 domestic and sexual violence helpline for Native Americans and Alaska Natives.'); },
+      call: { number: '18447628483', label: '1-844-762-8483' },
+      get text() { return { number: '18447628483', label: t('hotline.stronghearts.text', 'Text 1-844-762-8483') }; },
+      web: 'https://strongheartshelpline.org/',
+    },
   ],
 };
 

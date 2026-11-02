@@ -818,6 +818,11 @@ export default {
   'route.reentry': 'Reingreso y salud legal',
   'route.olderAdults': 'Adultos mayores y Medicare',
   'route.workplaceRights': 'Derechos laborales, FMLA y ADA',
+  'route.tribalHealth': 'Salud indígena y tribal',
+  'route.lgbtqCare': 'Atención LGBTQ+ y afirmación de género en SUD',
+  'route.woundCare': 'Cuidado de heridas y prevención de infecciones',
+  'hotline.stronghearts.desc': 'Línea de ayuda confidencial 24/7 y culturalmente centrada para personas indígenas y nativas de Alaska afectadas por violencia doméstica y sexual.',
+  'hotline.stronghearts.text': 'Envíe un mensaje de texto al 1-844-762-8483',
   'app.savedCount': '{n} guardados',
   'app.footer.dataUpdated': 'Datos de centros de salud actualizados el {date}. Los listados de tratamiento se consultan en vivo.',
 

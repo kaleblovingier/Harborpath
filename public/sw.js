@@ -81,6 +81,10 @@ const ELECTIVE_SHELL = [
   '/js/views/olderAdults.js',
   '/js/views/workplaceRights.js',
   '/js/components/recoveryCapital.js',
+  '/js/views/tribalHealth.js',
+  '/js/views/lgbtqCare.js',
+  '/js/views/woundInfectious.js',
+  '/js/components/safetyNetNavigator.js',
 ];
 
 self.addEventListener('install', (event) => {

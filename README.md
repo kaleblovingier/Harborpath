@@ -71,6 +71,10 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `public/js/views/olderAdults.js` | Medicare Part B OTP bundled benefits, Beers Criteria® polypharmacy interaction alerts, and geriatric pharmacokinetics |
 | `public/js/views/workplaceRights.js` | FMLA serious health condition protections, ADA In-Recovery Safe Harbor, prescribed MOUD civil rights, and professional licensure ATD |
 | `public/js/components/recoveryCapital.js` | Brief Assessment of Recovery Capital (BARC-10) screener, SAMHSA 4 dimensions, and strengths-based action planning |
+| `public/js/views/tribalHealth.js` | Indian Health Care Improvement Act, Medicaid § 1916(j) $0 cost sharing, Title V UIHOs, and ICWA family preservation |
+| `public/js/views/lgbtqCare.js` | WPATH SOC 8 HRT & MOUD compatibility, chemsex/party-and-play harm reduction, and ACA § 1557 trans civil rights |
+| `public/js/views/woundInfectious.js` | Moist wound healing, non-cytotoxic dressings, necrotizing fasciitis/sepsis 911 red flags, and AASLD universal HCV DAAs |
+| `public/js/components/safetyNetNavigator.js` | FQHC Section 330 sliding-fee discount calculator, Title X confidential care, and EMTALA emergency stabilization |
 | `public/js/views/veterans.js` | VA MISSION Act community care, TRICARE prior authorizations, Military Sexual Trauma ($0 copay), and Veterans Crisis Line |
 | `public/js/views/adolescentCare.js` | Minor consent laws, 42 CFR Part 2 youth confidentiality, EOB privacy suppression, and youth-adapted ASAM pathways |
 | `public/js/components/clinicalDifferential.js` | 4-condition poly-substance differential engine (Hunter serotonin criteria, opioid/xylazine, stimulant overamping, soft tissue necrosis) |
