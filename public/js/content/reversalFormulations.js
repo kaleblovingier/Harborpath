@@ -49,9 +49,9 @@ export const REVERSAL_FORMULATIONS = {
       targetReceptor: 'Mu-opioid receptor (MOR)',
       action: 'Pure competitive antagonist',
       affinityKiNm: 1.5,
-      receptorSelectivity: 'Mu > Kappa > Delta (Ki mu ~1–2 nM, kappa ~3–4 nM, delta ~25–50 nM)',
+      receptorSelectivity: 'Mu > Kappa > Delta (selective competitive antagonist at mu-opioid receptors with lower relative affinity at kappa and delta receptors, per FDA label / DailyMed)',
       intrinsicAgonistActivity: 0,
-      mechanismDetails: 'Rapidly displaces full and partial opioid agonists from mu-opioid receptors in the central nervous system without producing intrinsic agonist or respiratory depressant effects.',
+      mechanismDetails: 'Rapidly displaces full and partial opioid agonists from mu-opioid receptors in the central nervous system without producing intrinsic agonist or respiratory depressant effects (FDA / DailyMed).',
     },
     bioavailabilityPct: {
       min: 46,
@@ -86,9 +86,20 @@ export const REVERSAL_FORMULATIONS = {
       'Always support breathing with rescue breaths between doses while waiting the full 2–3 minutes for mucosal absorption.',
       'FDA-approved for Over-The-Counter (OTC) sale nationwide without a prescription.',
     ],
-    evidenceSources: [
-      { organization: 'FDA', title: 'FDA Approves First Over-the-Counter Naloxone Nasal Spray', year: 2023, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-first-over-counter-naloxone-nasal-spray' },
+    sources: [
+      { organization: 'DailyMed / FDA', title: 'DailyMed - NARCAN- naloxone hydrochloride spray (FDA Package Insert & OTC Label)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=066113b2-6dbb-4395-ac9f-d31e5f8f8b5a' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
       { organization: 'SAMHSA', title: 'Overdose Prevention and Response Toolkit', year: 2023, url: 'https://library.samhsa.gov/product/overdose-prevention-response-toolkit/pep23-03-00-001' },
+      { organization: 'FDA', title: 'FDA Approves First Over-the-Counter Naloxone Nasal Spray', year: 2023, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-first-over-counter-naloxone-nasal-spray' },
+      { organization: 'AHA', title: 'Highlights of the AHA Guidelines for CPR and ECC: Opioid Overdose Response', year: 2020, url: 'https://cpr.heart.org/' },
+    ],
+    evidenceSources: [
+      { organization: 'DailyMed / FDA', title: 'DailyMed - NARCAN- naloxone hydrochloride spray (FDA Package Insert & OTC Label)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=066113b2-6dbb-4395-ac9f-d31e5f8f8b5a' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'SAMHSA', title: 'Overdose Prevention and Response Toolkit', year: 2023, url: 'https://library.samhsa.gov/product/overdose-prevention-response-toolkit/pep23-03-00-001' },
+      { organization: 'FDA', title: 'FDA Approves First Over-the-Counter Naloxone Nasal Spray', year: 2023, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-first-over-counter-naloxone-nasal-spray' },
       { organization: 'AHA', title: 'Highlights of the AHA Guidelines for CPR and ECC: Opioid Overdose Response', year: 2020, url: 'https://cpr.heart.org/' },
     ],
   },
@@ -126,7 +137,7 @@ export const REVERSAL_FORMULATIONS = {
       targetReceptor: 'Mu-opioid receptor (MOR)',
       action: 'Pure competitive antagonist (high concentration)',
       affinityKiNm: 1.5,
-      receptorSelectivity: 'Mu > Kappa > Delta (delivers ~2x plasma Cmax of 4 mg)',
+      receptorSelectivity: 'Mu > Kappa > Delta (delivers ~2x peak plasma concentration compared to 4 mg formulation, per FDA Kloxxado label)',
       intrinsicAgonistActivity: 0,
       mechanismDetails: 'High-concentration competitive antagonism designed to overcome receptor blockade from high-potency synthetic opioids (e.g., fentanyl, carfentanil, nitazenes).',
     },
@@ -163,9 +174,20 @@ export const REVERSAL_FORMULATIONS = {
       'Higher milligram strength does NOT prolong elimination half-life: half-life remains short (30–90 minutes), so risk of renarconization from lipophilic synthetic fentanyl is not prevented.',
       'Airway protection is critical immediately after administration due to high incidence of sudden vomiting and aspiration.',
     ],
+    sources: [
+      { organization: 'DailyMed / FDA', title: 'DailyMed - KLOXXADO- naloxone hydrochloride spray (FDA Prescribing Information)', year: 2021, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4e7fae44-d6aa-4e94-8bf2-0cf43a6d7f02' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'FDA', title: 'FDA Approves Higher Dose Naloxone Nasal Spray (Kloxxado)', year: 2021, url: 'https://www.fda.gov/drugs/drug-safety-and-availability/fda-approves-higher-dose-naloxone-nasal-spray-kloxxado' },
+      { organization: 'ACMT', title: 'ACMT Position Statement on Naloxone Dose and Route in the Era of Synthetic Opioids', year: 2020, url: 'https://www.acmt.net/guidance/position-statements/' },
+      { organization: 'AACT', title: 'American Academy of Clinical Toxicology Practice Guidance: Overdose Resuscitation', year: 2022, url: 'https://www.clintox.org/' },
+    ],
     evidenceSources: [
-      { organization: 'FDA', title: 'FDA Approves Higher Dose Naloxone Nasal Spray (Kloxxado)', year: 2021, url: 'https://www.fda.gov/' },
-      { organization: 'ACMT', title: 'ACMT Position Statement on Naloxone Dose and Route in the Era of Synthetic Opioids', year: 2020, url: 'https://www.acmt.net/' },
+      { organization: 'DailyMed / FDA', title: 'DailyMed - KLOXXADO- naloxone hydrochloride spray (FDA Prescribing Information)', year: 2021, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4e7fae44-d6aa-4e94-8bf2-0cf43a6d7f02' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'FDA', title: 'FDA Approves Higher Dose Naloxone Nasal Spray (Kloxxado)', year: 2021, url: 'https://www.fda.gov/drugs/drug-safety-and-availability/fda-approves-higher-dose-naloxone-nasal-spray-kloxxado' },
+      { organization: 'ACMT', title: 'ACMT Position Statement on Naloxone Dose and Route in the Era of Synthetic Opioids', year: 2020, url: 'https://www.acmt.net/guidance/position-statements/' },
       { organization: 'AACT', title: 'American Academy of Clinical Toxicology Practice Guidance: Overdose Resuscitation', year: 2022, url: 'https://www.clintox.org/' },
     ],
   },
@@ -203,9 +225,9 @@ export const REVERSAL_FORMULATIONS = {
       targetReceptor: 'Mu-opioid receptor (MOR)',
       action: 'Long-acting competitive antagonist with partial kappa activity',
       affinityKiNm: 0.3,
-      receptorSelectivity: 'Mu (Ki ~0.24–0.4 nM, ~4–5x higher affinity than naloxone), Kappa partial agonist/antagonist, Delta antagonist',
+      receptorSelectivity: 'Mu (~4–5x higher binding affinity than naloxone), Kappa partial agonist/antagonist, Delta antagonist (FDA Opvee label)',
       intrinsicAgonistActivity: 0,
-      mechanismDetails: '6-methylene analog of naltrexone with slow receptor dissociation kinetics and high mu-receptor affinity, maintaining competitive blockade for over 8–12 hours.',
+      mechanismDetails: '6-methylene analog of naltrexone with slow receptor dissociation kinetics and high mu-receptor affinity, maintaining competitive blockade for over 8–12 hours (FDA Opvee label).',
     },
     bioavailabilityPct: {
       min: 70,
@@ -239,10 +261,21 @@ export const REVERSAL_FORMULATIONS = {
       'Toxicology consensus (ACMT/AACT): Harm reduction specialists caution against routine community bystander deployment because prolonged agonizing withdrawal triggers severe medical refusal and trauma.',
       'Unlike naloxone (which wears off in 60–90 minutes, enabling buprenorphine induction), nalmefene blocks opioid receptors for over 12–24 hours, completely delaying initiation of life-saving MOUD.',
     ],
+    sources: [
+      { organization: 'DailyMed / FDA', title: 'DailyMed - OPVEE- nalmefene hydrochloride spray (FDA Prescribing Information)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6b7d27e9-6f77-44f2-9086-4fbf9ebae88f' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'FDA', title: 'FDA Approves Opvee (Nalmefene Nasal Spray) for Opioid Overdose Reversal', year: 2023, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-new-nasal-spray-reverse-opioid-overdoses' },
+      { organization: 'ACMT', title: 'ACMT & AACT Position Statement on Nalmefene vs Naloxone in the Opioid Overdose Epidemic', year: 2023, url: 'https://www.acmt.net/guidance/position-statements/' },
+      { organization: 'Nelson et al.', title: 'Pharmacokinetics and Safety of Intranasal Nalmefene (Opvee) in Healthy Volunteers', year: 2023, url: 'https://pubmed.ncbi.nlm.nih.gov/37648932/' },
+    ],
     evidenceSources: [
-      { organization: 'FDA', title: 'FDA Approves Opvee (Nalmefene Nasal Spray) for Opioid Overdose Reversal', year: 2023, url: 'https://www.fda.gov/' },
-      { organization: 'ACMT', title: 'ACMT & AACT Position Statement on Nalmefene vs Naloxone in the Opioid Overdose Epidemic', year: 2023, url: 'https://www.acmt.net/' },
-      { organization: 'Nelson et al.', title: 'Pharmacokinetics and Safety of Intranasal Nalmefene (Opvee) in Healthy Volunteers', year: 2023, url: 'https://pubmed.ncbi.nlm.nih.gov/' },
+      { organization: 'DailyMed / FDA', title: 'DailyMed - OPVEE- nalmefene hydrochloride spray (FDA Prescribing Information)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6b7d27e9-6f77-44f2-9086-4fbf9ebae88f' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'FDA', title: 'FDA Approves Opvee (Nalmefene Nasal Spray) for Opioid Overdose Reversal', year: 2023, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-new-nasal-spray-reverse-opioid-overdoses' },
+      { organization: 'ACMT', title: 'ACMT & AACT Position Statement on Nalmefene vs Naloxone in the Opioid Overdose Epidemic', year: 2023, url: 'https://www.acmt.net/guidance/position-statements/' },
+      { organization: 'Nelson et al.', title: 'Pharmacokinetics and Safety of Intranasal Nalmefene (Opvee) in Healthy Volunteers', year: 2023, url: 'https://pubmed.ncbi.nlm.nih.gov/37648932/' },
     ],
   },
 
@@ -279,9 +312,9 @@ export const REVERSAL_FORMULATIONS = {
       targetReceptor: 'Mu-opioid receptor (MOR)',
       action: 'Pure competitive antagonist',
       affinityKiNm: 1.5,
-      receptorSelectivity: 'Mu > Kappa > Delta',
+      receptorSelectivity: 'Mu > Kappa > Delta (selective competitive antagonist at mu-opioid receptors, per FDA injection label)',
       intrinsicAgonistActivity: 0,
-      mechanismDetails: 'Pure competitive antagonism with rapid, reliable systemic distribution into brain tissue via parenteral circulation.',
+      mechanismDetails: 'Pure competitive antagonism with rapid, reliable systemic distribution into brain tissue via parenteral circulation (FDA / DailyMed).',
     },
     bioavailabilityPct: {
       min: 100,
@@ -310,15 +343,26 @@ export const REVERSAL_FORMULATIONS = {
       'Hospital and EMS titrated resuscitation where gentle reversal of apnea without severe withdrawal is desired',
     ],
     clinicalPearls: [
-      'Highest cost-effectiveness: Injectable vials typically cost $2–$5 each compared to $45–$120+ for proprietary nasal devices, maximizing public health reach.',
+      'Highest cost-effectiveness: Generic injectable naloxone provides a highly affordable option compared to proprietary nasal devices, maximizing public health distribution reach through Syringe Services Programs (SAMHSA TIP 63).',
       'Reliable absorption regardless of nasal mucosal conditions (rhinitis, congestion, blood, structural collapse from snorting).',
       'Intramuscular injection can be performed safely directly through clothing (e.g., denim jeans or jackets) into the lateral thigh.',
       'Recognized as standard of care by the Harm Reduction Coalition and WHO Model List of Essential Medicines.',
     ],
+    sources: [
+      { organization: 'DailyMed / FDA', title: 'DailyMed - NALOXONE HYDROCHLORIDE injection (FDA Package Insert)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7be04a43-cfc8-47a3-8350-bb46d251d167' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'WHO', title: 'WHO Model List of Essential Medicines: Naloxone Injection', year: 2023, url: 'https://www.who.int/publications/i/item/WHO-MHP-HPS-EML-2023.02' },
+      { organization: 'Harm Reduction Coalition', title: 'Intramuscular Naloxone Administration and Kit Assembly Protocols', year: 2022, url: 'https://harmreduction.org/issues/overdose-prevention/tools-resources/' },
+      { organization: 'CDC', title: 'Syringe Services Programs and Overdose Prevention Guidance', year: 2023, url: 'https://www.cdc.gov/ssp/' },
+    ],
     evidenceSources: [
-      { organization: 'WHO', title: 'WHO Model List of Essential Medicines: Naloxone Injection', year: 2023, url: 'https://www.who.int/' },
-      { organization: 'Harm Reduction Coalition', title: 'Intramuscular Naloxone Administration and Kit Assembly Protocols', year: 2022, url: 'https://harmreduction.org/' },
-      { organization: 'CDC', title: 'Syringe Services Programs and Overdose Prevention Guidance', year: 2023, url: 'https://www.cdc.gov/' },
+      { organization: 'DailyMed / FDA', title: 'DailyMed - NALOXONE HYDROCHLORIDE injection (FDA Package Insert)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7be04a43-cfc8-47a3-8350-bb46d251d167' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'WHO', title: 'WHO Model List of Essential Medicines: Naloxone Injection', year: 2023, url: 'https://www.who.int/publications/i/item/WHO-MHP-HPS-EML-2023.02' },
+      { organization: 'Harm Reduction Coalition', title: 'Intramuscular Naloxone Administration and Kit Assembly Protocols', year: 2022, url: 'https://harmreduction.org/issues/overdose-prevention/tools-resources/' },
+      { organization: 'CDC', title: 'Syringe Services Programs and Overdose Prevention Guidance', year: 2023, url: 'https://www.cdc.gov/ssp/' },
     ],
   },
 };
@@ -356,16 +400,27 @@ export const WOODEN_CHEST_SYNDROME = {
     'Profound cyanosis (blue/gray lips and nailbeds) developing within seconds',
     'Jaw clenching and generalized skeletal muscle hypertonicity',
   ],
+  emergencyGuidance: [
+    '1. Call 911 immediately: Request urgent emergency medical services / Advanced Life Support for severe chest rigidity and suspected synthetic opioid overdose.',
+    '2. Give naloxone: Administer first dose immediately (4 mg nasal or 0.4–2 mg IV/IM); if chest wall remains rigid and airflow is blocked after 60–90 seconds, give an immediate repeat naloxone dose.',
+    '3. Rescue breathing (1 breath every 5s): Perform vigorous two-handed jaw thrust and attempt rescue breathing (1 breath every 5 seconds) as chest wall rigidity relents.',
+    '4. Left recovery position: Place into left recovery position once breathing resumes to protect airway and prevent aspiration.',
+    '5. Stay with them: Stay with the person continuously until emergency medical personnel arrive.',
+    'Emergency Medical Services (EMS) / Hospital ED Procedure: In refractory prehospital or emergency department settings, definitive hospital management requires rapid sequence endotracheal intubation (RSI) and neuromuscular blockade (e.g., succinylcholine or rocuronium) to relax the chest wall.',
+  ],
   immediateClinicalResponse: {
     priorityOrder: [
-      '1. Emergency 911 / EMS Activation immediately (request Advanced Life Support for rigid airway/anoxia)',
-      '2. Immediate High-Dose Naloxone Administration (repeat immediately if chest wall remains rigid)',
-      '3. Rapid Airway Positioning & Aggressive Airway Maneuvers (jaw thrust, prepare for rescue breaths)',
-      '4. Ongoing Continuous Ventilation Attempts & ALS Neuromuscular Blockade if refractory',
+      '1. Call 911 immediately: Request Advanced Life Support (ALS) for rigid airway and anoxia.',
+      '2. Give naloxone immediately: Administer high-dose naloxone (repeat immediately if chest wall remains rigid).',
+      '3. Rescue breathing (1 breath every 5s): Two-handed jaw thrust, prepare for rescue breaths.',
+      '4. Left recovery position: Roll onto left side once breathing resumes to protect airway against aspiration.',
+      '5. Stay with them: Monitor continuously until emergency personnel arrive.',
+      'EMS / Hospital ED Procedure: In refractory cases, ALS/hospital personnel perform neuromuscular blockade (succinylcholine or rocuronium) with rapid sequence intubation (RSI).',
     ],
     naloxoneDosing: 'Administer high-dose naloxone: give 4 mg intranasal or 0.4–2 mg IV/IM naloxone immediately. If chest wall remains rigid and rescue breaths cannot be delivered after 60–90 seconds, IMMEDIATELY repeat naloxone dose. High central opioid receptor occupancy requires prompt, aggressive displacement.',
-    airwayManagement: 'Perform vigorous two-handed jaw thrust to open the supraglottic space. Attempt bag-valve-mask ventilation with a tight two-person mask seal. Do not delay repeat naloxone while struggling with airway.',
-    emsRole: 'Paramedics / ALS must be informed of acute wooden chest syndrome. In prehospital/ED refractory cases, definitive management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
+    airwayManagement: 'Perform vigorous two-handed jaw thrust to open the supraglottic space. Attempt rescue breathing (1 breath every 5 seconds) with bag-valve-mask or pocket mask. Place in left recovery position once breathing resumes; stay with them continuously. Do not delay repeat naloxone while struggling with airway.',
+    emsRole: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Paramedics and ALS/hospital medical teams manage acute refractory wooden chest syndrome. In prehospital/ED refractory cases, definitive hospital management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
+    hospitalEmsProcedure: 'Emergency Medical Services (EMS) / Hospital ED Procedure: In prehospital/ED refractory cases, definitive hospital management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
     contraindications: 'Do not rely solely on rescue breathing without naloxone, as physical chest wall rigidity and closed vocal cords prevent air from entering lungs.',
   },
   evidenceBase: [
@@ -397,6 +452,14 @@ export const RENARCONIZATION_RISK = {
       text: '30–90 minutes (up to 2–4+ hours with ultra-potent analogues)',
     },
   },
+  emergencyGuidance: [
+    '1. Call 911 immediately: Re-activate emergency medical dispatch if breathing slows, becomes shallow, or the person becomes unresponsive again.',
+    '2. Give naloxone: Administer a repeat dose of naloxone (4 mg nasal or 0.4–1 mg IV/IM) at the first sign of recurring respiratory slowdown (<10–12 breaths/min).',
+    '3. Rescue breathing (1 breath every 5s): Provide rescue breathing (1 breath every 5 seconds) if breathing is shallow or absent until spontaneous respirations resume.',
+    '4. Left recovery position: Position person onto their left side to maintain open airway and protect against vomit aspiration.',
+    '5. Stay with them: Maintain strict continuous observation for at least 2 to 4 hours post-reversal; never leave the person unobserved.',
+    'Emergency Medical Services (EMS) / Hospital ED Procedure: For recurrent renarconization in hospital/ED settings, clinicians initiate a continuous IV naloxone infusion titrated at two-thirds the effective initial bolus dose per hour.',
+  ],
   clinicalProtocol: {
     minimumObservationHours: 2,
     recommendedObservationHours: '2–4 hours for short-acting/fentanyl; 6–12+ hours for methadone or extended-release opioids',
@@ -408,9 +471,9 @@ export const RENARCONIZATION_RISK = {
       'Pupillary diameter and responsiveness',
     ],
     managementOfRecurrence: [
-      'Re-administer bolus naloxone (4 mg nasal or 0.4–1.0 mg IV/IM) at first sign of recurrent respiratory depression',
-      'For recurrent renarconization in hospital/EMS, initiate continuous IV naloxone infusion titrated at two-thirds the effective reversal dose per hour',
-      'Never allow patient to leave unobserved within the initial 2-hour window',
+      '1. Call 911 immediately, give naloxone (4 mg nasal or 0.4–1.0 mg IV/IM), rescue breathing (1 breath every 5s), left recovery position, stay with them.',
+      'Emergency Medical Services (EMS) / Hospital ED Procedure: For recurrent renarconization in hospital/ED settings, clinicians initiate a continuous IV naloxone infusion titrated at two-thirds the effective reversal dose per hour.',
+      'Never allow patient to leave unobserved within the initial 2-hour window.',
     ],
     patientEducationAndRefusal: [
       'Strongly emphasize to patient that waking up does NOT mean the drug has left their body',
@@ -432,6 +495,15 @@ export const STIMULANT_OVERAMPING_GUIDE = {
   title: 'Stimulant Overamping Clinical Guide (Cocaine, Methamphetamine, Prescription Stimulants)',
   substances: ['Methamphetamine', 'Cocaine', 'Crack', 'MDMA', 'Prescription stimulants (Adderall, Vyvanse)'],
   overview: 'Overamping is stimulant toxicity resulting from high dose, rapid administration, chronic bingeing, sleep deprivation, or adulteration. Unlike depressants, stimulant toxicity presents along two distinct clinical axes: psychological and physical.',
+  emergencyGuidance: [
+    '1. Call 911 immediately: For physical crisis (hyperthermia >104°F, seizures, chest pain, stroke signs) or if the person is unresponsive.',
+    '2. Give naloxone: Always administer naloxone if the person is unresponsive, breathing slowly (<10–12 breaths/min), or if fentanyl contamination is suspected.',
+    '3. Rescue breathing (1 breath every 5s): Provide rescue breathing (1 breath every 5 seconds) if breathing is slow, irregular, or stopped.',
+    '4. Left recovery position: Place on their left side once convulsions cease to protect airway against aspiration.',
+    '5. Stay with them: Stay with the person continuously; monitor breathing and provide calming reassurance until paramedics arrive.',
+    'Active Cooling & Seizure Precautions: Ice packs or cool wet towels placed at neck, axillae (armpits), and groin; fan circulation. Clear surrounding hazards and pad head during seizures.',
+    'Emergency Medical Services (EMS) / Hospital ED Procedure: In hospital and emergency medical services settings, clinicians administer IV benzodiazepines (e.g., lorazepam, midazolam) for sedation, seizure control, and hyperadrenergic crisis, along with IV fluids for rhabdomyolysis.',
+  ],
   classification: {
     psychologicalOveramping: {
       definition: 'Severe neuropsychiatric distress resulting from intense dopamine/norepinephrine surge and sleep deprivation, without acute organ failure.',
@@ -446,7 +518,7 @@ export const STIMULANT_OVERAMPING_GUIDE = {
         'Non-threatening, calm interpersonal de-escalation: speak slowly, sit at eye level, avoid crowding',
         'Never physically restrain the person (restraints drastically increase struggle, hyperthermia, and fatal cardiac collapse)',
         'Offer sips of cool water or electrolyte beverages; encourage slow deep breathing',
-        'Stay with the person and provide reality-grounding reassurance',
+        'Stay with the person and provide reality-grounding reassurance; if breathing slows or unresponsiveness occurs: Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them',
       ],
     },
     physicalOveramping: {
@@ -460,10 +532,14 @@ export const STIMULANT_OVERAMPING_GUIDE = {
         'Acute stroke signs (facial droop, hemiparesis, dysarthria)',
       ],
       interventions: [
-        'Immediate Emergency 911 / EMS activation with request for ALS/paramedic response',
+        '1. Call 911 immediately: Emergency activation requesting ALS/paramedic response for physical stimulant crisis',
+        '2. Give naloxone: Administer naloxone if breathing is slow (<10–12 breaths/min) or person is unresponsive (suspect fentanyl adulteration)',
+        '3. Rescue breathing (1 breath every 5s): Deliver rescue breaths if breathing is compromised',
+        '4. Left recovery position: Roll onto left side once convulsions stop to protect airway and prevent aspiration',
+        '5. Stay with them: Continuously monitor breathing and temperature until EMS arrives',
         'Aggressive active external cooling: ice packs or cool wet towels placed at neck, axillae, and groin; cold water misting with fan circulation',
-        'Seizure precautions: clear surrounding hazards, pad head, do NOT insert anything into mouth, roll into recovery position once convulsions stop',
-        'EMS / Hospital treatment: IV benzodiazepines (e.g., lorazepam, midazolam) for sedation, seizure control, and reduction of hyperadrenergic crisis; IV crystalloid hydration for rhabdomyolysis',
+        'Seizure precautions: clear surrounding hazards, pad head, do NOT insert anything into mouth',
+        'Emergency Medical Services (EMS) / Hospital ED Procedure: Clinicians in emergency hospital settings administer IV benzodiazepines (e.g., lorazepam, midazolam) for sedation, seizure control, and reduction of hyperadrenergic crisis, along with IV crystalloid hydration for rhabdomyolysis',
       ],
     },
   },
@@ -501,31 +577,43 @@ export const XYLAZINE_SEDATION_MANAGEMENT = {
     ],
     durationOfSedationHours: '1–4+ hours (significantly outlasts fentanyl and naloxone)',
   },
+  emergencyGuidance: [
+    '1. Call 911 immediately: Inform dispatch of suspected xylazine ("tranq") sedation and opioid exposure.',
+    '2. Give naloxone: Administer naloxone if breathing is shallow, slow (<10–12 breaths/min), or absent to reverse any co-present opioid (fentanyl) component.',
+    '3. Rescue breathing (1 breath every 5s): Provide rescue breaths (1 breath every 5 seconds) if spontaneous respiration is inadequate.',
+    '4. Left recovery position: Once breathing spontaneously (>10–12 breaths/min), roll the person onto their left side in the recovery position to prevent tongue obstruction and vomit aspiration.',
+    '5. Stay with them: Continuously monitor breathing rate and chest rise, and keep the person warm until emergency medical services arrive.',
+    'Xylazine Sedation Clarification: Naloxone should still be administered if breathing is shallow or absent to reverse any opioid component. However, if the person is breathing spontaneously (>10–12 bpm) while unconscious from sedation, focus on rescue breathing and airway monitoring in the left recovery position rather than repeat naloxone dumping.',
+  ],
   coreClinicalPriorities: {
     priority1_rescueBreathing: {
-      action: 'Airway maintenance and rescue breathing are the definitive life-saving interventions.',
+      action: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them.',
       guidelines: [
-        'If patient is not breathing or taking slow/shallow breaths (<10–12 breaths/min), administer 1 dose of naloxone for the opioid component and immediately begin rescue breathing (1 breath every 5 seconds).',
-        'Open and maintain airway using head-tilt chin-lift or jaw thrust maneuver.',
-        'Use bag-valve-mask or pocket mask with one-way valve if available; continue rescue breaths until patient breathes adequately on their own.',
+        'Call 911 immediately: Inform emergency dispatch of suspected xylazine ("tranq") sedation and opioid exposure.',
+        'Give naloxone: If patient is not breathing or taking slow/shallow breaths (<10–12 breaths/min), administer 1 dose of naloxone to reverse any co-present opioid component.',
+        'Rescue breathing (1 breath every 5s): Immediately begin rescue breathing (1 breath every 5 seconds). Open and maintain airway using head-tilt chin-lift or jaw thrust maneuver.',
+        'Left recovery position: Once spontaneous respirations exceed 10–12 breaths/min, place in left lateral recovery position.',
+        'Stay with them: Continuously observe breathing rate and chest rise until paramedics arrive.',
       ],
     },
     priority2_avoidNaloxoneDumping: {
       warning: 'CRITICAL WARNING: Avoid repeated naloxone administration ("naloxone dumping") when the patient has adequate spontaneous breathing.',
       rationale: [
-        'Xylazine is NOT an opioid. Naloxone has zero affinity for alpha-2 adrenergic receptors and CANNOT reverse xylazine-induced sedation.',
+        'Xylazine is NOT an opioid: It is a non-opioid alpha-2 adrenergic agonist. Naloxone has zero affinity for alpha-2 adrenergic receptors and CANNOT reverse xylazine-induced sedation.',
+        'Naloxone should still be administered if breathing is shallow or absent (<10–12 breaths/min) to reverse any co-present opioid/fentanyl component.',
+        'However, if the person is breathing spontaneously (>10–12 breaths/min or bpm) while unconscious from sedation, focus on rescue breathing and airway monitoring rather than repeat naloxone dumping.',
         'The clinical endpoint of naloxone is restoring adequate spontaneous respiration (respiratory rate >= 10–12 breaths/min, good chest rise, normal skin color)—NOT consciousness or alertness.',
         'If the patient has resumed spontaneous breathing (>10–12 breaths/min) but remains unresponsive/sedated, STOP GIVING NALOXONE.',
         'Giving extra doses of naloxone ("naloxone dumping") will NOT wake the patient from xylazine sedation. Instead, it precipitates severe, explosive opioid withdrawal, intractable vomiting with fatal pulmonary aspiration in a sedated patient with depressed airway reflexes, acute catecholamine crisis, and non-cardiogenic pulmonary edema.',
       ],
     },
     priority3_recoveryPositionAndMonitoring: {
-      action: 'Recovery position and continuous monitoring until emergency transport arrives.',
+      action: 'Left recovery position and continuous airway monitoring until emergency transport arrives.',
       guidelines: [
-        'Roll the breathing patient onto their side into the lateral recovery position (top leg bent, head tilted back and rested on arm) to prevent tongue obstruction and vomit aspiration.',
+        'Roll the breathing patient onto their side into the left lateral recovery position (top leg bent, head tilted back and rested on arm) to prevent tongue obstruction and vomit aspiration.',
         'Continuously observe breathing rate and chest rise every 1–2 minutes.',
         'Keep patient warm with blankets (xylazine impairs thermoregulation and causes severe hypothermia).',
-        'Activate 911 / EMS for medical transport and prolonged emergency department monitoring.',
+        'Stay with them continuously; activate 911 / EMS for medical transport and prolonged emergency department monitoring.',
       ],
     },
     priority4_woundCareAwareness: {
@@ -605,11 +693,11 @@ export function compareFormulations(idA, idB) {
 
   let affinitySummary = '';
   if (formA.receptorPharmacology.affinityKiNm < formB.receptorPharmacology.affinityKiNm) {
-    affinitySummary = `${formA.brandName} has higher mu-opioid receptor binding affinity (lower Ki: ${formA.receptorPharmacology.affinityKiNm} nM vs ${formB.receptorPharmacology.affinityKiNm} nM).`;
+    affinitySummary = `${formA.brandName} has higher mu-opioid receptor binding affinity than ${formB.brandName} (higher receptor occupancy at equivalent doses).`;
   } else if (formA.receptorPharmacology.affinityKiNm > formB.receptorPharmacology.affinityKiNm) {
-    affinitySummary = `${formB.brandName} has higher mu-opioid receptor binding affinity (lower Ki: ${formB.receptorPharmacology.affinityKiNm} nM vs ${formA.receptorPharmacology.affinityKiNm} nM).`;
+    affinitySummary = `${formB.brandName} has higher mu-opioid receptor binding affinity than ${formA.brandName} (higher receptor occupancy at equivalent doses).`;
   } else {
-    affinitySummary = `${formA.brandName} and ${formB.brandName} have equivalent mu-opioid receptor binding affinity (Ki: ${formA.receptorPharmacology.affinityKiNm} nM).`;
+    affinitySummary = `${formA.brandName} and ${formB.brandName} have equivalent mu-opioid receptor binding affinity.`;
   }
 
   return {
@@ -718,9 +806,9 @@ export function evaluateOverdoseRiskScenario(scenario) {
       scenarioTitle: 'Wooden Chest Syndrome (Fentanyl-Induced Muscle Rigidity)',
       severity: 'critical',
       emergencyEMSRequired: true,
-      primaryAction: 'Administer naloxone immediately and activate 911/EMS requesting Advanced Life Support for severe chest wall rigidity. If chest wall remains rigid and rescue breaths cannot be delivered, repeat naloxone within 60–90 seconds.',
+      primaryAction: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them. Request Advanced Life Support for severe chest wall rigidity. If chest wall remains rigid and positive-pressure airflow is blocked, repeat naloxone within 60–90 seconds.',
       naloxoneGuidance: 'High-dose naloxone: give 4 mg intranasal or 0.4–2 mg IV/IM immediately. Repeat immediately if rigidity persists and positive-pressure ventilation remains blocked.',
-      airwayGuidance: 'Perform vigorous jaw thrust. Attempt bag-valve-mask ventilation with high inspiratory pressures. Prepare for emergency ALS neuromuscular blockade (succinylcholine/rocuronium) and endotracheal intubation if unresponsive to naloxone.',
+      airwayGuidance: 'Perform vigorous jaw thrust. Attempt rescue breathing (1 breath every 5 seconds). Place in left recovery position once breathing resumes; stay with them continuously. Note: EMS/ED hospital procedure for refractory rigidity includes advanced neuromuscular blockade (succinylcholine/rocuronium) and endotracheal intubation.',
       warnings: [
         'Do not delay repeat naloxone to struggle with rescue breathing alone: vocal cord closure and rigid intercostals physically block positive pressure airflow.',
         'Typically triggered by rapid IV injection or high-concentration inhalation of synthetic fentanyl.',
@@ -745,9 +833,9 @@ export function evaluateOverdoseRiskScenario(scenario) {
       scenarioTitle: 'Xylazine ("Tranq") Co-Ingestion Sedation Management',
       severity: 'high',
       emergencyEMSRequired: true,
-      primaryAction: 'Support breathing and place in recovery position. If respiratory rate is adequate (>10–12 breaths/min), STOP GIVING NALOXONE.',
-      naloxoneGuidance: 'Administer 1 standard dose of naloxone initially to reverse any opioid-induced respiratory depression. ONCE RESPIRATORY RATE IS >= 10–12 BREATHS/MIN, CEASE NALOXONE ADMINISTRATION even if patient remains comatose.',
-      airwayGuidance: 'Place in lateral recovery position with top knee bent to maintain airway and prevent aspiration. Continuously observe chest rise.',
+      primaryAction: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them. Naloxone should still be administered if breathing is shallow or absent (<10–12 breaths/min) to reverse any opioid component; if the person is breathing spontaneously (>10–12 bpm) while unconscious from sedation, focus on rescue breathing and airway monitoring rather than repeat naloxone dumping.',
+      naloxoneGuidance: 'Administer 1 standard dose of naloxone initially to reverse any opioid-induced respiratory depression. If breathing is shallow or absent, support with naloxone and rescue breathing. ONCE RESPIRATORY RATE IS >= 10–12 BREATHS/MIN, CEASE NALOXONE ADMINISTRATION even if patient remains comatose.',
+      airwayGuidance: 'Place in left lateral recovery position with top knee bent to maintain airway and prevent aspiration. Continuously observe chest rise and stay with them.',
       warnings: [
         'DO NOT DUMP REPEATED NALOXONE: Xylazine is an alpha-2 adrenergic agonist, not an opioid. Naloxone cannot wake someone from xylazine sedation.',
         'Excessive naloxone triggers explosive acute opioid withdrawal, intractable vomiting, and fatal aspiration in a sedated patient with depressed airway reflexes.',
@@ -772,9 +860,9 @@ export function evaluateOverdoseRiskScenario(scenario) {
       scenarioTitle: 'Renarconization Risk (Secondary Opioid Resurgence)',
       severity: 'critical',
       emergencyEMSRequired: true,
-      primaryAction: 'Re-administer naloxone immediately for recurring respiratory depression. Maintain strict 2–4 hour post-reversal observation protocol.',
-      naloxoneGuidance: 'Re-administer 4 mg intranasal or 0.4–1 mg IV/IM naloxone at first sign of recurrent respiratory rate slowdown (<10–12 breaths/min). In hospital settings, initiate continuous IV naloxone infusion at 2/3 the effective reversal dose per hour.',
-      airwayGuidance: 'Reposition airway, provide rescue ventilations if breathing is shallow or stopped, and place in recovery position.',
+      primaryAction: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them. Re-administer naloxone immediately for recurring respiratory depression and maintain strict 2–4 hour continuous post-reversal observation protocol.',
+      naloxoneGuidance: 'Re-administer 4 mg intranasal or 0.4–1 mg IV/IM naloxone at first sign of recurrent respiratory rate slowdown (<10–12 breaths/min). Emergency Medical Services (EMS) / Hospital ED Procedure: In hospital settings, initiate continuous IV naloxone infusion at 2/3 the effective reversal dose per hour.',
+      airwayGuidance: 'Reposition airway, provide rescue breathing (1 breath every 5 seconds) if breathing is shallow or stopped, place in left recovery position, and stay with them.',
       warnings: [
         'Synthetic fentanyl and long-acting opioids outlast naloxone (naloxone t1/2 = 30–90 min). Fentanyl redistributes from adipose tissue into blood after naloxone clears.',
         'Never allow patient to leave unobserved within the initial 2-hour post-reversal window.',
@@ -804,10 +892,10 @@ export function evaluateOverdoseRiskScenario(scenario) {
       severity: isPhysicalEmergency ? 'critical' : 'moderate',
       emergencyEMSRequired: true,
       primaryAction: isPhysicalEmergency
-        ? 'Call 911 immediately for physical stimulant crisis. Initiate active external cooling (wet cool cloths/ice packs at neck, axillae, groin) and clear space for seizure safety.'
-        : 'Move to quiet, low-stimulation environment with dimmed lighting. Speak calmly, do not physically restrain, offer sips of water, and stay with the person.',
+        ? 'Call 911 immediately, give naloxone (if unresponsive or fentanyl contamination suspected), rescue breathing (1 breath every 5s), left recovery position, stay with them. Initiate active external cooling (wet cool cloths/ice packs at neck, axillae, groin) and clear space for seizure safety.'
+        : 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them if breathing slows, unresponsiveness occurs, or physical crisis develops. For non-physical overamping (psychological panic/agitation), move to a calm, quiet, low-stimulation environment with dimmed lighting; do not physically restrain, offer sips of water, and stay with them.',
       naloxoneGuidance: 'Naloxone does NOT reverse stimulants. However, ALWAYS administer naloxone if the person is unresponsive, breathing slowly (<10–12 breaths/min), or if opioid adulteration (fentanyl cross-contamination) is suspected.',
-      airwayGuidance: 'If seizure occurs, do not put anything in mouth; pad head and place in recovery position once convulsions cease.',
+      airwayGuidance: 'If seizure occurs, do not put anything in mouth; pad head, deliver rescue breathing (1 breath every 5s) if respirations stop, and place in left recovery position once convulsions cease; stay with them.',
       warnings: [
         'NEVER physically restrain someone who is overamping: struggle against physical restraints rapidly worsens rhabdomyolysis, hyperpyrexia, and cardiac arrest.',
         'Fentanyl is frequently present in illicit stimulant supplies; treat unresponsiveness or hypoventilation as an opioid emergency.',
@@ -824,9 +912,9 @@ export function evaluateOverdoseRiskScenario(scenario) {
     scenarioTitle: 'Standard Opioid Overdose Emergency Protocol',
     severity: 'critical',
     emergencyEMSRequired: true,
-    primaryAction: 'Call 911 immediately, administer first dose of naloxone, support breathing (1 breath every 5 seconds), and place in recovery position once breathing resumes.',
+    primaryAction: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them. Administer first dose of naloxone; if no response after 2–3 minutes, give a second dose in the opposite nostril while continuing rescue breathing.',
     naloxoneGuidance: 'Give 1 spray (4 mg) of naloxone into one nostril. If no response after 2–3 minutes, give a second dose in the other nostril while continuing rescue breaths.',
-    airwayGuidance: 'Open airway (head-tilt chin-lift). Provide rescue breathing (1 breath every 5 seconds). Place in lateral recovery position once spontaneous respirations exceed 10–12 breaths/min.',
+    airwayGuidance: 'Open airway (head-tilt chin-lift). Provide rescue breathing (1 breath every 5 seconds). Place in left recovery position once spontaneous respirations exceed 10–12 breaths/min; stay with them.',
     warnings: [
       'Naloxone wears off in 30–90 minutes. Stay with the person until emergency medical services arrive.',
       'If fentanyl or xylazine is present, multiple doses or extended observation may be necessary.',
