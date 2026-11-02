@@ -1,6 +1,7 @@
 import { h, ext, tel, icon } from '../dom.js';
 import { overdoseGuide } from '../components/overdose.js';
 import { overdosePacer } from '../components/overdosePacing.js';
+import { mutualAidFinder } from '../components/mutualAidFinder.js';
 import { HOTLINES } from '../content/hotlines.js';
 import { offlineControlCard } from './core.js';
 import { pageHeader, section, p, fine, ul, strong, resourceList, hotlineGrid, tocNav, emergencyCallout } from './common.js';
@@ -203,6 +204,7 @@ export function supportView() {
     section('peer', 'Peer support & meetings',
       p('Mutual-help groups are free. Different groups work for different people, so it is fine to try a few. You can be in recovery while taking medications like buprenorphine or methadone (',
         h('a', { href: '#/medications' }, 'see our Medication Guide'), ').'),
+      mutualAidFinder(),
       resourceList([
         { name: 'SMART Recovery', href: 'https://meetings.smartrecovery.org/', desc: 'Science-based, self-empowering meetings in person and online.' },
         { name: 'Alcoholics Anonymous', href: 'https://www.aa.org/find-aa', desc: '12-step meetings for people with a drinking problem.' },
