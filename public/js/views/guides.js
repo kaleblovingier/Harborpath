@@ -1,5 +1,6 @@
 import { h, ext, tel, icon } from '../dom.js';
 import { overdoseGuide } from '../components/overdose.js';
+import { overdosePacer } from '../components/overdosePacing.js';
 import { HOTLINES } from '../content/hotlines.js';
 import { offlineControlCard } from './core.js';
 import { pageHeader, section, p, fine, ul, strong, resourceList, hotlineGrid, tocNav, emergencyCallout } from './common.js';
@@ -14,6 +15,9 @@ export function overdoseView() {
     pageHeader('Overdose response', 'What to do right now, step by step.',
       h('p', { class: 'actions' }, tel('911', [icon('phone'), 'Call 911'], { class: 'btn btn-emergency btn-large' }))),
     overdoseGuide(),
+    section('rescue-timer', 'Interactive rescue timer (optional)',
+      overdosePacer(),
+    ),
     offlineControlCard(),
   );
 }
