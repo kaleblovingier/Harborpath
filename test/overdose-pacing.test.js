@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { useDictionary } from '../public/js/i18n.js';
+useDictionary('en', {});
 
 import {
   RESCUE_PACING_STEPS,
