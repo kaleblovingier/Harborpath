@@ -263,3 +263,4 @@ describe('Recovery Capital Index (BARC-10) Component (public/js/components/recov
     });
   });
 });
+

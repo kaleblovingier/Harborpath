@@ -309,3 +309,4 @@ describe('Workplace Rights, FMLA & Professional Licensure Module (public/js/view
     });
   });
 });
+

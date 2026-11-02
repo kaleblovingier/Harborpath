@@ -758,3 +758,4 @@ export function recoveryCapitalComponent(containerOrOptions = {}, maybeOptions =
   if (container) container.append(root);
   return root;
 }
+
