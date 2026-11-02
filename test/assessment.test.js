@@ -179,6 +179,8 @@ test('calculateCowsScore handles zero, minimal, mild, moderate, moderately sever
   assert.equal(zeroRes.buprenorphineInduction.precipitatedWithdrawalRisk, 'HIGH');
   assert.match(zeroRes.buprenorphineInduction.clinicalAction, /CONTRAINDICATED/);
   assert.match(zeroRes.buprenorphineInduction.clinicalAction, /Bernese/i);
+  assert.match(zeroRes.buprenorphineInduction.clinicalAction, /commonly used clinical thresholds under prescriber guidance/i);
+  assert.match(zeroRes.buprenorphineInduction.clinicalAction, /WARNING — PRESCRIBER DIRECTED/);
 
   // Case 2: Minimal score boundary (4 points)
   const score4 = calculateCowsScore({ pulse: 1, sweating: 1, tremor: 1, yawning: 1 });
@@ -220,6 +222,8 @@ test('calculateCowsScore handles zero, minimal, mild, moderate, moderately sever
   assert.equal(score12.buprenorphineInduction.status, 'ready');
   assert.equal(score12.buprenorphineInduction.precipitatedWithdrawalRisk, 'LOW');
   assert.match(score12.buprenorphineInduction.clinicalAction, /Standard buprenorphine induction is clinically indicated/);
+  assert.match(score12.buprenorphineInduction.clinicalAction, /commonly used clinical thresholds under prescriber guidance/i);
+  assert.match(score12.buprenorphineInduction.clinicalAction, /WARNING — PRESCRIBER DIRECTED/);
 
   // Case 6: Moderate boundary (COWS = 13)
   const score13 = calculateCowsScore({
@@ -392,6 +396,7 @@ test('calculateCiwaScore handles Mild (<10), Moderate (10–18), and Severe (>=1
   assert.equal(score19.emergencyEvaluationRequired, true);
   assert.equal(score19.deliriumTremensRisk, 'HIGH');
   assert.equal(score19.seizureRisk, 'HIGH');
+  assert.match(score19.clinicalAction, /^CALL 911 IMMEDIATELY/);
   assert.match(score19.clinicalAction, /EMERGENCY HOSPITAL EVALUATION REQUIRED/);
   assert.match(score19.clinicalAction, /EMTALA/);
   assert.match(score19.clinicalAction, /Delirium Tremens/);
@@ -419,6 +424,7 @@ test('calculateCiwaScore triggers emergency evaluation when hallucinations or di
   assert.equal(lowWithHallucination.hasHallucinations, true);
   assert.equal(lowWithHallucination.emergencyEvaluationRequired, true); // overridden by red flag
   assert.equal(lowWithHallucination.deliriumTremensRisk, 'HIGH');
+  assert.match(lowWithHallucination.clinicalAction, /^CALL 911 IMMEDIATELY/);
   assert.match(lowWithHallucination.clinicalAction, /EMERGENCY HOSPITAL EVALUATION REQUIRED/);
   assert.ok(lowWithHallucination.redFlags.some((rf) => rf.includes('HALLUCINATIONS')));
 
@@ -430,7 +436,16 @@ test('calculateCiwaScore triggers emergency evaluation when hallucinations or di
   assert.equal(lowWithDisorientation.totalScore, 4);
   assert.equal(lowWithDisorientation.hasDisorientation, true);
   assert.equal(lowWithDisorientation.emergencyEvaluationRequired, true);
+  assert.match(lowWithDisorientation.clinicalAction, /^CALL 911 IMMEDIATELY/);
   assert.ok(lowWithDisorientation.redFlags.some((rf) => rf.includes('SENSORIUM CLOUDING')));
+
+  // Low score with seizure risk flag
+  const lowWithSeizureRisk = calculateCiwaScore({ tremor: 1, seizureRisk: true });
+  assert.equal(lowWithSeizureRisk.totalScore, 1);
+  assert.equal(lowWithSeizureRisk.hasSeizureRisk, true);
+  assert.equal(lowWithSeizureRisk.emergencyEvaluationRequired, true);
+  assert.match(lowWithSeizureRisk.clinicalAction, /^CALL 911 IMMEDIATELY/);
+  assert.ok(lowWithSeizureRisk.redFlags.some((rf) => rf.includes('SEIZURE RISK')));
 });
 
 // ============================================================================
@@ -521,7 +536,9 @@ test('formatAssessmentReportText generates comprehensive report with clinical, l
   assert.match(text, /Precipitated Withdrawal Risk: LOW/);
 
   // Required disclaimers and notices
+  assert.match(text, /Informational Self-Check Tool/);
   assert.match(text, /This document is NOT a formal medical diagnosis or prescription/);
+  assert.match(text, /commonly used clinical thresholds under prescriber guidance/);
   assert.match(text, /In-RAM Privacy/);
 
   // Regulatory protections

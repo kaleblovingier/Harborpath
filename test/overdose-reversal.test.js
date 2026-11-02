@@ -95,8 +95,9 @@ describe('REVERSAL_FORMULATIONS Clinical Pharmacology & Schema', () => {
       // Indications, Pearls, and Evidence Sources
       assert.ok(Array.isArray(f.targetIndications) && f.targetIndications.length >= 2);
       assert.ok(Array.isArray(f.clinicalPearls) && f.clinicalPearls.length >= 2);
+      assert.ok(Array.isArray(f.sources) && f.sources.length >= 2);
       assert.ok(Array.isArray(f.evidenceSources) && f.evidenceSources.length >= 2);
-      for (const src of f.evidenceSources) {
+      for (const src of f.sources) {
         assert.equal(typeof src.organization, 'string');
         assert.equal(typeof src.title, 'string');
         assert.ok(typeof src.year === 'number');
@@ -401,7 +402,8 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       assert.equal(resultByStr.scenarioId, 'wooden_chest_syndrome');
       assert.equal(resultByStr.severity, 'critical');
       assert.equal(resultByStr.emergencyEMSRequired, true);
-      assert.match(resultByStr.primaryAction, /Administer naloxone immediately.*Advanced Life Support/i);
+      assert.match(resultByStr.primaryAction, /Call 911 immediately.*give naloxone.*rescue breathing.*left recovery position.*stay with them/i);
+      assert.match(resultByStr.primaryAction, /Advanced Life Support/i);
       assert.match(resultByStr.airwayGuidance, /jaw thrust/i);
       assert.equal(resultByStr.referenceGuide.id, 'wooden_chest_syndrome');
 
@@ -413,7 +415,8 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       const resultByStr = evaluateOverdoseRiskScenario('xylazine_sedation');
       assert.equal(resultByStr.scenarioId, 'xylazine_sedation_management');
       assert.equal(resultByStr.severity, 'high');
-      assert.match(resultByStr.primaryAction, /If respiratory rate is adequate.*STOP GIVING NALOXONE/i);
+      assert.match(resultByStr.primaryAction, /Call 911 immediately.*give naloxone.*rescue breathing.*left recovery position.*stay with them/i);
+      assert.match(resultByStr.primaryAction, /breathing spontaneously.*rather than repeat naloxone dumping/i);
       assert.match(resultByStr.warnings[0], /DO NOT DUMP REPEATED NALOXONE/i);
       assert.match(resultByStr.airwayGuidance, /recovery position/i);
       assert.equal(resultByStr.referenceGuide.id, 'xylazine_sedation_management');
@@ -426,7 +429,8 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       const resultByStr = evaluateOverdoseRiskScenario('renarconization');
       assert.equal(resultByStr.scenarioId, 'renarconization_risk');
       assert.equal(resultByStr.severity, 'critical');
-      assert.match(resultByStr.primaryAction, /Re-administer naloxone immediately.*2–4 hour/i);
+      assert.match(resultByStr.primaryAction, /Call 911 immediately.*give naloxone.*rescue breathing.*left recovery position.*stay with them/i);
+      assert.match(resultByStr.primaryAction, /2–4 hour/i);
       assert.match(resultByStr.monitoringProtocol, /Minimum 2–4 hours continuous medical observation/i);
       assert.equal(resultByStr.referenceGuide.id, 'renarconization_risk');
 

@@ -397,13 +397,13 @@ export function calculateCowsScore(answers = {}) {
     ready: inductionReady,
     status: inductionReady ? 'ready' : 'wait_or_micro_induction',
     score: totalScore,
-    threshold: '12–13',
+    threshold: '12–13 (commonly used clinical threshold under prescriber guidance)',
     headline: inductionReady
-      ? 'Ready for Standard Buprenorphine Induction (COWS >= 12)'
-      : 'Wait or Bernese Micro-Induction (COWS < 12) — Precipitated Withdrawal Warning',
+      ? 'Ready for Standard Buprenorphine Induction (COWS >= 12–13 under Prescriber Guidance)'
+      : 'Wait or Prescriber-Directed Micro-Induction (COWS < 12) — Precipitated Withdrawal Warning',
     clinicalAction: inductionReady
-      ? 'Standard buprenorphine induction is clinically indicated. The score meets or exceeds the validated 12–13 threshold, indicating sufficient clearance of full mu-opioid agonists from receptors to safely initiate buprenorphine without precipitating acute withdrawal. Typical Day 1 protocol: 2–4 mg sublingual test dose, reassess at 60–120 minutes, titrating up to 8–16 mg as needed.'
-      : 'Standard buprenorphine induction is CONTRAINDICATED at this time. Because the COWS score is under 12, full opioid agonists remain bound to mu-opioid receptors. Administering standard buprenorphine now has a high risk of precipitating severe, sudden withdrawal. Recommended clinical options: (1) Wait 2–4 hours and re-score COWS until >= 12–13; or (2) Consult a licensed prescriber for a low-dose Bernese micro-induction schedule (which starts at 0.2–0.5 mg buprenorphine while continuing full agonists, titrating up over 7–10 days without acute withdrawal). Non-opioid comfort medications (clonidine, ondansetron, loperamide, NSAIDs) can relieve distress while waiting.',
+      ? 'Standard buprenorphine induction is clinically indicated: Commonly used clinical thresholds under prescriber guidance (COWS >= 12–13) suggest sufficient mu-opioid receptor clearance to initiate buprenorphine with lower risk of precipitated withdrawal. WARNING — PRESCRIBER DIRECTED: All dosing recommendations and treatment plans must be directed by a licensed prescriber. Under prescriber direction, standard induction typically begins with an observed test dose (e.g., 2–4 mg sublingual) followed by clinical reassessment at 60–120 minutes before titration up to 8–16 mg as needed.'
+      : 'Standard buprenorphine induction is CONTRAINDICATED at this time: Commonly used clinical thresholds under prescriber guidance require COWS >= 12–13 before standard buprenorphine induction to avoid precipitating acute, sudden withdrawal distress. WARNING — PRESCRIBER DIRECTED: Any medication adjustment or induction strategy must be directed by a licensed prescriber. Prescriber-directed clinical options include: (1) Waiting 2–4 hours for withdrawal symptoms to reach the prescriber-guided threshold; or (2) Prescriber-directed low-dose micro-induction (such as the Bernese method, starting at microgram doses like 0.2–0.5 mg buprenorphine while continuing full agonists under medical supervision). Physician-prescribed non-opioid comfort medications (clonidine, ondansetron, loperamide, NSAIDs) can relieve distress while waiting.',
     precipitatedWithdrawalRisk: inductionReady ? 'LOW' : 'HIGH',
   };
 
@@ -479,18 +479,21 @@ export function calculateCiwaScore(answers = {}) {
   }
 
   const medicalDetoxIndicated = totalScore >= 10;
-  const emergencyEvaluationRequired = totalScore >= 19;
+  const isSevereScore = totalScore >= 19;
 
-  // Hallucination and disorientation checks
+  // Hallucination, disorientation, and seizure risk checks
   const hasHallucinations = Boolean(
     (dimensionScores.tactile_disturbances?.score >= 4) ||
     (dimensionScores.auditory_disturbances?.score >= 4) ||
     (dimensionScores.visual_disturbances?.score >= 4)
   );
   const hasDisorientation = Boolean(dimensionScores.orientation?.score >= 2);
+  const hasSeizureRisk = Boolean(safeAnswers.seizureRisk || safeAnswers.seizureHistory || isSevereScore);
+
+  const emergencyEvaluationRequired = isSevereScore || hasHallucinations || hasDisorientation || hasSeizureRisk;
 
   const redFlags = [];
-  if (totalScore >= 19) {
+  if (isSevereScore) {
     redFlags.push('CRITICAL EMERGENCY: Severe alcohol withdrawal score (>= 19). High risk of Delirium Tremens (DTs), generalized tonic-clonic seizures, hyperthermia, aspiration, and cardiovascular collapse. Immediate EMTALA emergency hospital evaluation required.');
   }
   if (hasHallucinations) {
@@ -499,14 +502,17 @@ export function calculateCiwaScore(answers = {}) {
   if (hasDisorientation) {
     redFlags.push('SENSORIUM CLOUDING / DISORIENTATION: Significant disorientation indicates acute encephalopathy or delirium. Urgent medical stabilization required.');
   }
+  if (safeAnswers.seizureRisk || safeAnswers.seizureHistory) {
+    redFlags.push('SEIZURE RISK: Personal history or active risk of alcohol withdrawal seizures indicates dangerous instability. Immediate emergency hospital evaluation required.');
+  }
 
   let clinicalAction = '';
-  if (totalScore >= 19 || hasHallucinations || hasDisorientation) {
-    clinicalAction = 'EMERGENCY HOSPITAL EVALUATION REQUIRED (EMTALA 42 U.S.C. § 1395dd). The patient is in severe alcohol withdrawal and at imminent risk of Delirium Tremens, generalized seizures, aspiration, and death. Immediately call 911 or transfer to an Emergency Department. Inpatient hospital admission, intensive benzodiazepine therapy, continuous telemetry, and electrolyte correction are indicated.';
+  if (emergencyEvaluationRequired) {
+    clinicalAction = 'CALL 911 IMMEDIATELY / EMERGENCY HOSPITAL EVALUATION REQUIRED (EMTALA 42 U.S.C. § 1395dd). The person is experiencing severe alcohol withdrawal or critical complication risks (score >= 19, hallucinations, disorientation, or seizure risk) and is at imminent risk of Delirium Tremens, generalized seizures, aspiration, and death. Call 911 or go to the nearest Emergency Department immediately. Under EMTALA, emergency departments are required to provide medical stabilization regardless of insurance or ability to pay. Inpatient hospital admission, continuous telemetry, and physician-directed benzodiazepine therapy are indicated.';
   } else if (totalScore >= 10) {
-    clinicalAction = 'MEDICAL DETOXIFICATION INDICATED. Moderate alcohol withdrawal (CIWA-Ar 10–18). Pharmacotherapy with benzodiazepines (symptom-triggered or scheduled protocol, e.g., lorazepam or diazepam) is clinically indicated to prevent progression to withdrawal seizures or Delirium Tremens. Parenteral or high-dose oral thiamine (200–500 mg daily) should be started immediately prior to glucose. Admission to a medically monitored withdrawal management facility (ASAM Level 3.2-WM or 3.7-WM) is recommended.';
+    clinicalAction = 'MEDICAL DETOXIFICATION INDICATED. Moderate alcohol withdrawal (CIWA-Ar 10–18). Self-check indicates need for professional medical detoxification. Pharmacotherapy with benzodiazepines (symptom-triggered or scheduled protocol, e.g., lorazepam or diazepam under prescriber direction) is clinically indicated to prevent progression to withdrawal seizures or Delirium Tremens. Parenteral or high-dose oral thiamine (200–500 mg daily) should be started immediately prior to glucose. Admission to a medically monitored withdrawal management facility (ASAM Level 3.2-WM or 3.7-WM) is recommended.';
   } else {
-    clinicalAction = 'MILD WITHDRAWAL — OUTPATIENT SUPPORTIVE CARE. Mild withdrawal (<10). Medical detox is typically not required unless there is a past personal history of alcohol withdrawal seizures or Delirium Tremens. Provide supportive care: oral hydration with electrolytes, thiamine supplementation (100–500 mg daily), multivitamins with folate, and quiet environment. Re-assess with CIWA-Ar every 2–4 hours; if score climbs to 10+, escalate to medical detox.';
+    clinicalAction = 'MILD WITHDRAWAL — OUTPATIENT SUPPORTIVE CARE. Mild withdrawal (<10). Medical detox is typically not required unless there is a past personal history of alcohol withdrawal seizures or Delirium Tremens. Self-check indicates supportive outpatient care: oral hydration with electrolytes, thiamine supplementation (100–500 mg daily), multivitamins with folate, and quiet environment. Re-assess with CIWA-Ar every 2–4 hours; if score climbs to 10+, escalate to medical detox.';
   }
 
   return {
@@ -518,12 +524,13 @@ export function calculateCiwaScore(answers = {}) {
     isComplete: answeredCount === CIWA_DIMENSIONS.length,
     severityBand,
     medicalDetoxIndicated,
-    emergencyEvaluationRequired: emergencyEvaluationRequired || hasHallucinations || hasDisorientation,
+    emergencyEvaluationRequired,
     clinicalAction,
-    deliriumTremensRisk: totalScore >= 19 || hasHallucinations ? 'HIGH' : (totalScore >= 10 ? 'MODERATE' : 'LOW'),
-    seizureRisk: totalScore >= 19 ? 'HIGH' : (totalScore >= 10 ? 'MODERATE' : 'LOW'),
+    deliriumTremensRisk: isSevereScore || hasHallucinations ? 'HIGH' : (totalScore >= 10 ? 'MODERATE' : 'LOW'),
+    seizureRisk: hasSeizureRisk ? 'HIGH' : (totalScore >= 10 ? 'MODERATE' : 'LOW'),
     hasHallucinations,
     hasDisorientation,
+    hasSeizureRisk,
     dimensionScores,
     redFlags,
   };
@@ -650,9 +657,10 @@ export function formatAssessmentReportText(state = inMemoryAssessmentState) {
     `Assessor Perspective: ${safeState.assessorRole || 'patient'} self-report / clinical triage`,
     '',
     'CLINICAL & REGULATORY NOTICE:',
-    '• This is an informational triage support tool based on standard validated clinical scales.',
+    '• Informational Self-Check Tool: This is an informational self-check screening tool based on standard validated clinical scales.',
     '• This document is NOT a formal medical diagnosis or prescription. A licensed clinician must assess you.',
-    '• Emergency Warning: If experiencing chest pain, difficulty breathing, seizures, confusion, hallucinations, or severe delirium, call 911 or visit the nearest Emergency Department immediately (protected under EMTALA, 42 U.S.C. § 1395dd).',
+    '• Prescriber Guidance Required: Score thresholds (e.g. COWS >= 12–13) are commonly used clinical thresholds under prescriber guidance. All buprenorphine induction decisions, test doses, and micro-induction schedules must be directed by a licensed prescriber.',
+    '• Emergency Warning: If experiencing severe alcohol withdrawal (CIWA-Ar >= 19), hallucinations, disorientation, seizures, chest pain, or difficulty breathing, call 911 or visit the nearest Emergency Department immediately (protected under EMTALA, 42 U.S.C. § 1395dd).',
     '• In-RAM Privacy: Answers are evaluated in temporary browser memory only and are not written to device storage or sent over the internet.',
     '',
   ];
@@ -772,7 +780,7 @@ export function assessmentView({ query } = {}) {
     t('assessment.title', 'Clinical Withdrawal Assessment (COWS & CIWA-Ar)'),
     t(
       'assessment.lede',
-      'Evidence-based clinical withdrawal monitoring for opioids (COWS) and alcohol (CIWA-Ar). Evaluates buprenorphine induction readiness, medical detox thresholds, and emergency hospital evaluation needs with 100% ephemeral in-RAM privacy.',
+      'Evidence-based clinical withdrawal self-check tool for opioids (COWS) and alcohol (CIWA-Ar). Evaluates buprenorphine induction readiness under commonly used prescriber guidance, medical detox thresholds, and emergency hospital evaluation needs with 100% ephemeral in-RAM privacy.',
     ),
   );
   root.append(header);
@@ -795,6 +803,22 @@ export function assessmentView({ query } = {}) {
     ),
   );
   root.append(privacyCallout);
+
+  // 2b. Clinical Self-Check Disclaimer Callout
+  const disclaimerCallout = h(
+    'div',
+    { class: 'callout callout-warn' },
+    h(
+      'p',
+      { class: 'callout-title' },
+      icon('alert'),
+      'Clinical Self-Check Disclaimer — Not a Medical Diagnosis',
+    ),
+    p(
+      'This assessment is an informational self-check screening tool based on validated clinical scales, NOT a clinical diagnosis or medical prescription. COWS thresholds (>= 12–13) reflect commonly used clinical thresholds under prescriber guidance, and all dosing regimens (test doses, micro-inductions, comfort medications) must be directed by a licensed prescriber. Any severe alcohol withdrawal score (CIWA-Ar >= 19), hallucinations, confusion, or seizure risk requires immediate emergency medical evaluation (Call 911 / EMTALA emergency hospital evaluation).',
+    ),
+  );
+  root.append(disclaimerCallout);
 
   // 3. Scale Selector Tabs (COWS vs CIWA-Ar)
   const tabList = h('div', { class: 'tabs', role: 'tablist', 'aria-label': t('assessment.tabs.label', 'Withdrawal assessment scale') });
@@ -906,7 +930,7 @@ export function assessmentView({ query } = {}) {
   }
 
   // Build COWS Questionnaire
-  const cowsHeader = h('h3', null, 'COWS 11 Clinical Dimensions (Opioid Withdrawal)');
+  const cowsHeader = h('h3', null, 'COWS 11 Clinical Dimensions (Opioid Withdrawal Self-Check)');
   cowsPanel.append(cowsHeader);
   for (const dim of COWS_DIMENSIONS) {
     const fs = renderDimensionFieldset(dim, 'cows', inMemoryAssessmentState.cowsAnswers, (id, score) => {
@@ -918,7 +942,7 @@ export function assessmentView({ query } = {}) {
   }
 
   // Build CIWA Questionnaire
-  const ciwaHeader = h('h3', null, 'CIWA-Ar 10 Clinical Dimensions (Alcohol Withdrawal)');
+  const ciwaHeader = h('h3', null, 'CIWA-Ar 10 Clinical Dimensions (Alcohol Withdrawal Self-Check — Not a Clinical Diagnosis)');
   ciwaPanel.append(ciwaHeader);
   for (const dim of CIWA_DIMENSIONS) {
     const fs = renderDimensionFieldset(dim, 'ciwa', inMemoryAssessmentState.ciwaAnswers, (id, score) => {
