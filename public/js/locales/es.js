@@ -812,6 +812,7 @@ export default {
   'route.stateDetail': 'Recursos estatales ({code})',
   'route.notFound': 'Página no encontrada',
   'route.readiness': 'Disposición y etapas del cambio',
+  'route.perinatal': 'Atención perinatal y apoyo en el embarazo',
   'app.savedCount': '{n} guardados',
   'app.footer.dataUpdated': 'Datos de centros de salud actualizados el {date}. Los listados de tratamiento se consultan en vivo.',
 

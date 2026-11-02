@@ -4,7 +4,7 @@
 // deletes all caches and unregisters itself when Quick Exit sends { type: 'wipe' }.
 
 const CACHE_PREFIX = 'harborpath-offline';
-const CACHE_NAME = `${CACHE_PREFIX}-v2`;
+const CACHE_NAME = `${CACHE_PREFIX}-v3`;
 
 // Critical tier: precached at install; install fails if any is missing.
 // Holds the app shell plus everything needed in an emergency while offline:
@@ -38,6 +38,7 @@ const APP_SHELL = [
   '/js/components/sensoryMode.js',
   '/js/components/emergencyDrawer.js',
   '/js/components/stateLegalCard.js',
+  '/js/components/mutualAidFinder.js',
   '/js/content/hotlines.js',
   '/js/content/reversalFormulations.js',
   '/js/views/common.js',
@@ -70,6 +71,8 @@ const ELECTIVE_SHELL = [
   '/js/views/readiness.js',
   '/js/views/match.js',
   '/js/match/engine.js',
+  '/js/views/perinatal.js',
+  '/js/components/testStripCalculator.js',
 ];
 
 self.addEventListener('install', (event) => {

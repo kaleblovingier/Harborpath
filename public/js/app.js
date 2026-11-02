@@ -71,6 +71,10 @@ export const LAZY_LOADERS = {
     viewCache.set('readiness', m.readinessView);
     return m.readinessView;
   }),
+  perinatal: () => import('./views/perinatal.js').then((m) => {
+    viewCache.set('perinatal', m.perinatalView);
+    return m.perinatalView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -90,6 +94,7 @@ const ROUTE_TITLES = {
   plan: () => t('route.plan', 'Safety plan & first visit'),
   assessment: () => t('route.assessment', 'Withdrawal assessment (COWS & CIWA-Ar)'),
   readiness: () => t('route.readiness', 'Readiness & stages of change'),
+  perinatal: () => t('route.perinatal', 'Perinatal care & pregnancy support'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -119,6 +124,7 @@ export function preloadAllLazyViews() {
     preloadRoute('plan'),
     preloadRoute('assessment'),
     preloadRoute('readiness'),
+    preloadRoute('perinatal'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -242,6 +248,9 @@ export function runQuickExitResets() {
   import('./components/emergencyDrawer.js').then((m) => m.closeEmergencyDrawer?.()).catch(() => {});
   import('./components/stateLegalCard.js').then((m) => m.resetStateLegalCardState?.()).catch(() => {});
   import('./components/overdosePacing.js').then((m) => m.resetOverdosePacer?.()).catch(() => {});
+  import('./views/perinatal.js').then((m) => m.resetPerinatalState?.()).catch(() => {});
+  import('./components/testStripCalculator.js').then((m) => m.resetTestStripState?.()).catch(() => {});
+  import('./components/mutualAidFinder.js').then((m) => m.resetMutualAidState?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
