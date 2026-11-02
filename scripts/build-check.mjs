@@ -13,6 +13,10 @@ import { decodeTable, isTable } from '../src/columns.js';
 import { SECURITY_HEADERS } from '../src/app.js';
 import { SOURCES } from './sources/index.mjs';
 
+// Install-time (critical tier) offline budget. Emergency content must stay
+// within it; heavier elective tools belong in ELECTIVE_SHELL instead.
+export const CRITICAL_GZIP_BUDGET = 350 * 1024;
+
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
@@ -109,6 +113,8 @@ export async function runBuildCheck({ silent = false } = {}) {
   let assetCount = 0;
   let totalBytes = 0;
   let totalGzipBytes = 0;
+  let electiveCount = 0;
+  let electiveGzipBytes = 0;
   const swPath = path.join(PUBLIC_DIR, 'sw.js');
   if (!existsSync(swPath)) {
     record('app-shell:sw.js', false, 'Missing public/sw.js');
@@ -137,13 +143,39 @@ export async function runBuildCheck({ silent = false } = {}) {
         }
       }
       assetCount = seenFiles.size;
+      const overBudget = totalGzipBytes >= CRITICAL_GZIP_BUDGET;
       record(
         'app-shell:assets',
-        missingAssets.length === 0 && assetCount >= 20,
-        missingAssets.length === 0
-          ? `${assetCount} unique files (${(totalBytes / 1024).toFixed(1)} KB raw, ${(totalGzipBytes / 1024).toFixed(1)} KB gzip)`
-          : `Missing APP_SHELL files: ${missingAssets.join(', ')}`,
+        missingAssets.length === 0 && assetCount >= 20 && !overBudget,
+        missingAssets.length > 0
+          ? `Missing APP_SHELL files: ${missingAssets.join(', ')}`
+          : `${assetCount} critical files (${(totalBytes / 1024).toFixed(1)} KB raw, ${(totalGzipBytes / 1024).toFixed(1)} KB gzip; budget < ${CRITICAL_GZIP_BUDGET / 1024} KB)${overBudget ? ' OVER BUDGET' : ''}`,
       );
+
+      // Elective tier: warmed in the background after activation, so it does not
+      // count against the install budget, but every listed file must exist.
+      const electiveMatch = swText.match(/const ELECTIVE_SHELL = \[([\s\S]*?)\];/);
+      if (electiveMatch) {
+        const electiveUrls = [...electiveMatch[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+        const missingElective = [];
+        for (const urlPath of electiveUrls) {
+          const full = path.join(PUBLIC_DIR, urlPath.replace(/^\//, ''));
+          if (!existsSync(full) || !statSync(full).isFile()) {
+            missingElective.push(urlPath);
+            continue;
+          }
+          if (seenFiles.has(full)) continue;
+          electiveCount += 1;
+          electiveGzipBytes += gzipSync(readFileSync(full), { level: 9 }).length;
+        }
+        record(
+          'app-shell:elective',
+          missingElective.length === 0,
+          missingElective.length === 0
+            ? `${electiveCount} elective files (${(electiveGzipBytes / 1024).toFixed(1)} KB gzip, warmed after activation)`
+            : `Missing ELECTIVE_SHELL files: ${missingElective.join(', ')}`,
+        );
+      }
     }
   }
 
