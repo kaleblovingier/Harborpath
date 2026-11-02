@@ -9,6 +9,21 @@
 import { readFileSync } from 'node:fs';
 
 /**
+ * Plain-language statutory disclaimer exported for API consumers and UI presentation.
+ * Explicitly notes that data is unverified by a licensed attorney, statutes change,
+ * users should confirm with linked sources or local legal aid / harm reduction programs,
+ * and ALWAYS call 911 first during an overdose emergency.
+ */
+export const LEGAL_DISCLAIMER =
+  'Statutory information presented here is unverified by a licensed attorney. Statutes change frequently and enforcement varies across jurisdictions. Confirm current statutory protections with linked authoritative sources or local legal aid / harm reduction programs. In any suspected overdose emergency, ALWAYS call 911 first to save a life — medical resuscitation is the first and most critical priority.';
+
+/**
+ * @typedef {Object} LegalSource
+ * @property {string} name
+ * @property {string} url
+ */
+
+/**
  * @typedef {Object} GoodSamaritanProtection
  * @property {boolean} hasProtection
  * @property {boolean} arrestImmunity
@@ -40,6 +55,10 @@ import { readFileSync } from 'node:fs';
  * @typedef {Object} JurisdictionLegalRecord
  * @property {string} stateCode
  * @property {string} stateName
+ * @property {string} reviewStatus
+ * @property {string|null} lastReviewed
+ * @property {ReadonlyArray<LegalSource>} sources
+ * @property {string} disclaimer
  * @property {GoodSamaritanProtection} goodSamaritan
  * @property {NaloxoneAccess} naloxoneAccess
  * @property {HarmReductionEquipment} harmReductionEquipment
@@ -130,6 +149,10 @@ function buildJurisdictionSummary(record) {
   return deepFreeze({
     stateCode: record.stateCode,
     stateName: record.stateName,
+    reviewStatus: record.reviewStatus ?? 'unverified',
+    lastReviewed: record.lastReviewed ?? null,
+    sources: record.sources ?? [],
+    disclaimer: LEGAL_DISCLAIMER,
     goodSamaritan: {
       hasProtection: gs.hasProtection,
       arrestImmunity: gs.arrestImmunity,
@@ -191,7 +214,14 @@ export function loadLegalRegistry(options = {}) {
       throw new Error('Malformed jurisdiction record missing stateCode.');
     }
     const code = item.stateCode.trim().toUpperCase();
-    const frozenRecord = deepFreeze({ ...item, stateCode: code });
+    const frozenRecord = deepFreeze({
+      ...item,
+      stateCode: code,
+      reviewStatus: item.reviewStatus ?? 'unverified',
+      lastReviewed: item.lastReviewed ?? null,
+      sources: item.sources ?? [],
+      disclaimer: LEGAL_DISCLAIMER,
+    });
     map.set(code, frozenRecord);
     summaryMap.set(code, buildJurisdictionSummary(frozenRecord));
     frozenList.push(frozenRecord);

@@ -18,6 +18,7 @@ import {
   hasXylazineTestStripProtection,
   hasSyringeProgramProtection,
   compareJurisdictions,
+  LEGAL_DISCLAIMER,
 } from '../src/legalRegistry.js';
 
 const EXPECTED_JURISDICTIONS = [
@@ -90,6 +91,20 @@ describe('Legal Registry - Schema & Completeness (52 Jurisdictions)', () => {
       assert.equal(typeof hr.sspStatutoryProtection, 'boolean', `harmReductionEquipment.sspStatutoryProtection in ${item.stateCode}`);
       assert.equal(typeof hr.statuteNotes, 'string', `harmReductionEquipment.statuteNotes in ${item.stateCode}`);
       assert.ok(hr.statuteNotes.trim().length > 0, `Empty statuteNotes in ${item.stateCode}`);
+
+      // Provenance, review status and disclaimer fields
+      assert.equal(item.reviewStatus, 'unverified', `Expected reviewStatus: "unverified" in ${item.stateCode}`);
+      assert.equal(item.lastReviewed, null, `Expected lastReviewed: null in ${item.stateCode}`);
+      assert.ok(Array.isArray(item.sources), `Expected sources array in ${item.stateCode}`);
+      assert.ok(item.sources.length > 0, `Expected non-empty sources in ${item.stateCode}`);
+      for (const src of item.sources) {
+        assert.equal(typeof src.name, 'string', `Invalid source name in ${item.stateCode}`);
+        assert.ok(src.name.trim().length > 0, `Empty source name in ${item.stateCode}`);
+        assert.equal(typeof src.url, 'string', `Invalid source url in ${item.stateCode}`);
+        assert.match(src.url, /^https?:\/\//, `Source url must start with http(s) in ${item.stateCode}`);
+      }
+      assert.equal(typeof item.disclaimer, 'string');
+      assert.ok(item.disclaimer.includes('unverified by a licensed attorney'));
     }
   });
 
@@ -423,3 +438,148 @@ describe('Legal Registry - Zero-PII & Confidentiality Invariants', () => {
     assert.match(summary.confidentialityNotice, /zero/i);
   });
 });
+
+describe('Legal Registry - Provenance, Disclaimer & stateLegalCard Safety', () => {
+  it('exports LEGAL_DISCLAIMER with explicit attorney, change, and 911 safeguards', () => {
+    assert.equal(typeof LEGAL_DISCLAIMER, 'string');
+    assert.ok(LEGAL_DISCLAIMER.includes('unverified by a licensed attorney'));
+    assert.ok(LEGAL_DISCLAIMER.toLowerCase().includes('statutes change') || LEGAL_DISCLAIMER.toLowerCase().includes('laws change'));
+    assert.ok(LEGAL_DISCLAIMER.includes('local legal aid') || LEGAL_DISCLAIMER.includes('harm reduction'));
+    assert.ok(LEGAL_DISCLAIMER.includes('ALWAYS call 911 first'));
+    assert.ok(LEGAL_DISCLAIMER.includes('overdose'));
+  });
+
+  it('every record in data/state-legal.json has reviewStatus "unverified", non-empty sources, and lastReviewed null', () => {
+    const raw = readFileSync(new URL('../data/state-legal.json', import.meta.url), 'utf8');
+    const records = JSON.parse(raw);
+    assert.equal(records.length, 52);
+    for (const r of records) {
+      assert.equal(r.reviewStatus, 'unverified', `Record ${r.stateCode} reviewStatus must be 'unverified'`);
+      assert.equal(r.lastReviewed, null, `Record ${r.stateCode} lastReviewed must be null`);
+      assert.ok(Array.isArray(r.sources) && r.sources.length > 0, `Record ${r.stateCode} sources must be non-empty`);
+      for (const s of r.sources) {
+        assert.equal(typeof s.name, 'string');
+        assert.ok(s.name.length > 0);
+        assert.equal(typeof s.url, 'string');
+        assert.match(s.url, /^https?:\/\//);
+      }
+    }
+  });
+
+  it('exposes reviewStatus, lastReviewed, sources, and disclaimer on plain-language summaries', () => {
+    const summary = getJurisdictionSummary('WA');
+    assert.equal(summary.reviewStatus, 'unverified');
+    assert.equal(summary.lastReviewed, null);
+    assert.ok(Array.isArray(summary.sources) && summary.sources.length > 0);
+    assert.equal(summary.disclaimer, LEGAL_DISCLAIMER);
+  });
+
+  it('stateLegalCard renders unverified note and does not claim "you are immune" or "you are protected"', async () => {
+    class MockClassList {
+      constructor(node) { this.node = node; }
+      contains(c) { return (this.node.className || '').split(/\s+/).includes(c); }
+      add(...classes) {
+        const s = new Set((this.node.className || '').split(/\s+/).filter(Boolean));
+        classes.forEach((c) => s.add(c));
+        this.node.className = [...s].join(' ');
+      }
+    }
+    class MockNode {
+      constructor(tag) {
+        this.tagName = String(tag).toUpperCase();
+        this.className = '';
+        this.dataset = {};
+        this.attributes = {};
+        this.listeners = {};
+        this.children = [];
+        this.classList = new MockClassList(this);
+      }
+      setAttribute(k, v) { this.attributes[k] = String(v); }
+      getAttribute(k) { return this.attributes[k] ?? null; }
+      removeAttribute(k) { delete this.attributes[k]; }
+      addEventListener(ev, fn) { this.listeners[ev] = fn; }
+      append(...children) {
+        for (const c of children.flat(Infinity)) {
+          if (c === null || c === undefined || c === false) continue;
+          this.children.push(c instanceof MockNode ? c : new MockTextNode(String(c)));
+        }
+      }
+      get textContent() { return this.children.map((c) => c.textContent).join(''); }
+      querySelectorAll(sel) {
+        const results = [];
+        this._findAll(sel, results);
+        return results;
+      }
+      _findAll(sel, acc) {
+        for (const c of this.children) {
+          if (c instanceof MockNode) {
+            if (sel.startsWith('[') && sel.endsWith(']')) {
+              const [k, v] = sel.slice(1, -1).split('=');
+              const cleanV = v ? v.replace(/['"]/g, '') : null;
+              if (cleanV ? c.getAttribute(k) === cleanV : c.getAttribute(k) !== null) acc.push(c);
+            }
+            c._findAll(sel, acc);
+          }
+        }
+      }
+    }
+    class MockTextNode {
+      constructor(text) { this.text = text; }
+      get textContent() { return this.text; }
+    }
+
+    const hadDoc = typeof globalThis.document !== 'undefined';
+    const hadNode = typeof globalThis.Node !== 'undefined';
+    if (!hadDoc) {
+      globalThis.Node = MockNode;
+      globalThis.document = {
+        createElement: (t) => new MockNode(t),
+        createElementNS: (_ns, t) => new MockNode(t),
+        createTextNode: (t) => new MockTextNode(t),
+      };
+    } else if (typeof globalThis.document.createElementNS !== 'function') {
+      globalThis.document.createElementNS = (_ns, t) => globalThis.document.createElement(t);
+    }
+
+    try {
+      const { stateLegalCard } = await import('../public/js/components/stateLegalCard.js');
+      const waRecord = getLegalProtections('WA');
+      const card = stateLegalCard(waRecord);
+
+      // Verify unverified note is rendered with role="note"
+      const noteCallouts = card.querySelectorAll('[role=note]');
+      assert.ok(noteCallouts.length > 0, 'stateLegalCard must render a callout with role="note"');
+      assert.ok(
+        card.textContent.includes('Not yet reviewed by a legal expert — confirm with the source below.'),
+        'Must display unverified disclaimer notice'
+      );
+
+      // Verify hedged phrasing: NEVER claims "you are immune" or "you are protected"
+      const lowerText = card.textContent.toLowerCase();
+      assert.ok(!lowerText.includes('you are immune'), 'stateLegalCard must never claim "you are immune"');
+      assert.ok(!lowerText.includes('you are protected'), 'stateLegalCard must never claim "you are protected"');
+
+      // Verify "Call 911 first" instruction is front and center
+      assert.ok(card.textContent.includes('In an overdose emergency, ALWAYS CALL 911 FIRST to save a life.'));
+
+      // Verify authoritative source links are present
+      assert.ok(card.textContent.includes('LawAtlas Good Samaritan Overdose Prevention Laws'));
+      assert.ok(card.textContent.includes('End Overdose State Law Toolkit'));
+
+      // Also verify fallback when legalData is null
+      const fallbackCard = stateLegalCard(null);
+      assert.ok(
+        fallbackCard.textContent.includes('Not yet reviewed by a legal expert — confirm with the source below.')
+      );
+      assert.ok(!fallbackCard.textContent.toLowerCase().includes('you are immune'));
+    } finally {
+      if (!hadDoc) {
+        delete globalThis.document;
+      }
+      if (!hadNode) {
+        delete globalThis.Node;
+      }
+    }
+  });
+});
+

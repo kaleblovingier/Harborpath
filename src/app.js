@@ -9,7 +9,7 @@ import { createHealthCenterIndex } from './healthCenters.js';
 import { createProviderSearch } from './providers.js';
 import { createRegions } from './regions.js';
 import { createStateDirectory } from './stateResources.js';
-import { filterStatesByProtection, getJurisdictionSummary, getLegalProtections } from './legalRegistry.js';
+import { filterStatesByProtection, getJurisdictionSummary, getLegalProtections, LEGAL_DISCLAIMER } from './legalRegistry.js';
 import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
 import { createVirtualProviders } from './virtualProviders.js';
@@ -321,14 +321,23 @@ export function createApp({
             if (!summary) {
               return json(req, res, 400, { error: 'Invalid or missing state code' });
             }
-            return json(req, res, 200, summary);
+            return json(req, res, 200, {
+              ...summary,
+              disclaimer: LEGAL_DISCLAIMER,
+              reviewStatus: summary.reviewStatus,
+            });
           }
 
           if (isFts || isSsp) {
             const filters = {};
             if (isFts) filters.ftsLegal = true;
             if (isSsp) filters.sspLegal = true;
-            return json(req, res, 200, filterStatesByProtection(filters));
+            const records = filterStatesByProtection(filters).map((record) => ({
+              ...record,
+              disclaimer: LEGAL_DISCLAIMER,
+              reviewStatus: record.reviewStatus,
+            }));
+            return json(req, res, 200, records);
           }
 
           if (params.has('state')) {
@@ -337,7 +346,11 @@ export function createApp({
             if (!protections) {
               return json(req, res, 400, { error: 'Invalid or missing state code' });
             }
-            return json(req, res, 200, protections);
+            return json(req, res, 200, {
+              ...protections,
+              disclaimer: LEGAL_DISCLAIMER,
+              reviewStatus: protections.reviewStatus,
+            });
           }
 
           return json(req, res, 400, { error: 'Invalid or missing state code' });

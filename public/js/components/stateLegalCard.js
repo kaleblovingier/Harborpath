@@ -45,6 +45,12 @@ export function stateLegalCard(legalData, options = {}) {
       'legal.noData',
       'Statutory legal protection data is currently available for all 50 U.S. states, Washington D.C., and Puerto Rico. In an overdose emergency, call 911 immediately — healthcare priority is resuscitation.'
     );
+    const unverifiedNote = h(
+      'div',
+      { class: 'callout callout-warn', role: 'note' },
+      h('p', { class: 'callout-title' }, icon('alert'), ' Statutory Information Notice'),
+      h('p', null, 'Not yet reviewed by a legal expert — confirm with the source below. In an overdose emergency, ALWAYS call 911 first to save a life.')
+    );
     return h(
       'section',
       {
@@ -56,7 +62,8 @@ export function stateLegalCard(legalData, options = {}) {
       h('div', { class: 'facility-head' },
         h(headingTag, { id: headingId, class: 'facility-name' }, icon('shield'), ' ', fallbackTitle)
       ),
-      h('p', { class: 'state-legal-notice' }, fallbackMessage)
+      unverifiedNote,
+      h('p', { class: 'state-legal-notice callout-emergency' }, fallbackMessage)
     );
   }
 
@@ -66,7 +73,20 @@ export function stateLegalCard(legalData, options = {}) {
     goodSamaritan = {},
     naloxoneAccess = {},
     harmReductionEquipment = {},
+    sources = [],
   } = legalData;
+
+  const defaultSources = [
+    {
+      name: 'LawAtlas Good Samaritan Overdose Prevention Laws',
+      url: 'https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws',
+    },
+    {
+      name: 'End Overdose State Law Toolkit',
+      url: 'https://endoverdose.net/toolkit/',
+    },
+  ];
+  const activeSources = Array.isArray(sources) && sources.length > 0 ? sources : defaultSources;
 
   const titlePrefix = stateName || (stateCode ? stateCode.toUpperCase() : '');
   const titleText = titlePrefix
@@ -87,13 +107,31 @@ export function stateLegalCard(legalData, options = {}) {
     statusChip
   );
 
+  // Front and center 911 emergency instruction with softened, hedged statutory phrasing
   const notice = h(
     'p',
     { class: 'state-legal-notice callout-emergency' },
+    icon('phone'),
+    ' ',
+    h('strong', null, 'In an overdose emergency, ALWAYS CALL 911 FIRST to save a life. '),
     t(
       'legal.notice911',
-      'Calling 911 during an overdose provides statutory immunity from arrest and prosecution for minor drug possession in this jurisdiction. Citations are for legal reference; paramedics\' priority is medical resuscitation.'
+      'State law reported to offer statutory immunity for reporting an overdose, but statutory protections vary — check the source below. Paramedics\' primary priority is medical resuscitation.'
     )
+  );
+
+  // Prominent accessible unverified callout (role="note", class="callout callout-warn")
+  const sourceLinks = activeSources.map((s, idx) => [
+    idx > 0 ? ' • ' : '',
+    ext(s.url, s.name, { class: 'legal-source-link' }),
+  ]).flat();
+
+  const unverifiedCallout = h(
+    'div',
+    { class: 'callout callout-warn', role: 'note' },
+    h('p', { class: 'callout-title' }, icon('alert'), ' Statutory Information Notice'),
+    h('p', null, 'Not yet reviewed by a legal expert — confirm with the source below. State laws change and local enforcement practices vary.'),
+    h('p', { class: 'callout-sources' }, h('strong', null, 'Authoritative Sources: '), ...sourceLinks)
   );
 
   // 1. Good Samaritan Overdose Criminal Immunity
@@ -110,32 +148,32 @@ export function stateLegalCard(legalData, options = {}) {
     { class: 'legal-immunity-list' },
     makeImmunityItem(
       goodSamaritan.arrestImmunity,
-      'Arrest immunity: Protected from arrest for personal drug possession',
+      'Arrest immunity: Protected under state statute for personal drug possession (state law reported to offer protection; check source)',
       'Arrest immunity: Not explicitly shielded from arrest'
     ),
     makeImmunityItem(
       goodSamaritan.prosecutionImmunity,
-      'Prosecution immunity: Protected from criminal prosecution in court',
+      'Prosecution immunity: Protected under state statute from criminal prosecution in court (state law reported to offer protection; check source)',
       'Prosecution immunity: Not explicitly shielded from prosecution'
     ),
     makeImmunityItem(
       goodSamaritan.chargeImmunity,
-      'Charge immunity: Protected from criminal charging',
+      'Charge immunity: Protected under state statute from criminal charging (state law reported to offer protection; check source)',
       'Charge immunity: Not explicitly shielded from charging'
     ),
     makeImmunityItem(
       goodSamaritan.protectsParaphernalia,
-      'Paraphernalia protection: Drug checking & use supplies shielded',
+      'Paraphernalia protection: Drug checking & use supplies shielded under statute (state law reported to offer protection; check source)',
       'Paraphernalia protection: Paraphernalia not explicitly shielded'
     ),
     makeImmunityItem(
       goodSamaritan.protectsParoleProbation,
-      'Parole / Probation: Shields against revocation violations',
+      'Parole / Probation: Shields against revocation violations under statute (state law reported to offer protection; check source)',
       'Parole / Probation: Does NOT shield probation or parole violations'
     ),
     makeImmunityItem(
       goodSamaritan.protectsUnderageAlcohol,
-      'Underage alcohol: Shields minor consumption/possession',
+      'Underage alcohol: Shields minor consumption/possession under statute (state law reported to offer protection; check source)',
       'Underage alcohol: Underage alcohol not covered'
     )
   );
@@ -165,17 +203,17 @@ export function stateLegalCard(legalData, options = {}) {
     { class: 'legal-immunity-list' },
     makeImmunityItem(
       naloxoneAccess.standingOrder,
-      'Statewide standing order: Available at pharmacies without personal prescription',
+      'Statewide standing order: Available at pharmacies without personal prescription (check local pharmacy)',
       'Standing order: Limited or individual prescription required'
     ),
     makeImmunityItem(
       naloxoneAccess.thirdPartyPrescribing,
-      'Third-party prescribing authorized: Family and friends can obtain naloxone',
+      'Third-party prescribing authorized: Family and friends can obtain naloxone under state policy',
       'Third-party prescribing: Restricted or not specified'
     ),
     makeImmunityItem(
       naloxoneAccess.layResponderImmunity,
-      'Lay responder civil & criminal immunity: Responders protected when administering in good faith',
+      'Lay responder civil & criminal immunity: Responders reported to be shielded when administering in good faith (check source)',
       'Lay responder immunity: Not explicitly codified in statute'
     )
   );
@@ -205,17 +243,17 @@ export function stateLegalCard(legalData, options = {}) {
     { class: 'legal-immunity-list' },
     makeImmunityItem(
       harmReductionEquipment.fentanylTestStripsLegal,
-      'Fentanyl test strips: Decriminalized / Legal for personal drug checking',
+      'Fentanyl test strips: Decriminalized / Legal for personal drug checking (reported; check local statute)',
       'Fentanyl test strips: Regulated under drug paraphernalia statutes'
     ),
     makeImmunityItem(
       harmReductionEquipment.xylazineTestStripsLegal,
-      'Xylazine test strips: Decriminalized / Legal for checking supplies',
+      'Xylazine test strips: Decriminalized / Legal for checking supplies (reported; check local statute)',
       'Xylazine test strips: Regulated or unclear under paraphernalia law'
     ),
     makeImmunityItem(
       harmReductionEquipment.sspStatutoryProtection,
-      'Syringe services programs (SSP): Explicit statutory authorization/protection',
+      'Syringe services programs (SSP): Explicit statutory authorization/protection (reported; check source)',
       'Syringe services programs: Lacks explicit state statutory protection'
     )
   );
@@ -260,7 +298,7 @@ export function stateLegalCard(legalData, options = {}) {
       'li',
       null,
       h('strong', null, '1. Call 911 immediately: '),
-      'State your location clearly and say "Someone is unresponsive and not breathing." You are not required to mention substances.'
+      'State your location clearly and say "Someone is unresponsive and not breathing." Medical priority is resuscitation. You are not required to mention substances.'
     ),
     h(
       'li',
@@ -278,7 +316,7 @@ export function stateLegalCard(legalData, options = {}) {
       'li',
       null,
       h('strong', null, '4. Assert statutory protection: '),
-      'If law enforcement questions you, politely inform them you called 911 in good faith to report an overdose emergency under state Good Samaritan law.'
+      'If law enforcement questions you, politely inform them you called 911 in good faith to report an overdose emergency under state Good Samaritan law. Consult linked authoritative sources or legal counsel for jurisdiction details.'
     )
   );
 
@@ -296,15 +334,10 @@ export function stateLegalCard(legalData, options = {}) {
     h(
       'div',
       { class: 'actions' },
-      ext(
-        'https://endoverdose.net/toolkit/',
-        'Verify 50-State Overdose Legal Toolkit (End Overdose)',
-        { class: 'btn btn-secondary btn-small' }
-      ),
-      ext(
-        'https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws',
-        'LawAtlas Good Samaritan Dataset (Temple Univ.)',
-        { class: 'btn btn-ghost btn-small' }
+      ...activeSources.map((s, idx) =>
+        ext(s.url, `${idx === 0 ? 'Verify ' : ''}${s.name}`, {
+          class: idx === 0 ? 'btn btn-secondary btn-small' : 'btn btn-ghost btn-small',
+        })
       )
     )
   );
@@ -339,6 +372,7 @@ export function stateLegalCard(legalData, options = {}) {
     },
     header,
     notice,
+    unverifiedCallout,
     gsBlock,
     nxBlock,
     hrBlock,

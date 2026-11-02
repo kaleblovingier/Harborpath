@@ -2,6 +2,18 @@
   {
     "stateCode": "AL",
     "stateName": "Alabama",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -28,6 +40,18 @@
   {
     "stateCode": "AK",
     "stateName": "Alaska",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -54,6 +78,18 @@
   {
     "stateCode": "AZ",
     "stateName": "Arizona",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -80,6 +116,18 @@
   {
     "stateCode": "AR",
     "stateName": "Arkansas",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -106,6 +154,18 @@
   {
     "stateCode": "CA",
     "stateName": "California",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -132,6 +192,18 @@
   {
     "stateCode": "CO",
     "stateName": "Colorado",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -158,6 +230,18 @@
   {
     "stateCode": "CT",
     "stateName": "Connecticut",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -184,6 +268,18 @@
   {
     "stateCode": "DE",
     "stateName": "Delaware",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -210,6 +306,18 @@
   {
     "stateCode": "DC",
     "stateName": "District of Columbia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -236,6 +344,18 @@
   {
     "stateCode": "FL",
     "stateName": "Florida",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -262,6 +382,18 @@
   {
     "stateCode": "GA",
     "stateName": "Georgia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -288,6 +420,18 @@
   {
     "stateCode": "HI",
     "stateName": "Hawaii",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -314,6 +458,18 @@
   {
     "stateCode": "ID",
     "stateName": "Idaho",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -340,6 +496,18 @@
   {
     "stateCode": "IL",
     "stateName": "Illinois",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -366,6 +534,18 @@
   {
     "stateCode": "IN",
     "stateName": "Indiana",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -392,6 +572,18 @@
   {
     "stateCode": "IA",
     "stateName": "Iowa",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -418,6 +610,18 @@
   {
     "stateCode": "KS",
     "stateName": "Kansas",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -444,6 +648,18 @@
   {
     "stateCode": "KY",
     "stateName": "Kentucky",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -470,6 +686,18 @@
   {
     "stateCode": "LA",
     "stateName": "Louisiana",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -496,6 +724,18 @@
   {
     "stateCode": "ME",
     "stateName": "Maine",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -522,6 +762,18 @@
   {
     "stateCode": "MD",
     "stateName": "Maryland",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -548,6 +800,18 @@
   {
     "stateCode": "MA",
     "stateName": "Massachusetts",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -574,6 +838,18 @@
   {
     "stateCode": "MI",
     "stateName": "Michigan",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -600,6 +876,18 @@
   {
     "stateCode": "MN",
     "stateName": "Minnesota",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -626,6 +914,18 @@
   {
     "stateCode": "MS",
     "stateName": "Mississippi",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -652,6 +952,18 @@
   {
     "stateCode": "MO",
     "stateName": "Missouri",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -678,6 +990,18 @@
   {
     "stateCode": "MT",
     "stateName": "Montana",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -704,6 +1028,18 @@
   {
     "stateCode": "NE",
     "stateName": "Nebraska",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -730,6 +1066,18 @@
   {
     "stateCode": "NV",
     "stateName": "Nevada",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -756,6 +1104,18 @@
   {
     "stateCode": "NH",
     "stateName": "New Hampshire",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -782,6 +1142,18 @@
   {
     "stateCode": "NJ",
     "stateName": "New Jersey",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -808,6 +1180,18 @@
   {
     "stateCode": "NM",
     "stateName": "New Mexico",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -834,6 +1218,18 @@
   {
     "stateCode": "NY",
     "stateName": "New York",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -860,6 +1256,18 @@
   {
     "stateCode": "NC",
     "stateName": "North Carolina",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -886,6 +1294,18 @@
   {
     "stateCode": "ND",
     "stateName": "North Dakota",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -912,6 +1332,18 @@
   {
     "stateCode": "OH",
     "stateName": "Ohio",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -938,6 +1370,18 @@
   {
     "stateCode": "OK",
     "stateName": "Oklahoma",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -964,6 +1408,18 @@
   {
     "stateCode": "OR",
     "stateName": "Oregon",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -990,6 +1446,18 @@
   {
     "stateCode": "PA",
     "stateName": "Pennsylvania",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1016,6 +1484,18 @@
   {
     "stateCode": "PR",
     "stateName": "Puerto Rico",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1042,6 +1522,18 @@
   {
     "stateCode": "RI",
     "stateName": "Rhode Island",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1068,6 +1560,18 @@
   {
     "stateCode": "SC",
     "stateName": "South Carolina",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1094,6 +1598,18 @@
   {
     "stateCode": "SD",
     "stateName": "South Dakota",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1120,6 +1636,18 @@
   {
     "stateCode": "TN",
     "stateName": "Tennessee",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1146,6 +1674,18 @@
   {
     "stateCode": "TX",
     "stateName": "Texas",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": false,
@@ -1172,6 +1712,18 @@
   {
     "stateCode": "UT",
     "stateName": "Utah",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1198,6 +1750,18 @@
   {
     "stateCode": "VT",
     "stateName": "Vermont",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1224,6 +1788,18 @@
   {
     "stateCode": "VA",
     "stateName": "Virginia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1250,6 +1826,18 @@
   {
     "stateCode": "WA",
     "stateName": "Washington",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1276,6 +1864,18 @@
   {
     "stateCode": "WV",
     "stateName": "West Virginia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1302,6 +1902,18 @@
   {
     "stateCode": "WI",
     "stateName": "Wisconsin",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
@@ -1328,6 +1940,18 @@
   {
     "stateCode": "WY",
     "stateName": "Wyoming",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
     "goodSamaritan": {
       "hasProtection": true,
       "arrestImmunity": true,
