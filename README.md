@@ -67,6 +67,13 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `src/` | HTTP app, FindTreatment.gov client with stale-while-revalidate cache, offline geocoder, spatial grid & columnar tables, HRSA/VA/IHS/RHC/ER provider indexes, state/region directory, and rate limiter |
 | `public/` | The web app: plain ES modules, bilingual `i18n` (`en`/`es`), opt-in offline Service Worker (`sw.js`), and WCAG 2.2 AA+ CSS with `@media print` clinical handout styles |
 | `public/js/views/populationHelpers.js` | Phase 1 pure functions for population-specific provider matching (pregnancy, youth, justice reentry, older adults, stimulants, xylazine, co-occurring MH) |
+| `public/js/views/reentry.js` | Section 1115 Demonstration Waivers, post-release overdose spike protocols, take-home naloxone, and DOJ ADA Title II supervision rights |
+| `public/js/views/olderAdults.js` | Medicare Part B OTP bundled benefits, Beers Criteria® polypharmacy interaction alerts, and geriatric pharmacokinetics |
+| `public/js/views/workplaceRights.js` | FMLA serious health condition protections, ADA In-Recovery Safe Harbor, prescribed MOUD civil rights, and professional licensure ATD |
+| `public/js/components/recoveryCapital.js` | Brief Assessment of Recovery Capital (BARC-10) screener, SAMHSA 4 dimensions, and strengths-based action planning |
+| `public/js/views/veterans.js` | VA MISSION Act community care, TRICARE prior authorizations, Military Sexual Trauma ($0 copay), and Veterans Crisis Line |
+| `public/js/views/adolescentCare.js` | Minor consent laws, 42 CFR Part 2 youth confidentiality, EOB privacy suppression, and youth-adapted ASAM pathways |
+| `public/js/components/clinicalDifferential.js` | 4-condition poly-substance differential engine (Hunter serotonin criteria, opioid/xylazine, stimulant overamping, soft tissue necrosis) |
 | `public/js/views/navigator.js` | 6-dimension ASAM Criteria (4th Edition) Care Navigator, COWS/SOWS & CIWA/PAWSS withdrawal calculators, transition risk evaluator, and clinician handoff formatter |
 | `public/js/match/engine.js` | Shared matching & insurance compatibility engine: coverage tiers, distance-preserving explainable ranking (pure; runs in the browser) |
 | `data/` | Compacted public datasets (SAMHSA service codes, Census ZCTAs/places/island places, HRSA health centers, VA facilities, IHS facilities, CMS rural health clinics & emergency hospitals, state agencies & Medicaid), built by `scripts/build-data.mjs` |

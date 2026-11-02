@@ -815,6 +815,9 @@ export default {
   'route.perinatal': 'Atención perinatal y apoyo en el embarazo',
   'route.veterans': 'Atención de salud y leyes para veteranos',
   'route.adolescent': 'Atención y leyes para adolescentes',
+  'route.reentry': 'Reingreso y salud legal',
+  'route.olderAdults': 'Adultos mayores y Medicare',
+  'route.workplaceRights': 'Derechos laborales, FMLA y ADA',
   'app.savedCount': '{n} guardados',
   'app.footer.dataUpdated': 'Datos de centros de salud actualizados el {date}. Los listados de tratamiento se consultan en vivo.',
 

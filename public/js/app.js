@@ -83,6 +83,18 @@ export const LAZY_LOADERS = {
     viewCache.set('adolescent', m.adolescentCareView);
     return m.adolescentCareView;
   }),
+  reentry: () => import('./views/reentry.js').then((m) => {
+    viewCache.set('reentry', m.reentryView);
+    return m.reentryView;
+  }),
+  'older-adults': () => import('./views/olderAdults.js').then((m) => {
+    viewCache.set('older-adults', m.olderAdultsView);
+    return m.olderAdultsView;
+  }),
+  'workplace-rights': () => import('./views/workplaceRights.js').then((m) => {
+    viewCache.set('workplace-rights', m.workplaceRightsView);
+    return m.workplaceRightsView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -105,6 +117,9 @@ export const ROUTE_TITLES = {
   perinatal: () => t('route.perinatal', 'Perinatal care & pregnancy support'),
   veterans: () => t('route.veterans', 'Veterans & military health care'),
   adolescent: () => t('route.adolescent', 'Adolescent care & legal guide'),
+  reentry: () => t('route.reentry', 'Reentry & criminal legal health'),
+  'older-adults': () => t('route.olderAdults', 'Older adults & Medicare SUD'),
+  'workplace-rights': () => t('route.workplaceRights', 'Workplace rights, FMLA & ADA'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -137,6 +152,9 @@ export function preloadAllLazyViews() {
     preloadRoute('perinatal'),
     preloadRoute('veterans'),
     preloadRoute('adolescent'),
+    preloadRoute('reentry'),
+    preloadRoute('older-adults'),
+    preloadRoute('workplace-rights'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -267,6 +285,10 @@ export function runQuickExitResets() {
   import('./components/testStripCalculator.js').then((m) => m.resetTestStripState?.()).catch(() => {});
   import('./components/mutualAidFinder.js').then((m) => m.resetMutualAidState?.()).catch(() => {});
   import('./components/sessionBookmarks.js').then((m) => m.resetBookmarksViewState?.()).catch(() => {});
+  import('./views/reentry.js').then((m) => m.resetReentryState?.()).catch(() => {});
+  import('./views/olderAdults.js').then((m) => m.resetOlderAdultsState?.()).catch(() => {});
+  import('./views/workplaceRights.js').then((m) => m.resetWorkplaceState?.()).catch(() => {});
+  import('./components/recoveryCapital.js').then((m) => m.resetRecoveryCapitalState?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
