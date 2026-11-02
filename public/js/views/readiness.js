@@ -1,5 +1,6 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
+import { t, getLang } from '../i18n.js';
 
 // ============================================================================
 // Stages of Change Taxonomy (Transtheoretical Model - Prochaska & DiClemente)
@@ -14,111 +15,123 @@ import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './co
 const STAGES_LIST = [
   {
     id: 'precontemplation',
-    name: 'Precontemplation',
-    title: 'Precontemplation (Not Ready / Exploring)',
-    plainLanguageTitle: 'Not thinking about changing right now',
-    tagline: 'Not currently considering a change in substance use',
-    description: 'You feel content with how things are right now, or you feel exhausted by other people telling you what to do. You may not view drug or alcohol use as a problem, or past attempts may have left you feeling that change is too difficult or discouraging.',
-    clinicalGoal: 'Empathy, harm reduction, overdose prevention, and establishing an open, non-judgmental alliance without pressure.',
-    motivationalCoachingPrompt: 'What is most important to you in your life right now? What keeps you safe? You are the expert on your own life, and no one can force you to change anything.',
-    coachingPrompt: 'What is most important to you in your life right now? What keeps you safe? You are the expert on your own life, and no one can force you to change anything.',
-    recommendedNextSteps: [
-      'Keep harm reduction supplies nearby (fentanyl and xylazine test strips, sterile supplies).',
-      'Obtain and carry naloxone (Narcan) — let friends know where it is in case of an emergency.',
-      'Never use alone: Call the Never Use Alone line (800-484-3731) or use the Brave App.',
-      'Connect with a peer support specialist who has lived experience with zero pressure to stop.',
-      'Access low-barrier medical care (hepatitis C and HIV testing, wound care, basic wellness).',
-    ],
+    get name() { return t('readiness.stage.precontemplation.name', 'Precontemplation'); },
+    get title() { return t('readiness.stage.precontemplation.title', 'Precontemplation (Not Ready / Exploring)'); },
+    get plainLanguageTitle() { return t('readiness.stage.precontemplation.plainTitle', 'Not thinking about changing right now'); },
+    get tagline() { return t('readiness.stage.precontemplation.tagline', 'Not currently considering a change in substance use'); },
+    get description() { return t('readiness.stage.precontemplation.desc', 'You feel content with how things are right now, or you feel exhausted by other people telling you what to do. You may not view drug or alcohol use as a problem, or past attempts may have left you feeling that change is too difficult or discouraging.'); },
+    get clinicalGoal() { return t('readiness.stage.precontemplation.goal', 'Empathy, harm reduction, overdose prevention, and establishing an open, non-judgmental alliance without pressure.'); },
+    get motivationalCoachingPrompt() { return t('readiness.stage.precontemplation.prompt', 'What is most important to you in your life right now? What keeps you safe? You are the expert on your own life, and no one can force you to change anything.'); },
+    get coachingPrompt() { return this.motivationalCoachingPrompt; },
+    get recommendedNextSteps() {
+      return [
+        t('readiness.stage.precontemplation.step1', 'Keep harm reduction supplies nearby (fentanyl and xylazine test strips, sterile supplies).'),
+        t('readiness.stage.precontemplation.step2', 'Obtain and carry naloxone (Narcan) — let friends know where it is in case of an emergency.'),
+        t('readiness.stage.precontemplation.step3', 'Never use alone: Call the Never Use Alone line (800-484-3731) or use the Brave App.'),
+        t('readiness.stage.precontemplation.step4', 'Connect with a peer support specialist who has lived experience with zero pressure to stop.'),
+        t('readiness.stage.precontemplation.step5', 'Access low-barrier medical care (hepatitis C and HIV testing, wound care, basic wellness).'),
+      ];
+    },
   },
   {
     id: 'contemplation',
-    name: 'Contemplation',
-    title: 'Contemplation (Ambivalent / Weighing Options)',
-    plainLanguageTitle: 'Thinking about change, but weighing pros and cons',
-    tagline: 'Torn between the benefits of use and the costs or risks',
-    description: 'You are aware that substance use has downsides, expenses, or risks, but you also experience genuine benefits, emotional relief, or social connection from using. You are weighing whether making a change is worth the discomfort and effort.',
-    clinicalGoal: 'Explore ambivalence, conduct decisional balance, examine core values, and build hope without forcing commitment.',
-    motivationalCoachingPrompt: 'What are the good things about using, and what are the less good things? If you woke up tomorrow and things were 10% better or easier, what would be different?',
-    coachingPrompt: 'What are the good things about using, and what are the less good things? If you woke up tomorrow and things were 10% better or easier, what would be different?',
-    recommendedNextSteps: [
-      'Use the interactive Decisional Balance matrix below to clearly map pros and cons.',
-      'Learn about medications for addiction treatment (MOUD/MAUD) that reduce cravings without requiring immediate abstinence.',
-      'Talk confidentially with a non-judgmental addiction counselor or peer navigator.',
-      'Try small, low-risk harm reduction experiments (e.g. tracking amounts, taking pacing breaks).',
-      'Read stories of how people with similar experiences resolved their ambivalence.',
-    ],
+    get name() { return t('readiness.stage.contemplation.name', 'Contemplation'); },
+    get title() { return t('readiness.stage.contemplation.title', 'Contemplation (Ambivalent / Weighing Options)'); },
+    get plainLanguageTitle() { return t('readiness.stage.contemplation.plainTitle', 'Thinking about change, but weighing pros and cons'); },
+    get tagline() { return t('readiness.stage.contemplation.tagline', 'Torn between the benefits of use and the costs or risks'); },
+    get description() { return t('readiness.stage.contemplation.desc', 'You are aware that substance use has downsides, expenses, or risks, but you also experience genuine benefits, emotional relief, or social connection from using. You are weighing whether making a change is worth the discomfort and effort.'); },
+    get clinicalGoal() { return t('readiness.stage.contemplation.goal', 'Explore ambivalence, conduct decisional balance, examine core values, and build hope without forcing commitment.'); },
+    get motivationalCoachingPrompt() { return t('readiness.stage.contemplation.prompt', 'What are the good things about using, and what are the less good things? If you woke up tomorrow and things were 10% better or easier, what would be different?'); },
+    get coachingPrompt() { return this.motivationalCoachingPrompt; },
+    get recommendedNextSteps() {
+      return [
+        t('readiness.stage.contemplation.step1', 'Use the interactive Decisional Balance matrix below to clearly map pros and cons.'),
+        t('readiness.stage.contemplation.step2', 'Learn about medications for addiction treatment (MOUD/MAUD) that reduce cravings without requiring immediate abstinence.'),
+        t('readiness.stage.contemplation.step3', 'Talk confidentially with a non-judgmental addiction counselor or peer navigator.'),
+        t('readiness.stage.contemplation.step4', 'Try small, low-risk harm reduction experiments (e.g. tracking amounts, taking pacing breaks).'),
+        t('readiness.stage.contemplation.step5', 'Read stories of how people with similar experiences resolved their ambivalence.'),
+      ];
+    },
   },
   {
     id: 'preparation',
-    name: 'Preparation',
-    title: 'Preparation (Planning / Getting Ready)',
-    plainLanguageTitle: 'Ready to take steps soon and planning how',
-    tagline: 'Decided to make changes and preparing concrete steps',
-    description: 'You have decided that making a change is important to you and are ready to take action in the immediate future (typically within the next 30 days). You are gathering information, exploring options, and setting up support systems.',
-    clinicalGoal: 'Co-design an individualized change plan, identify personal triggers, choose treatment modalities, and prepare support systems.',
-    motivationalCoachingPrompt: 'What is one small, concrete step you feel ready to try this week? What resources or people would make that step easier?',
-    coachingPrompt: 'What is one small, concrete step you feel ready to try this week? What resources or people would make that step easier?',
-    recommendedNextSteps: [
-      'Schedule a medical evaluation for FDA-approved medications (buprenorphine, methadone, naltrexone, acamprosate).',
-      'Complete a personalized safety and coping plan for cravings and stressful moments.',
-      'Identify 1–2 trusted people (friends, family, mentors) who support your goals without judgment.',
-      'Look into treatment formats that fit your schedule: outpatient clinic, intensive outpatient (IOP), telehealth, or residential.',
-      'Prepare your living space by removing triggers and setting boundaries with people who use.',
-    ],
+    get name() { return t('readiness.stage.preparation.name', 'Preparation'); },
+    get title() { return t('readiness.stage.preparation.title', 'Preparation (Planning / Getting Ready)'); },
+    get plainLanguageTitle() { return t('readiness.stage.preparation.plainTitle', 'Ready to take steps soon and planning how'); },
+    get tagline() { return t('readiness.stage.preparation.tagline', 'Decided to make changes and preparing concrete steps'); },
+    get description() { return t('readiness.stage.preparation.desc', 'You have decided that making a change is important to you and are ready to take action in the immediate future (typically within the next 30 days). You are gathering information, exploring options, and setting up support systems.'); },
+    get clinicalGoal() { return t('readiness.stage.preparation.goal', 'Co-design an individualized change plan, identify personal triggers, choose treatment modalities, and prepare support systems.'); },
+    get motivationalCoachingPrompt() { return t('readiness.stage.preparation.prompt', 'What is one small, concrete step you feel ready to try this week? What resources or people would make that step easier?'); },
+    get coachingPrompt() { return this.motivationalCoachingPrompt; },
+    get recommendedNextSteps() {
+      return [
+        t('readiness.stage.preparation.step1', 'Schedule a medical evaluation for FDA-approved medications (buprenorfina, methadone, naltrexone, acamprosate).'),
+        t('readiness.stage.preparation.step2', 'Complete a personalized safety and coping plan for cravings and stressful moments.'),
+        t('readiness.stage.preparation.step3', 'Identify 1–2 trusted people (friends, family, mentors) who support your goals without judgment.'),
+        t('readiness.stage.preparation.step4', 'Look into treatment formats that fit your schedule: outpatient clinic, intensive outpatient (IOP), telehealth, or residential.'),
+        t('readiness.stage.preparation.step5', 'Prepare your living space by removing triggers and setting boundaries with people who use.'),
+      ];
+    },
   },
   {
     id: 'action',
-    name: 'Action',
-    title: 'Action (Actively Changing)',
-    plainLanguageTitle: 'Actively making changes right now',
-    tagline: 'Putting time and energy into changing behavior and routines',
-    description: 'You are actively implementing changes in your substance use patterns, routines, or environment (within the past 6 months). You are learning new coping habits, managing cravings, and navigating daily life with different tools.',
-    clinicalGoal: 'Reinforce self-efficacy, manage acute cravings and withdrawal, modify environments, and build relapse prevention skills.',
-    motivationalCoachingPrompt: 'What strategies have worked best for you so far? When a strong craving hits, what is your go-to move to ride it out?',
-    coachingPrompt: 'What strategies have worked best for you so far? When a strong craving hits, what is your go-to move to ride it out?',
-    recommendedNextSteps: [
-      'Maintain consistent adherence to prescribed medications (MOUD/MAUD).',
-      'Engage with mutual aid groups (SMART Recovery, 12-Step, LifeRing, Harm Reduction Works).',
-      'Practice urge surfing: observe cravings as waves that peak at 15–20 minutes and naturally subside.',
-      'Develop alternative dopamine sources: movement, creative arts, nature, good nutrition, and restful sleep.',
-      'Keep in regular contact with your counselor, therapist, or peer specialist.',
-    ],
+    get name() { return t('readiness.stage.action.name', 'Action'); },
+    get title() { return t('readiness.stage.action.title', 'Action (Actively Changing)'); },
+    get plainLanguageTitle() { return t('readiness.stage.action.plainTitle', 'Actively making changes right now'); },
+    get tagline() { return t('readiness.stage.action.tagline', 'Putting time and energy into changing behavior and routines'); },
+    get description() { return t('readiness.stage.action.desc', 'You are actively implementing changes in your substance use patterns, routines, or environment (within the past 6 months). You are learning new coping habits, managing cravings, and navigating daily life with different tools.'); },
+    get clinicalGoal() { return t('readiness.stage.action.goal', 'Reinforce self-efficacy, manage acute cravings and withdrawal, modify environments, and build relapse prevention skills.'); },
+    get motivationalCoachingPrompt() { return t('readiness.stage.action.prompt', 'What strategies have worked best for you so far? When a strong craving hits, what is your go-to move to ride it out?'); },
+    get coachingPrompt() { return this.motivationalCoachingPrompt; },
+    get recommendedNextSteps() {
+      return [
+        t('readiness.stage.action.step1', 'Maintain consistent adherence to prescribed medications (MOUD/MAUD).'),
+        t('readiness.stage.action.step2', 'Engage with mutual aid groups (SMART Recovery, 12-Step, LifeRing, Harm Reduction Works).'),
+        t('readiness.stage.action.step3', 'Practice urge surfing: observe cravings as waves that peak at 15–20 minutes and naturally subside.'),
+        t('readiness.stage.action.step4', 'Develop alternative dopamine sources: movement, creative arts, nature, good nutrition, and restful sleep.'),
+        t('readiness.stage.action.step5', 'Keep in regular contact with your counselor, therapist, or peer specialist.'),
+      ];
+    },
   },
   {
     id: 'maintenance',
-    name: 'Maintenance',
-    title: 'Maintenance (Sustaining Recovery / Growth)',
-    plainLanguageTitle: 'Sustaining changes long-term and preventing slips',
-    tagline: 'Maintaining positive changes for 6 months or longer',
-    description: 'You have maintained your desired changes for 6 months or longer. Your focus has expanded from avoiding return to use to building a fulfilling, balanced, and sustainable life with deeper relationships and personal growth.',
-    clinicalGoal: 'Consolidate recovery identity, maintain lifestyle balance, monitor subtle warning signs, and foster ongoing personal fulfillment.',
-    motivationalCoachingPrompt: 'How has your life expanded since you made these changes? What daily rituals keep you grounded when life gets stressful?',
-    coachingPrompt: 'How has your life expanded since you made these changes? What daily rituals keep you grounded when life gets stressful?',
-    recommendedNextSteps: [
-      'Continue regular healthcare and medication check-ins without abrupt discontinuation.',
-      'Stay connected to your community or mutual aid network, perhaps exploring mentorship or service.',
-      'Periodically refresh your early warning sign checklist (isolation, sleep changes, resentment, exhaustion).',
-      'Celebrate your milestones, resilience, and personal growth with people who love you.',
-      'Invest in long-term goals: education, career, relationships, creative pursuits, and physical health.',
-    ],
+    get name() { return t('readiness.stage.maintenance.name', 'Maintenance'); },
+    get title() { return t('readiness.stage.maintenance.title', 'Maintenance (Sustaining Recovery / Growth)'); },
+    get plainLanguageTitle() { return t('readiness.stage.maintenance.plainTitle', 'Sustaining changes long-term and preventing slips'); },
+    get tagline() { return t('readiness.stage.maintenance.tagline', 'Maintaining positive changes for 6 months or longer'); },
+    get description() { return t('readiness.stage.maintenance.desc', 'You have maintained your desired changes for 6 months or longer. Your focus has expanded from avoiding return to use to building a fulfilling, balanced, and sustainable life with deeper relationships and personal growth.'); },
+    get clinicalGoal() { return t('readiness.stage.maintenance.goal', 'Consolidate recovery identity, maintain lifestyle balance, monitor subtle warning signs, and foster ongoing personal fulfillment.'); },
+    get motivationalCoachingPrompt() { return t('readiness.stage.maintenance.prompt', 'How has your life expanded since you made these changes? What daily rituals keep you grounded when life gets stressful?'); },
+    get coachingPrompt() { return this.motivationalCoachingPrompt; },
+    get recommendedNextSteps() {
+      return [
+        t('readiness.stage.maintenance.step1', 'Continue regular healthcare and medication check-ins without abrupt discontinuation.'),
+        t('readiness.stage.maintenance.step2', 'Stay connected to your community or mutual aid network, perhaps exploring mentorship or service.'),
+        t('readiness.stage.maintenance.step3', 'Periodically refresh your early warning sign checklist (isolation, sleep changes, resentment, exhaustion).'),
+        t('readiness.stage.maintenance.step4', 'Celebrate your milestones, resilience, and personal growth with people who love you.'),
+        t('readiness.stage.maintenance.step5', 'Invest in long-term goals: education, career, relationships, creative pursuits, and physical health.'),
+      ];
+    },
   },
   {
     id: 'recurrence',
-    name: 'Recurrence / Slip Support',
-    title: 'Recurrence / Slip Support (Learning & Re-engaging)',
-    plainLanguageTitle: 'Had a slip or return to use — restarting with compassion',
-    tagline: 'A return to use is a clinical event and learning opportunity, not a failure',
-    description: 'A lapse, slip, or return to use is a clinical event and a very common part of managing chronic health conditions. It does not erase your past progress, hard work, or recovery time. It provides crucial clues about unmet needs, new stressors, or gaps in support.',
-    clinicalGoal: 'Immediate harm reduction and overdose prevention (addressing lowered tolerance), shame reduction, rapid re-entry into care, and trigger analysis.',
-    motivationalCoachingPrompt: 'You deserve safety, care, and compassion right now. What were you feeling right before the slip, and what can this experience teach us about what you need?',
-    coachingPrompt: 'You deserve safety, care, and compassion right now. What were you feeling right before the slip, and what can this experience teach us about what you need?',
-    recommendedNextSteps: [
-      'CRITICAL OVERDOSE WARNING: Lowered tolerance dramatically increases fatal overdose risk. Take much smaller test amounts and never use alone.',
-      'Ensure you have fresh naloxone (Narcan) immediately on hand. Have someone with you or call Never Use Alone (800-484-3731).',
-      'Reach out immediately to your prescriber, counselor, or trusted supporter — do not isolate or hide.',
-      'Practice self-compassion: Remind yourself that every single day of change in your past still counts and lives in your brain.',
-      'Conduct a gentle review of the event: What was the trigger? What was the unmet need? How can your safety plan adjust?',
-    ],
+    get name() { return t('readiness.stage.recurrence.name', 'Recurrence / Slip Support'); },
+    get title() { return t('readiness.stage.recurrence.title', 'Recurrence / Slip Support (Learning & Re-engaging)'); },
+    get plainLanguageTitle() { return t('readiness.stage.recurrence.plainTitle', 'Had a slip or return to use — restarting with compassion'); },
+    get tagline() { return t('readiness.stage.recurrence.tagline', 'A return to use is a clinical event and learning opportunity, not a failure'); },
+    get description() { return t('readiness.stage.recurrence.desc', 'A lapse, slip, or return to use is a clinical event and a very common part of managing chronic health conditions. It does not erase your past progress, hard work, or recovery time. It provides crucial clues about unmet needs, new stressors, or gaps in support.'); },
+    get clinicalGoal() { return t('readiness.stage.recurrence.goal', 'Immediate harm reduction and overdose prevention (addressing lowered tolerance), shame reduction, rapid re-entry into care, and trigger analysis.'); },
+    get motivationalCoachingPrompt() { return t('readiness.stage.recurrence.prompt', 'You deserve safety, care, and compassion right now. What were you feeling right before the slip, and what can this experience teach us about what you need?'); },
+    get coachingPrompt() { return this.motivationalCoachingPrompt; },
+    get recommendedNextSteps() {
+      return [
+        t('readiness.stage.recurrence.step1', 'CRITICAL OVERDOSE WARNING: Lowered tolerance dramatically increases fatal overdose risk. Take much smaller test amounts and never use alone.'),
+        t('readiness.stage.recurrence.step2', 'Ensure you have fresh naloxone (Narcan) immediately on hand. Have someone with you or call Never Use Alone (800-484-3731).'),
+        t('readiness.stage.recurrence.step3', 'Reach out immediately to your prescriber, counselor, or trusted supporter — do not isolate or hide.'),
+        t('readiness.stage.recurrence.step4', 'Practice self-compassion: Remind yourself that every single day of change in your past still counts and lives in your brain.'),
+        t('readiness.stage.recurrence.step5', 'Conduct a gentle review of the event: What was the trigger? What was the unmet need? How can your safety plan adjust?'),
+      ];
+    },
   },
 ];
 
@@ -132,11 +145,11 @@ for (const stage of STAGES_LIST) {
 // ============================================================================
 
 export const LIKERT_OPTIONS = [
-  { score: 1, label: 'Strongly disagree', shortLabel: 'Strongly disagree' },
-  { score: 2, label: 'Disagree', shortLabel: 'Disagree' },
-  { score: 3, label: 'Neutral / Undecided', shortLabel: 'Neutral' },
-  { score: 4, label: 'Agree', shortLabel: 'Agree' },
-  { score: 5, label: 'Strongly agree', shortLabel: 'Strongly agree' },
+  { score: 1, get label() { return t('readiness.likert.1', 'Strongly disagree'); }, get shortLabel() { return t('readiness.likert.1.short', 'Strongly disagree'); } },
+  { score: 2, get label() { return t('readiness.likert.2', 'Disagree'); }, get shortLabel() { return t('readiness.likert.2.short', 'Disagree'); } },
+  { score: 3, get label() { return t('readiness.likert.3', 'Neutral / Undecided'); }, get shortLabel() { return t('readiness.likert.3.short', 'Neutral'); } },
+  { score: 4, get label() { return t('readiness.likert.4', 'Agree'); }, get shortLabel() { return t('readiness.likert.4.short', 'Agree'); } },
+  { score: 5, get label() { return t('readiness.likert.5', 'Strongly agree'); }, get shortLabel() { return t('readiness.likert.5.short', 'Strongly agree'); } },
 ];
 
 /**
@@ -147,65 +160,65 @@ const STATEMENTS_LIST = [
   {
     id: 's1',
     stage: 'precontemplation',
-    category: 'Precontemplation',
-    statement: 'As far as I am concerned, my alcohol or drug use is not really a problem that needs changing.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s1.category', 'Precontemplation'); },
+    get statement() { return t('readiness.statement.s1.text', 'As far as I am concerned, my alcohol or drug use is not really a problem that needs changing.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's2',
     stage: 'precontemplation',
-    category: 'Precontemplation',
-    statement: 'Other people worry about my drug or alcohol use, but I think they exaggerate or make too big a deal out of it.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s2.category', 'Precontemplation'); },
+    get statement() { return t('readiness.statement.s2.text', 'Other people worry about my drug or alcohol use, but I think they exaggerate or make too big a deal out of it.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's3',
     stage: 'contemplation',
-    category: 'Contemplation',
-    statement: 'I have been thinking that my substance use might be causing some difficulties, and I wonder if I should make a change.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s3.category', 'Contemplation'); },
+    get statement() { return t('readiness.statement.s3.text', 'I have been thinking that my substance use might be causing some difficulties, and I wonder if I should make a change.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's4',
     stage: 'contemplation',
-    category: 'Contemplation',
-    statement: 'Part of me relies on or enjoys using, but another part of me worries about the health, relationship, or financial consequences.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s4.category', 'Contemplation'); },
+    get statement() { return t('readiness.statement.s4.text', 'Part of me relies on or enjoys using, but another part of me worries about the health, relationship, or financial consequences.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's5',
     stage: 'preparation',
-    category: 'Preparation',
-    statement: 'I have decided that I want to change how I use substances, and I am preparing to take concrete steps in the next 30 days.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s5.category', 'Preparation'); },
+    get statement() { return t('readiness.statement.s5.text', 'I have decided that I want to change how I use substances, and I am preparing to take concrete steps in the next 30 days.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's6',
     stage: 'preparation',
-    category: 'Preparation',
-    statement: 'I am actively looking into treatment options, harm reduction strategies, or support networks to help me make changes.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s6.category', 'Preparation'); },
+    get statement() { return t('readiness.statement.s6.text', 'I am actively looking into treatment options, harm reduction strategies, or support networks to help me make changes.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's7',
     stage: 'action',
-    category: 'Action',
-    statement: 'I am actively putting time and effort into cutting down, stopping, or changing my routines right now.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s7.category', 'Action'); },
+    get statement() { return t('readiness.statement.s7.text', 'I am actively putting time and effort into cutting down, stopping, or changing my routines right now.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
   {
     id: 's8',
     stage: 'maintenance',
-    category: 'Maintenance',
-    statement: 'I have already made positive changes in my substance use and my primary focus is keeping them going and preventing a slip.',
-    prompt: 'How much does this describe you right now?',
+    get category() { return t('readiness.statement.s8.category', 'Maintenance'); },
+    get statement() { return t('readiness.statement.s8.text', 'I have already made positive changes in my substance use and my primary focus is keeping them going and preventing a slip.'); },
+    get prompt() { return t('readiness.statement.prompt', 'How much does this describe you right now?'); },
     options: LIKERT_OPTIONS,
   },
 ];
@@ -222,55 +235,63 @@ for (const stmt of STATEMENTS_LIST) {
 export const DECISIONAL_BALANCE_PROMPTS = {
   likes: {
     id: 'likes',
-    title: 'What I like about using',
-    subtitle: 'Benefits, relief, and reasons to continue using as you do now',
-    examples: [
-      'Relief from anxiety, stress, or intense emotional pain',
-      'Helps manage physical pain, fatigue, or chronic discomfort',
-      'Social connection and feeling bonded with friends who use',
-      'Numbing painful memories, grief, or traumatic experiences',
-      'Helps me unwind, relax, or sleep at night',
-      'Gives an immediate boost of energy, confidence, or focus',
-    ],
+    get title() { return t('readiness.db.likes.title', 'What I like about using'); },
+    get subtitle() { return t('readiness.db.likes.sub', 'Benefits, relief, and reasons to continue using as you do now'); },
+    get examples() {
+      return [
+        t('readiness.db.likes.ex1', 'Relief from anxiety, stress, or intense emotional pain'),
+        t('readiness.db.likes.ex2', 'Helps manage physical pain, fatigue, or chronic discomfort'),
+        t('readiness.db.likes.ex3', 'Social connection and feeling bonded with friends who use'),
+        t('readiness.db.likes.ex4', 'Numbing painful memories, grief, or traumatic experiences'),
+        t('readiness.db.likes.ex5', 'Helps me unwind, relax, or sleep at night'),
+        t('readiness.db.likes.ex6', 'Gives an immediate boost of energy, confidence, or focus'),
+      ];
+    },
   },
   concerns: {
     id: 'concerns',
-    title: 'What is difficult or worrying',
-    subtitle: 'Costs, downsides, health risks, and stress caused by continuing',
-    examples: [
-      'Financial costs draining savings or creating debt',
-      'Conflict, tension, or broken trust with partner, children, or family',
-      'Fear of accidental overdose, poisoning, or dangerous cuts (fentanyl, xylazine)',
-      'Physical withdrawal sickness, severe hangovers, or feeling trapped',
-      'Struggling at work, school, or missing important life goals',
-      'Feeling like the substance has taken over my daily choices',
-    ],
+    get title() { return t('readiness.db.concerns.title', 'What is difficult or worrying'); },
+    get subtitle() { return t('readiness.db.concerns.sub', 'Costs, downsides, health risks, and stress caused by continuing'); },
+    get examples() {
+      return [
+        t('readiness.db.concerns.ex1', 'Financial costs draining savings or creating debt'),
+        t('readiness.db.concerns.ex2', 'Conflict, tension, or broken trust with partner, children, or family'),
+        t('readiness.db.concerns.ex3', 'Fear of accidental overdose, poisoning, or dangerous cuts (fentanyl, xylazine)'),
+        t('readiness.db.concerns.ex4', 'Physical withdrawal sickness, severe hangovers, or feeling trapped'),
+        t('readiness.db.concerns.ex5', 'Struggling at work, school, or missing important life goals'),
+        t('readiness.db.concerns.ex6', 'Feeling like the substance has taken over my daily choices'),
+      ];
+    },
   },
   positives: {
     id: 'positives',
-    title: 'What would be better if things changed',
-    subtitle: 'Hopes, personal values, and benefits of making a change',
-    examples: [
-      'Better physical energy, clearer thinking, and overall health',
-      'Saving money for things that truly matter to me and my family',
-      'Rebuilding trust, honesty, and emotional connection with loved ones',
-      'Freedom from the daily panic of cravings and withdrawal sickness',
-      'Clearer thinking, emotional stability, and true peace of mind',
-      'Lower risk of legal problems, medical emergencies, or hospital visits',
-    ],
+    get title() { return t('readiness.db.positives.title', 'What would be better if things changed'); },
+    get subtitle() { return t('readiness.db.positives.sub', 'Hopes, personal values, and benefits of making a change'); },
+    get examples() {
+      return [
+        t('readiness.db.positives.ex1', 'Better physical energy, clearer thinking, and overall health'),
+        t('readiness.db.positives.ex2', 'Saving money for things that truly matter to me and my family'),
+        t('readiness.db.positives.ex3', 'Rebuilding trust, honesty, and emotional connection with loved ones'),
+        t('readiness.db.positives.ex4', 'Freedom from the daily panic of cravings and withdrawal sickness'),
+        t('readiness.db.positives.ex5', 'Clearer thinking, emotional stability, and true peace of mind'),
+        t('readiness.db.positives.ex6', 'Lower risk of legal problems, medical emergencies, or hospital visits'),
+      ];
+    },
   },
   hurdles: {
     id: 'hurdles',
-    title: 'What feels hard about changing',
-    subtitle: 'Fears, barriers, losses, and challenges of making a change',
-    examples: [
-      'Wondering how I will survive intense stress or anxiety without substances',
-      'Fear of physical withdrawal symptoms or feeling terribly sick',
-      'Losing friends or feeling isolated from social circles that use',
-      'Fear that I will try and not succeed (fear of failing)',
-      'Cravings feeling so overpowering that I cannot resist them',
-      'Having to feel difficult emotions or memories I have been avoiding',
-    ],
+    get title() { return t('readiness.db.hurdles.title', 'What feels hard about changing'); },
+    get subtitle() { return t('readiness.db.hurdles.sub', 'Fears, barriers, losses, and challenges of making a change'); },
+    get examples() {
+      return [
+        t('readiness.db.hurdles.ex1', 'Wondering how I will survive intense stress or anxiety without substances'),
+        t('readiness.db.hurdles.ex2', 'Fear of physical withdrawal symptoms or feeling terribly sick'),
+        t('readiness.db.hurdles.ex3', 'Losing friends or feeling isolated from social circles that use'),
+        t('readiness.db.hurdles.ex4', 'Fear that I will try and not succeed (fear of failing)'),
+        t('readiness.db.hurdles.ex5', 'Cravings feeling so overpowering that I cannot resist them'),
+        t('readiness.db.hurdles.ex6', 'Having to feel difficult emotions or memories I have been avoiding'),
+      ];
+    },
   },
 };
 
@@ -279,43 +300,51 @@ export const DECISIONAL_BALANCE_PROMPTS = {
 // ============================================================================
 
 export const CRAFT_GUIDANCE = {
-  title: 'CRAFT: Guidance for Families, Loved Ones & Allies',
-  subtitle: 'Community Reinforcement and Family Training — Evidence-based strategies for concerned significant others',
-  strategies: [
-    {
-      id: 'positive_communication',
-      title: 'Positive Communication Strategies',
-      summary: 'Replace accusations and lecturing with clear, positive, and loving "I" statements.',
-      practices: [
-        'Use "I" statements to share feelings instead of blame (e.g. "I love you and feel worried when I see you hurting" instead of "You are reckless and ruining our lives").',
-        'Time your conversations carefully: Never attempt serious discussions when your loved one is high, drunk, or in acute withdrawal. Wait for sober, calm moments.',
-        'Keep statements brief and focused on one specific topic rather than bringing up months of past arguments.',
-        'Actively praise and reinforce sober moments: Notice when they take a healthy step, share a kind conversation, or engage in a sober hobby.',
-      ],
-    },
-    {
-      id: 'non_punitive_boundaries',
-      title: 'Non-Punitive Boundaries & Natural Consequences',
-      summary: 'Step back from shielding without hostility or punishment, allowing natural consequences to occur.',
-      practices: [
-        'Stop enabling or shielding: Do not call in sick for them, pay off debts or legal fines, or clean up messes caused by use.',
-        'Set clear, consistent limits with love: "I care about you too much to give cash, but I will gladly drive you to a doctor, buy groceries, or sit with you."',
-        'Disengage calmly when using starts: Do not argue or plead while substances are active. Calmly state: "I love you, but I cannot be around substance use right now. I am going for a walk."',
-        'Never make empty threats: Only state consequences you are prepared and willing to follow through on.',
-      ],
-    },
-    {
-      id: 'self_care_allies',
-      title: 'Self-Care & Safety for Supporters',
-      summary: 'Reclaim your own mental health and safety regardless of your loved one’s choices.',
-      practices: [
-        'Remember that your life has independent value: Your joy, sleep, and well-being cannot depend completely on someone else’s sobriety.',
-        'Reconnect with your own life: Re-engage with friends, hobbies, exercise, and personal therapy.',
-        'Join family support groups: Al-Anon, Nar-Anon, SMART Recovery for Friends & Family, or local CRAFT groups.',
-        'Safety first: If violence, weapons, or physical threats occur, prioritize immediate safety, call 911 or the Domestic Violence Helpline (800-799-7233).',
-      ],
-    },
-  ],
+  get title() { return t('readiness.craft.title', 'CRAFT: Guidance for Families, Loved Ones & Allies'); },
+  get subtitle() { return t('readiness.craft.sub', 'Community Reinforcement and Family Training — Evidence-based strategies for concerned significant others'); },
+  get strategies() {
+    return [
+      {
+        id: 'positive_communication',
+        get title() { return t('readiness.craft.pos_comm.title', 'Positive Communication Strategies'); },
+        get summary() { return t('readiness.craft.pos_comm.summary', 'Replace accusations and lecturing with clear, positive, and loving "I" statements.'); },
+        get practices() {
+          return [
+            t('readiness.craft.pos_comm.p1', 'Use "I" statements to share feelings instead of blame (e.g. "I love you and feel worried when I see you hurting" instead of "You are reckless and ruining our lives").'),
+            t('readiness.craft.pos_comm.p2', 'Time your conversations carefully: Never attempt serious discussions when your loved one is high, drunk, or in acute withdrawal. Wait for sober, calm moments.'),
+            t('readiness.craft.pos_comm.p3', 'Keep statements brief and focused on one specific topic rather than bringing up months of past arguments.'),
+            t('readiness.craft.pos_comm.p4', 'Actively praise and reinforce sober moments: Notice when they take a healthy step, share a kind conversation, or engage in a sober hobby.'),
+          ];
+        },
+      },
+      {
+        id: 'non_punitive_boundaries',
+        get title() { return t('readiness.craft.non_punitive.title', 'Non-Punitive Boundaries & Natural Consequences'); },
+        get summary() { return t('readiness.craft.non_punitive.summary', 'Step back from shielding without hostility or punishment, allowing natural consequences to occur.'); },
+        get practices() {
+          return [
+            t('readiness.craft.non_punitive.p1', 'Stop enabling or shielding: Do not call in sick for them, pay off debts or legal fines, or clean up messes caused by use.'),
+            t('readiness.craft.non_punitive.p2', 'Set clear, consistent limits with love: "I care about you too much to give cash, but I will gladly drive you to a doctor, buy groceries, or sit with you."'),
+            t('readiness.craft.non_punitive.p3', 'Disengage calmly when using starts: Do not argue or plead while substances are active. Calmly state: "I love you, but I cannot be around substance use right now. I am going for a walk."'),
+            t('readiness.craft.non_punitive.p4', 'Never make empty threats: Only state consequences you are prepared and willing to follow through on.'),
+          ];
+        },
+      },
+      {
+        id: 'self_care_allies',
+        get title() { return t('readiness.craft.self_care.title', 'Self-Care & Safety for Supporters'); },
+        get summary() { return t('readiness.craft.self_care.summary', 'Reclaim your own mental health and safety regardless of your loved one’s choices.'); },
+        get practices() {
+          return [
+            t('readiness.craft.self_care.p1', 'Remember that your life has independent value: Your joy, sleep, and well-being cannot depend completely on someone else’s sobriety.'),
+            t('readiness.craft.self_care.p2', 'Reconnect with your own life: Re-engage with friends, hobbies, exercise, and personal therapy.'),
+            t('readiness.craft.self_care.p3', 'Join family support groups: Al-Anon, Nar-Anon, SMART Recovery for Friends & Family, or local CRAFT groups.'),
+            t('readiness.craft.self_care.p4', 'Safety first: If violence, weapons, or physical threats occur, prioritize immediate safety, call 911 or the Domestic Violence Helpline (800-799-7233).'),
+          ];
+        },
+      },
+    ];
+  },
 };
 
 // ============================================================================
@@ -607,6 +636,7 @@ export function resetReadinessState() {
  */
 export function formatReadinessSummaryText(state = inMemoryReadinessState) {
   const safeState = state || inMemoryReadinessState;
+  const isEs = getLang() === 'es';
   const answers = {
     ...(safeState.answers || {}),
     substance: safeState.substance || 'general',
@@ -616,6 +646,122 @@ export function formatReadinessSummaryText(state = inMemoryReadinessState) {
     answers.stage = safeState.selfIdentifiedStage;
   }
   const result = calculateReadinessStage(answers);
+
+  if (isEs) {
+    const roleMap = {
+      individual: 'Autorreflexión personal',
+      loved_one: 'Perspectiva de familiar / aliado',
+      counselor: 'Consejería / Profesional de salud',
+    };
+    const subMap = {
+      alcohol: 'Alcohol (Cerveza, vino, licor)',
+      opioids: 'Opioides (Fentanilo, heroína, pastillas)',
+      stimulants: 'Estimulantes (Metanfetamina, cocaína)',
+      cannabis: 'Cannabis / Marihuana',
+      general: 'Múltiples u otras sustancias',
+    };
+    const substanceLabel = subMap[safeState.substance] || safeState.substance || 'General';
+
+    const lines = [
+      '============================================================',
+      'HARBORPATH: RESUMEN DE PREPARACIÓN Y ETAPAS DEL CAMBIO',
+      'Modelo Transteórico (Inspirado en URICA) y Reducción de Daños',
+      '============================================================',
+      '',
+      `Fecha y hora de evaluación: ${safeState.timestamp ? new Date(safeState.timestamp).toISOString() : new Date().toISOString()}`,
+      `Rol del participante: ${roleMap[safeState.assessorRole] || safeState.assessorRole || 'Autorreflexión'}`,
+      `Sustancia explorada: ${substanceLabel}${safeState.customSubstance ? ` (${safeState.customSubstance})` : ''}`,
+      '',
+      '------------------------------------------------------------',
+      '1. ETAPA ACTUAL DEL CAMBIO Y PERSPECTIVA DE MOTIVACIÓN',
+      '------------------------------------------------------------',
+      `Etapa identificada: ${result.title.toUpperCase()}`,
+      `Lenguaje claro: ${result.plainLanguageTitle}`,
+      `Descripción general: ${result.description}`,
+      '',
+      'Pregunta de reflexión motivacional:',
+      `"${result.motivationalCoachingPrompt}"`,
+      '',
+      `Puntuación compuesta de preparación URICA: ${result.readinessScore}`,
+      'Perfil de subescalas (Escala 1 a 5):',
+      `  - Precontemplación (No listo/a): ${result.subscaleScores.precontemplation} / 5.0`,
+      `  - Contemplación (Ambivalencia):   ${result.subscaleScores.contemplation} / 5.0`,
+      `  - Preparación (Planificando):     ${result.subscaleScores.preparation} / 5.0`,
+      `  - Acción (Haciendo cambios):      ${result.subscaleScores.action} / 5.0`,
+      `  - Mantenimiento (Sosteniendo):    ${result.subscaleScores.maintenance} / 5.0`,
+      '',
+      'Próximos pasos recomendados:',
+      ...result.recommendedNextSteps.map((step, idx) => `  ${idx + 1}. ${step}`),
+      '',
+    ];
+
+    // Decisional Balance Section
+    const db = safeState.decisionalBalance || {};
+    const hasLikes = (db.likes && db.likes.length > 0) || db.customLikes;
+    const hasConcerns = (db.concerns && db.concerns.length > 0) || db.customConcerns;
+    const hasPositives = (db.positives && db.positives.length > 0) || db.customPositives;
+    const hasHurdles = (db.hurdles && db.hurdles.length > 0) || db.customHurdles;
+
+    if (hasLikes || hasConcerns || hasPositives || hasHurdles) {
+      lines.push(
+        '------------------------------------------------------------',
+        '2. BALANCE DECISIONAL (MATRIZ DE PROS Y CONTRAS)',
+        '------------------------------------------------------------',
+        'Lo que me gusta de consumir (Beneficios / Alivio):',
+        ...(db.likes && db.likes.length > 0 ? db.likes.map((item) => `  * ${item}`) : ['  (Ninguno seleccionado)']),
+        ...(db.customLikes ? [`  * Notas: ${db.customLikes}`] : []),
+        '',
+        'Lo que es difícil o preocupante (Costos y riesgos):',
+        ...(db.concerns && db.concerns.length > 0 ? db.concerns.map((item) => `  * ${item}`) : ['  (Ninguno seleccionado)']),
+        ...(db.customConcerns ? [`  * Notas: ${db.customConcerns}`] : []),
+        '',
+        'Lo que mejoraría si las cosas cambiaran (Valores y esperanzas):',
+        ...(db.positives && db.positives.length > 0 ? db.positives.map((item) => `  * ${item}`) : ['  (Ninguno seleccionado)']),
+        ...(db.customPositives ? [`  * Notas: ${db.customPositives}`] : []),
+        '',
+        'Lo que se siente difícil de cambiar (Obstáculos y miedos):',
+        ...(db.hurdles && db.hurdles.length > 0 ? db.hurdles.map((item) => `  * ${item}`) : ['  (Ninguno seleccionado)']),
+        ...(db.customHurdles ? [`  * Notas: ${db.customHurdles}`] : []),
+        '',
+      );
+    }
+
+    if (safeState.notes || safeState.craftNotes) {
+      lines.push(
+        '------------------------------------------------------------',
+        '3. NOTAS PERSONALES Y REFLEXIONES DEL ALIADO/A',
+        '------------------------------------------------------------',
+      );
+      if (safeState.notes) {
+        lines.push(`Notas del participante:\n${safeState.notes}\n`);
+      }
+      if (safeState.craftNotes) {
+        lines.push(`Reflexión CRAFT del aliado/a:\n${safeState.craftNotes}\n`);
+      }
+    }
+
+    lines.push(
+      '------------------------------------------------------------',
+      '4. AVISO CLÍNICO Y ÉTICO (SOLO AUTORREPORTE)',
+      '------------------------------------------------------------',
+      'La exploración de preparación de HarborPath es una herramienta educativa y de autorreflexión',
+      'guiada basada en el Modelo Transteórico del Cambio validado (Prochaska y DiClemente) y principios CRAFT.',
+      'NO constituye un diagnóstico psiquiátrico formal, ubicación clínica de ASAM ni prescripción médica.',
+      'El trastorno por consumo de sustancias es una condición médica tratable. Las decisiones de tratamiento son voluntarias.',
+      '',
+      '------------------------------------------------------------',
+      '5. LÍNEAS DE CRISIS Y APOYO CONFIDENCIAL 24/7 INMEDIATO',
+      '------------------------------------------------------------',
+      '* Línea de Prevención del Suicidio y Crisis 988: Llame o envíe texto al 988 (inglés y español, 24/7)',
+      '* Línea Nacional de Ayuda de SAMHSA: 1-800-662-4357 (Derivación a tratamiento gratuita y confidencial)',
+      '* Never Use Alone: 1-800-484-3731 (Línea de prevención de sobredosis operada por pares mientras consume)',
+      '* The Trevor Project (Crisis LGBTQ+): 1-866-488-7386 o envíe texto START al 678-678',
+      '* Línea de Ayuda contra la Violencia Doméstica: 1-800-799-7233 (Apoyo 24/7 y plan de seguridad)',
+      '============================================================',
+    );
+
+    return lines.join('\n');
+  }
 
   const lines = [
     '============================================================',
@@ -746,8 +892,8 @@ export function readinessView({ query } = {}) {
 
   // 1. Page Header
   const header = pageHeader(
-    'Readiness & Stages of Change',
-    'Explore where you are with alcohol, opioids, stimulants, or other substances without judgment or pressure. Weigh pros and cons, discover your stage of change, and find next steps that fit your personal goals.',
+    t('readiness.header.title', 'Readiness & Stages of Change'),
+    t('readiness.header.lede', 'Explore where you are with alcohol, opioids, stimulants, or other substances without judgment or pressure. Weigh pros and cons, discover your stage of change, and find next steps that fit your personal goals.'),
   );
   root.append(header);
 
@@ -759,28 +905,28 @@ export function readinessView({ query } = {}) {
       'p',
       { class: 'callout-title' },
       icon('shield'),
-      '100% Ephemeral In-RAM Privacy Guarantee',
+      t('readiness.privacy.title', '100% Ephemeral In-RAM Privacy Guarantee'),
     ),
     h(
       'p',
       null,
-      'Your answers, pros/cons entries, and notes exist only in your browser’s temporary RAM. Nothing is saved to cookies, local storage, or server databases. Clicking "Clear Assessment" or "Quick Exit" instantly wipes all data.',
+      t('readiness.privacy.body', 'Your answers, pros/cons entries, and notes exist only in your browser’s temporary RAM. Nothing is saved to cookies, local storage, or server databases. Clicking "Clear Assessment" or "Quick Exit" instantly wipes all data.'),
     ),
   );
   root.append(privacyCallout);
 
   // 3. Settings & Scope: Substance & Perspective
   const settingsCard = h('div', { class: 'card no-print' });
-  const settingsTitle = h('h2', { class: 'card-title' }, '1. What are you exploring today?');
+  const settingsTitle = h('h2', { class: 'card-title' }, t('readiness.settings.title', '1. What are you exploring today?'));
   settingsCard.append(settingsTitle);
 
   const substanceGrid = h('div', { class: 'choice-grid' });
   const SUBSTANCE_CHOICES = [
-    { id: 'alcohol', label: 'Alcohol (Beer, wine, liquor)' },
-    { id: 'opioids', label: 'Opioids (Fentanyl, heroin, oxycodone, pills)' },
-    { id: 'stimulants', label: 'Stimulants (Methamphetamine, cocaine, crack)' },
-    { id: 'cannabis', label: 'Cannabis / Marijuana' },
-    { id: 'general', label: 'Multiple or Other Substances' },
+    { id: 'alcohol', label: t('readiness.substance.alcohol', 'Alcohol (Beer, wine, liquor)') },
+    { id: 'opioids', label: t('readiness.substance.opioids', 'Opioids (Fentanyl, heroin, oxycodone, pills)') },
+    { id: 'stimulants', label: t('readiness.substance.stimulants', 'Stimulants (Methamphetamine, cocaine, crack)') },
+    { id: 'cannabis', label: t('readiness.substance.cannabis', 'Cannabis / Marijuana') },
+    { id: 'general', label: t('readiness.substance.general', 'Multiple or Other Substances') },
   ];
 
   for (const sub of SUBSTANCE_CHOICES) {
@@ -808,7 +954,7 @@ export function readinessView({ query } = {}) {
 
   // Perspective Choice (Individual vs Family/Ally vs Clinician)
   const roleGroup = h('div', { class: 'field' });
-  const roleLabel = h('label', { for: 'readiness-role-select', class: 'choice-label' }, 'Who is filling this out?');
+  const roleLabel = h('label', { for: 'readiness-role-select', class: 'choice-label' }, t('readiness.role.label', 'Who is filling this out?'));
   const roleSelect = h(
     'select',
     {
@@ -819,50 +965,52 @@ export function readinessView({ query } = {}) {
         updateLiveSummary();
       },
     },
-    h('option', { value: 'individual', selected: inMemoryReadinessState.assessorRole === 'individual' }, 'Exploring for myself (Self-Reflection)'),
-    h('option', { value: 'loved_one', selected: inMemoryReadinessState.assessorRole === 'loved_one' }, 'A family member, partner, or friend (Ally Perspective)'),
-    h('option', { value: 'counselor', selected: inMemoryReadinessState.assessorRole === 'counselor' }, 'A counselor, healthcare provider, or peer specialist'),
+    h('option', { value: 'individual', selected: inMemoryReadinessState.assessorRole === 'individual' }, t('readiness.role.individual', 'Exploring for myself (Self-Reflection)')),
+    h('option', { value: 'loved_one', selected: inMemoryReadinessState.assessorRole === 'loved_one' }, t('readiness.role.loved_one', 'A family member, partner, or friend (Ally Perspective)')),
+    h('option', { value: 'counselor', selected: inMemoryReadinessState.assessorRole === 'counselor' }, t('readiness.role.counselor', 'A counselor, healthcare provider, or peer specialist')),
   );
   roleGroup.append(roleLabel, roleSelect);
   settingsCard.append(roleGroup);
   root.append(settingsCard);
 
   // 4. Live Clinical Summary Card (Print-Handout Ready)
-  const summaryCard = h('div', { class: 'card asam-summary-card print-handout', 'aria-live': 'polite', id: 'readiness-summary' });
-  const summaryHeader = h('h2', { class: 'card-title' }, 'Live Readiness & Stage Summary');
+  const summaryCard = h('div', { class: 'card纠asam-summary-card print-handout', 'aria-live': 'polite', id: 'readiness-summary' });
+  summaryCard.className = 'card asam-summary-card print-handout';
+  const summaryHeader = h('h2', { class: 'card-title' }, t('readiness.summary.title', 'Live Readiness & Stage Summary'));
   const chipsWrap = h('div', { class: 'chips' });
-  const stageBadge = h('span', { class: 'chip chip-primary badge-severity' }, 'Calculating...');
-  const scoreBadge = h('span', { class: 'chip' }, 'Readiness Score: --');
+  const stageBadge = h('span', { class: 'chip chip-primary badge-severity' }, t('readiness.summary.calculating', 'Calculating...'));
+  const scoreBadge = h('span', { class: 'chip' }, t('readiness.summary.scoreBadge', 'Readiness Score: {score}', { score: '--' }));
   chipsWrap.append(stageBadge, scoreBadge);
 
   const stageDesc = h('p', { class: 'lede' }, '');
   const coachingCallout = h('div', { class: 'callout callout-info' });
-  const coachingTitle = h('p', { class: 'callout-title' }, icon('message'), 'Motivational Coaching Insight');
+  const coachingTitle = h('p', { class: 'callout-title' }, icon('message'), t('readiness.summary.coachingTitle', 'Motivational Coaching Insight'));
   const coachingText = h('p', null, '');
   coachingCallout.append(coachingTitle, coachingText);
 
-  const nextStepsHeading = h('h3', null, 'Recommended Next Steps');
+  const nextStepsHeading = h('h3', null, t('readiness.summary.nextStepsHeading', 'Recommended Next Steps'));
   const nextStepsList = h('ul', { class: 'list' });
 
   // Recurrence / Slip Quick Action Callout
   const slipBox = h(
     'div',
     { class: 'callout callout-emergency no-print' },
-    h('p', { class: 'callout-title' }, icon('alert'), 'Had a slip or return to use?'),
-    h('p', null, 'A return to use is common and provides valuable learning. Lowered tolerance dramatically increases overdose risk — please stay safe.'),
+    h('p', { class: 'callout-title' }, icon('alert'), t('readiness.slip.title', 'Had a slip or return to use?')),
+    h('p', null, t('readiness.slip.body', 'A return to use is common and provides valuable learning. Lowered tolerance dramatically increases overdose risk — please stay safe.')),
     h(
       'button',
       {
         type: 'button',
         class: 'btn btn-secondary',
-        onclick: () => {
+        onclick: (e) => {
           const isCurrentlySlip = inMemoryReadinessState.recentSlip;
           setReadinessState({ recentSlip: !isCurrentlySlip, timestamp: Date.now() });
           updateLiveSummary();
-          announce(!isCurrentlySlip ? 'Recurrence mode activated' : 'Standard readiness mode activated');
+          announce(!isCurrentlySlip ? t('readiness.slip.announceActive', 'Recurrence mode activated') : t('readiness.slip.announceStandard', 'Standard readiness mode activated'));
+          e.target.textContent = inMemoryReadinessState.recentSlip ? t('readiness.slip.btnExit', 'Exit Recurrence Mode') : t('readiness.slip.btnView', 'View Recurrence & Overdose Safety Guidance');
         },
       },
-      inMemoryReadinessState.recentSlip ? 'Exit Recurrence Mode' : 'View Recurrence & Overdose Safety Guidance',
+      inMemoryReadinessState.recentSlip ? t('readiness.slip.btnExit', 'Exit Recurrence Mode') : t('readiness.slip.btnView', 'View Recurrence & Overdose Safety Guidance'),
     ),
   );
 
@@ -882,7 +1030,7 @@ export function readinessView({ query } = {}) {
     const result = calculateReadinessStage(answers);
 
     stageBadge.textContent = result.plainLanguageTitle;
-    scoreBadge.textContent = `Readiness Score: ${result.readinessScore}`;
+    scoreBadge.textContent = t('readiness.summary.scoreBadge', 'Readiness Score: {score}', { score: result.readinessScore });
     stageDesc.textContent = result.description;
     coachingText.textContent = `"${result.motivationalCoachingPrompt}"`;
 
@@ -895,9 +1043,9 @@ export function readinessView({ query } = {}) {
   // 5. Validated URICA-Inspired 8 Statements Questionnaire
   const questionsSection = section(
     'readiness-questions',
-    '2. Readiness Assessment (URICA-Inspired)',
+    t('readiness.questions.heading', '2. Readiness Assessment (URICA-Inspired)'),
     p(
-      'Read each statement below and choose how much you agree with it right now. There are no right or wrong answers.',
+      t('readiness.questions.desc', 'Read each statement below and choose how much you agree with it right now. There are no right or wrong answers.'),
     ),
   );
 
@@ -909,7 +1057,7 @@ export function readinessView({ query } = {}) {
     const legend = h(
       'legend',
       null,
-      h('span', { class: 'choice-label' }, `Statement ${i + 1}: ${stmt.statement}`),
+      h('span', { class: 'choice-label' }, t('readiness.questions.statementLegend', 'Statement {n}: {text}', { n: i + 1, text: stmt.statement })),
     );
     fieldset.append(legend);
 
@@ -935,7 +1083,7 @@ export function readinessView({ query } = {}) {
             timestamp: Date.now(),
           });
           updateLiveSummary();
-          announce(`Selected ${opt.label} for statement ${i + 1}`);
+          announce(t('readiness.questions.announceSelected', 'Selected {label} for statement {n}', { label: opt.label, n: i + 1 }));
         },
       });
       inputs.push({ radio, score: opt.score });
@@ -962,9 +1110,9 @@ export function readinessView({ query } = {}) {
   // 6. Decisional Balance Tool (Pros / Cons Matrix)
   const dbSection = section(
     'readiness-decisional-balance',
-    '3. Decisional Balance Tool (Pros & Cons Matrix)',
+    t('readiness.db.heading', '3. Decisional Balance Tool (Pros & Cons Matrix)'),
     p(
-      'Ambivalence is normal. Weighing what you like about using against what is difficult or worrying helps clarify your genuine personal priorities.',
+      t('readiness.db.desc', 'Ambivalence is normal. Weighing what you like about using against what is difficult or worrying helps clarify your genuine personal priorities.'),
     ),
   );
 
@@ -1025,12 +1173,12 @@ export function readinessView({ query } = {}) {
 
     // Custom notes textarea for this quadrant
     const customKey = `custom${quad.key.charAt(0).toUpperCase() + quad.key.slice(1)}`;
-    const textLabel = h('label', { for: `db-custom-${quad.key}`, class: 'choice-desc' }, `Add your own thoughts for "${quad.data.title}":`);
+    const textLabel = h('label', { for: `db-custom-${quad.key}`, class: 'choice-desc' }, t('readiness.db.customThoughts', 'Add your own thoughts for "{title}":', { title: quad.data.title }));
     const textarea = h('textarea', {
       id: `db-custom-${quad.key}`,
       class: 'input',
       rows: 2,
-      placeholder: 'Type personal notes here (held in RAM only)...',
+      placeholder: t('readiness.db.notesPlaceholder', 'Type personal notes here (held in RAM only)...'),
       value: inMemoryReadinessState.decisionalBalance[customKey] || '',
       oninput: (e) => {
         setReadinessState({
@@ -1048,9 +1196,9 @@ export function readinessView({ query } = {}) {
   // 7. CRAFT Guidance for Families & Allies
   const craftSection = section(
     'readiness-craft',
-    '4. Guidance for Families & Loved Ones (CRAFT Principles)',
+    t('readiness.craft.heading', '4. Guidance for Families & Loved Ones (CRAFT Principles)'),
     p(
-      'If you love someone navigating drug or alcohol use, Community Reinforcement and Family Training (CRAFT) offers science-backed ways to support them while protecting your own well-being.',
+      t('readiness.craft.desc', 'If you love someone navigating drug or alcohol use, Community Reinforcement and Family Training (CRAFT) offers science-backed ways to support them while protecting your own well-being.'),
     ),
   );
 
@@ -1071,12 +1219,12 @@ export function readinessView({ query } = {}) {
 
   // Supporter Notes Field
   const craftNotesField = h('div', { class: 'field' });
-  const craftNotesLabel = h('label', { for: 'craft-ally-notes', class: 'choice-label' }, 'Ally & Supporter Reflection Notes:');
+  const craftNotesLabel = h('label', { for: 'craft-ally-notes', class: 'choice-label' }, t('readiness.craft.allyNotesLabel', 'Ally & Supporter Reflection Notes:'));
   const craftNotesTextarea = h('textarea', {
     id: 'craft-ally-notes',
     class: 'input',
     rows: 3,
-    placeholder: 'Record boundaries you wish to set or positive moments you noticed (held in RAM only)...',
+    placeholder: t('readiness.craft.allyNotesPlaceholder', 'Record boundaries you wish to set or positive moments you noticed (held in RAM only)...'),
     value: inMemoryReadinessState.craftNotes || '',
     oninput: (e) => {
       setReadinessState({ craftNotes: e.target.value, timestamp: Date.now() });
@@ -1088,12 +1236,12 @@ export function readinessView({ query } = {}) {
 
   // 8. General Notes Section
   const notesField = h('div', { class: 'field no-print' });
-  const notesLabel = h('label', { for: 'readiness-personal-notes', class: 'choice-label' }, 'General Personal Notes & Goals (Held in RAM only):');
+  const notesLabel = h('label', { for: 'readiness-personal-notes', class: 'choice-label' }, t('readiness.notes.label', 'General Personal Notes & Goals (Held in RAM only):'));
   const notesTextarea = h('textarea', {
     id: 'readiness-personal-notes',
     class: 'input',
     rows: 3,
-    placeholder: 'Write any personal insights, questions for your doctor, or goals here...',
+    placeholder: t('readiness.notes.placeholder', 'Write any personal insights, questions for your doctor, or goals here...'),
     value: inMemoryReadinessState.notes || '',
     oninput: (e) => {
       setReadinessState({ notes: e.target.value, timestamp: Date.now() });
@@ -1115,16 +1263,16 @@ export function readinessView({ query } = {}) {
         if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
           navigator.clipboard.writeText(text).catch(() => {});
         }
-        announce('Readiness summary report copied to clipboard');
-        copyBtn.textContent = '✓ Report Copied!';
+        announce(t('readiness.actions.announceCopied', 'Readiness summary report copied to clipboard'));
+        copyBtn.textContent = t('readiness.actions.copied', '✓ Report Copied!');
         setTimeout(() => {
           clear(copyBtn);
-          copyBtn.append(icon('clipboard'), ' Copy Readiness Summary');
+          copyBtn.append(icon('clipboard'), t('readiness.actions.copyBtn', ' Copy Readiness Summary'));
         }, 3000);
       },
     },
     icon('clipboard'),
-    ' Copy Readiness Summary',
+    t('readiness.actions.copyBtn', ' Copy Readiness Summary'),
   );
 
   const printBtn = h(
@@ -1139,7 +1287,7 @@ export function readinessView({ query } = {}) {
       },
     },
     icon('printer'),
-    ' Print Handout',
+    t('readiness.actions.printBtn', ' Print Handout'),
   );
 
   const resetBtn = h(
@@ -1149,25 +1297,25 @@ export function readinessView({ query } = {}) {
       class: 'btn btn-ghost',
       onclick: () => {
         resetReadinessState();
-        announce('All readiness answers and notes have been cleared from memory');
+        announce(t('readiness.actions.announceReset', 'All readiness answers and notes have been cleared from memory'));
       },
     },
     icon('x'),
-    ' Clear All Answers (RAM Wipe)',
+    t('readiness.actions.resetBtn', ' Clear All Answers (RAM Wipe)'),
   );
 
   const navTreatmentBtn = h(
     'a',
     { class: 'btn btn-secondary', href: '#/treatment' },
     icon('search'),
-    ' Find Treatment Options',
+    t('readiness.actions.findTreatment', ' Find Treatment Options'),
   );
 
   const navHarmReductionBtn = h(
     'a',
     { class: 'btn btn-secondary', href: '#/harm-reduction' },
     icon('heart'),
-    ' Harm Reduction & Supplies',
+    t('readiness.actions.harmReduction', ' Harm Reduction & Supplies'),
   );
 
   actionsBar.append(copyBtn, printBtn, resetBtn, navTreatmentBtn, navHarmReductionBtn);

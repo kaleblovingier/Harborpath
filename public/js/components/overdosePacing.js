@@ -20,6 +20,7 @@ import {
   XYLAZINE_SEDATION_MANAGEMENT,
   REVERSAL_FORMULATIONS,
 } from '../content/reversalFormulations.js';
+import { t, getLang } from '../i18n.js';
 
 /**
  * Five-Step Rescue Protocol Schema and Clinical Content
@@ -28,131 +29,151 @@ export const RESCUE_PACING_STEPS = [
   {
     step: 1,
     id: 'responsiveness',
-    title: 'Sternal Rub & Responsiveness Check',
-    subtitle: 'Evaluate responsiveness and respiratory status',
-    badge: 'Step 1 of 5',
-    headline: 'No response to shouting or firm rub on breastbone',
-    instructions: [
-      'Shout loudly into both ears: "Can you hear me? Wake up!"',
-      'Make a firm fist and grind your knuckles hard up and down their breastbone (sternum) for 5 to 10 seconds.',
-      'Check for cardinal signs of opioid overdose: unresponsive to physical pain, slow or stopped breathing, gurgling or choking sounds ("death rattle"), pinpoint pupils, limp muscles, or blue, purple, or gray lips and nail beds.',
-      'Call 911 immediately. Put your phone on speakerphone and place it beside you so dispatchers can coach you while your hands remain free.',
-    ],
-    actionPrompt: 'If the person does not respond or is breathing abnormally, immediately administer naloxone.',
-    clinicalNote: 'Naloxone causes zero harm if opioids are absent. If you are unsure whether opioids were taken, always administer naloxone immediately.',
+    get title() { return t('pacer.step1.title', 'Sternal Rub & Responsiveness Check'); },
+    get subtitle() { return t('pacer.step1.subtitle', 'Evaluate responsiveness and respiratory status'); },
+    get badge() { return t('pacer.step1.badge', 'Step 1 of 5'); },
+    get headline() { return t('pacer.step1.headline', 'No response to shouting or firm rub on breastbone'); },
+    get instructions() {
+      return [
+        t('pacer.step1.ins1', 'Shout loudly into both ears: "Can you hear me? Wake up!"'),
+        t('pacer.step1.ins2', 'Make a firm fist and grind your knuckles hard up and down their breastbone (sternum) for 5 to 10 seconds.'),
+        t('pacer.step1.ins3', 'Check for cardinal signs of opioid overdose: unresponsive to physical pain, slow or stopped breathing, gurgling or choking sounds ("death rattle"), pinpoint pupils, limp muscles, or blue, purple, or gray lips and nail beds.'),
+        t('pacer.step1.ins4', 'Call 911 immediately. Put your phone on speakerphone and place it beside you so dispatchers can coach you while your hands remain free.'),
+      ];
+    },
+    get actionPrompt() { return t('pacer.step1.actionPrompt', 'If the person does not respond or is breathing abnormally, immediately administer naloxone.'); },
+    get clinicalNote() { return t('pacer.step1.clinicalNote', 'Naloxone causes zero harm if opioids are absent. If you are unsure whether opioids were taken, always administer naloxone immediately.'); },
   },
   {
     step: 2,
     id: 'first_dose',
-    title: 'First Naloxone Administration',
-    subtitle: 'Administer initial reversal dose immediately',
-    badge: 'Step 2 of 5',
-    headline: '4mg nasal spray in 1 nostril, or 0.4mg IM injection',
-    formulations: {
-      nasal: {
-        dose: '4 mg in 0.1 mL',
-        route: 'Intranasal (IN)',
-        device: 'Single-dose needle-free spray (Narcan / OTC generic)',
-        instructions: [
-          'Peel open the blister package and remove the single-dose device.',
-          'Hold the device with your thumb on the bottom plunger and your index and middle fingers on the nozzle collar. Do NOT test-spray or prime.',
-          'Tilt the person’s head gently backward to open the nasal passage.',
-          'Insert the nozzle tip fully into ONE nostril until your fingers touch the base of their nose.',
-          'Press the plunger firmly with your thumb until it clicks to deliver the entire 4mg dose.',
-        ],
-      },
-      injectable: {
-        dose: '0.4 mg / 1 mL',
-        route: 'Intramuscular (IM)',
-        device: 'Vial with syringe or auto-injector',
-        instructions: [
-          'Draw 1 mL (0.4 mg) of solution into the syringe.',
-          'Inject at a 90-degree angle into the muscle of the outer thigh or upper arm (can inject straight through clothing if necessary).',
-          'Push plunger down completely and withdraw the needle carefully.',
-        ],
-      },
+    get title() { return t('pacer.step2.title', 'First Naloxone Administration'); },
+    get subtitle() { return t('pacer.step2.subtitle', 'Administer initial reversal dose immediately'); },
+    get badge() { return t('pacer.step2.badge', 'Step 2 of 5'); },
+    get headline() { return t('pacer.step2.headline', '4mg nasal spray in 1 nostril, or 0.4mg IM injection'); },
+    get formulations() {
+      return {
+        nasal: {
+          dose: '4 mg in 0.1 mL',
+          get route() { return t('pacer.step2.nasal.route', 'Intranasal (IN)'); },
+          get device() { return t('pacer.step2.nasal.device', 'Single-dose needle-free spray (Narcan / OTC generic)'); },
+          get instructions() {
+            return [
+              t('pacer.step2.nasal.ins1', 'Peel open the blister package and remove the single-dose device.'),
+              t('pacer.step2.nasal.ins2', 'Hold the device with your thumb on the bottom plunger and your index and middle fingers on the nozzle collar. Do NOT test-spray or prime.'),
+              t('pacer.step2.nasal.ins3', 'Tilt the person’s head gently backward to open the nasal passage.'),
+              t('pacer.step2.nasal.ins4', 'Insert the nozzle tip fully into ONE nostril until your fingers touch the base of their nose.'),
+              t('pacer.step2.nasal.ins5', 'Press the plunger firmly with your thumb until it clicks to deliver the entire 4mg dose.'),
+            ];
+          },
+        },
+        injectable: {
+          dose: '0.4 mg / 1 mL',
+          get route() { return t('pacer.step2.im.route', 'Intramuscular (IM)'); },
+          get device() { return t('pacer.step2.im.device', 'Vial with syringe or auto-injector'); },
+          get instructions() {
+            return [
+              t('pacer.step2.im.ins1', 'Draw 1 mL (0.4 mg) of solution into the syringe.'),
+              t('pacer.step2.im.ins2', 'Inject at a 90-degree angle into the muscle of the outer thigh or upper arm (can inject straight through clothing if necessary).'),
+              t('pacer.step2.im.ins3', 'Push plunger down completely and withdraw the needle carefully.'),
+            ];
+          },
+        },
+      };
     },
-    timingNote: 'Naloxone takes 2 to 3 minutes to absorb across the nasal mucosa and displace opioids from mu-opioid receptors. Start the 2-to-3 minute evaluation clock immediately upon dose administration.',
+    get timingNote() { return t('pacer.step2.timingNote', 'Naloxone takes 2 to 3 minutes to absorb across the nasal mucosa and displace opioids from mu-opioid receptors. Start the 2-to-3 minute evaluation clock immediately upon dose administration.'); },
   },
   {
     step: 3,
     id: 'rescue_breathing',
-    title: 'Rescue Breathing Metronome',
-    subtitle: 'Rhythmic visual pacing at 1 breath every 5 seconds',
-    badge: 'Step 3 of 5',
-    headline: '1 breath every 5 seconds (12 breaths/minute)',
+    get title() { return t('pacer.step3.title', 'Rescue Breathing Metronome'); },
+    get subtitle() { return t('pacer.step3.subtitle', 'Rhythmic visual pacing at 1 breath every 5 seconds'); },
+    get badge() { return t('pacer.step3.badge', 'Step 3 of 5'); },
+    get headline() { return t('pacer.step3.headline', '1 breath every 5 seconds (12 breaths/minute)'); },
     rhythmSeconds: 5,
     targetBreathsPerMin: 12,
-    instructions: [
-      'Position airway: Tilt head back gently and lift chin (head-tilt / chin-lift maneuver) to prevent tongue from blocking the throat.',
-      'Pinch the person’s nose shut firmly with your thumb and forefinger.',
-      'Make an airtight seal with your mouth completely covering theirs.',
-      'Deliver 1 slow, steady breath over 1 second. Watch the chest rise visibly.',
-      'Release the seal and allow 4 seconds for passive exhalation.',
-      'Follow the metronome pacing: Deliver exactly 1 breath every 5 seconds (12 breaths per minute). Continue until spontaneous breathing resumes or EMS arrives.',
-    ],
-    clinicalCallout: {
-      type: 'wooden_chest_syndrome',
-      title: WOODEN_CHEST_SYNDROME.title,
-      mechanism: WOODEN_CHEST_SYNDROME.pathophysiology.mechanism,
-      glotticClosure: WOODEN_CHEST_SYNDROME.pathophysiology.glotticInvolvement,
-      warning: 'CRITICAL ALERT: Fentanyl "Wooden Chest Syndrome" (Thoracic Rigidity & Laryngospasm). If the chest wall feels rigid and board-like, or positive-pressure breaths cannot be delivered despite an airtight seal, synthetic fentanyl has induced acute thoracic muscle rigidity and vocal cord closure.',
-      action: 'Do NOT struggle or delay with rescue breathing alone. Immediately administer a repeat dose of naloxone (within 60–90 seconds) to displace high central receptor occupancy, and explicitly notify 911 ALS that the patient has wooden chest syndrome requiring rapid sequence endotracheal intubation (RSI) and neuromuscular blockade.',
-      reference: 'ACMT / AHA Opioid Emergency Guidelines',
+    get instructions() {
+      return [
+        t('pacer.step3.ins1', 'Position airway: Tilt head back gently and lift chin (head-tilt / chin-lift maneuver) to prevent tongue from blocking the throat.'),
+        t('pacer.step3.ins2', 'Pinch the person’s nose shut firmly with your thumb and forefinger.'),
+        t('pacer.step3.ins3', 'Make an airtight seal with your mouth completely covering theirs.'),
+        t('pacer.step3.ins4', 'Deliver 1 slow, steady breath over 1 second. Watch the chest rise visibly.'),
+        t('pacer.step3.ins5', 'Release the seal and allow 4 seconds for passive exhalation.'),
+        t('pacer.step3.ins6', 'Follow the metronome pacing: Deliver exactly 1 breath every 5 seconds (12 breaths per minute). Continue until spontaneous breathing resumes or EMS arrives.'),
+      ];
+    },
+    get clinicalCallout() {
+      return {
+        type: 'wooden_chest_syndrome',
+        get title() { return t('pacer.woodenchest.title', WOODEN_CHEST_SYNDROME.title); },
+        mechanism: WOODEN_CHEST_SYNDROME.pathophysiology.mechanism,
+        glotticClosure: WOODEN_CHEST_SYNDROME.pathophysiology.glotticInvolvement,
+        get warning() { return t('pacer.woodenchest.warning', 'CRITICAL ALERT: Fentanyl "Wooden Chest Syndrome" (Thoracic Rigidity & Laryngospasm). If the chest wall feels rigid and board-like, or positive-pressure breaths cannot be delivered despite an airtight seal, synthetic fentanyl has induced acute thoracic muscle rigidity and vocal cord closure.'); },
+        get action() { return t('pacer.woodenchest.action', 'Do NOT struggle or delay with rescue breathing alone. Immediately administer a repeat dose of naloxone (within 60–90 seconds) to displace high central receptor occupancy, and explicitly notify 911 ALS that the patient has wooden chest syndrome requiring rapid sequence endotracheal intubation (RSI) and neuromuscular blockade.'); },
+        get reference() { return t('pacer.woodenchest.ref', 'ACMT / AHA Opioid Emergency Guidelines'); },
+      };
     },
   },
   {
     step: 4,
     id: 'redosing_clock',
-    title: '2-to-3 Minute Re-Dosing Evaluation Clock',
-    subtitle: 'Real-time countdown tracking time since first dose',
-    badge: 'Step 4 of 5',
-    headline: 'Evaluate breathing at 2 min & 3 min; re-dose in opposite nostril if unresponsive',
-    evaluationPoints: [
-      {
-        minute: 2,
-        seconds: 120,
-        label: '2-Minute Evaluation Mark',
-        instruction: 'Check breathing effort now. Has the person resumed spontaneous, normal breathing (at least 10–12 breaths per minute with good chest rise)?',
-      },
-      {
-        minute: 3,
-        seconds: 180,
-        label: '3-Minute Re-Dosing Threshold',
-        instruction: 'If the person is still unresponsive or breathing remains slow/shallow (<10 breaths/min), administer a SECOND DOSE of naloxone immediately in the OPPOSITE nostril, and continue rescue breathing.',
-      },
-    ],
-    clinicalCallout: {
-      type: 'xylazine_sedation',
-      title: XYLAZINE_SEDATION_MANAGEMENT.title,
-      warning: 'CRITICAL WARNING: DO NOT DUMP REPEATED NALOXONE FOR XYLAZINE SEDATION. Xylazine ("tranq") is an alpha-2 adrenergic agonist, NOT an opioid. Naloxone has zero affinity for alpha-2 receptors and CANNOT wake someone from xylazine sedation.',
-      clinicalGoal: 'The clinical endpoint of naloxone is restoring adequate spontaneous respiration (>=10–12 breaths/minute)—NOT waking the person up into full alertness or withdrawal. If the person has resumed normal spontaneous breathing but remains sedated, STOP giving naloxone. Giving repeated unnecessary doses ("naloxone dumping") will NOT wake them up; it precipitates explosive acute opioid withdrawal, intractable vomiting, and fatal pulmonary aspiration in a sedated patient.',
-      action: 'Keep the patient warm with blankets (xylazine causes severe hypothermia), monitor respirations continuously, and roll them into the recovery position once breathing normally.',
-      reference: 'CDC / ACMT Xylazine Guidelines',
+    get title() { return t('pacer.step4.title', '2-to-3 Minute Re-Dosing Evaluation Clock'); },
+    get subtitle() { return t('pacer.step4.subtitle', 'Real-time countdown tracking time since first dose'); },
+    get badge() { return t('pacer.step4.badge', 'Step 4 of 5'); },
+    get headline() { return t('pacer.step4.headline', 'Evaluate breathing at 2 min & 3 min; re-dose in opposite nostril if unresponsive'); },
+    get evaluationPoints() {
+      return [
+        {
+          minute: 2,
+          seconds: 120,
+          get label() { return t('pacer.step4.eval2min.label', '2-Minute Evaluation Mark'); },
+          get instruction() { return t('pacer.step4.eval2min.ins', 'Check breathing effort now. Has the person resumed spontaneous, normal breathing (at least 10–12 breaths per minute with good chest rise)?'); },
+        },
+        {
+          minute: 3,
+          seconds: 180,
+          get label() { return t('pacer.step4.eval3min.label', '3-Minute Re-Dosing Threshold'); },
+          get instruction() { return t('pacer.step4.eval3min.ins', 'If the person is still unresponsive or breathing remains slow/shallow (<10 breaths/min), administer a SECOND DOSE of naloxone immediately in the OPPOSITE nostril, and continue rescue breathing.'); },
+        },
+      ];
+    },
+    get clinicalCallout() {
+      return {
+        type: 'xylazine_sedation',
+        get title() { return t('pacer.xylazine.title', XYLAZINE_SEDATION_MANAGEMENT.title); },
+        get warning() { return t('pacer.xylazine.warning', 'CRITICAL WARNING: DO NOT DUMP REPEATED NALOXONE FOR XYLAZINE SEDATION. Xylazine ("tranq") is an alpha-2 adrenergic agonist, NOT an opioid. Naloxone has zero affinity for alpha-2 receptors and CANNOT wake someone from xylazine sedation.'); },
+        get clinicalGoal() { return t('pacer.xylazine.clinicalGoal', 'The clinical endpoint of naloxone is restoring adequate spontaneous respiration (>=10–12 breaths/minute)—NOT waking the person up into full alertness or withdrawal. If the person has resumed normal spontaneous breathing but remains sedated, STOP giving naloxone. Giving repeated unnecessary doses ("naloxone dumping") will NOT wake them up; it precipitates explosive acute opioid withdrawal, intractable vomiting, and fatal pulmonary aspiration in a sedated patient.'); },
+        get action() { return t('pacer.xylazine.action', 'Keep the patient warm with blankets (xylazine causes severe hypothermia), monitor respirations continuously, and roll them into the recovery position once breathing normally.'); },
+        get reference() { return t('pacer.xylazine.ref', 'CDC / ACMT Xylazine Guidelines'); },
+      };
     },
   },
   {
     step: 5,
     id: 'recovery_position',
-    title: 'Recovery Position & Post-Reversal Observation',
-    subtitle: 'Left lateral recumbent positioning and observation protocol',
-    badge: 'Step 5 of 5',
-    headline: 'Left lateral recumbent position to maintain patent airway and prevent aspiration',
-    instructions: [
-      'Roll the person onto their LEFT side (Left Lateral Recumbent Position).',
-      'Bend their top knee forward at a 90-degree angle to prop the body and prevent them from rolling onto their stomach.',
-      'Place their top hand under their cheek to keep the neck extended and maintain an open airway.',
-      'Tilt their face and mouth slightly downward toward the floor so any vomit, saliva, or fluids drain freely without obstructing the trachea.',
-      'Continuously monitor breathing rate and chest rise every 1 to 2 minutes until paramedics arrive.',
-    ],
-    clinicalCallout: {
-      type: 'renarconization_risk',
-      title: RENARCONIZATION_RISK.title,
-      mechanism: RENARCONIZATION_RISK.pathophysiology.mechanism,
-      reboundWindow: '30–90 minutes (up to 2–4+ hours for synthetic fentanyl analogues or methadone)',
-      warning: 'CRITICAL ALERT: Renarconization Risk (Secondary Opioid Resurgence). Naloxone has a short elimination half-life of 30 to 90 minutes. Lipophilic synthetic fentanyl and high-potency analogues store in body fat and slowly redistribute back into circulation for hours. As naloxone clears, secondary opioid overdose and fatal respiratory depression can recur.',
-      action: 'Observe the patient continuously for a MINIMUM of 2 to 4 hours post-reversal. Never allow them to leave unaccompanied. Strongly warn the person that taking additional opioids to relieve withdrawal symptoms will cause rapid, fatal overdose once naloxone wears off.',
-      reference: 'SAMHSA / ACEP Post-Reversal Observation Guidelines',
+    get title() { return t('pacer.step5.title', 'Recovery Position & Post-Reversal Observation'); },
+    get subtitle() { return t('pacer.step5.subtitle', 'Left lateral recumbent positioning and observation protocol'); },
+    get badge() { return t('pacer.step5.badge', 'Step 5 of 5'); },
+    get headline() { return t('pacer.step5.headline', 'Left lateral recumbent position to maintain patent airway and prevent aspiration'); },
+    get instructions() {
+      return [
+        t('pacer.step5.ins1', 'Roll the person onto their LEFT side (Left Lateral Recumbent Position).'),
+        t('pacer.step5.ins2', 'Bend their top knee forward at a 90-degree angle to prop the body and prevent them from rolling onto their stomach.'),
+        t('pacer.step5.ins3', 'Place their top hand under their cheek to keep the neck extended and maintain an open airway.'),
+        t('pacer.step5.ins4', 'Tilt their face and mouth slightly downward toward the floor so any vomit, saliva, or fluids drain freely without obstructing the trachea.'),
+        t('pacer.step5.ins5', 'Continuously monitor breathing rate and chest rise every 1 to 2 minutes until paramedics arrive.'),
+      ];
+    },
+    get clinicalCallout() {
+      return {
+        type: 'renarconization_risk',
+        get title() { return t('pacer.renarconization.title', RENARCONIZATION_RISK.title); },
+        mechanism: RENARCONIZATION_RISK.pathophysiology.mechanism,
+        get reboundWindow() { return t('pacer.renarconization.window', '30–90 minutes (up to 2–4+ hours for synthetic fentanyl analogues or methadone)'); },
+        get warning() { return t('pacer.renarconization.warning', 'CRITICAL ALERT: Renarconization Risk (Secondary Opioid Resurgence). Naloxone has a short elimination half-life of 30 to 90 minutes. Lipophilic synthetic fentanyl and high-potency analogues store in body fat and slowly redistribute back into circulation for hours. As naloxone clears, secondary opioid overdose and fatal respiratory depression can recur.'); },
+        get action() { return t('pacer.renarconization.action', 'Observe the patient continuously for a MINIMUM of 2 to 4 hours post-reversal. Never allow them to leave unaccompanied. Strongly warn the person that taking additional opioids to relieve withdrawal symptoms will cause rapid, fatal overdose once naloxone wears off.'); },
+        get reference() { return t('pacer.renarconization.ref', 'SAMHSA / ACEP Post-Reversal Observation Guidelines'); },
+      };
     },
   },
 ];
@@ -292,7 +313,7 @@ export function startRescueBreathingTimer(options = {}) {
     pacerState.breathPhase = 'inhale';
     pacerState.breathCount += 1;
     try { navigator?.vibrate?.([150]); } catch {}
-    try { announce('Rescue breathing started: Inhale 1 breath now.'); } catch {}
+    try { announce(t('pacer.announce.breathingStarted', 'Rescue breathing started: Inhale 1 breath now.')); } catch {}
     if (typeof onBreath === 'function') onBreath(pacerState.breathCount);
   }
   notifySubscribers();
@@ -323,7 +344,7 @@ function tickRescueBreathingStep(options = {}) {
     pacerState.breathCount += 1;
     pacerState.breathPhase = 'inhale';
     try { navigator?.vibrate?.([150]); } catch {}
-    try { announce(`Breath ${pacerState.breathCount}: Deliver 1 breath now.`); } catch {}
+    try { announce(t('pacer.announce.breathDelivered', 'Breath {n}: Deliver 1 breath now.', { n: pacerState.breathCount })); } catch {}
     if (typeof onBreath === 'function') onBreath(pacerState.breathCount);
   } else {
     pacerState.breathPhase = 'pause';
@@ -391,7 +412,7 @@ function tickReDoseTimerStep(options = {}) {
     pacerState.twoMinuteAlertTriggered = true;
     pacerState.evaluationAlert = '2min_evaluate';
     try {
-      announce('Two minutes elapsed since first dose. Evaluate breathing now: Has spontaneous normal breathing resumed?');
+      announce(t('pacer.announce.alert2min', 'Two minutes elapsed since first dose. Evaluate breathing now: Has spontaneous normal breathing resumed?'));
     } catch {}
     try { navigator?.vibrate?.([200, 100, 200]); } catch {}
     if (typeof onAlert === 'function') onAlert('2min_evaluate', getOverdosePacerState());
@@ -402,7 +423,7 @@ function tickReDoseTimerStep(options = {}) {
     pacerState.threeMinuteAlertTriggered = true;
     pacerState.evaluationAlert = '3min_redose_prompt';
     try {
-      announce('Three minutes reached. If still unresponsive or shallow breathing, administer second naloxone dose in opposite nostril now.');
+      announce(t('pacer.announce.alert3min', 'Three minutes reached. If still unresponsive or shallow breathing, administer second naloxone dose in opposite nostril now.'));
     } catch {}
     try { navigator?.vibrate?.([300, 150, 300, 150, 300]); } catch {}
     if (typeof onAlert === 'function') onAlert('3min_redose_prompt', getOverdosePacerState());
@@ -499,7 +520,7 @@ export function overdosePacer(props = {}) {
     class: 'overdose-pacer',
     'data-step': String(pacerState.currentStep),
     role: 'region',
-    'aria-label': 'Overdose Rescue Pacing Assistant',
+    'aria-label': t('pacer.aria.label', 'Overdose Rescue Pacing Assistant'),
   });
 
   // Screen reader announcer region
@@ -513,7 +534,7 @@ export function overdosePacer(props = {}) {
   // Navigation header with step indicators
   const navContainer = h('nav', {
     class: 'pacer-stepper',
-    'aria-label': 'Rescue pacing steps',
+    'aria-label': t('pacer.stepper.aria', 'Rescue pacing steps'),
   });
 
   // Main step view container
@@ -597,11 +618,11 @@ export function overdosePacer(props = {}) {
       }
       if (phaseLabel) {
         if (stateSnapshot.breathPhase === 'inhale') {
-          phaseLabel.textContent = 'BREATHE NOW: Deliver 1 full breath over 1 second';
+          phaseLabel.textContent = t('pacer.step3.phaseInhale', 'BREATHE NOW: Deliver 1 full breath over 1 second');
         } else if (stateSnapshot.isBreathingActive) {
-          phaseLabel.textContent = `Wait (Second ${stateSnapshot.currentBreathSecond} of 5) — chest falls passively`;
+          phaseLabel.textContent = t('pacer.step3.phaseWait', 'Wait (Second {sec} of 5) — chest falls passively', { sec: stateSnapshot.currentBreathSecond });
         } else {
-          phaseLabel.textContent = 'Metronome Paused — Press "Start Metronome" below';
+          phaseLabel.textContent = t('pacer.step3.phasePaused', 'Metronome Paused — Press "Start Metronome" below');
         }
       }
       if (breathCounter) {
@@ -609,8 +630,8 @@ export function overdosePacer(props = {}) {
       }
       if (secondCounter) {
         secondCounter.textContent = stateSnapshot.isBreathingActive
-          ? `Second ${stateSnapshot.currentBreathSecond} of 5`
-          : 'Ready (5-second cadence)';
+          ? t('pacer.step3.cadenceActive', 'Second {sec} of 5', { sec: stateSnapshot.currentBreathSecond })
+          : t('pacer.step3.cadenceReady', '1 breath every 5 seconds (12 / min)');
       }
     }
 
@@ -624,22 +645,22 @@ export function overdosePacer(props = {}) {
         display.textContent = formatTime(stateSnapshot.reDoseRemainingSeconds);
       }
       if (elapsed) {
-        elapsed.textContent = `Elapsed since 1st dose: ${formatTime(stateSnapshot.reDoseElapsedSeconds)}`;
+        elapsed.textContent = t('pacer.step4.elapsed', 'Elapsed since 1st dose: {time}', { time: formatTime(stateSnapshot.reDoseElapsedSeconds) });
       }
       if (alertArea) {
         clear(alertArea);
         if (stateSnapshot.threeMinuteAlertTriggered) {
           alertArea.append(
             h('div', { class: 'callout callout-danger', role: 'alert' },
-              h('strong', null, '3-Minute Mark Reached: '),
-              'If the person is still unresponsive or breathing shallowly, administer SECOND DOSE in OPPOSITE nostril immediately!'
+              h('strong', null, t('pacer.step4.alert3minHeading', '3-Minute Mark Reached: ')),
+              t('pacer.step4.alert3min', 'If the person is still unresponsive or breathing shallowly, administer SECOND DOSE in OPPOSITE nostril immediately!')
             )
           );
         } else if (stateSnapshot.twoMinuteAlertTriggered) {
           alertArea.append(
             h('div', { class: 'callout callout-warn', role: 'alert' },
-              h('strong', null, '2-Minute Evaluation Mark: '),
-              'Evaluate breathing effort now. Has spontaneous normal breathing (>10–12 breaths/min) resumed?'
+              h('strong', null, t('pacer.step4.alert2minHeading', '2-Minute Evaluation Mark: ')),
+              t('pacer.step4.alert2min', 'Evaluate breathing effort now. Has spontaneous normal breathing (>10–12 breaths/min) resumed?')
             )
           );
         }
@@ -651,7 +672,7 @@ export function overdosePacer(props = {}) {
   const header = h('header', { class: 'pacer-header' },
     h('div', { class: 'pacer-header-title-group' },
       icon('activity'),
-      h('h2', { class: 'pacer-main-heading' }, 'Overdose Rescue Pacing Assistant')
+      h('h2', { class: 'pacer-main-heading' }, t('pacer.title', 'Overdose Rescue Pacing Assistant'))
     ),
     h('div', { class: 'pacer-header-controls' },
       h('button', {
@@ -662,7 +683,7 @@ export function overdosePacer(props = {}) {
           toggleReducedMotion();
           renderAll();
         },
-      }, pacerState.reducedMotion ? 'Enable Pulsing Motion' : 'Reduced Motion Mode'),
+      }, pacerState.reducedMotion ? t('pacer.motion.enable', 'Enable Pulsing Motion') : t('pacer.motion.reduced', 'Reduced Motion Mode')),
       h('button', {
         type: 'button',
         class: 'btn btn-ghost pacer-btn pacer-reset-btn',
@@ -670,7 +691,7 @@ export function overdosePacer(props = {}) {
           resetOverdosePacer();
           renderAll();
         },
-      }, 'Reset Assistant')
+      }, t('pacer.reset', 'Reset Assistant'))
     )
   );
 
@@ -690,21 +711,21 @@ function buildStep1Responsiveness(stepDef) {
       h('p', { class: 'pacer-step-headline' }, stepDef.headline)
     ),
     h('div', { class: 'callout callout-warn' },
-      h('p', null, h('strong', null, 'First action: '), 'Shout loudly and rub their breastbone firmly with your knuckles. Look for signs of critical overdose:')
+      h('p', null, h('strong', null, t('pacer.label.action', 'First action: ')), t('pacer.step1.callout', 'Shout loudly and rub their breastbone firmly with your knuckles. Look for signs of critical overdose:'))
     ),
     h('ul', { class: 'pacer-instruction-list' },
       ...stepDef.instructions.map((item) => h('li', null, item))
     ),
     h('div', { class: 'pacer-emergency-call-row' },
-      tel('911', [icon('phone'), 'Call 911 Immediately'], { class: 'btn btn-emergency pacer-btn' }),
-      h('p', { class: 'pacer-note' }, 'Keep 911 on speakerphone while delivering care.')
+      tel('911', [icon('phone'), t('pacer.call911', 'Call 911 Immediately')], { class: 'btn btn-emergency pacer-btn' }),
+      h('p', { class: 'pacer-note' }, t('pacer.step1.speakerNote', 'Keep 911 on speakerphone while delivering care.'))
     ),
     h('div', { class: 'pacer-step-actions' },
       h('button', {
         type: 'button',
         class: 'btn btn-primary pacer-btn',
         onclick: () => setOverdosePacerStep(2),
-      }, icon('chevron-right'), 'Victim Unresponsive — Proceed to Naloxone (Step 2)')
+      }, icon('chevron-right'), t('pacer.step1.advance', 'Victim Unresponsive — Proceed to Naloxone (Step 2)'))
     ),
     h('div', { class: 'callout callout-info' },
       h('p', null, icon('info'), ' ', stepDef.clinicalNote)
@@ -724,13 +745,13 @@ function buildStep2FirstDose(stepDef) {
       h('p', { class: 'pacer-step-headline' }, stepDef.headline)
     ),
     h('div', { class: 'pacer-formulation-box' },
-      h('h4', null, 'Route 1: 4mg Nasal Spray (Narcan / OTC Generic) — Recommended'),
+      h('h4', null, t('pacer.step2.route1', 'Route 1: 4mg Nasal Spray (Narcan / OTC Generic) — Recommended')),
       h('ul', { class: 'pacer-instruction-list' },
         ...stepDef.formulations.nasal.instructions.map((ins) => h('li', null, ins))
       )
     ),
     h('div', { class: 'pacer-nostril-selector-box' },
-      h('label', { class: 'pacer-label-bold', id: 'nostril-select-label' }, 'Selected Nostril for 1st Dose:'),
+      h('label', { class: 'pacer-label-bold', id: 'nostril-select-label' }, t('pacer.step2.nostrilLabel', 'Selected Nostril for 1st Dose:')),
       h('div', { class: 'pacer-button-group', role: 'radiogroup', 'aria-labelledby': 'nostril-select-label' },
         h('button', {
           type: 'button',
@@ -745,7 +766,7 @@ function buildStep2FirstDose(stepDef) {
               b.className = `btn pacer-btn ${b === e.currentTarget ? 'btn-primary' : 'btn-outline'}`;
             });
           },
-        }, 'Right Nostril (Standard)'),
+        }, t('pacer.step2.nostrilRight', 'Right Nostril (Standard)')),
         h('button', {
           type: 'button',
           role: 'radio',
@@ -759,7 +780,7 @@ function buildStep2FirstDose(stepDef) {
               b.className = `btn pacer-btn ${b === e.currentTarget ? 'btn-primary' : 'btn-outline'}`;
             });
           },
-        }, 'Left Nostril')
+        }, t('pacer.step2.nostrilLeft', 'Left Nostril'))
       )
     ),
     h('div', { class: 'callout callout-info' },
@@ -777,7 +798,7 @@ function buildStep2FirstDose(stepDef) {
           setOverdosePacerStep(3);
           startRescueBreathingTimer();
         },
-      }, icon('check'), 'Administer 1st Dose & Start Timers (Proceed to Step 3)')
+      }, icon('check'), t('pacer.step2.advance', 'Administer 1st Dose & Start Timers (Proceed to Step 3)'))
     )
   );
   return card;
@@ -803,7 +824,7 @@ function buildStep3RescueBreathing(stepDef) {
       class: `pacer-metronome-box ${pacerState.reducedMotion ? 'pacer-reduced-motion' : ''}`,
       role: 'timer',
       'aria-live': 'polite',
-      'aria-label': 'Rescue breathing rhythm: 1 breath every 5 seconds',
+      'aria-label': t('pacer.step3.metronomeAria', 'Rescue breathing rhythm: 1 breath every 5 seconds'),
     },
       h('div', {
         class: `pacer-guide pacer-${pacerState.breathPhase}`,
@@ -811,23 +832,23 @@ function buildStep3RescueBreathing(stepDef) {
         h('div', { class: 'pacer-circle', 'aria-hidden': 'true' }),
         h('div', { class: 'pacer-phase-label' },
           pacerState.breathPhase === 'inhale'
-            ? 'BREATHE NOW: Deliver 1 full breath over 1 second'
+            ? t('pacer.step3.phaseInhale', 'BREATHE NOW: Deliver 1 full breath over 1 second')
             : (pacerState.isBreathingActive
-              ? `Wait (Second ${pacerState.currentBreathSecond} of 5) — chest falls passively`
-              : 'Metronome Paused — Press "Start Metronome" below')
+              ? t('pacer.step3.phaseWait', 'Wait (Second {sec} of 5) — chest falls passively', { sec: pacerState.currentBreathSecond })
+              : t('pacer.step3.phasePaused', 'Metronome Paused — Press "Start Metronome" below'))
         )
       ),
       h('div', { class: 'pacer-metronome-stats' },
         h('div', { class: 'pacer-stat-item' },
-          h('span', { class: 'pacer-stat-label' }, 'Breaths Delivered: '),
+          h('span', { class: 'pacer-stat-label' }, t('pacer.step3.statBreaths', 'Breaths Delivered: ')),
           h('strong', { class: 'pacer-breath-count-value' }, String(pacerState.breathCount))
         ),
         h('div', { class: 'pacer-stat-item' },
-          h('span', { class: 'pacer-stat-label' }, 'Pacing Cadence: '),
+          h('span', { class: 'pacer-stat-label' }, t('pacer.step3.statCadence', 'Pacing Cadence: ')),
           h('span', { class: 'pacer-second-counter' },
             pacerState.isBreathingActive
-              ? `Second ${pacerState.currentBreathSecond} of 5`
-              : '1 breath every 5 seconds (12 / min)'
+              ? t('pacer.step3.cadenceActive', 'Second {sec} of 5', { sec: pacerState.currentBreathSecond })
+              : t('pacer.step3.cadenceReady', '1 breath every 5 seconds (12 / min)')
           )
         )
       ),
@@ -842,7 +863,7 @@ function buildStep3RescueBreathing(stepDef) {
               startRescueBreathingTimer();
             }
           },
-        }, pacerState.isBreathingActive ? 'Pause Metronome' : 'Start Metronome'),
+        }, pacerState.isBreathingActive ? t('pacer.step3.btnPause', 'Pause Metronome') : t('pacer.step3.btnStart', 'Start Metronome')),
         h('button', {
           type: 'button',
           class: 'btn btn-outline pacer-btn',
@@ -852,27 +873,27 @@ function buildStep3RescueBreathing(stepDef) {
             pacerState.breathPhase = 'ready';
             notifySubscribers();
           },
-        }, 'Reset Breath Count')
+        }, t('pacer.step3.btnReset', 'Reset Breath Count'))
       )
     ),
     // Clinical Callout: Fentanyl Wooden Chest Syndrome
     h('aside', { class: 'callout callout-warn alert-wooden-chest' },
       h('h4', { class: 'pacer-callout-title' }, icon('alert'), ' ', callout.title),
-      h('p', { class: 'pacer-callout-warning' }, h('strong', null, 'Warning: '), callout.warning),
-      h('p', { class: 'pacer-callout-action' }, h('strong', null, 'Immediate Action: '), callout.action),
-      h('p', { class: 'pacer-callout-ref' }, 'Reference: ', callout.reference)
+      h('p', { class: 'pacer-callout-warning' }, h('strong', null, t('pacer.label.warning', 'Warning: ')), callout.warning),
+      h('p', { class: 'pacer-callout-action' }, h('strong', null, t('pacer.label.action', 'Immediate Action: ')), callout.action),
+      h('p', { class: 'pacer-callout-ref' }, t('pacer.label.reference', 'Reference: '), callout.reference)
     ),
     h('div', { class: 'pacer-step-actions' },
       h('button', {
         type: 'button',
         class: 'btn btn-secondary pacer-btn',
         onclick: () => setOverdosePacerStep(4),
-      }, 'Check 2-to-3 Min Re-Dosing Clock (Step 4)'),
+      }, t('pacer.step3.advance', 'Check 2-to-3 Min Re-Dosing Clock (Step 4)')),
       h('button', {
         type: 'button',
         class: 'btn btn-success pacer-btn',
         onclick: () => recordSpontaneousBreathingResumed(),
-      }, icon('check'), 'Victim Resumed Normal Breathing -> Step 5')
+      }, icon('check'), t('pacer.step3.resumed', 'Victim Resumed Normal Breathing -> Step 5'))
     )
   );
   return card;
@@ -895,28 +916,28 @@ function buildStep4RedosingClock(stepDef) {
       class: 'timer pacer-clock-box',
       role: 'timer',
       'aria-live': 'assertive',
-      'aria-label': 'Naloxone re-dosing countdown timer',
+      'aria-label': t('pacer.step4.timerAria', 'Naloxone re-dosing countdown timer'),
     },
       h('div', { class: 'pacer-clock-digits-group' },
-        h('span', { class: 'pacer-clock-label' }, 'Countdown to Re-Dosing Evaluation:'),
+        h('span', { class: 'pacer-clock-label' }, t('pacer.step4.clockLabel', 'Countdown to Re-Dosing Evaluation:')),
         h('p', { class: 'timer-display' }, formatTime(pacerState.reDoseRemainingSeconds)),
         h('p', { class: 'pacer-elapsed-display' },
-          `Elapsed since 1st dose: ${formatTime(pacerState.reDoseElapsedSeconds)}`
+          t('pacer.step4.elapsed', 'Elapsed since 1st dose: {time}', { time: formatTime(pacerState.reDoseElapsedSeconds) })
         )
       ),
       h('div', { class: 'pacer-alert-container' },
         pacerState.threeMinuteAlertTriggered
           ? h('div', { class: 'callout callout-danger', role: 'alert' },
-              h('strong', null, '3-Minute Mark Reached: '),
-              'If the person is still unresponsive or breathing shallowly, administer SECOND DOSE in OPPOSITE nostril immediately!'
+              h('strong', null, t('pacer.step4.alert3minHeading', '3-Minute Mark Reached: ')),
+              t('pacer.step4.alert3min', 'If the person is still unresponsive or breathing shallowly, administer SECOND DOSE in OPPOSITE nostril immediately!')
             )
           : (pacerState.twoMinuteAlertTriggered
               ? h('div', { class: 'callout callout-warn', role: 'alert' },
-                  h('strong', null, '2-Minute Evaluation Mark: '),
-                  'Evaluate breathing effort now. Has spontaneous normal breathing (>10–12 breaths/min) resumed?'
+                  h('strong', null, t('pacer.step4.alert2minHeading', '2-Minute Evaluation Mark: ')),
+                  t('pacer.step4.alert2min', 'Evaluate breathing effort now. Has spontaneous normal breathing (>10–12 breaths/min) resumed?')
                 )
               : h('p', { class: 'timer-live' },
-                  'Waiting for mucosal absorption. Continue 1 rescue breath every 5 seconds.'
+                  t('pacer.step4.alertWait', 'Waiting for mucosal absorption. Continue 1 rescue breath every 5 seconds.')
                 ))
       ),
       h('div', { class: 'pacer-clock-controls' },
@@ -930,7 +951,7 @@ function buildStep4RedosingClock(stepDef) {
               startReDoseTimer();
             }
           },
-        }, pacerState.reDoseTimerActive ? 'Pause Clock' : 'Start / Resume Clock'),
+        }, pacerState.reDoseTimerActive ? t('pacer.step4.btnPause', 'Pause Clock') : t('pacer.step4.btnResume', 'Start / Resume Clock')),
         h('button', {
           type: 'button',
           class: 'btn btn-outline pacer-btn',
@@ -942,41 +963,41 @@ function buildStep4RedosingClock(stepDef) {
             pacerState.evaluationAlert = null;
             notifySubscribers();
           },
-        }, 'Reset Clock to 3:00')
+        }, t('pacer.step4.btnReset', 'Reset Clock to 3:00'))
       )
     ),
     // Second Dose Action Box
     h('div', { class: 'pacer-second-dose-box' },
-      h('h4', null, 'Second Dose Administration (Opposite Nostril)'),
+      h('h4', null, t('pacer.step4.secondDoseTitle', 'Second Dose Administration (Opposite Nostril)')),
       pacerState.secondDoseAdministered
         ? h('div', { class: 'callout callout-success' },
-            h('p', null, icon('check'), ` Second dose administered in ${pacerState.secondDoseNostril.toUpperCase()} nostril. Continue rescue breaths until normal breathing resumes.`)
+            h('p', null, icon('check'), ' ', t('pacer.step4.secondDoseDone', 'Second dose administered in {nostril} nostril. Continue rescue breaths until normal breathing resumes.', { nostril: (pacerState.secondDoseNostril === 'right' ? t('pacer.nostril.right', 'RIGHT') : t('pacer.nostril.left', 'LEFT')) }))
           )
         : h('button', {
             type: 'button',
             class: 'btn btn-emergency pacer-btn',
             onclick: () => recordSecondDose({ nostril: pacerState.secondDoseNostril }),
-          }, icon('alert'), `Administer Second 4mg Dose in OPPOSITE Nostril (${pacerState.secondDoseNostril.toUpperCase()} Nostril)`)
+          }, icon('alert'), t('pacer.step4.secondDoseBtn', 'Administer Second 4mg Dose in OPPOSITE Nostril ({nostril} Nostril)', { nostril: (pacerState.secondDoseNostril === 'right' ? t('pacer.nostril.right', 'RIGHT') : t('pacer.nostril.left', 'LEFT')) }))
     ),
     // Clinical Callout: Xylazine Sedation Caution
     h('aside', { class: 'callout callout-danger alert-xylazine' },
       h('h4', { class: 'pacer-callout-title' }, icon('alert'), ' ', callout.title),
-      h('p', { class: 'pacer-callout-warning' }, h('strong', null, 'Caution: '), callout.warning),
-      h('p', { class: 'pacer-callout-goal' }, h('strong', null, 'Clinical Endpoint: '), callout.clinicalGoal),
-      h('p', { class: 'pacer-callout-action' }, h('strong', null, 'Action: '), callout.action),
-      h('p', { class: 'pacer-callout-ref' }, 'Reference: ', callout.reference)
+      h('p', { class: 'pacer-callout-warning' }, h('strong', null, t('pacer.label.caution', 'Caution: ')), callout.warning),
+      h('p', { class: 'pacer-callout-goal' }, h('strong', null, t('pacer.label.endpoint', 'Clinical Endpoint: ')), callout.clinicalGoal),
+      h('p', { class: 'pacer-callout-action' }, h('strong', null, t('pacer.label.action', 'Action: ')), callout.action),
+      h('p', { class: 'pacer-callout-ref' }, t('pacer.label.reference', 'Reference: '), callout.reference)
     ),
     h('div', { class: 'pacer-step-actions' },
       h('button', {
         type: 'button',
         class: 'btn btn-success pacer-btn',
         onclick: () => recordSpontaneousBreathingResumed(),
-      }, icon('check'), 'Normal Breathing Resumed -> Proceed to Recovery Position (Step 5)'),
+      }, icon('check'), t('pacer.step4.normalBreathing', 'Normal Breathing Resumed -> Proceed to Recovery Position (Step 5)')),
       h('button', {
         type: 'button',
         class: 'btn btn-secondary pacer-btn',
         onclick: () => setOverdosePacerStep(3),
-      }, 'Return to Rescue Breathing Metronome')
+      }, t('pacer.step4.returnBreathing', 'Return to Rescue Breathing Metronome'))
     )
   );
   return card;
@@ -995,7 +1016,7 @@ function buildStep5RecoveryPosition(stepDef) {
       h('p', { class: 'pacer-step-headline' }, stepDef.headline)
     ),
     h('div', { class: 'callout callout-info' },
-      h('p', null, h('strong', null, 'Airway Patentcy & Aspiration Prevention: '), 'Once normal breathing resumes, place the person into the left lateral recumbent position to prevent the tongue from sliding back and prevent pulmonary aspiration of emesis.')
+      h('p', null, h('strong', null, t('pacer.step5.airwayHeading', 'Airway Patentcy & Aspiration Prevention: ')), t('pacer.step5.airway', 'Once normal breathing resumes, place the person into the left lateral recumbent position to prevent the tongue from sliding back and prevent pulmonary aspiration of emesis.'))
     ),
     h('ol', { class: 'pacer-instruction-list pacer-recovery-steps' },
       ...stepDef.instructions.map((item) => h('li', null, item))
@@ -1003,10 +1024,10 @@ function buildStep5RecoveryPosition(stepDef) {
     // Clinical Callout: Renarconization Risk Warning
     h('aside', { class: 'callout callout-danger alert-renarconization' },
       h('h4', { class: 'pacer-callout-title' }, icon('alert'), ' ', callout.title),
-      h('p', { class: 'pacer-callout-warning' }, h('strong', null, 'Warning: '), callout.warning),
-      h('p', { class: 'pacer-callout-window' }, h('strong', null, 'Rebound Window: '), callout.reboundWindow),
-      h('p', { class: 'pacer-callout-action' }, h('strong', null, 'Monitoring Mandate: '), callout.action),
-      h('p', { class: 'pacer-callout-ref' }, 'Reference: ', callout.reference)
+      h('p', { class: 'pacer-callout-warning' }, h('strong', null, t('pacer.label.warning', 'Warning: ')), callout.warning),
+      h('p', { class: 'pacer-callout-window' }, h('strong', null, t('pacer.label.reboundWindow', 'Rebound Window: ')), callout.reboundWindow),
+      h('p', { class: 'pacer-callout-action' }, h('strong', null, t('pacer.label.mandate', 'Monitoring Mandate: ')), callout.action),
+      h('p', { class: 'pacer-callout-ref' }, t('pacer.label.reference', 'Reference: '), callout.reference)
     ),
     h('div', { class: 'pacer-step-actions' },
       h('button', {
@@ -1019,12 +1040,12 @@ function buildStep5RecoveryPosition(stepDef) {
             registeredOnComplete(getOverdosePacerState());
           }
         },
-      }, icon('check'), 'Complete Rescue Protocol'),
+      }, icon('check'), t('pacer.step5.complete', 'Complete Rescue Protocol')),
       h('button', {
         type: 'button',
         class: 'btn btn-ghost pacer-btn',
         onclick: () => resetOverdosePacer(),
-      }, 'Reset Assistant')
+      }, t('pacer.step5.reset', 'Reset Assistant'))
     )
   );
   return card;
