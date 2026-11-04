@@ -107,6 +107,18 @@ export const LAZY_LOADERS = {
     viewCache.set('wound-care', m.woundInfectiousView);
     return m.woundInfectiousView;
   }),
+  'rural-health': () => import('./views/ruralHealth.js').then((m) => {
+    viewCache.set('rural-health', m.ruralHealthView);
+    return m.ruralHealthView;
+  }),
+  'disability-care': () => import('./views/disabilityCare.js').then((m) => {
+    viewCache.set('disability-care', m.disabilityCareView);
+    return m.disabilityCareView;
+  }),
+  'street-medicine': () => import('./views/streetMedicine.js').then((m) => {
+    viewCache.set('street-medicine', m.streetMedicineView);
+    return m.streetMedicineView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -135,6 +147,9 @@ export const ROUTE_TITLES = {
   'tribal-health': () => t('route.tribalHealth', 'Indigenous & tribal health'),
   'lgbtq-care': () => t('route.lgbtqCare', 'LGBTQ+ & gender-affirming SUD care'),
   'wound-care': () => t('route.woundCare', 'Wound care & infection prevention'),
+  'rural-health': () => t('route.ruralHealth', 'Rural & frontier health'),
+  'disability-care': () => t('route.disabilityCare', 'Disability, neurodiversity & accessible care'),
+  'street-medicine': () => t('route.streetMedicine', 'Street medicine & unhoused care'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -173,6 +188,9 @@ export function preloadAllLazyViews() {
     preloadRoute('tribal-health'),
     preloadRoute('lgbtq-care'),
     preloadRoute('wound-care'),
+    preloadRoute('rural-health'),
+    preloadRoute('disability-care'),
+    preloadRoute('street-medicine'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -311,6 +329,10 @@ export function runQuickExitResets() {
   import('./views/lgbtqCare.js').then((m) => m.resetLgbtqState?.()).catch(() => {});
   import('./views/woundInfectious.js').then((m) => m.resetWoundState?.()).catch(() => {});
   import('./components/safetyNetNavigator.js').then((m) => m.resetSafetyNetState?.()).catch(() => {});
+  import('./views/ruralHealth.js').then((m) => m.resetRuralHealthState?.()).catch(() => {});
+  import('./views/disabilityCare.js').then((m) => m.resetDisabilityState?.()).catch(() => {});
+  import('./views/streetMedicine.js').then((m) => m.resetStreetMedicineState?.()).catch(() => {});
+  import('./components/sspEquipmentTracker.js').then((m) => m.resetSspTrackerState?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }

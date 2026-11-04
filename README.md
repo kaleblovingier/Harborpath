@@ -75,6 +75,10 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `public/js/views/lgbtqCare.js` | WPATH SOC 8 HRT & MOUD compatibility, chemsex/party-and-play harm reduction, and ACA § 1557 trans civil rights |
 | `public/js/views/woundInfectious.js` | Moist wound healing, non-cytotoxic dressings, necrotizing fasciitis/sepsis 911 red flags, and AASLD universal HCV DAAs |
 | `public/js/components/safetyNetNavigator.js` | FQHC Section 330 sliding-fee discount calculator, Title X confidential care, and EMTALA emergency stabilization |
+| `public/js/views/ruralHealth.js` | Rural Health Clinics Act, Medicaid NEMT transportation rights, frontier tele-MOUD, and mail-order harm reduction |
+| `public/js/views/disabilityCare.js` | ADA Title II/III service animal rights, auxiliary communication (ASL/CART), sensory/ADHD accommodations, and CDC pain rules |
+| `public/js/views/streetMedicine.js` | Low-barrier street buprenorphine, extreme weather hypothermia/heat survival, sweep protections, and HUD shelter rights |
+| `public/js/components/sspEquipmentTracker.js` | Syringe services calculator, low dead-space needle standards, ascorbic acid safety, and sharps disposal |
 | `public/js/views/veterans.js` | VA MISSION Act community care, TRICARE prior authorizations, Military Sexual Trauma ($0 copay), and Veterans Crisis Line |
 | `public/js/views/adolescentCare.js` | Minor consent laws, 42 CFR Part 2 youth confidentiality, EOB privacy suppression, and youth-adapted ASAM pathways |
 | `public/js/components/clinicalDifferential.js` | 4-condition poly-substance differential engine (Hunter serotonin criteria, opioid/xylazine, stimulant overamping, soft tissue necrosis) |
