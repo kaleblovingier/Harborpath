@@ -1,12 +1,25 @@
 import { h, icon, tel } from '../dom.js';
 import { state } from '../state.js';
-import { t } from '../i18n.js';
+import { t, onLanguageChange } from '../i18n.js';
 
 let isDrawerOpen = false;
 let drawerWrapperEl = null;
 let previousActiveEl = null;
 const registeredTriggers = new Set();
 let drawerKeydownBound = false;
+let focusTimer = null;
+
+// The drawer lives outside the routed view. Rebuild it after a language switch
+// so previously opened emergency instructions never retain the old language.
+onLanguageChange(() => {
+  if (!drawerWrapperEl) return;
+  const reopen = isDrawerOpen;
+  const trigger = previousActiveEl;
+  closeEmergencyDrawer();
+  drawerWrapperEl.remove?.();
+  drawerWrapperEl = null;
+  if (reopen) openEmergencyDrawer(trigger);
+});
 
 function updateClass(el, className, active) {
   if (!el) return;
@@ -35,7 +48,7 @@ export function buildNaloxonePacingCard(options = {}) {
   const heading = h(
     'h3',
     { class: 'card-heading', id: options.headingId || 'naloxone-card-title' },
-    icon('activity', 'Activity'),
+    icon('activity'),
     h('span', null, t('emergency.naloxoneTitle', 'Naloxone & Rescue Breathing Pacing'))
   );
 
@@ -45,7 +58,7 @@ export function buildNaloxonePacingCard(options = {}) {
       title: t('emergency.step1Title', 'Check responsiveness'),
       desc: t(
         'emergency.step1Desc',
-        'Shout their name loudly and rub their breastbone (sternum) firmly with your knuckles. Check for limpness, unresponsiveness, slow or stopped breathing, or pale/blue/gray lips.'
+        'Shout and tap their shoulders. Check for unresponsiveness, slow, shallow, or stopped breathing, gasping, or pale/blue/gray lips. Gasping is not normal breathing. Call 911 for a suspected overdose.'
       ),
     },
     {
@@ -58,18 +71,18 @@ export function buildNaloxonePacingCard(options = {}) {
     },
     {
       num: '3',
-      title: t('emergency.step3Title', 'Rescue breathing 1 breath every 5 seconds'),
+      title: t('emergency.step3Title', 'Support breathing — follow 911 instructions'),
       desc: t(
         'emergency.step3Desc',
-        'Tilt head back, lift chin, pinch nose shut. Seal your mouth completely over theirs and give 1 breath every 5 seconds (10–12 breaths per minute). Watch chest rise.'
+        'If the person is unresponsive and not breathing normally, follow the 911 dispatcher’s CPR instructions. Use an AED if available. Give rescue breaths as trained or directed by the dispatcher; never delay CPR to use a timer.'
       ),
     },
     {
       num: '4',
-      title: t('emergency.step4Title', 'Repeat in 2-3 min if no response'),
+      title: t('emergency.step4Title', 'Repeat every 2–3 minutes if breathing is abnormal'),
       desc: t(
         'emergency.step4Desc',
-        'Naloxone takes 2 to 3 minutes to activate. If there is no response or breathing is still shallow after 2–3 minutes, give a second 4mg dose in the OTHER nostril. Continue rescue breathing until paramedics arrive.'
+        'If breathing is still slow, shallow, or absent, or becomes abnormal again, use a new naloxone nasal spray in the other nostril. Repeat every 2–3 minutes as the product label directs until normal breathing returns or emergency help takes over. Do not give extra doses solely to wake someone who is breathing normally.'
       ),
     },
   ];
@@ -88,17 +101,16 @@ export function buildNaloxonePacingCard(options = {}) {
     )
   );
 
-  const stepsList = h('ol', { class: 'pacer-steps-list', 'aria-label': 'Naloxone and rescue breathing steps' }, ...listItems);
+  const stepsList = h('ol', { class: 'pacer-steps-list', 'aria-label': t('emergency.stepsLabel', 'Naloxone and rescue breathing steps') }, ...listItems);
 
   const pacerGuide = h(
     'div',
     {
       class: 'pacer-pulse-guide',
-      role: 'timer',
-      'aria-live': 'polite',
-      'aria-label': 'Rescue breathing 5-second pacing guide',
+      role: 'note',
+      'aria-label': t('emergency.pacerLabel', 'Emergency breathing support reminder'),
     },
-    t('emergency.pacerGuide', 'Rescue Breathing Rhythm: 1 breath every 5 seconds (Breathe... 2... 3... 4... 5... Breathe)')
+    t('emergency.pacerGuide', 'Follow the 911 dispatcher’s breathing support or CPR instructions. This reference is not a CPR timer.')
   );
 
   return h(
@@ -118,7 +130,7 @@ export function buildOverdoseMatrixCard(options = {}) {
   const heading = h(
     'h3',
     { class: 'card-heading', id: options.headingId || 'matrix-card-title' },
-    icon('alert', 'Alert'),
+    icon('alert'),
     h('span', null, t('emergency.matrixTitle', 'Opioid vs. Stimulant Overdose Matrix'))
   );
 
@@ -185,13 +197,13 @@ export function buildOverdoseMatrixCard(options = {}) {
     {
       class: 'overdose-matrix-table',
       role: 'table',
-      'aria-label': 'Comparison matrix: Opioid overdose signs versus Stimulant overdose signs',
+      'aria-label': t('emergency.matrixLabel', 'Comparison matrix: Opioid overdose signs versus Stimulant overdose signs'),
     },
     thead,
     tbody
   );
 
-  const tableWrap = h('div', { class: 'matrix-table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Overdose comparison table' }, table);
+  const tableWrap = h('div', { class: 'matrix-table-wrap', tabindex: '0', role: 'region', 'aria-label': t('emergency.tableLabel', 'Overdose comparison table') }, table);
 
   const crossNote = h(
     'p',
@@ -221,18 +233,18 @@ export function buildGoodSamaritanCard(options = {}) {
   const heading = h(
     'h3',
     { class: 'card-heading', id: options.headingId || 'script-card-title' },
-    icon('phone', 'Phone'),
+    icon('phone'),
     h('span', null, t('emergency.scriptTitle', '911 Good Samaritan Script'))
   );
 
-  const locationText = state.location?.label || '[Location]';
-  const scriptContent = `“I am at ${locationText}. A person is unresponsive and not breathing. Medical help is needed immediately.”`;
+  const locationText = state.location?.label || t('emergency.locationPlaceholder', '[Location]');
+  const scriptContent = t('emergency.script', '“I am at {location}. A person is unresponsive and not breathing. Medical help is needed immediately.”', { location: locationText });
 
   const quoteBox = h(
     'blockquote',
     {
       class: 'script-quote-box',
-      'aria-label': 'Exact words to speak to 911 dispatcher',
+      'aria-label': t('emergency.scriptLabel', 'Exact words to speak to 911 dispatcher'),
     },
     scriptContent
   );
@@ -251,7 +263,7 @@ export function buildGoodSamaritanCard(options = {}) {
     h('strong', null, t('emergency.legalTitle', 'Good Samaritan Legal Protection: ')),
     t(
       'emergency.legalText',
-      'All 50 states and DC provide Good Samaritan protections from criminal arrest and drug possession prosecution when calling 911 to save someone experiencing an overdose.'
+      'Good Samaritan protections vary by state and situation. Call 911 for an overdose emergency.'
     )
   );
 
@@ -260,7 +272,7 @@ export function buildGoodSamaritanCard(options = {}) {
     t('emergency.call911Action', 'Call 911 Now'),
     {
       class: 'btn btn-emergency btn-large',
-      'aria-label': 'Call 911 immediately',
+      'aria-label': t('emergency.call911Label', 'Call 911 immediately'),
     }
   );
 
@@ -354,9 +366,11 @@ export function openEmergencyDrawer(triggerElement = null) {
     drawerKeydownBound = true;
   }
 
-  setTimeout(() => {
-    if (drawerWrapperEl) {
-      const closeBtn = drawerWrapperEl.querySelector?.('.emergency-drawer-close');
+  const openedWrapper = drawerWrapperEl;
+  focusTimer = setTimeout(() => {
+    focusTimer = null;
+    if (isDrawerOpen && openedWrapper && openedWrapper === drawerWrapperEl && !openedWrapper.hidden) {
+      const closeBtn = openedWrapper.querySelector?.('.emergency-drawer-close');
       if (closeBtn && typeof closeBtn.focus === 'function') {
         closeBtn.focus();
       }
@@ -365,6 +379,8 @@ export function openEmergencyDrawer(triggerElement = null) {
 }
 
 export function closeEmergencyDrawer() {
+  clearTimeout(focusTimer);
+  focusTimer = null;
   if (!isDrawerOpen) return;
   isDrawerOpen = false;
 
@@ -414,7 +430,7 @@ export function emergencyDrawer(options = {}) {
       'aria-label': t('common.closeEmergencyDrawer', 'Close emergency reference drawer'),
       onclick: () => closeEmergencyDrawer(),
     },
-    icon('x', 'Close')
+    icon('x')
   );
 
   const header = h(
@@ -423,7 +439,7 @@ export function emergencyDrawer(options = {}) {
     h(
       'div',
       { class: 'emergency-drawer-title-group' },
-      icon('alert', 'Emergency Alert'),
+      icon('alert'),
       h('h2', { id: 'emergency-drawer-title', class: 'emergency-drawer-title' }, t('emergency.drawerTitle', 'Emergency Survival Guide'))
     ),
     closeButton
@@ -432,7 +448,7 @@ export function emergencyDrawer(options = {}) {
   const description = h(
     'p',
     { id: 'emergency-drawer-desc', class: 'visually-hidden' },
-    'Offline critical emergency survival reference: Naloxone & rescue breathing pacing, Opioid vs. Stimulant overdose matrix, and 911 Good Samaritan call script.'
+    t('emergency.description', 'Offline critical emergency survival reference: Naloxone & rescue breathing pacing, Opioid vs. Stimulant overdose matrix, and 911 Good Samaritan call script.')
   );
 
   const card1 = buildNaloxonePacingCard({ headingId: 'ed-naloxone-title' });
@@ -453,7 +469,7 @@ export function emergencyDrawer(options = {}) {
 
   const footerCallBtn = tel('911', t('emergency.call911Action', 'Call 911 Now'), {
     class: 'btn btn-emergency',
-    'aria-label': 'Call 911 immediately',
+    'aria-label': t('emergency.call911Label', 'Call 911 immediately'),
   });
 
   const footer = h('div', { class: 'emergency-drawer-footer' }, footerCloseBtn, footerCallBtn);
@@ -521,7 +537,7 @@ export function emergencyDrawerButton(options = {}) {
         }
       },
     },
-    icon('alert', 'Alert'),
+    icon('alert'),
     h('span', null, label)
   );
 

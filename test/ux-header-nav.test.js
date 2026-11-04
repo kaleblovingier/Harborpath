@@ -221,6 +221,17 @@ mockAnnouncer.setAttribute('aria-live', 'polite');
 mockBody.append(mockAnnouncer);
 
 const windowListeners = {};
+const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+
+Object.defineProperty(globalThis, 'navigator', {
+  configurable: true,
+  value: { languages: ['en-US'], language: 'en-US' },
+});
+
+after(() => {
+  if (originalNavigator) Object.defineProperty(globalThis, 'navigator', originalNavigator);
+  else delete globalThis.navigator;
+});
 
 globalThis.Node = MockNode;
 globalThis.document = {
@@ -346,7 +357,7 @@ describe('Suite 1: HTML Header Buttons & Navigation Links (public/index.html)', 
     assert.match(indexHtml, /title="Low-stimulation sensory mode \(Alt\+S\)"/, 'Must provide descriptive title');
     assert.match(indexHtml, /data-i18n-title="app\.sensoryMode"/, 'Must provide data-i18n-title');
     assert.match(indexHtml, /<use\s+href="\/icons\.svg#eye"><\/use>/, 'Must reference #eye icon');
-    assert.match(indexHtml, /<span\s+class="sr-only">Sensory Mode<\/span>/, 'Must provide sr-only text');
+    assert.match(indexHtml, /<span\s+class="sr-only"\s+data-i18n="app\.sensoryModeLabel">Sensory Mode<\/span>/, 'Must provide translated sr-only text');
   });
 
   test('header contains accessible Quick Emergency Drawer button with alert icon', () => {
@@ -355,6 +366,7 @@ describe('Suite 1: HTML Header Buttons & Navigation Links (public/index.html)', 
     assert.match(indexHtml, /type="button"/, 'Must specify type="button"');
     assert.match(indexHtml, /aria-expanded="false"/, 'Must initialize with aria-expanded="false"');
     assert.match(indexHtml, /aria-controls="emergency-drawer"/, 'Must link to aria-controls="emergency-drawer"');
+    assert.match(indexHtml, /id="btn-emergency-drawer"[^>]*aria-haspopup="dialog"/, 'Must announce that the emergency control opens a dialog');
     assert.match(indexHtml, /title="Emergency survival cards"/, 'Must provide descriptive emergency title');
     assert.match(indexHtml, /data-i18n-title="app\.emergencyCards"/, 'Must provide data-i18n-title');
     assert.match(indexHtml, /<use\s+href="\/icons\.svg#alert"><\/use>/, 'Must reference #alert icon');
@@ -383,6 +395,31 @@ describe('Suite 1: HTML Header Buttons & Navigation Links (public/index.html)', 
     assert.match(indexHtml, /<main\s+id="main"\s+class="wrap"\s+tabindex="-1">/, 'Main landmark present');
     assert.match(indexHtml, /<footer\s+class="site-footer">/, 'Footer landmark present');
     assert.match(indexHtml, /<a\s+class="skip-link"\s+href="#main"/, 'Skip link present');
+  });
+
+  test('care tools and care team workspace are discoverable in the main navigation', () => {
+    const mainNav = indexHtml.match(/<nav id="site-nav"[\s\S]*?<\/nav>/)?.[0];
+    assert.ok(mainNav);
+    assert.match(mainNav, /href="#\/tools"\s+data-nav="tools"\s+data-i18n="app\.nav\.tools">Care tools<\/a>/);
+    assert.match(mainNav, /href="#\/workspace"\s+data-nav="workspace"\s+data-i18n="app\.nav\.workspace">For care teams<\/a>/);
+  });
+
+  test('secondary navigation uses a translated native disclosure without hiding primary care routes', () => {
+    const mainNav = indexHtml.match(/<nav id="site-nav"[\s\S]*?<\/nav>/)?.[0];
+    const disclosure = mainNav?.match(/<details class="nav-more-menu">[\s\S]*?<\/details>/)?.[0];
+    assert.ok(disclosure, 'Secondary routes should use a native, initially closed details control');
+    assert.match(disclosure, /<summary data-i18n="app\.nav\.more">More tools<\/summary>/);
+    assert.doesNotMatch(disclosure, /role="menu(?:item)?"/, 'Keep native link and disclosure keyboard semantics');
+    const primary = mainNav.replace(disclosure, '');
+    for (const route of ['match', 'treatment', 'health', 'tools', 'plan', 'workspace', 'saved']) {
+      assert.ok(primary.includes(`data-nav="${route}"`), `Primary ${route} link must remain visible outside the disclosure`);
+    }
+    for (const route of ['navigator', 'assessment', 'readiness', 'medications', 'harm-reduction', 'support', 'choosing-care']) {
+      assert.ok(disclosure.includes(`data-nav="${route}"`), `Secondary ${route} link must remain reachable in More tools`);
+    }
+    const routes = [...mainNav.matchAll(/data-nav="([^"]+)"/g)].map((match) => match[1]);
+    assert.equal(routes.length, 14);
+    assert.equal(new Set(routes).size, routes.length, 'Do not duplicate routes between primary and secondary lists');
   });
 });
 

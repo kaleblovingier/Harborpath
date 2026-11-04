@@ -4,6 +4,9 @@
 import esMatch from './es-match.js';
 import esClinical from './es-clinical.js';
 import esPrivacy from './es-privacy.js';
+import esTools from './es-tools.js';
+import esWorkspace from './es-workspace.js';
+import esEvidence from './es-evidence.js';
 
 export default {
   // ---------------------------------------------------------------- Sensory mode & Emergency drawer
@@ -23,16 +26,25 @@ export default {
   'legal.toggleDetails': 'Ver citas de estatutos y orientación clara',
   'emergency.drawerTitle': 'Guía de supervivencia en emergencias',
   'emergency.quickGuide': 'Guía de supervivencia en emergencias',
+  'emergency.description': 'Referencia de emergencia sin conexión: naloxona y ritmo de respiración de rescate, comparación de sobredosis de opioides y estimulantes, y guion para llamar al 911.',
+  'emergency.stepsLabel': 'Pasos de naloxona y respiración de rescate',
+  'emergency.pacerLabel': 'Recordatorio de apoyo respiratorio de emergencia',
+  'emergency.matrixLabel': 'Comparación de signos de sobredosis de opioides y estimulantes',
+  'emergency.tableLabel': 'Tabla de comparación de sobredosis',
+  'emergency.scriptLabel': 'Palabras para comunicar a la persona que atiende el 911',
+  'emergency.locationPlaceholder': '[Ubicación]',
+  'emergency.script': '«Estoy en {location}. Una persona no responde y no respira. Se necesita ayuda médica de inmediato».',
+  'emergency.call911Label': 'Llame al 911 de inmediato',
   'emergency.naloxoneTitle': 'Naloxona y ritmo de respiración de rescate',
   'emergency.step1Title': 'Verifique si responde',
-  'emergency.step1Desc': 'Grite su nombre con fuerza y frote firmemente su esternón con los nudillos. Verifique si está flácido, no responde, no respira o tiene labios pálidos, azules o grises.',
+  'emergency.step1Desc': 'Grite y toque sus hombros. Verifique si no responde, respira de forma lenta o superficial, no respira, jadea o tiene labios pálidos, azules o grises. Los jadeos no son respiración normal. Llame al 911 si sospecha una sobredosis.',
   'emergency.step2Title': 'Aplique 4 mg de naloxona en 1 fosa nasal',
   'emergency.step2Desc': 'Abra el envase. Incline la cabeza hacia atrás. Inserte la boquilla en una fosa nasal hasta que sus dedos toquen la nariz. Presione el émbolo con firmeza hasta que haga clic.',
-  'emergency.step3Title': 'Respiración de rescate: 1 respiración cada 5 segundos',
-  'emergency.step3Desc': 'Incline la cabeza hacia atrás, levante la barbilla y tape la nariz. Cubra la boca con la suya y dé 1 respiración cada 5 segundos (10 a 12 por minuto). Observe que el pecho se eleve.',
-  'emergency.step4Title': 'Repita en 2 a 3 min si no hay respuesta',
-  'emergency.step4Desc': 'La naloxona tarda de 2 a 3 minutos en actuar. Si no responde o la respiración sigue débil después de 2 a 3 minutos, administre una segunda dosis de 4 mg en la OTRA fosa nasal. Continúe con respiraciones de rescate.',
-  'emergency.pacerGuide': 'Ritmo de respiración de rescate: 1 respiración cada 5 segundos (Respire... 2... 3... 4... 5... Respire)',
+  'emergency.step3Title': 'Apoye la respiración: siga las indicaciones del 911',
+  'emergency.step3Desc': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un DEA si está disponible. Dé respiraciones de rescate según su capacitación o las indicaciones del operador; nunca retrase la RCP para usar un temporizador.',
+  'emergency.step4Title': 'Repita cada 2 a 3 minutos si la respiración es anormal',
+  'emergency.step4Desc': 'Si la respiración sigue lenta, superficial o ausente, o vuelve a ser anormal, use un aerosol nasal de naloxona nuevo en la otra fosa nasal. Repita cada 2 a 3 minutos según la etiqueta hasta que vuelva la respiración normal o la ayuda de emergencia se haga cargo. No dé dosis adicionales solo para despertar a alguien que respira normalmente.',
+  'emergency.pacerGuide': 'Siga las indicaciones del operador del 911 para apoyar la respiración o hacer RCP. Esta referencia no es un temporizador de RCP.',
 
   'emergency.matrixTitle': 'Matriz de sobredosis: opioides vs. estimulantes',
   'emergency.matrixSubtitle': 'Identifique rápidamente los signos para brindar la respuesta adecuada:',
@@ -62,7 +74,7 @@ export default {
   'emergency.tip2': 'Enfóquese en los síntomas médicos: no responde, no respira, se necesita ayuda médica de emergencia.',
   'emergency.tip3': 'Dé la dirección exacta, número de apartamento o intersección más cercana.',
   'emergency.legalTitle': 'Protección legal del Buen Samaritano: ',
-  'emergency.legalText': 'Los 50 estados y DC tienen leyes del Buen Samaritano que protegen contra el arresto y cargos por posesión de drogas al llamar al 911 ante una emergencia por sobredosis.',
+  'emergency.legalText': 'Las protecciones de las leyes del buen samaritano varían según el estado y la situación. Llame al 911 ante una emergencia por sobredosis.',
   'emergency.call911Action': 'Llame al 911 ahora',
   'common.closeEmergencyDrawer': 'Cerrar el panel de referencia de emergencia',
   'common.done': 'Listo',
@@ -81,6 +93,7 @@ export default {
   'app.home': 'Inicio de HarborPath',
   'app.language': 'Idioma',
   'app.sensoryMode': 'Modo sensorial bajo en estímulos (Alt+S)',
+  'app.sensoryModeLabel': 'Modo sensorial',
   'app.emergencyCards': 'Tarjetas de supervivencia de emergencia',
   'app.emergency': 'Emergencia',
   'app.menu': 'Menú',
@@ -92,6 +105,9 @@ export default {
   'app.nav.medications': 'Medicamentos',
   'app.nav.harm': 'Reducción de daños',
   'app.nav.health': 'Servicios de salud',
+  'app.nav.tools': 'Herramientas de atención',
+  'app.nav.workspace': 'Para equipos de atención',
+  'app.nav.more': 'Más herramientas',
   'app.nav.plan': 'Plan de seguridad',
   'app.nav.support': 'Recuperación y familia',
   'app.nav.choosing': 'Cómo elegir atención',
@@ -1125,4 +1141,7 @@ export default {
   ...esMatch,
   ...esClinical,
   ...esPrivacy,
+  ...esTools,
+  ...esWorkspace,
+  ...esEvidence,
 };

@@ -364,16 +364,17 @@ test('Wave 6: overdosePacer renders authentic clinical Spanish strings when lang
     assert.match(text, /Reiniciar asistente/);
 
     // Stepper Tabs in Spanish
-    assert.match(text, /Frote esternal y verificación de respuesta/);
+    assert.match(text, /Compruebe la respuesta y la respiración/);
     assert.match(text, /Primera administración de naloxona/);
     assert.match(text, /Metrónomo de respiración de rescate/);
     assert.match(text, /Reloj de evaluación de re-dosificación a 2-3 minutos/);
     assert.match(text, /Posición de recuperación y observación post-reversión/);
 
     // Step 1: Responsiveness Check
-    assert.match(text, /Sin respuesta al gritar ni al frote firme en el esternón/);
+    assert.match(text, /Intente despertar a la persona y compruebe si respira normalmente/);
+    assert.doesNotMatch(text, /frote firmemente su esternón|frote firme en el esternón/i);
     assert.match(text, /Llamar al 911 de inmediato/);
-    assert.match(text, /Víctima no responde — Pasar a naloxona \(Paso 2\)/);
+    assert.ok(text.includes(esClinical['pacer.step1.advance']));
 
     // Advance to Step 2
     setOverdosePacerStep(2);
@@ -381,7 +382,7 @@ test('Wave 6: overdosePacer renders authentic clinical Spanish strings when lang
     assert.match(step2Text, /Aerosol nasal de 4 mg en 1 fosa nasal, o inyección IM de 0.4 mg/);
     assert.match(step2Text, /Fosa nasal derecha \(Estándar\)/);
     assert.match(step2Text, /Fosa nasal izquierda/);
-    assert.match(step2Text, /Administrar 1\.ª dosis e iniciar temporizadores \(Pasar al Paso 3\)/);
+    assert.match(step2Text, /Administrar 1\.ª dosis y comprobar la respiración \(Pasar al Paso 3\)/);
 
     // Advance to Step 3 (Metronome)
     setOverdosePacerStep(3);
@@ -390,18 +391,19 @@ test('Wave 6: overdosePacer renders authentic clinical Spanish strings when lang
     assert.match(step3Text, /Respiraciones administradas:/);
     assert.match(step3Text, /Cadencia de ritmo:/);
     assert.match(step3Text, /Iniciar metrónomo/);
-    assert.match(step3Text, /ALERTA CRÍTICA: Síndrome de "Tórax de Madera" por Fentanilo/);
+    assert.match(step3Text, /Si el pecho se siente rígido o el aire de las respiraciones de rescate no entra/);
+    assert.match(step3Text, /esta herramienta no puede diagnosticar rigidez torácica por fentanilo/);
     assert.match(step3Text, /Revisar reloj de re-dosificación de 2 a 3 min \(Paso 4\)/);
-    assert.match(step3Text, /Víctima reanudó respiración normal -> Paso 5/);
+    assert.match(step3Text, /Respiración normal reanudada -> Paso 5/);
 
     // Advance to Step 4 (Re-dosing clock & Xylazine caution)
     setOverdosePacerStep(4);
     const step4Text = pacerRoot.textContent;
     assert.match(step4Text, /Cuenta regresiva para la evaluación de re-dosificación:/);
-    assert.match(step4Text, /Transcurrido desde la 1\.ª dosis:/);
+    assert.match(step4Text, /Transcurrido desde la dosis más reciente:/);
     assert.match(step4Text, /Administración de la segunda dosis \(Fosa nasal opuesta\)/);
     assert.match(step4Text, /Administrar segunda dosis de 4 mg en la fosa nasal OPUESTA/);
-    assert.match(step4Text, /ADVERTENCIA CRÍTICA: NO DESCARGUE DOSIS REPETIDAS DE NALOXONA ANTE LA SEDACIÓN POR XILACINA/);
+    assert.match(step4Text, /La naloxona no revierte la xilacina en sí/);
     assert.match(step4Text, /Respiración normal reanudada -> Pasar a posición de recuperación \(Paso 5\)/);
 
     // Advance to Step 5 (Recovery Position & Renarconization risk)

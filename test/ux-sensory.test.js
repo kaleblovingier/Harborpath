@@ -30,6 +30,8 @@ import {
 
 import { runQuickExitResets } from '../public/js/app.js';
 import { state, setLocation } from '../public/js/state.js';
+import { useDictionary, setLanguage } from '../public/js/i18n.js';
+import es from '../public/js/locales/es.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const componentsDir = path.join(here, '..', 'public', 'js', 'components');
@@ -507,23 +509,32 @@ test('emergencyDrawer: Card 1 - Naloxone & Rescue Breathing Pacing contains 4 cr
     const text = card.textContent;
     // Step 1: Check responsiveness
     assert.match(text, /Check responsiveness/i);
-    assert.match(text, /rub.*sternum/i);
+    assert.match(text, /tap their shoulders/i);
+    assert.match(text, /Gasping is not normal breathing/);
+    assert.doesNotMatch(text, /sternum|knuckles/i);
 
     // Step 2: Spray 4mg naloxone in 1 nostril
     assert.match(text, /Spray 4mg naloxone in 1 nostril/i);
 
-    // Step 3: Rescue breathing 1 breath every 5 seconds
-    assert.match(text, /Rescue breathing 1 breath every 5 seconds/i);
+    // Step 3: Emergency dispatcher guidance takes priority over a timer.
+    assert.match(text, /Support breathing.*follow 911 instructions/i);
+    assert.match(text, /follow the 911 dispatcher’s CPR instructions/);
+    assert.match(text, /Use an AED if available/);
+    assert.match(text, /never delay CPR to use a timer/);
 
-    // Step 4: Repeat in 2-3 min if no response
-    assert.match(text, /Repeat in 2-3 min if no response/i);
+    // Step 4: Repeat based on abnormal breathing, rather than wakefulness.
+    assert.match(text, /Repeat every 2–3 minutes if breathing is abnormal/);
+    assert.match(text, /new naloxone nasal spray in the other nostril/);
+    assert.match(text, /as the product label directs/);
+    assert.match(text, /Do not give extra doses solely to wake someone who is breathing normally/);
+    assert.doesNotMatch(text, /Repeat in 2-3 min if no response|takes 2 to 3 minutes to activate/i);
 
-    // Pacer pulse guide with role=timer
+    // Static reference text must not be exposed as an active CPR timer.
     const pacerGuide = card.findAll((n) => n.hasClass('pacer-pulse-guide'))[0];
     assert.ok(pacerGuide);
-    assert.equal(pacerGuide.getAttribute('role'), 'timer');
-    assert.equal(pacerGuide.getAttribute('aria-live'), 'polite');
-    assert.match(pacerGuide.textContent, /1 breath every 5 seconds/i);
+    assert.equal(pacerGuide.getAttribute('role'), 'note');
+    assert.equal(pacerGuide.getAttribute('aria-live'), null);
+    assert.match(pacerGuide.textContent, /not a CPR timer/i);
   });
 });
 
@@ -636,6 +647,102 @@ test('emergencyDrawer: keyboard trap and Escape-key handling', () => {
     assert.equal(stopped, true);
     assert.equal(isEmergencyDrawerOpen(), false);
     assert.equal(globalThis.document.activeElement, triggerBtn);
+  });
+});
+
+test('emergencyDrawer: keyboard focus wraps in both directions', () => {
+  withMockDom(({ body }) => {
+    closeEmergencyDrawer();
+    const trigger = new MockNode('button');
+    body.append(trigger);
+    const wrapper = emergencyDrawer({ singleton: false });
+    openEmergencyDrawer(trigger);
+    try {
+      const focusable = wrapper.querySelectorAll('button, [href]');
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      assert.notEqual(first, last);
+
+      let prevented = false;
+      first.focus();
+      handleDrawerKeydown({ key: 'Tab', shiftKey: true, preventDefault: () => { prevented = true; } });
+      assert.equal(prevented, true);
+      assert.equal(document.activeElement, last);
+
+      prevented = false;
+      handleDrawerKeydown({ key: 'Tab', shiftKey: false, preventDefault: () => { prevented = true; } });
+      assert.equal(prevented, true);
+      assert.equal(document.activeElement, first);
+    } finally {
+      closeEmergencyDrawer();
+    }
+  });
+});
+
+test('emergencyDrawer: closing immediately cancels delayed focus into the hidden dialog', async () => {
+  await withMockDom(async ({ body }) => {
+    closeEmergencyDrawer();
+    const trigger = new MockNode('button');
+    body.append(trigger);
+    emergencyDrawer({ singleton: false });
+    trigger.focus();
+    openEmergencyDrawer(trigger);
+    closeEmergencyDrawer();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.equal(document.activeElement, trigger);
+    assert.equal(isEmergencyDrawerOpen(), false);
+  });
+});
+
+test('emergencyDrawer: Spanish includes emergency accessible names, description, and call script', () => {
+  withMockDom(() => {
+    closeEmergencyDrawer();
+    useDictionary('es', es);
+    try {
+      const wrapper = emergencyDrawer({ singleton: false });
+      const labels = wrapper.findAll((node) => node.hasAttribute('aria-label')).map((node) => node.getAttribute('aria-label'));
+      for (const key of ['common.closeEmergencyDrawer', 'emergency.stepsLabel', 'emergency.pacerLabel',
+        'emergency.matrixLabel', 'emergency.tableLabel', 'emergency.scriptLabel', 'emergency.call911Label']) {
+        assert.ok(labels.includes(es[key]), `Missing Spanish accessible name: ${key}`);
+      }
+      assert.ok(labels.every((label) => Object.values(es).includes(label)), 'No emergency accessible names remain in English');
+      assert.equal(wrapper.querySelector('#emergency-drawer-desc').textContent, es['emergency.description']);
+      assert.match(wrapper.querySelector('blockquote').textContent, /Una persona no responde y no respira/);
+      assert.match(wrapper.textContent, /nunca retrase la RCP para usar un temporizador/);
+      assert.match(wrapper.textContent, /según la etiqueta/);
+      assert.match(wrapper.textContent, /No dé dosis adicionales solo para despertar a alguien que respira normalmente/);
+      assert.doesNotMatch(wrapper.textContent, /frote.*esternón|si no hay respuesta|tarda de 2 a 3 minutos en actuar/i);
+      assert.match(wrapper.textContent, /varían según el estado y la situación/);
+      assert.doesNotMatch(wrapper.textContent, /Los 50 estados y DC tienen leyes/);
+    } finally {
+      useDictionary('en', {});
+      closeEmergencyDrawer();
+    }
+  });
+});
+
+test('emergencyDrawer: changing language rebuilds an open dialog and preserves its trigger', async () => {
+  await withMockDom(async ({ body }) => {
+    document.querySelectorAll = () => [];
+    closeEmergencyDrawer();
+    useDictionary('en', {});
+    const trigger = new MockNode('button');
+    body.append(trigger);
+    const englishWrapper = emergencyDrawer({ singleton: false });
+    openEmergencyDrawer(trigger);
+    try {
+      await setLanguage('es');
+      const spanishWrapper = body.querySelector('#emergency-drawer-wrapper');
+      assert.ok(spanishWrapper);
+      assert.notEqual(spanishWrapper, englishWrapper);
+      assert.equal(isEmergencyDrawerOpen(), true);
+      assert.equal(spanishWrapper.querySelector('#emergency-drawer-title').textContent, es['emergency.drawerTitle']);
+      closeEmergencyDrawer();
+      assert.equal(document.activeElement, trigger);
+    } finally {
+      closeEmergencyDrawer();
+      await setLanguage('en');
+    }
   });
 });
 

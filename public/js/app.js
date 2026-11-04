@@ -31,6 +31,9 @@ export const SYNC_VIEWS = {
 // imported on demand, cached in memory, and preloaded during browser idle time or link hover/focus.
 export const viewCache = new Map();
 const pendingLoads = new Map();
+// Register a reset with each loaded new view so Quick Exit can clear its
+// in-memory state synchronously, before navigating away.
+const routeResets = new Map();
 
 function loadGuidesModule() {
   return import('./views/guides.js').then((m) => {
@@ -43,6 +46,16 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  tools: () => import('./views/tools.js').then((m) => {
+    viewCache.set('tools', m.careToolsView);
+    routeResets.set('tools', m.resetCareToolsState);
+    return m.careToolsView;
+  }),
+  workspace: () => import('./views/workspace.js').then((m) => {
+    viewCache.set('workspace', m.careWorkspaceView);
+    routeResets.set('workspace', m.resetCareWorkspaceState);
+    return m.careWorkspaceView;
+  }),
   match: () => import('./views/match.js').then((m) => {
     viewCache.set('match', m.matchView);
     return m.matchView;
@@ -139,6 +152,8 @@ export const LAZY_LOADERS = {
 
 export const ROUTE_TITLES = {
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
+  tools: () => t('route.tools', 'Care tools and guides'),
+  workspace: () => t('route.workspace', 'Care team workspace'),
   match: () => t('route.match', 'Find care that fits'),
   treatment: () => t('route.treatment', 'Find treatment'),
   navigator: () => t('route.navigator', 'Clinical care navigator (ASAM)'),
@@ -187,6 +202,8 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('tools'),
+    preloadRoute('workspace'),
     preloadRoute('match'),
     preloadRoute('navigator'),
     preloadRoute('guided'),
@@ -249,7 +266,7 @@ export function resolveRoute(path, query) {
     const title = ROUTE_TITLES[path]();
     const syncView = SYNC_VIEWS[path] ?? viewCache.get(path) ?? null;
     if (syncView) {
-      return { view: () => syncView({ query }), lazyPath: null, title };
+      return { view: () => syncView({ query, meta: lastMeta }), lazyPath: null, title };
     }
     return { view: null, lazyPath: path, title };
   }
@@ -283,6 +300,7 @@ const savedCount = hasDom ? document.getElementById('saved-count') : null;
 function closeMenu() {
   toggle?.setAttribute('aria-expanded', 'false');
   nav?.classList.remove('open');
+  for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
 }
 
 async function render() {
@@ -305,7 +323,7 @@ async function render() {
   if (!buildView && resolved.lazyPath) {
     const loadedView = await preloadRoute(resolved.lazyPath);
     if (token !== renderSeq) return;
-    buildView = loadedView ? () => loadedView({ query }) : () => notFoundView({ query });
+    buildView = loadedView ? () => loadedView({ query, meta: lastMeta }) : () => notFoundView({ query });
   }
 
   main.replaceChildren(buildView());
@@ -318,6 +336,8 @@ async function render() {
 // ---------------------------------------------------------------- Quick exit
 export function runQuickExitResets() {
   wipeAll();
+  carried = null;
+  for (const reset of routeResets.values()) reset();
   import('./views/navigator.js').then((m) => m.resetNavigatorState?.()).catch(() => {});
   import('./views/insuranceHelpers.js').then((m) => m.resetInsuranceState?.()).catch(() => {});
   import('./views/guidedNavigator.js').then((m) => m.resetGuidedNavigatorState?.()).catch(() => {});
@@ -398,6 +418,9 @@ if (hasDom) {
   // one, so HarborPath occupies a single slot in the back history. After a
   // quick exit, pressing Back skips past this site.
   document.addEventListener('click', (e) => {
+    if (!e.target?.closest?.('.nav-more-menu')) {
+      for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
+    }
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const a = e.target.closest('a[href^="#/"], a[href="#"]');
     if (!a) return;
@@ -426,6 +449,11 @@ if (hasDom) {
   let lastEscape = 0;
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
+    const more = nav?.querySelector('.nav-more-menu[open]');
+    if (more) {
+      more.open = false;
+      more.querySelector('summary')?.focus();
+    }
     const now = Date.now();
     if (now - lastEscape < 1000) quickExit();
     lastEscape = now;
@@ -495,6 +523,13 @@ if (hasDom) {
   api.meta().then((meta) => {
     lastMeta = meta;
     renderFooterMeta();
+    // Update only the source disclosure if metadata arrives after a new view
+    // renders; preserve the visitor's focus, filters, and checklist.
+    if (main?.querySelector('.source-context')) {
+      import('./components/sourceContext.js').then(({ sourceContext }) => {
+        main?.querySelector('.source-context')?.replaceWith(sourceContext({ meta: lastMeta }));
+      }).catch(() => {});
+    }
   }).catch(() => { /* footer note is optional */ });
 
   onLanguageChange(() => {

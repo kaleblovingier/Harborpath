@@ -1,0 +1,22 @@
+// Source provenance and verification context (es-US).
+export default {
+  'evidence.title': 'Fuentes y verificación',
+  'evidence.snapshotLabel': 'Fecha de compilación de los datos incluidos:',
+  'evidence.snapshotUnavailable': 'Fecha no disponible en este dispositivo.',
+  'evidence.dateMeaning': 'Esta es la fecha de compilación de los archivos; no confirma que cada listado o ley siga vigente.',
+  'evidence.liveTitle': 'Directorio de tratamiento en línea',
+  'evidence.liveBody': 'Las búsquedas de tratamiento usan FindTreatment.gov de SAMHSA. Durante una interrupción del servicio, puede mostrarse una respuesta guardada temporalmente. Confirme la disponibilidad y el costo con el proveedor.',
+  'evidence.bundledTitle': 'Directorios incluidos',
+  'evidence.bundledBody': 'Las ubicaciones de proveedores, las búsquedas de códigos postales y ciudades, y los enlaces estatales de Medicaid provienen de conjuntos de datos públicos incluidos. Estos archivos no se actualizan automáticamente durante una búsqueda.',
+  'evidence.reviewTitle': 'Límites de la verificación',
+  'evidence.reviewBody': 'Los resúmenes legales estatales no están verificados. Consulte las fuentes enlazadas o la asistencia legal local para confirmar las protecciones vigentes. Los listados de programas exclusivamente en línea que esperan revisión se excluyen de los resultados.',
+  'evidence.connection': 'Las búsquedas en línea y los sitios web de las fuentes necesitan una conexión a internet. La orientación sin conexión depende de lo que haya activado y guardado antes en este dispositivo.',
+  'evidence.sourcesTitle': 'Consulte las fuentes oficiales',
+  'evidence.sourceTreatment': 'Directorio de tratamiento de SAMHSA',
+  'evidence.sourceHealthCenters': 'Centros de salud de HRSA',
+  'evidence.sourceVeterans': 'Centros del VA',
+  'evidence.sourceTribal': 'Centros del IHS y de las naciones tribales',
+  'evidence.sourceHospitals': 'Hospitales y clínicas rurales de CMS',
+  'evidence.sourcePlaces': 'Datos de ubicación del Censo',
+  'evidence.sourceMedicaid': 'Contactos estatales de Medicaid',
+};

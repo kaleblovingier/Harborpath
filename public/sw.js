@@ -4,7 +4,7 @@
 // deletes all caches and unregisters itself when Quick Exit sends { type: 'wipe' }.
 
 const CACHE_PREFIX = 'harborpath-offline';
-const CACHE_NAME = `${CACHE_PREFIX}-v3`;
+const CACHE_NAME = `${CACHE_PREFIX}-v4`;
 
 // Critical tier: precached at install; install fails if any is missing.
 // Holds the app shell plus everything needed in an emergency while offline:
@@ -56,12 +56,18 @@ const APP_SHELL = [
   '/js/locales/es-clinical.js',
   '/js/locales/es-privacy.js',
   '/js/locales/es-services.js',
+  '/js/locales/es-tools.js',
+  '/js/locales/es-workspace.js',
+  '/js/locales/es-evidence.js',
 ];
 
 // Elective tier: heavier, non-emergency clinical tools. Warmed in the
 // background after activation so they never delay or break install, and
 // cached on first online visit by the fetch handler below.
 const ELECTIVE_SHELL = [
+  '/js/views/tools.js',
+  '/js/views/workspace.js',
+  '/js/components/sourceContext.js',
   '/js/views/medications.js',
   '/js/views/navigator.js',
   '/js/views/guidedNavigator.js',
