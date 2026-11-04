@@ -212,15 +212,19 @@ describe('Clinical Scenario Guides', () => {
       assert.match(WOODEN_CHEST_SYNDROME.pathophysiology.mechanism, /central mu-opioid/i);
       assert.match(WOODEN_CHEST_SYNDROME.pathophysiology.mechanism, /striatum|basal ganglia/i);
       assert.match(WOODEN_CHEST_SYNDROME.pathophysiology.glotticInvolvement, /vocal cord closure|laryngospasm/i);
-      assert.match(WOODEN_CHEST_SYNDROME.pathophysiology.ventilationImpact, /bag-valve-mask.*impossible/i);
+      assert.match(WOODEN_CHEST_SYNDROME.pathophysiology.ventilationImpact, /bag-valve-mask.*difficult/i);
     });
 
-    it('provides immediate clinical response: high-dose naloxone, rapid airway positioning, emergency EMS activation', () => {
+    it('routes breathing difficulty to 911 and labeled naloxone dosing without diagnosing its cause', () => {
       const resp = WOODEN_CHEST_SYNDROME.immediateClinicalResponse;
-      assert.match(resp.naloxoneDosing, /high-dose|repeat immediately/i);
-      assert.match(resp.airwayManagement, /jaw thrust/i);
-      assert.match(resp.emsRole, /ALS|neuromuscular blockade|succinylcholine|rocuronium/i);
-      assert.match(resp.contraindications, /do not rely solely on rescue breathing without naloxone/i);
+      assert.match(resp.naloxoneDosing, /every 2–3 minutes.*new device/i);
+      assert.match(resp.naloxoneDosing, /product label/i);
+      assert.match(resp.airwayManagement, /dispatcher instructions for CPR/i);
+      assert.match(resp.emsRole, /trained emergency clinicians/i);
+      assert.match(resp.contraindications, /do not delay emergency help, CPR, or breathing support/i);
+      const guidance = [...WOODEN_CHEST_SYNDROME.emergencyGuidance, ...Object.values(resp)].join(' ');
+      assert.doesNotMatch(guidance, /60.?90 seconds|high-dose|repeat immediately|repeat.*within 90/i);
+      assert.ok(WOODEN_CHEST_SYNDROME.evidenceBase.every((source) => /^https:\/\//.test(source.url)));
     });
   });
 
@@ -402,13 +406,18 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       assert.equal(resultByStr.scenarioId, 'wooden_chest_syndrome');
       assert.equal(resultByStr.severity, 'critical');
       assert.equal(resultByStr.emergencyEMSRequired, true);
-      assert.match(resultByStr.primaryAction, /Call 911 immediately.*give naloxone.*rescue breathing.*left recovery position.*stay with them/i);
-      assert.match(resultByStr.primaryAction, /Advanced Life Support/i);
-      assert.match(resultByStr.airwayGuidance, /jaw thrust/i);
+      assert.match(resultByStr.primaryAction, /Call 911 immediately.*give naloxone.*rescue breathing.*recovery position.*stay with them/i);
+      assert.match(resultByStr.primaryAction, /dispatcher|911/i);
+      assert.match(resultByStr.airwayGuidance, /dispatcher instructions for CPR/i);
+      assert.match(resultByStr.naloxoneGuidance, /every 2–3 minutes/i);
+      assert.match(resultByStr.warnings.join(' '), /cannot diagnose/i);
+      assert.doesNotMatch(resultByStr.primaryAction + resultByStr.naloxoneGuidance, /60.?90 seconds|repeat immediately|high-dose/i);
       assert.equal(resultByStr.referenceGuide.id, 'wooden_chest_syndrome');
 
       const resultByObj = evaluateOverdoseRiskScenario({ chestRigidity: true, inabilityToVentilate: true });
       assert.equal(resultByObj.scenarioId, 'wooden_chest_syndrome');
+      assert.match(resultByObj.scenarioTitle, /possible/i);
+      assert.equal(resultByObj.emergencyEMSRequired, true);
     });
 
     it('evaluates Xylazine Sedation scenario and warns against naloxone dumping', () => {

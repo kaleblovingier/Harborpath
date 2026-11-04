@@ -47,8 +47,8 @@
         <a href="?lang=en" hreflang="en" lang="en" aria-current="true">English</a>
         <a href="?lang=es" hreflang="es" lang="es">Español</a>
       </nav>
-      <button id="btn-sensory-mode" class="btn-sensory-mode" type="button" aria-pressed="false" aria-keyshortcuts="Alt+S" title="Low-stimulation sensory mode (Alt+S)" data-i18n-title="app.sensoryMode"><svg class="icon" aria-hidden="true"><use href="/icons.svg#eye"></use></svg><span class="sr-only">Sensory Mode</span></button>
-      <button id="btn-emergency-drawer" class="btn-emergency-drawer" type="button" aria-expanded="false" aria-controls="emergency-drawer" title="Emergency survival cards" data-i18n-title="app.emergencyCards"><svg class="icon" aria-hidden="true"><use href="/icons.svg#alert"></use></svg><span data-i18n="app.emergency">Emergency</span></button>
+      <button id="btn-sensory-mode" class="btn-sensory-mode" type="button" aria-pressed="false" aria-keyshortcuts="Alt+S" title="Low-stimulation sensory mode (Alt+S)" data-i18n-title="app.sensoryMode"><svg class="icon" aria-hidden="true"><use href="/icons.svg#eye"></use></svg><span class="sr-only" data-i18n="app.sensoryModeLabel">Sensory Mode</span></button>
+      <button id="btn-emergency-drawer" class="btn-emergency-drawer" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="emergency-drawer" title="Emergency survival cards" data-i18n-title="app.emergencyCards"><svg class="icon" aria-hidden="true"><use href="/icons.svg#alert"></use></svg><span data-i18n="app.emergency">Emergency</span></button>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
         <svg class="icon" aria-hidden="true"><use href="/icons.svg#menu"></use></svg>
         <span data-i18n="app.menu">Menu</span>
@@ -57,16 +57,25 @@
         <ul>
           <li><a href="#/match" data-nav="match" data-i18n="app.nav.match">Care that fits</a></li>
           <li><a href="#/treatment" data-nav="treatment" data-i18n="app.nav.treatment">Find treatment</a></li>
-          <li><a href="#/navigator" data-nav="navigator" data-i18n="app.nav.navigator">Care navigator</a></li>
-          <li><a href="#/assessment" data-nav="assessment" data-i18n="app.nav.assessment">Withdrawal check (COWS/CIWA)</a></li>
-          <li><a href="#/readiness" data-nav="readiness" data-i18n="app.nav.readiness">Readiness to change</a></li>
-          <li><a href="#/medications" data-nav="medications" data-i18n="app.nav.medications">Medications</a></li>
-          <li><a href="#/harm-reduction" data-nav="harm-reduction" data-i18n="app.nav.harm">Harm reduction</a></li>
           <li><a href="#/health" data-nav="health" data-i18n="app.nav.health">Health services</a></li>
+          <li><a href="#/tools" data-nav="tools" data-i18n="app.nav.tools">Care tools</a></li>
           <li><a href="#/plan" data-nav="plan" data-i18n="app.nav.plan">Safety plan</a></li>
-          <li><a href="#/support" data-nav="support" data-i18n="app.nav.support">Recovery &amp; family</a></li>
-          <li><a href="#/choosing-care" data-nav="choosing-care" data-i18n="app.nav.choosing">Choosing care</a></li>
+          <li><a href="#/workspace" data-nav="workspace" data-i18n="app.nav.workspace">For care teams</a></li>
           <li><a href="#/saved" data-nav="saved"><span data-i18n="app.nav.saved">Saved</span> <span id="saved-count" class="count" hidden></span></a></li>
+          <li class="nav-more">
+            <details class="nav-more-menu">
+              <summary data-i18n="app.nav.more">More tools</summary>
+              <ul class="nav-more-links">
+                <li><a href="#/navigator" data-nav="navigator" data-i18n="app.nav.navigator">Care navigator</a></li>
+                <li><a href="#/assessment" data-nav="assessment" data-i18n="app.nav.assessment">Withdrawal check (COWS/CIWA)</a></li>
+                <li><a href="#/readiness" data-nav="readiness" data-i18n="app.nav.readiness">Readiness to change</a></li>
+                <li><a href="#/medications" data-nav="medications" data-i18n="app.nav.medications">Medications</a></li>
+                <li><a href="#/harm-reduction" data-nav="harm-reduction" data-i18n="app.nav.harm">Harm reduction</a></li>
+                <li><a href="#/support" data-nav="support" data-i18n="app.nav.support">Recovery &amp; family</a></li>
+                <li><a href="#/choosing-care" data-nav="choosing-care" data-i18n="app.nav.choosing">Choosing care</a></li>
+              </ul>
+            </details>
+          </li>
         </ul>
       </nav>
     </div>

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { useDictionary } from '../public/js/i18n.js';
+import esClinical from '../public/js/locales/es-clinical.js';
 useDictionary('en', {});
 
 import {
@@ -278,13 +279,15 @@ test('RESCUE_PACING_STEPS schema and evidence-based clinical protocols', async (
     ]);
   });
 
-  await t.test('Step 1 incorporates sternal rub and critical unresponsiveness verification', () => {
+  await t.test('Step 1 checks response and breathing without painful stimulation', () => {
     const s1 = RESCUE_PACING_STEPS[0];
     assert.equal(s1.step, 1);
-    assert.match(s1.headline, /firm rub on breastbone/i);
-    assert.ok(s1.instructions.some((i) => i.includes('sternum') || i.includes('breastbone')));
+    assert.match(s1.headline, /breathing normally/i);
+    assert.ok(s1.instructions.some((i) => /tap their shoulders/i.test(i)));
+    assert.doesNotMatch(s1.instructions.join(' '), /grind|physical pain|sternal rub/i);
     assert.ok(s1.instructions.some((i) => i.includes('911')));
-    assert.match(s1.clinicalNote, /zero harm/i);
+    assert.match(s1.clinicalNote, /suspected opioid overdose/i);
+    assert.match(s1.clinicalNote, /does not replace.*CPR/i);
   });
 
   await t.test('Step 2 incorporates 4mg nasal spray and 0.4mg IM injection formulations', () => {
@@ -309,10 +312,11 @@ test('RESCUE_PACING_STEPS schema and evidence-based clinical protocols', async (
     assert.equal(s3.clinicalCallout.type, 'wooden_chest_syndrome');
     assert.equal(s3.clinicalCallout.title, WOODEN_CHEST_SYNDROME.title);
     assert.match(s3.clinicalCallout.warning, /Wooden Chest Syndrome/i);
-    assert.match(s3.clinicalCallout.warning, /laryngospasm/i);
-    assert.match(s3.clinicalCallout.action, /repeat dose of naloxone/i);
-    assert.match(s3.clinicalCallout.action, /60.*90 seconds/i);
-    assert.match(s3.clinicalCallout.action, /neuromuscular blockade/i);
+    assert.match(s3.clinicalCallout.warning, /cannot diagnose/i);
+    assert.match(s3.clinicalCallout.action, /new nasal spray every 2–3 minutes/i);
+    assert.match(s3.clinicalCallout.action, /product label/i);
+    assert.doesNotMatch(s3.clinicalCallout.action, /60.*90 seconds|neuromuscular blockade|requiring.*intubation/i);
+    assert.ok(s3.instructions.some((i) => /911.*CPR instructions/i.test(i)));
   });
 
   await t.test('Step 4 specifies 2-minute and 3-minute marks and incorporates Xylazine Sedation Caution', () => {
@@ -325,10 +329,14 @@ test('RESCUE_PACING_STEPS schema and evidence-based clinical protocols', async (
     // Clinical Callout: Xylazine Sedation Management
     assert.equal(s4.clinicalCallout.type, 'xylazine_sedation');
     assert.equal(s4.clinicalCallout.title, XYLAZINE_SEDATION_MANAGEMENT.title);
-    assert.match(s4.clinicalCallout.warning, /DO NOT DUMP REPEATED NALOXONE/i);
-    assert.match(s4.clinicalCallout.warning, /alpha-2 adrenergic agonist/i);
-    assert.match(s4.clinicalCallout.clinicalGoal, /endpoint of naloxone is restoring adequate spontaneous respiration/i);
-    assert.match(s4.clinicalCallout.action, /keep the patient warm/i);
+    assert.match(s4.clinicalCallout.warning, /still give naloxone.*suspected opioid overdose/i);
+    assert.match(s4.clinicalCallout.clinicalGoal, /normal breathing, not full wakefulness/i);
+    assert.match(s4.clinicalCallout.action, /recovery position/i);
+    for (const point of s4.evaluationPoints) {
+      assert.match(point.instruction, /breathing.*slow, shallow, or absent/i);
+      assert.match(point.instruction, /new nasal spray/i);
+      assert.doesNotMatch(point.instruction, /still unresponsive or/i);
+    }
   });
 
   await t.test('Step 5 specifies Left Lateral Recumbent position and incorporates Renarconization Risk', () => {
@@ -344,7 +352,8 @@ test('RESCUE_PACING_STEPS schema and evidence-based clinical protocols', async (
     assert.equal(s5.clinicalCallout.title, RENARCONIZATION_RISK.title);
     assert.match(s5.clinicalCallout.warning, /Renarconization Risk/i);
     assert.match(s5.clinicalCallout.warning, /half-life of 30 to 90 minutes/i);
-    assert.match(s5.clinicalCallout.action, /MINIMUM of 2 to 4 hours/i);
+    assert.match(s5.clinicalCallout.action, /stay with the person until emergency help takes over/i);
+    assert.doesNotMatch(s5.clinicalCallout.action, /never allow.*leave/i);
   });
 });
 
@@ -471,14 +480,50 @@ test('Step progression and dose administration navigation', async (t) => {
     stopReDoseTimer();
   });
 
-  await t.test('recordSpontaneousBreathingResumed marks resumed and moves to Step 5', () => {
+  await t.test('recording the second dose restarts the label interval from that dose', () => {
+    resetOverdosePacer();
+    recordFirstDose({ nostril: 'right' });
+    tickReDoseTimer(120);
+    assert.equal(getOverdosePacerState().twoMinuteAlertTriggered, true);
+
+    recordSecondDose({ nostril: 'left' });
+    const restarted = getOverdosePacerState();
+    assert.equal(restarted.reDoseElapsedSeconds, 0);
+    assert.equal(restarted.reDoseRemainingSeconds, 180);
+    assert.equal(restarted.twoMinuteAlertTriggered, false);
+    assert.equal(restarted.threeMinuteAlertTriggered, false);
+    assert.equal(restarted.evaluationAlert, null);
+
+    // A dose at the two-minute mark must not produce another prompt only
+    // one minute later from the previous dose's clock.
+    tickReDoseTimer(60);
+    assert.equal(getOverdosePacerState().evaluationAlert, null);
+    tickReDoseTimer(60);
+    assert.equal(getOverdosePacerState().evaluationAlert, '2min_evaluate');
+    stopReDoseTimer();
+  });
+
+  await t.test('normal breathing moves to recovery and stops dose prompts and breathing cues', () => {
     resetOverdosePacer();
     setOverdosePacerStep(3);
+    startRescueBreathingTimer();
+    recordFirstDose();
+    tickReDoseTimer(119);
     recordSpontaneousBreathingResumed();
     const st = getOverdosePacerState();
 
     assert.equal(st.spontaneousBreathingResumed, true);
     assert.equal(st.currentStep, 5);
+    assert.equal(st.isBreathingActive, false);
+    assert.equal(st.reDoseTimerActive, false);
+
+    // A queued callback after recovery must not tell a sleepy person’s helper
+    // to give another dose merely because the previous clock reached a mark.
+    const alerts = [];
+    tickReDoseTimer(180, { onAlert: (alert) => alerts.push(alert) });
+    assert.deepEqual(alerts, []);
+    assert.equal(getOverdosePacerState().reDoseElapsedSeconds, 119);
+    assert.equal(getOverdosePacerState().evaluationAlert, null);
   });
 });
 
@@ -670,7 +715,7 @@ test('DOM Component: overdosePacer accessible rendering and step progression', (
 
     // Step 1 initial view
     const title = pacerRoot.querySelector('.pacer-step-title');
-    assert.match(title.textContent, /Sternal Rub & Responsiveness/i);
+    assert.match(title.textContent, /Check Response & Breathing/i);
 
     // Call 911 button is present in Step 1
     const callBtn = pacerRoot.querySelector('.btn-emergency');
@@ -695,12 +740,18 @@ test('DOM Component: overdosePacer accessible rendering and step progression', (
     assert.ok(dose1Btn);
     dose1Btn.click();
 
-    // Clicking 1st dose transitions to Step 3 and starts timers
+    // Recording a dose starts its clock, but never starts rescue breathing
+    // automatically before the helper can read the dispatcher/CPR instruction.
     const stStep3 = getOverdosePacerState();
     assert.equal(stStep3.currentStep, 3);
     assert.equal(stStep3.firstDoseAdministered, true);
-    assert.equal(stStep3.isBreathingActive, true);
+    assert.equal(stStep3.isBreathingActive, false);
     assert.equal(stStep3.reDoseTimerActive, true);
+    assert.match(pacerRoot.textContent, /911 dispatcher’s CPR instructions/i);
+    const metronomeStart = pacerRoot.querySelectorAll('button').find((b) => b.textContent.includes('Start Metronome'));
+    assert.ok(metronomeStart);
+    metronomeStart.click();
+    assert.equal(getOverdosePacerState().isBreathingActive, true);
 
     // Step 3 metronome has role="timer" and aria-live="polite"
     const metronomeBox = pacerRoot.querySelector('.pacer-metronome-box');
@@ -727,7 +778,7 @@ test('DOM Component: overdosePacer accessible rendering and step progression', (
     const xylazineAlert = pacerRoot.querySelector('.alert-xylazine');
     assert.ok(xylazineAlert);
     assert.match(xylazineAlert.textContent, /Xylazine/i);
-    assert.match(xylazineAlert.textContent, /Naloxone Dumping/i);
+    assert.match(xylazineAlert.textContent, /normal breathing, not full wakefulness/i);
 
     // Simulate clicking "Normal Breathing Resumed" -> proceeds to Step 5
     const breathingResumedBtn = pacerRoot.querySelectorAll('button').find((b) =>
@@ -761,4 +812,44 @@ test('DOM Component: overdosePacer accessible rendering and step progression', (
     assert.equal(resetInvoked, true);
     assert.equal(getOverdosePacerState().currentStep, 1);
   });
+});
+
+test('English and Spanish emergency views and live alerts use breathing-based redosing', () => {
+  for (const [lang, dictionary] of [['en', {}], ['es', esClinical]]) {
+    useDictionary(lang, dictionary);
+    try {
+      withMockDom(({ body }) => {
+        resetOverdosePacer();
+        const root = overdosePacer();
+        body.append(root);
+        setOverdosePacerStep(3);
+        const step3 = root.textContent;
+        assert.match(step3, lang === 'en' ? /cannot diagnose/i : /no puede diagnosticar/i);
+        assert.match(step3, lang === 'en' ? /911 dispatcher’s CPR instructions/i : /RCP del operador del 911/i);
+        assert.doesNotMatch(step3, /60.?90|60 a 90|requiring rapid sequence|requiere intubación/i);
+
+        recordFirstDose();
+        setOverdosePacerStep(4);
+        tickReDoseTimer(120);
+        const doseAtTwoMinutes = root.querySelector('.pacer-alert-container').textContent;
+        assert.match(doseAtTwoMinutes, lang === 'en' ? /breathing.*slow, shallow, or absent/i : /respiración.*lenta, superficial o ausente/i);
+        assert.match(doseAtTwoMinutes, lang === 'en' ? /new nasal spray/i : /aerosol nasal nuevo/i);
+        tickReDoseTimer(60);
+        const doseAtThreeMinutes = root.querySelector('.pacer-alert-container').textContent;
+        assert.match(doseAtThreeMinutes, lang === 'en' ? /normal breathing can return before/i : /respiración normal puede volver antes/i);
+        assert.doesNotMatch(doseAtThreeMinutes, /still unresponsive or|sigue sin responder o/i);
+        assert.match(root.querySelector('.alert-xylazine').textContent, lang === 'en' ? /not full wakefulness/i : /no despertar por completo/i);
+
+        const recordDose = root.querySelector('.pacer-second-dose-box').querySelector('button');
+        assert.ok(recordDose);
+        recordDose.click();
+        assert.equal(root.querySelector('.timer-display').textContent, '3:00');
+        assert.match(root.querySelector('.pacer-second-dose-box').textContent, lang === 'en' ? /second dose recorded/i : /segunda dosis registrada/i);
+        assert.equal(root.querySelector('.pacer-second-dose-box').querySelector('button'), null);
+      });
+    } finally {
+      resetOverdosePacer();
+      useDictionary('en', {});
+    }
+  }
 });

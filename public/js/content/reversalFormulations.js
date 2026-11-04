@@ -377,6 +377,11 @@ Object.defineProperty(REVERSAL_FORMULATIONS, Symbol.iterator, {
 
 /**
  * Clinical Scenario Guide: Wooden Chest Syndrome (Fentanyl-Induced Muscle Rigidity)
+ * Bystander instructions follow the FDA NARCAN label (2–3 minute repeat doses)
+ * and SAMHSA/AHA breathing-support guidance, not a separate rigidity dose protocol:
+ * https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/208411Orig1s002lbl.pdf
+ * https://library.samhsa.gov/sites/default/files/overdose-prevention-response-kit-pep23-03-00-001.pdf
+ * Difficulty ventilating is an emergency observation, not a diagnosis by this tool.
  */
 export const WOODEN_CHEST_SYNDROME = {
   id: 'wooden_chest_syndrome',
@@ -385,7 +390,7 @@ export const WOODEN_CHEST_SYNDROME = {
   pathophysiology: {
     mechanism: 'Central mu-opioid receptor-mediated hypertonicity originating in the striatum/basal ganglia, locus coeruleus, and spinal cord interneurons, triggering massive sustained contraction of chest wall, intercostal, and abdominal musculature.',
     glotticInvolvement: 'Simultaneous acute vocal cord closure (laryngospasm/glottic adduction) that mechanically seals the upper airway.',
-    ventilationImpact: 'Bag-valve-mask (BVM) and rescue breathing become physically impossible due to insurmountable thoracic impedance and vocal cord closure, producing rapid fatal anoxia within minutes.',
+    ventilationImpact: 'Chest wall rigidity can make bag-valve-mask (BVM) ventilation and rescue breathing difficult. Difficulty ventilating can have other causes and needs immediate emergency assessment.',
     triggers: [
       'Rapid intravenous injection or concentrated inhalation of illicit synthetic fentanyl or potent analogues (e.g., alfentanil, sufentanil, carfentanil)',
       'High dose or high rate of administration overwhelming central inhibitory interneurons',
@@ -402,31 +407,31 @@ export const WOODEN_CHEST_SYNDROME = {
   ],
   emergencyGuidance: [
     '1. Call 911 immediately: Request urgent emergency medical services / Advanced Life Support for severe chest rigidity and suspected synthetic opioid overdose.',
-    '2. Give naloxone: Administer first dose immediately (4 mg nasal or 0.4–2 mg IV/IM); if chest wall remains rigid and airflow is blocked after 60–90 seconds, give an immediate repeat naloxone dose.',
-    '3. Rescue breathing (1 breath every 5s): Perform vigorous two-handed jaw thrust and attempt rescue breathing (1 breath every 5 seconds) as chest wall rigidity relents.',
+    '2. Give naloxone for a suspected opioid overdose, following the product label. For naloxone nasal spray, repeat with a new device every 2–3 minutes if breathing is slow, shallow, or absent, or becomes abnormal again. Alternate nostrils.',
+    '3. Rescue breathing (1 breath every 5s) only as trained or directed by 911. If the person is unresponsive and not breathing normally, follow the dispatcher’s CPR instructions and use an AED if available. Never delay CPR to use a timer.',
     '4. Left recovery position: Place into left recovery position once breathing resumes to protect airway and prevent aspiration.',
     '5. Stay with them: Stay with the person continuously until emergency medical personnel arrive.',
-    'Emergency Medical Services (EMS) / Hospital ED Procedure: In refractory prehospital or emergency department settings, definitive hospital management requires rapid sequence endotracheal intubation (RSI) and neuromuscular blockade (e.g., succinylcholine or rocuronium) to relax the chest wall.',
+    'Emergency Medical Services (EMS) / Hospital ED Procedure: Trained clinicians assess the cause of breathing difficulty and select airway treatment using their clinical protocols. Bystanders should report observed signs and follow dispatcher instructions.',
   ],
   immediateClinicalResponse: {
     priorityOrder: [
       '1. Call 911 immediately: Request Advanced Life Support (ALS) for rigid airway and anoxia.',
-      '2. Give naloxone immediately: Administer high-dose naloxone (repeat immediately if chest wall remains rigid).',
-      '3. Rescue breathing (1 breath every 5s): Two-handed jaw thrust, prepare for rescue breaths.',
+      '2. Give naloxone immediately for a suspected opioid overdose. Follow the product’s repeat-dose instructions; nasal spray doses are repeated every 2–3 minutes if breathing remains abnormal.',
+      '3. Support breathing as trained or directed by 911; follow CPR instructions for an unresponsive person who is not breathing normally.',
       '4. Left recovery position: Roll onto left side once breathing resumes to protect airway against aspiration.',
       '5. Stay with them: Monitor continuously until emergency personnel arrive.',
-      'EMS / Hospital ED Procedure: In refractory cases, ALS/hospital personnel perform neuromuscular blockade (succinylcholine or rocuronium) with rapid sequence intubation (RSI).',
+      'EMS / Hospital ED Procedure: Trained emergency clinicians assess breathing difficulty and provide airway treatment using clinical protocols.',
     ],
-    naloxoneDosing: 'Administer high-dose naloxone: give 4 mg intranasal or 0.4–2 mg IV/IM naloxone immediately. If chest wall remains rigid and rescue breaths cannot be delivered after 60–90 seconds, IMMEDIATELY repeat naloxone dose. High central opioid receptor occupancy requires prompt, aggressive displacement.',
-    airwayManagement: 'Perform vigorous two-handed jaw thrust to open the supraglottic space. Attempt rescue breathing (1 breath every 5 seconds) with bag-valve-mask or pocket mask. Place in left recovery position once breathing resumes; stay with them continuously. Do not delay repeat naloxone while struggling with airway.',
-    emsRole: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Paramedics and ALS/hospital medical teams manage acute refractory wooden chest syndrome. In prehospital/ED refractory cases, definitive hospital management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
-    hospitalEmsProcedure: 'Emergency Medical Services (EMS) / Hospital ED Procedure: In prehospital/ED refractory cases, definitive hospital management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
-    contraindications: 'Do not rely solely on rescue breathing without naloxone, as physical chest wall rigidity and closed vocal cords prevent air from entering lungs.',
+    naloxoneDosing: 'Give naloxone for a suspected opioid overdose, following the product label. Repeat nasal spray every 2–3 minutes with a new device in the other nostril if breathing remains slow, shallow, or absent, or becomes abnormal again. Stiffness alone is not a reason to shorten the labeled interval.',
+    airwayManagement: 'Tell 911 immediately if breaths are not going in. Follow dispatcher instructions for CPR and breathing support; use airway techniques only as trained. Place in the recovery position once normal breathing returns and stay until emergency help takes over.',
+    emsRole: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Trained emergency clinicians assess the cause of breathing difficulty and select airway management using clinical protocols. This tool does not diagnose chest wall rigidity or prescribe a procedure.',
+    hospitalEmsProcedure: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Advanced airway treatment is provided by trained clinicians according to their protocols and assessment.',
+    contraindications: 'Do not delay emergency help, CPR, or breathing support while waiting for naloxone to work. Difficulty ventilating alone does not establish its cause.',
   },
   evidenceBase: [
-    { organization: 'AHA', title: 'Cardiac Arrest in Opioid Overdose and Chest Wall Rigidity Guidelines', year: 2023 },
-    { organization: 'ACMT', title: 'Fentanyl-Induced Chest Wall Rigidity: Clinical Toxicologic Mechanisms', year: 2022 },
-    { organization: 'SAMHSA', title: 'Overdose Prevention and Response Toolkit', year: 2023 },
+    { organization: 'FDA', title: 'NARCAN Nasal Spray: Dosage and Administration / Instructions for Use', year: 2019, url: 'https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/208411Orig1s002lbl.pdf' },
+    { organization: 'AHA', title: 'Opioid-Associated Emergency for Lay Responders Algorithm', year: 2020, url: 'https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2024-Algorithms/Algorithm-Opioid-Lay-Responder-200615.pdf' },
+    { organization: 'SAMHSA', title: 'Overdose Prevention and Response Toolkit (updated May 2026)', year: 2026, url: 'https://library.samhsa.gov/sites/default/files/overdose-prevention-response-kit-pep23-03-00-001.pdf' },
   ],
 };
 
@@ -792,7 +797,7 @@ export function evaluateOverdoseRiskScenario(scenario) {
     ? { type: scenario.toLowerCase().trim() }
     : (scenario && typeof scenario === 'object' ? scenario : {});
 
-  // Detect Wooden Chest Syndrome
+  // Route observations to urgent help without treating them as a diagnosis.
   if (
     norm.type === 'wooden_chest' ||
     norm.type === 'wooden_chest_syndrome' ||
@@ -803,17 +808,17 @@ export function evaluateOverdoseRiskScenario(scenario) {
   ) {
     return {
       scenarioId: 'wooden_chest_syndrome',
-      scenarioTitle: 'Wooden Chest Syndrome (Fentanyl-Induced Muscle Rigidity)',
+      scenarioTitle: 'Breathing Difficulty / Possible Chest Wall Rigidity',
       severity: 'critical',
       emergencyEMSRequired: true,
-      primaryAction: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them. Request Advanced Life Support for severe chest wall rigidity. If chest wall remains rigid and positive-pressure airflow is blocked, repeat naloxone within 60–90 seconds.',
-      naloxoneGuidance: 'High-dose naloxone: give 4 mg intranasal or 0.4–2 mg IV/IM immediately. Repeat immediately if rigidity persists and positive-pressure ventilation remains blocked.',
-      airwayGuidance: 'Perform vigorous jaw thrust. Attempt rescue breathing (1 breath every 5 seconds). Place in left recovery position once breathing resumes; stay with them continuously. Note: EMS/ED hospital procedure for refractory rigidity includes advanced neuromuscular blockade (succinylcholine/rocuronium) and endotracheal intubation.',
+      primaryAction: 'Call 911 immediately, give naloxone for a suspected opioid overdose, support breathing with rescue breathing or CPR as directed by 911, use the recovery position once breathing normally, and stay with them. Tell the dispatcher if breaths are not going in. Repeat nasal naloxone every 2–3 minutes with a new device if breathing remains slow, shallow, or absent, following the product label.',
+      naloxoneGuidance: WOODEN_CHEST_SYNDROME.immediateClinicalResponse.naloxoneDosing,
+      airwayGuidance: WOODEN_CHEST_SYNDROME.immediateClinicalResponse.airwayManagement,
       warnings: [
-        'Do not delay repeat naloxone to struggle with rescue breathing alone: vocal cord closure and rigid intercostals physically block positive pressure airflow.',
-        'Typically triggered by rapid IV injection or high-concentration inhalation of synthetic fentanyl.',
+        'Difficulty ventilating can have several causes. This tool cannot diagnose fentanyl-related chest rigidity; report the signs to 911.',
+        'Do not delay CPR or emergency help to use a timer or wait for naloxone to work.',
       ],
-      monitoringProtocol: 'Continuous intensive care monitoring post-resuscitation. High risk of immediate hypoxic brain injury if rigidity is not reversed in <3 minutes.',
+      monitoringProtocol: 'Keep watching breathing and stay with the person until emergency help takes over, even if they wake up.',
       recommendedFormulation: 'naloxone_nasal_4mg',
       referenceGuide: WOODEN_CHEST_SYNDROME,
     };

@@ -1064,13 +1064,16 @@ describe('Sensory Accessibility & Offline Emergency Cards Contract', () => {
     assert.equal(dialog.getAttribute('role'), 'dialog');
     assert.equal(dialog.getAttribute('aria-modal'), 'true');
 
-    // Card 1: Naloxone & Rescue Breathing Pacing
+    // Card 1: Naloxone and dispatcher-directed breathing support
     const pacingCard = drawerModule.buildNaloxonePacingCard();
     assert.ok(pacingCard instanceof MockNode);
     const pacingText = pacingCard.textContent;
     assert.match(pacingText, /naloxone|4\s*mg/i, 'Card 1 must document 4mg naloxone administration');
-    assert.match(pacingText, /5\s*second/i, 'Card 1 must document 1 breath every 5 seconds pacing');
-    assert.match(pacingText, /2|3\s*min/i, 'Card 1 must document 2-3 minute redosing check');
+    assert.match(pacingText, /follow the 911 dispatcher[’']s CPR instructions/i, 'Card 1 prioritizes dispatcher-guided CPR');
+    assert.match(pacingText, /never delay CPR to use a timer/i, 'Card 1 must not encourage delaying CPR for pacing');
+    assert.match(pacingText, /not a CPR timer/i, 'Card 1 identifies the limit of its reference guidance');
+    assert.match(pacingText, /new naloxone nasal spray/i, 'Card 1 specifies a new nasal device for repeat dosing');
+    assert.match(pacingText, /every 2[–-]3 minutes/i, 'Card 1 documents the nasal product-label redosing interval');
 
     // Card 2: Opioid vs Stimulant Matrix
     const matrixCard = drawerModule.buildOverdoseMatrixCard();
