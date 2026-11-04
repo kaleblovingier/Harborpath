@@ -576,3 +576,4 @@ function renderResponderSupportTab(container, isEs) {
   ]);
   container.appendChild(card);
 }
+

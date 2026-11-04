@@ -583,3 +583,4 @@ function renderFaqTab(container, isEs) {
   });
   container.appendChild(faqContainer);
 }
+

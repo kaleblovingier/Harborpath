@@ -320,3 +320,4 @@ export function medicalRespiteFinderComponent(container) {
   wrapper.appendChild(resultsDiv);
   container.appendChild(wrapper);
 }
+

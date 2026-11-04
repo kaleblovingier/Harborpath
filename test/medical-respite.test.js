@@ -150,3 +150,4 @@ test('Medical Respite & Recuperative Care Specialist (public/js/components/medic
     assert.doesNotMatch(code, /saved to disk|erases everything|zero-knowledge|does not record search terms|never stored|nothing is logged|100% private/i, 'No absolute overclaims');
   });
 });
+

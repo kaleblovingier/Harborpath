@@ -583,3 +583,4 @@ function renderSaferUseTab(container, isEs) {
   ]);
   container.appendChild(card);
 }
+
