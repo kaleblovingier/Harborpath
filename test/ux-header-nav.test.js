@@ -221,6 +221,17 @@ mockAnnouncer.setAttribute('aria-live', 'polite');
 mockBody.append(mockAnnouncer);
 
 const windowListeners = {};
+const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+
+Object.defineProperty(globalThis, 'navigator', {
+  configurable: true,
+  value: { languages: ['en-US'], language: 'en-US' },
+});
+
+after(() => {
+  if (originalNavigator) Object.defineProperty(globalThis, 'navigator', originalNavigator);
+  else delete globalThis.navigator;
+});
 
 globalThis.Node = MockNode;
 globalThis.document = {
