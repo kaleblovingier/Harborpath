@@ -79,6 +79,10 @@ Platforms that detect `npm start` (Render, Railway, Fly.io, Heroku-style hosts) 
 | `public/js/views/disabilityCare.js` | ADA Title II/III service animal rights, auxiliary communication (ASL/CART), sensory/ADHD accommodations, and CDC pain rules |
 | `public/js/views/streetMedicine.js` | Low-barrier street buprenorphine, extreme weather hypothermia/heat survival, sweep protections, and HUD shelter rights |
 | `public/js/components/sspEquipmentTracker.js` | Syringe services calculator, low dead-space needle standards, ascorbic acid safety, and sharps disposal |
+| `public/js/views/immigrantHealth.js` | DHS Protected Areas Policy, Emergency Medicaid (42 U.S.C. § 1396b(v)), 2022 Public Charge exemptions, and Title VI language access |
+| `public/js/views/postOverdose.js` | Post-overdose response teams (PORT), critical 48hr-30d vulnerability window, precipitated withdrawal management, and DEA 72-hour bridges |
+| `public/js/views/stimulantCare.js` | Stimulant overamping differential (physical vs psychological), cooling protocols, physical restraint avoidance, and Contingency Management |
+| `public/js/components/medicalRespiteFinder.js` | NHCHC medical respite and recuperative care screening, post-acute unhoused recovery, safe discharge rights, and MOUD lockboxes |
 | `public/js/views/veterans.js` | VA MISSION Act community care, TRICARE prior authorizations, Military Sexual Trauma ($0 copay), and Veterans Crisis Line |
 | `public/js/views/adolescentCare.js` | Minor consent laws, 42 CFR Part 2 youth confidentiality, EOB privacy suppression, and youth-adapted ASAM pathways |
 | `public/js/components/clinicalDifferential.js` | 4-condition poly-substance differential engine (Hunter serotonin criteria, opioid/xylazine, stimulant overamping, soft tissue necrosis) |

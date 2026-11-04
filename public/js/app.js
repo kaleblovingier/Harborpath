@@ -119,6 +119,18 @@ export const LAZY_LOADERS = {
     viewCache.set('street-medicine', m.streetMedicineView);
     return m.streetMedicineView;
   }),
+  'immigrant-health': () => import('./views/immigrantHealth.js').then((m) => {
+    viewCache.set('immigrant-health', m.immigrantHealthView);
+    return m.immigrantHealthView;
+  }),
+  'post-overdose': () => import('./views/postOverdose.js').then((m) => {
+    viewCache.set('post-overdose', m.postOverdoseView);
+    return m.postOverdoseView;
+  }),
+  'stimulant-care': () => import('./views/stimulantCare.js').then((m) => {
+    viewCache.set('stimulant-care', m.stimulantCareView);
+    return m.stimulantCareView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -150,6 +162,9 @@ export const ROUTE_TITLES = {
   'rural-health': () => t('route.ruralHealth', 'Rural & frontier health'),
   'disability-care': () => t('route.disabilityCare', 'Disability, neurodiversity & accessible care'),
   'street-medicine': () => t('route.streetMedicine', 'Street medicine & unhoused care'),
+  'immigrant-health': () => t('route.immigrantHealth', 'Immigrant health & language rights'),
+  'post-overdose': () => t('route.postOverdose', 'Post-overdose care & MOUD bridges'),
+  'stimulant-care': () => t('route.stimulantCare', 'Stimulant care & overamping'),
   support: () => t('route.support', 'Recovery & family support'),
   'choosing-care': () => t('route.choosing', 'Choosing quality care'),
   states: () => t('route.states', 'Resources by state and territory'),
@@ -191,6 +206,9 @@ export function preloadAllLazyViews() {
     preloadRoute('rural-health'),
     preloadRoute('disability-care'),
     preloadRoute('street-medicine'),
+    preloadRoute('immigrant-health'),
+    preloadRoute('post-overdose'),
+    preloadRoute('stimulant-care'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -333,6 +351,10 @@ export function runQuickExitResets() {
   import('./views/disabilityCare.js').then((m) => m.resetDisabilityState?.()).catch(() => {});
   import('./views/streetMedicine.js').then((m) => m.resetStreetMedicineState?.()).catch(() => {});
   import('./components/sspEquipmentTracker.js').then((m) => m.resetSspTrackerState?.()).catch(() => {});
+  import('./views/immigrantHealth.js').then((m) => m.resetImmigrantState?.()).catch(() => {});
+  import('./views/postOverdose.js').then((m) => m.resetPostOverdoseState?.()).catch(() => {});
+  import('./views/stimulantCare.js').then((m) => m.resetStimulantCareState?.()).catch(() => {});
+  import('./components/medicalRespiteFinder.js').then((m) => m.resetRespiteFinderState?.()).catch(() => {});
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
