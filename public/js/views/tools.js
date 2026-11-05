@@ -50,6 +50,7 @@ const entries = [
   ['viral-hepatitis', 'health', 'Hepatitis C cure, DAA regimens, FIB-4 & HIV PrEP/PEP', 'AASLD/IDSA 8-to-12-week DAA cure protocols, non-invasive FIB-4 scoring, HBV screening, HIV 72-hour PEP, and patient rights without sobriety barriers.', ['individual', 'supporter', 'care-team']],
   ['nicotine-care', 'health', 'Tobacco, nicotine, vaping and smoking cessation', 'Fagerström dependence scoring, combination NRT dosing protocols, varenicline guidance, vape salt down-titration, and craving defusal.', ['individual', 'supporter', 'care-team']],
   ['benzodiazepine-care', 'care', 'Benzodiazepines, Ashton tapering and BIND care', 'Diazepam equivalence calculator, Ashton Manual crossover schedules, flumazenil toxicity alerts, protracted withdrawal (BIND) validation, and seizure safety.', ['individual', 'supporter', 'care-team']],
+  ['adhd-care', 'care', 'ADHD, neurodiversity and stimulant harm reduction', 'ASRS v1.1 clinical screener, non-stimulant pharmacotherapy in SUD recovery, counterfeit pill FTS dilution, and executive function tools.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

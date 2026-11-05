@@ -171,6 +171,7 @@ export function harmReductionView() {
       p('For AASLD/IDSA Hepatitis C 8-to-12-week DAA cure regimens, non-invasive FIB-4 scoring, HBV screening, and HIV PrEP/PEP emergency windows, explore the ', h('a', { href: '#/viral-hepatitis' }, 'Viral Hepatitis (HCV/HBV), DAA & HIV PrEP/PEP Guide'), '.'),
       p('For concurrent smoking cessation in recovery, Fagerström dependence scoring, combination NRT dosing protocols, and vape salt tapering, visit the ', h('a', { href: '#/nicotine-care' }, 'Tobacco, Nicotine & Vaping Recovery Navigator'), '.'),
       p('For Ashton Manual diazepam equivalence calculations, stepwise crossover tapering schedules, flumazenil black box contraindications, and protracted BIND validation, explore the ', h('a', { href: '#/benzodiazepine-care' }, 'Benzodiazepine & Ashton Taper Navigator'), '.'),
+      p('For adult ADHD self-screening (ASRS v1.1), non-controlled pharmacotherapy in SUD recovery, counterfeit pressed pill FTS dilution, and executive function tools, explore the ', h('a', { href: '#/adhd-care' }, 'ADHD, Neurodiversity & Stimulant Harm Reduction Navigator'), '.'),
       fine('Wound care guidance from the ',
         ext('https://www.cdc.gov/overdose-prevention/media/pdfs/2024/07/Xylazine-Clinical-Management-and-Harm-Reduction.pdf', 'CDC xylazine fact sheet'), '.'),
     ),

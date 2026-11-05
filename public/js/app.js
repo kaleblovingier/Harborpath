@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'adhd-care': () => import('./views/adhdCare.js').then((m) => {
+    viewCache.set('adhd-care', m.adhdCareView);
+    routeResets.set('adhd-care', m.resetAdhdState);
+    return m.adhdCareView;
+  }),
   'benzodiazepine-care': () => import('./views/benzodiazepineCare.js').then((m) => {
     viewCache.set('benzodiazepine-care', m.benzodiazepineCareView);
     routeResets.set('benzodiazepine-care', m.resetBenzodiazepineState);
@@ -221,6 +226,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'adhd-care': () => t('route.adhdCare', 'ADHD, neurodiversity & stimulant harm reduction'),
   'benzodiazepine-care': () => t('route.benzodiazepineCare', 'Benzodiazepines, Ashton tapering & BIND care'),
   'nicotine-care': () => t('route.nicotineCare', 'Tobacco, nicotine, vaping & smoking cessation'),
   'viral-hepatitis': () => t('route.viralHepatitis', 'Hepatitis C cure, DAA regimens, FIB-4 & HIV PrEP/PEP'),
@@ -320,6 +326,7 @@ export function preloadAllLazyViews() {
     preloadRoute('viral-hepatitis'),
     preloadRoute('nicotine-care'),
     preloadRoute('benzodiazepine-care'),
+    preloadRoute('adhd-care'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

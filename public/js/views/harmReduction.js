@@ -513,6 +513,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-secondary btn-small',
         href: '#/benzodiazepine-care',
       }, icon('shield'), tr('Benzodiazepines, Ashton taper & BIND', 'Benzodiazepinas, desescalada Ashton y BIND')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/adhd-care',
+      }, icon('activity'), tr('ADHD, neurodiversity & fake pill safety', 'TDAH, neurodiversidad y pastillas falsas')),
     ),
   );
 }

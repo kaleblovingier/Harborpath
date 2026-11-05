@@ -562,4 +562,43 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
 
+## 25. Wave 27 — ADHD, Neurodiversity, Counterfeit Pill FTS Protocols & Stimulant Pharmacotherapy Navigator
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **ADHD & Substance Use Disorder (SUD) Clinical Consensus**:
+  - Highlights that 25% to 30% of adults seeking SUD treatment meet criteria for ADHD, frequently remaining undiagnosed or untreated due to clinical stigma.
+  - Deconstructs the "Self-Medication Hypothesis": unmanaged prefrontal dopamine ($D_1/D_2$) and norepinephrine hypofunction leads individuals to intuitive self-medication with street stimulants (methamphetamine, cocaine) or excessive caffeine to achieve cognitive focus and emotional calm.
+  - Implements the ASAM/AAP clinical consensus: **Treating ADHD concurrently during addiction treatment reduces substance use relapse by 30% to 50% and dramatically improves treatment retention.**
+  - Clarifies full compatibility with Medications for Opioid Use Disorder (MOUD): Buprenorphine, Methadone, and Naltrexone are fully compatible with ADHD pharmacotherapy under clinical monitoring.
+- **Validated WHO Adult ADHD Self-Report Scale (ASRS v1.1 Part A)**:
+  - Full 6-question clinical screener assessing executive dysfunction and inattention frequency over the preceding 6 months.
+  - Implements validated threshold scoring (Q1-Q3 significant at $\ge 2$; Q4-Q6 significant at $\ge 3$); scoring $\ge 4$ significant symptoms establishes a high-probability clinical cutoff for adult ADHD.
+- **Three-Tier Medication Selection Framework in Active / Remission SUD**:
+  - *Tier 1: Non-Controlled Non-Stimulants (Zero Abuse Liability)*:
+    - Atomoxetine (Strattera - selective NRI, 40–100 mg/day, zero euphoria, 24-hour coverage).
+    - Viloxazine ER (Qelbree - selective serotonin-norepinephrine modulator, 200–600 mg/day).
+    - Guanfacine ER (Intuniv - selective alpha-2A agonist, strengthens prefrontal networks, alleviates rejection sensitivity and autonomic hyperarousal).
+    - Clonidine ER (Kapvay - alpha-2 adrenergic agonist).
+    - Bupropion XL (Wellbutrin - dual NDRI; contraindication reminder for seizure threshold).
+  - *Tier 2: Tamper-Resistant Prodrugs & Long-Acting Stimulants (Low Misuse Potential)*:
+    - Lisdexamfetamine (Vyvanse - red blood cell enzymatic cleavage prodrug; resist snorting/injection euphoria).
+    - OROS Methylphenidate (Concerta - laser-drilled osmotic delivery system resisting crushing).
+  - *Tier 3 / High-Risk: Immediate-Release Stimulants (AVOID in Early Recovery)*:
+    - Adderall IR, Ritalin IR (steep ventral striatum dopamine spikes, binge-crash patterns, and diversion risk).
+- **DEA Counterfeit Prescription Pill Alert & FTS Testing Protocols**:
+  - DEA Public Safety Alert: over 7 out of 10 fake prescription pills seized contain potentially lethal fentanyl or nitazenes.
+  - Counterfeit orange/peach "Adderall" pills (stamped "d 30", "dp 30") bought from street markets or social media almost universally contain illicit fentanyl or high-purity methamphetamine.
+  - Exact pill testing dilution protocol: crush tablet completely (preventing "chocolate chip cookie" hot spots) and dissolve each 10 mg of pill mass in at least 1 teaspoon (5 mL) of clean water to eliminate false positives from binders/methamphetamine.
+  - Universal Naloxone access mandate for stimulant and pill users.
+- **Cardiovascular Emergency Triggers**:
+  - Hypertensive crisis, angina/crushing chest pressure, malignant hyperthermia ($> 103^\circ\text{F}$), and stimulant-induced psychosis -> immediate 911 emergency escalation.
+- **Neurodivergent Recovery & Executive Function Toolkit**:
+  - Time-blindness aids, "body doubling" co-working strategies, the "5-minute dopamine micro-step" for initiation paralysis, sensory overload decompression, and meeting accommodations.
+- **Bilingual Clinician Discussion Brief Generator (Zero PII)**:
+  - Generates structured, respectful, plain-text proposals in English and Spanish for patients to present to their prescribers to negotiate safe, non-stimulant ADHD evaluations without fear of discriminatory "drug-seeking" labels.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

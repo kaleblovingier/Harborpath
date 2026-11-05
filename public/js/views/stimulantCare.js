@@ -582,4 +582,15 @@ function renderSaferUseTab(container, isEs) {
     ])
   ]);
   container.appendChild(card);
+  const adhdTip = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Uso de Estimulantes por Posible TDAH No Diagnosticado?' : 'Using Stimulants to Cope with ADHD or Executive Dysfunction?'),
+    h('p', {}, isEs
+      ? 'Muchas personas utilizan estimulantes no recetados como automedicación de déficits de dopamina prefrontal. '
+      : 'Many individuals use unprescribed stimulants as self-medication for prefrontal dopamine deficits. '),
+    h('a', { href: '#/adhd-care' }, isEs
+      ? 'Explore el Navegador de TDAH, Cribado ASRS y Farmacoterapia Segura →'
+      : 'Explore the ADHD, Neurodiversity & Safe Pharmacotherapy Navigator →')
+  ]);
+  container.appendChild(adhdTip);
+
 }

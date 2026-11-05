@@ -116,4 +116,6 @@ export default {
   'tools.item.nicotine-care.description': 'Test de Fagerström, pautas de TRN combinada (parches y chicles), vareniclina, reducción gradual de sales de vapeo y desescalada de deseos.',
   'tools.item.benzodiazepine-care.title': 'Desescalada de benzodiazepinas, método Ashton y BIND',
   'tools.item.benzodiazepine-care.description': 'Calculadora de equivalencia en diazepam, calendario de sustitución y reducción paulatina Ashton, alertas de contraindicación de flumazenil, validación de BIND y seguridad ante convulsiones.',
+  'tools.item.adhd-care.title': 'TDAH, neurodiversidad y reducción de daños',
+  'tools.item.adhd-care.description': 'Cribado clínico ASRS v1.1, farmacoterapia no estimulante en recuperación de adicciones, dilución de tiras FTS para pastillas falsas y herramientas de función ejecutiva.',
 };
