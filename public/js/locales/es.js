@@ -848,6 +848,7 @@ export default {
   'route.familySupport': 'Apoyo familiar y guía CRAFT',
   'route.adulterantCare': 'Adulterantes emergentes, xilacina y heridas por tranq',
   'route.methadoneAccess': 'Acceso a clínicas de metadona y reglas Parte 8 de 2024',
+  'route.polysubstanceCare': 'Sinergia de sobredosis de polisustancias e interacciones',
   'route.dualDiagnosis': 'Diagnóstico dual y salud mental integrada',
   'dual.badge': 'Tratamiento integrado para trastornos duales (IDDT)',
   'dual.title': 'Diagnóstico dual, salud mental e integración con MOUD',

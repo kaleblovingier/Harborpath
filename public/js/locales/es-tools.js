@@ -100,4 +100,6 @@ export default {
   'tools.item.methadone-access.description': 'Explore las reglas de SAMHSA Parte 8 de 2024, calcule la elegibilidad para botellas para llevar, prevenga reducciones rápidas y defienda sus derechos.',
   'tools.item.dual-diagnosis.title': 'Diagnóstico dual y salud mental integrada',
   'tools.item.dual-diagnosis.description': 'Explore el tratamiento integrado (IDDT), compatibilidad de psicofármacos y MOUD, derechos ante falsos positivos en orina y plan de crisis.',
+  'tools.item.polysubstance-care.title': 'Sinergia de sobredosis de polisustancias e interacciones',
+  'tools.item.polysubstance-care.description': 'Evalúe interacciones de múltiples sustancias, riesgos de paro respiratorio por depresores, límites de la naloxona, respiración de rescate y toxicidad por serotonina.',
 };

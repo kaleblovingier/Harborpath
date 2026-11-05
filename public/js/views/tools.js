@@ -42,6 +42,7 @@ const entries = [
   ['adulterant-care', 'care', 'Emerging adulterants, xylazine and tranq wound care', 'Evidence-based guidance for xylazine (tranq), nitazenes, alpha-2 sedation triage, necrotic wound management, and test strip standards.', ['individual', 'supporter', 'care-team']],
   ['methadone-access', 'care', 'Methadone clinic access and 2024 Part 8 rules', 'Explore 2024 SAMHSA Part 8 rules, calculate take-home bottle eligibility, prevent dangerous rapid tapers, and advocate for patient rights.', ['individual', 'supporter', 'care-team']],
   ['dual-diagnosis', 'care', 'Dual diagnosis and integrated mental health', 'Explore integrated dual disorder treatment (IDDT), psychotropic and MOUD compatibility, false-positive toxicology rights, and crisis safety planning.', ['individual', 'supporter', 'care-team']],
+  ['polysubstance-care', 'harm', 'Polysubstance overdose synergy and interactions', 'Evaluate multi-substance interactions, depressant respiratory arrest risks, naloxone limits, airway rescue breathing, and serotonin toxicity.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

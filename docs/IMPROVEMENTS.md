@@ -327,4 +327,27 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Self-Advocacy Script Composer**:
   - Plain-language scripts for requesting IDDT care, demanding confirmatory GC-MS testing, seeking adult ADHD evaluation, and setting trauma-informed care boundaries.
 
+
+## 17. Wave 19 — Polysubstance Overdose Synergy, Depressant Stacking & Interaction Navigator
+
+### Clinical, Pharmacological & Public Health Objectives
+- **Polysubstance Overdose Synergy**: Addresses the epidemiological reality that over 80% of accidental overdose deaths in the United States involve multi-substance combinations (CDC Overdose Data to Action).
+- **Depressant Stacks (Opioids + Benzodiazepines + Alcohol + Gabapentinoids + Alpha-2 Agonists)**:
+  - Details the fatal pharmacodynamic mechanism: Opioids blunt hypoxic ventilatory drive; Benzodiazepines and Alcohol blunt hypercapnic respiratory arousal reflexes; Gabapentinoids impair compensatory ventilatory mechanics.
+  - Multiplies risk of fatal central and obstructive apnea at fractional doses.
+- **Speedballs & Goofballs (Opioids + Stimulants)**:
+  - Explains the pharmacokinetic half-life mismatch: Short-acting cocaine (0.5-1.5h) masks the severe respiratory depression of long-acting opioids (fentanyl, methadone). When the stimulant rapidly wears off, the patient lapses into sudden respiratory arrest.
+  - Cardiac arrhythmia and acute coronary vasospasm risks from simultaneous adrenergic drive and hypoxia.
+- **Airway & Resuscitation Algorithm (The "Naloxone-Resistant" Overdose Protocol)**:
+  - Clarifies that naloxone **only** reverses mu-opioid receptor binding, having zero affinity for GABA-A (benzos, alcohol), GABA-B (GHB), alpha-2 (xylazine), or voltage-gated calcium channels (gabapentin).
+  - Establishes the clinical rule: If adequate spontaneous respirations (> 10-12 breaths/min) are restored, **do NOT** administer continuous massive naloxone doses that induce violent precipitated withdrawal, projectile vomiting with asphyxiation risk, and flash pulmonary edema.
+  - Emphasizes the Recovery Position and immediate rescue breathing (1 breath every 5 seconds) as the primary life-saving interventions while calling 911.
+- **Hunter Serotonin Toxicity Criteria Evaluation**:
+  - Implements the international gold standard for Serotonin Syndrome: spontaneous clonus, inducible clonus + agitation/diaphoresis, ocular clonus + agitation/diaphoresis, tremor + hyperreflexia, and hyperthermia (> 38°C / 100.4°F) + hypertonia.
+  - Explains why muscular hyperthermia is non-hypothalamic and non-responsive to acetaminophen, requiring urgent physical cooling and emergency hospital admission.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual plain-text summary generator for patient-peer communication without PII.
+  - WCAG 2.2 AA compliant tabbed interface with full keyboard navigation and accessible headings.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

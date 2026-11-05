@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'polysubstance-care': () => import('./views/polysubstanceCare.js').then((m) => {
+    viewCache.set('polysubstance-care', m.polysubstanceCareView);
+    routeResets.set('polysubstance-care', m.resetPolysubstanceState);
+    return m.polysubstanceCareView;
+  }),
   'dual-diagnosis': () => import('./views/dualDiagnosis.js').then((m) => {
     viewCache.set('dual-diagnosis', m.dualDiagnosisView);
     routeResets.set('dual-diagnosis', m.resetDualDiagnosisState);
@@ -181,6 +186,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'polysubstance-care': () => t('route.polysubstanceCare', 'Polysubstance overdose synergy & interactions'),
   'dual-diagnosis': () => t('route.dualDiagnosis', 'Dual diagnosis & integrated mental health'),
   'methadone-access': () => t('route.methadoneAccess', 'Methadone clinic access & 2024 Part 8 rules'),
   'adulterant-care': () => t('route.adulterantCare', 'Emerging adulterants, xylazine & wound care'),
@@ -267,6 +273,7 @@ export function preloadAllLazyViews() {
     preloadRoute('family-support'),
     preloadRoute('adulterant-care'),
     preloadRoute('methadone-access'),
+    preloadRoute('polysubstance-care'),
     preloadRoute('dual-diagnosis'),
     preloadRoute('harm-reduction'),
   ]);

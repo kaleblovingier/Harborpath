@@ -1909,6 +1909,151 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: #047857;
 }
 
+/* ------------------------------------------------------------ Wave 19: Polysubstance Care */
+.polysubstance-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.polysubstance-view .grid-2-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.checkbox-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.checkbox-card:hover {
+  border-color: var(--brand);
+}
+
+.checkbox-card.selected {
+  background: var(--surface-alt, rgba(37, 99, 235, 0.04));
+  border-color: var(--brand);
+}
+
+.checkbox-card input[type="checkbox"] {
+  margin-top: 0.25rem;
+  accent-color: var(--brand);
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.checkbox-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sub-examples {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.risks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.risk-item {
+  padding: 0.85rem 1rem;
+  background: var(--surface-alt);
+  border-left: 4px solid var(--danger);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.risk-item strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+
+.protocol-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.step-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.step-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hunter-rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.hunter-rule-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.diagnostic-weight {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.summary-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  resize: vertical;
+}
+
+.copy-status {
+  font-weight: 600;
+  color: var(--ok);
+  align-self: center;
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

@@ -489,6 +489,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-secondary btn-small',
         href: '#/adulterant-care',
       }, icon('shield'), tr('Clinical adulterants & sedation triage guide', 'Guía clínica de adulterantes y triaje de sedación')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/polysubstance-care',
+      }, icon('shield'), tr('Polysubstance synergy & airway guide', 'Guía de sinergia de polisustancias y vía aérea')),
     ),
   );
 }
