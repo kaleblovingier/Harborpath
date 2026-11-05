@@ -117,6 +117,7 @@ const ELECTIVE_SHELL = [
   '/js/views/toxicologyTriage.js',
   '/js/views/hospitalCare.js',
   '/js/views/needleExposure.js',
+  '/js/views/sexualHealth.js',
 ];
 
 self.addEventListener('install', (event) => {

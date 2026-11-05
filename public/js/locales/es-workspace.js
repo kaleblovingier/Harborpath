@@ -57,4 +57,5 @@ export default {
   'workspace.link.toxicologyTriage': 'Triage toxicológico y desescalada',
   'workspace.link.hospitalCare': 'Atención hospitalaria y dolor en MOUD',
   'workspace.link.needleExposure': 'Pinchazos de aguja y protocolo PEP',
+  'workspace.link.sexualHealth': 'Salud sexual, Doxy-PEP y anticoncepción',
 };

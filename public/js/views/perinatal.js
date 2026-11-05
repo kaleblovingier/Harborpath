@@ -1543,6 +1543,18 @@ export function perinatalView({ query } = {}) {
     );
 
     // Assemble View
+    
+    const ecBanner = h('div', { class: 'info-callout', role: 'note' }, [
+      h('strong', {}, isEs ? '¿Necesita anticoncepción de emergencia o prevención de ITS? ' : 'Need emergency contraception or STI post-exposure care? '),
+      h('span', {}, isEs
+        ? 'Consulte la guía de anticoncepción de emergencia (Plan B vs Ella vs DIU según peso) y Doxy-PEP: '
+        : 'Consult the emergency contraception guide (Plan B vs Ella vs IUD weight thresholds) and Doxy-PEP: '),
+      h('a', { href: '#/sexual-health' }, isEs
+        ? 'Abrir Navegador de Salud Sexual y Anticoncepción de Emergencia →'
+        : 'Open Sexual Health & Emergency Contraception Navigator →')
+    ]);
+    container.append(ecBanner);
+
     container.append(
       header,
       controlsBar,

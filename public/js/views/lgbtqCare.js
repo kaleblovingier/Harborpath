@@ -835,6 +835,17 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
   root.append(tabPanel);
 
   // Footer Helplines
+  const doxyPrEpCard = h('div', { class: 'info-callout', role: 'note' },
+    h('strong', {}, isEs ? '¿Salud sexual afirmativa, Doxy-PEP o PrEP para VIH? ' : 'Affirming sexual health, Doxy-PEP or HIV PrEP? '),
+    h('span', {}, isEs
+      ? 'Explore las guías de Doxy-PEP de los CDC 2024, modalidades de PrEP (Truvada, Descovy, Apretude) y anticoncepción de emergencia: '
+      : 'Explore CDC 2024 Doxy-PEP guidelines, PrEP modalities (Truvada, Descovy, Apretude), and emergency contraception: '),
+    h('a', { href: '#/sexual-health' }, isEs
+      ? 'Abrir Navegador de Salud Sexual y Doxy-PEP →'
+      : 'Open Sexual Health & Doxy-PEP Navigator →')
+  );
+  root.append(doxyPrEpCard);
+
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'The Trevor Project (LGBTQ+ 24/7):' : 'The Trevor Project:'),

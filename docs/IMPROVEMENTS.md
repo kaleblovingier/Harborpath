@@ -731,4 +731,34 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Instant clipboard export of structured Situation, Background, Assessment, and Recommendation notes for Emergency Department triage and Employee Health handoffs.
 
 
+
+
+## 29. Wave 31 — Sexual Health, STI Post-Exposure Prophylaxis (Doxy-PEP), HIV PrEP Navigation & Emergency Contraception
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **CDC 2024 Doxycycline Post-Exposure Prophylaxis (Doxy-PEP) Guidelines**:
+  - Implements the CDC 2024 clinical guidelines for bacterial STI post-exposure prophylaxis:
+    - Regimen: Doxycycline 200 mg orally as a single dose, taken as soon as possible within 72 hours of condomless sex (max 200 mg per 24 hours).
+    - Esophagitis Prevention: Must be taken with a full 8 oz (240 mL) glass of water and remain upright for at least 30 minutes to prevent chemical esophageal ulceration.
+    - Pathogen Efficacy: Syphilis (~70%–87% risk reduction), Chlamydia (~70%–88% reduction), Gonorrhea (~50%–55% reduction).
+    - Black-Box Education: Explicitly clarifies that Doxy-PEP has **ZERO activity against viral STIs** (HIV, HSV, HPV, Hepatitis B/C, Mpox).
+- **Comprehensive HIV PrEP Modalities & PEP-to-PrEP Continuity**:
+  - Stratifies all modern PrEP modalities:
+    - *Daily Oral Truvada (TDF/FTC)*: Approved for all populations (anal sex, vaginal sex, injection drug use).
+    - *Daily Oral Descovy (TAF/FTC)*: Favorable bone/renal safety profile; approved for sexual exposure EXCEPT receptive vaginal sex (due to lack of cisgender female data).
+    - *Long-Acting Injectable Apretude (Cabotegravir 600 mg IM)*: Gluteal injection every 2 months; ideal for adherence barriers; requires bi-monthly HIV RNA testing.
+    - *Event-Driven "2-1-1" PrEP (Truvada Only)*: For cisgender MSM with planned, infrequent sex (2 pills 2–24h before sex, 1 pill 24h later, 1 pill 48h later).
+    - *Seamless PEP-to-PrEP Transition*: Mandates Day 28 HIV testing and immediate PrEP initiation with **zero unmedicated lapse days** to maintain protective tissue saturation.
+- **Emergency Contraception (EC) Timing & Weight Threshold Matrix (ACOG Practice Bulletin No. 152)**:
+  - Clinical decision tree based on hours elapsed (0–72h vs 72–120h) and patient body weight:
+    - *Levonorgestrel 1.5 mg (Plan B One-Step)*: OTC access, effective up to 72 hours; **steep weight limitation** (reduced efficacy at >= 165 lbs / 75 kg, ineffective at >= 175 lbs / 80 kg or BMI >= 30).
+    - *Ulipristal Acetate 30 mg (Ella)*: Prescription required, effective up to 120 hours (5 days) with consistent efficacy across all 5 days; superior weight ceiling maintaining efficacy up to 195 lbs (88 kg) or BMI <= 35.
+    - *Copper IUD / 52 mg LNG IUD*: Gold standard emergency contraception (> 99.9% effective) placed within 120 hours; **zero weight restrictions**; provides 8–12 years of ongoing reversible contraception.
+- **Barrier & Lubricant Chemical Harm Reduction**:
+  - Critical warning: Oil-based lubricants (vaseline, mineral oil, baby oil, coconut oil, lotion) dissolve and rupture latex condoms within 60 seconds.
+  - Safe alternatives: Water-based or pure silicone-based lubricants with latex; polyurethane/polyisoprene for latex allergies; internal condoms (FC2 nitrile) compatible with all lubricants and insertable up to 8 hours prior.
+- **Zero-PII Sexual Health Consultation & SBAR Note Generator**:
+  - Instant clipboard export of structured Situation, Background, Assessment, and Recommendation notes for urgent care, telehealth, or primary care consultations.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

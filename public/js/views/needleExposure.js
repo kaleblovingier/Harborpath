@@ -864,6 +864,16 @@ export function needleExposureView() {
       h('h2', { class: 'tab-heading' }, t('needle.pep.title', 'CDC & USPHS Antiretroviral PEP Regimens')),
       h('p', { class: 'tab-subtitle' }, t('needle.pep.subtitle', 'A full 28-day antiretroviral course must be completed. Below are the preferred single-tablet and alternative regimens.')),
 
+      // PEP-to-PrEP Continuity Card
+      h('div', { class: 'pep-prep-banner', role: 'note' }, [
+        icon('shield'),
+        h('div', {}, [
+          h('strong', {}, 'Ongoing Exposure Risk? Seamless Transition to PrEP: '),
+          h('span', {}, 'If ongoing sexual or injection drug exposure persists upon completing the 28-day PEP course, transition directly to daily PrEP on Day 28 without any coverage lapse: '),
+          h('a', { href: '#/sexual-health' }, 'Explore PrEP Modalities & Transition Protocol →'),
+        ]),
+      ]),
+
       // Starter Pack Banner
       h('div', { class: 'starter-pack-banner' }, [
         icon('alert'),
@@ -1039,3 +1049,4 @@ export function needleExposureView() {
 
   return container;
 }
+

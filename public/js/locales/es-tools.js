@@ -124,4 +124,6 @@ export default {
   'tools.item.hospital-care.description': 'Inducción rápida a altas dosis de buprenorfina CA Bridge en urgencias, analgesia quirúrgica en MOUD, rescate de abstinencia precipitada y reducción de daños en altas voluntarias (AMA).',
   'tools.item.needle-exposure.title': 'Protocolo de pinchazos de aguja y PEP',
   'tools.item.needle-exposure.description': 'Motor de decisión para profilaxis post-exposición (PEP 72h) de VIH/VHB, derechos OSHA 1910.1030 y desecho seguro de punzocortantes.',
+  'tools.item.sexual-health.title': 'Doxy-PEP, PrEP de VIH y anticoncepción de emergencia',
+  'tools.item.sexual-health.description': 'Guías CDC 2024 de Doxy-PEP (doxiciclina 200 mg), modalidades de PrEP (Truvada/Descovy/Apretude), transición de PEP a PrEP y umbrales de peso para anticoncepción.',
 };
