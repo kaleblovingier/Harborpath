@@ -2054,6 +2054,73 @@ body.sensory-mode-active [tabindex]:focus-visible {
   align-self: center;
 }
 
+/* ------------------------------------------------------------ Wave 20: Nightlife & Festival Harm Reduction */
+.nightlife-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.nightlife-view .grid-2-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.substance-profile-card {
+  margin-bottom: 1.25rem;
+}
+
+.mechanism-text, .duration-text {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.margin-top-sm {
+  margin-top: 1rem;
+}
+
+.reagents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.reagent-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reactions-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.reaction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.reaction-substance {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.reaction-color {
+  color: var(--brand);
+  font-weight: 500;
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

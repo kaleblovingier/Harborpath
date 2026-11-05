@@ -106,6 +106,7 @@ const ELECTIVE_SHELL = [
   '/js/views/methadoneAccess.js',
   '/js/views/dualDiagnosis.js',
   '/js/views/polysubstanceCare.js',
+  '/js/views/nightlifeCare.js',
 ];
 
 self.addEventListener('install', (event) => {

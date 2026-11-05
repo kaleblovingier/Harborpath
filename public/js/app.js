@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'nightlife-care': () => import('./views/nightlifeCare.js').then((m) => {
+    viewCache.set('nightlife-care', m.nightlifeCareView);
+    routeResets.set('nightlife-care', m.resetNightlifeState);
+    return m.nightlifeCareView;
+  }),
   'polysubstance-care': () => import('./views/polysubstanceCare.js').then((m) => {
     viewCache.set('polysubstance-care', m.polysubstanceCareView);
     routeResets.set('polysubstance-care', m.resetPolysubstanceState);
@@ -186,6 +191,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'nightlife-care': () => t('route.nightlifeCare', 'Nightlife, club drugs & festival harm reduction'),
   'polysubstance-care': () => t('route.polysubstanceCare', 'Polysubstance overdose synergy & interactions'),
   'dual-diagnosis': () => t('route.dualDiagnosis', 'Dual diagnosis & integrated mental health'),
   'methadone-access': () => t('route.methadoneAccess', 'Methadone clinic access & 2024 Part 8 rules'),
@@ -273,6 +279,7 @@ export function preloadAllLazyViews() {
     preloadRoute('family-support'),
     preloadRoute('adulterant-care'),
     preloadRoute('methadone-access'),
+    preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
     preloadRoute('dual-diagnosis'),
     preloadRoute('harm-reduction'),

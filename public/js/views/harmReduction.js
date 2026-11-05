@@ -493,6 +493,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-secondary btn-small',
         href: '#/polysubstance-care',
       }, icon('shield'), tr('Polysubstance synergy & airway guide', 'Guía de sinergia de polisustancias y vía aérea')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/nightlife-care',
+      }, icon('shield'), tr('Nightlife, club drugs & reagent testing', 'Ocio nocturno, drogas de club y reactivos')),
     ),
   );
 }

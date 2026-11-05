@@ -102,4 +102,6 @@ export default {
   'tools.item.dual-diagnosis.description': 'Explore el tratamiento integrado (IDDT), compatibilidad de psicofármacos y MOUD, derechos ante falsos positivos en orina y plan de crisis.',
   'tools.item.polysubstance-care.title': 'Sinergia de sobredosis de polisustancias e interacciones',
   'tools.item.polysubstance-care.description': 'Evalúe interacciones de múltiples sustancias, riesgos de paro respiratorio por depresores, límites de la naloxona, respiración de rescate y toxicidad por serotonina.',
+  'tools.item.nightlife-care.title': 'Reducción de daños en ocio nocturno y festivales',
+  'tools.item.nightlife-care.description': 'Pautas basadas en evidencia para MDMA, ketamina, GHB/GBL, óxido nitroso, reactivos químicos, prevención de hiponatremia y salud vesical.',
 };

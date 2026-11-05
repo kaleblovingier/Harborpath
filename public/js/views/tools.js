@@ -43,6 +43,7 @@ const entries = [
   ['methadone-access', 'care', 'Methadone clinic access and 2024 Part 8 rules', 'Explore 2024 SAMHSA Part 8 rules, calculate take-home bottle eligibility, prevent dangerous rapid tapers, and advocate for patient rights.', ['individual', 'supporter', 'care-team']],
   ['dual-diagnosis', 'care', 'Dual diagnosis and integrated mental health', 'Explore integrated dual disorder treatment (IDDT), psychotropic and MOUD compatibility, false-positive toxicology rights, and crisis safety planning.', ['individual', 'supporter', 'care-team']],
   ['polysubstance-care', 'harm', 'Polysubstance overdose synergy and interactions', 'Evaluate multi-substance interactions, depressant respiratory arrest risks, naloxone limits, airway rescue breathing, and serotonin toxicity.', ['individual', 'supporter', 'care-team']],
+  ['nightlife-care', 'harm', 'Nightlife, club drugs and festival harm reduction', 'Evidence-based harm reduction for MDMA, ketamine, GHB/GBL, nitrous oxide, reagent testing, hyponatremia prevention, and bladder health.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

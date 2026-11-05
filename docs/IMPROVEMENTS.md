@@ -350,4 +350,35 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual plain-text summary generator for patient-peer communication without PII.
   - WCAG 2.2 AA compliant tabbed interface with full keyboard navigation and accessible headings.
 
+
+## 18. Wave 20 — Nightlife, Club Drugs, Dissociatives & Festival Harm Reduction
+
+### Clinical, Toxicological & Harm Reduction Objectives
+- **Dance Culture & Festival Grounding**: Addresses critical harm reduction for party environments, festivals, and nightlife venues using DanceSafe, American College of Medical Toxicology (ACMT), and Crew 2000 evidence-based clinical standards.
+- **Ketamine Bladder Health & K-Cystitis Protocol**:
+  - Explains the pathophysiology of Ketamine-Induced Ulcerative Cystitis: norketamine urothelial cytotoxicity, micro-ulcerations, mucosal sloughing, severe bladder contraction, frequency (>60 times/day), and hematuria.
+  - Actionable harm reduction: regular breaks, spitting the drip (preventing non-psychoactive gastrointestinal and biliary irritation), abundant isotonic hydration, and Epigallocatechin Gallate (EGCG / green tea extract 400-800 mg) polyphenolic urothelial shielding.
+- **MDMA Fluid Balance Protocol & Dilutional Hyponatremia**:
+  - Highlights SIADH (syndrome of inappropriate antidiuretic hormone) induced by MDMA, impairing renal water excretion.
+  - Establishes precise fluid limits: no more than 250 mL/hour when resting, or 500 mL/hour when actively dancing in hot spaces.
+  - Mandates isotonic electrolyte fluids over plain water to prevent fatal acute cerebral edema and hyponatremic seizures.
+  - Details hyperthermia prevention (cool-down chill rooms), 3-month spacing rule, and weight-based dosing `[body weight kg + 50 = max mg]`.
+  - Enforces the strict rule that 5-HTP must **never** be taken on the same day as MDMA due to severe Serotonin Syndrome risks.
+- **GHB/GBL/1,4-BD Precision Dosing & Dependence Emergency**:
+  - Highlights the steep non-linear dose-response curve (0.5 mL margin between euphoria and comatose "G-out").
+  - Absolute prohibition of alcohol co-ingestion (multiplied synergistic GABA-B respiratory arrest).
+  - Volumetric oral syringe dosing and food-coloring safety precautions.
+  - Outlines the life-threatening medical emergency of abrupt round-the-clock GHB withdrawal (delirium, seizures, autonomic collapse) requiring inpatient medical detoxification with high-dose baclofen and benzodiazepines.
+- **Nitrous Oxide Neuropathy & Vitamin B12 Inactivation**:
+  - Details the chemical mechanism: oxidation of the cobalt core of cobalamin from Co+ to Co3+, rendering Vitamin B12 permanently inactive and shutting down methionine synthase.
+  - Identifies early warning signs of Subacute Combined Degeneration of the Spinal Cord (SCD): paresthesias, foot drop, ataxia, and loss of proprioception.
+  - Cryogenic freeze burn prevention (mandatory balloon use) and high-dose intramuscular Vitamin B12 protocol.
+- **Reagent Testing Matrix**:
+  - Qualitative chemical reaction tables for Marquis, Simon's (A + B), Froehde, and Morris (A + B) across MDMA, Meth, 2C-B, Cathinones, and Ketamine.
+  - Emphasizes that reagents confirm substance identity but do not rule out trace fentanyl or xylazine, mandating dual testing with test strips.
+- **In-RAM Ephemeral State & Plain-Text Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual export without PII.
+  - WCAG 2.2 AA compliant accessible DOM structure.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.
