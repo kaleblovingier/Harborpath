@@ -100,6 +100,7 @@ const ELECTIVE_SHELL = [
   '/js/views/stimulantCare.js',
   '/js/components/medicalRespiteFinder.js',
   '/js/views/chronicPain.js',
+  '/js/views/alcoholCare.js',
 ];
 
 self.addEventListener('install', (event) => {

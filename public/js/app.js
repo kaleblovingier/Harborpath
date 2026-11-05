@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'alcohol-care': () => import('./views/alcoholCare.js').then((m) => {
+    viewCache.set('alcohol-care', m.alcoholCareView);
+    routeResets.set('alcohol-care', m.resetAlcoholState);
+    return m.alcoholCareView;
+  }),
   'chronic-pain': () => import('./views/chronicPain.js').then((m) => {
     viewCache.set('chronic-pain', m.chronicPainView);
     routeResets.set('chronic-pain', m.resetPainState);
@@ -156,6 +161,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'alcohol-care': () => t('route.alcoholCare', 'Alcohol care, withdrawal & MAUD'),
   'chronic-pain': () => t('route.chronicPain', 'Chronic pain & sedative deprescribing'),
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
   tools: () => t('route.tools', 'Care tools and guides'),
@@ -233,6 +239,7 @@ export function preloadAllLazyViews() {
     preloadRoute('post-overdose'),
     preloadRoute('stimulant-care'),
     preloadRoute('chronic-pain'),
+    preloadRoute('alcohol-care'),
     preloadRoute('harm-reduction'),
   ]);
 }

@@ -90,4 +90,6 @@ export default {
   'tools.item.workplace-rights.description': 'Explore adaptaciones laborales, licencias y consideraciones de apoyo profesional.',
   'tools.item.chronic-pain.title': 'Dolor crónico y reducción de sedantes',
   'tools.item.chronic-pain.description': 'Revise la guía de dolor de los CDC 2022, la dosis dividida de buprenorfina analgésica y la reducción segura de benzodiazepinas Ashton.',
+  'tools.item.alcohol-care.title': 'Atención de alcohol y desintoxicación médica',
+  'tools.item.alcohol-care.description': 'Evalúe el riesgo de abstinencia de alcohol (PAWSS), la prevención de Wernicke y los medicamentos aprobados por la FDA (MAUD).',
 };

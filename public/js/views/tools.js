@@ -37,6 +37,7 @@ const entries = [
   ['stimulant-care', 'care', 'Stimulant care and support', 'Explore stimulant-related risks, support options, and treatment information.', ['individual', 'supporter', 'care-team']],
   ['workplace-rights', 'populations', 'Work and professional support', 'Explore workplace accommodation, leave, and professional support considerations.', ['individual', 'supporter', 'care-team']],
   ['chronic-pain', 'care', 'Chronic pain and sedative tapering', 'Review CDC 2022 pain guidance, buprenorphine analgesia split-dosing, and safe Ashton benzodiazepine tapering.', ['individual', 'supporter', 'care-team']],
+  ['alcohol-care', 'care', 'Alcohol care and medical withdrawal', 'Evaluate alcohol withdrawal risk (PAWSS), Wernicke-Korsakoff prevention, and FDA-approved medications (MAUD).', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({
