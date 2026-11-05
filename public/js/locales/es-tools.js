@@ -104,4 +104,6 @@ export default {
   'tools.item.polysubstance-care.description': 'Evalúe interacciones de múltiples sustancias, riesgos de paro respiratorio por depresores, límites de la naloxona, respiración de rescate y toxicidad por serotonina.',
   'tools.item.nightlife-care.title': 'Reducción de daños en ocio nocturno y festivales',
   'tools.item.nightlife-care.description': 'Pautas basadas en evidencia para MDMA, ketamina, GHB/GBL, óxido nitroso, reactivos químicos, prevención de hiponatremia y salud vesical.',
+  'tools.item.sleep-care.title': 'Restauración del sueño e insomnio en recuperación',
+  'tools.item.sleep-care.description': 'Pautas basadas en evidencia para restaurar el sueño, protocolos TCC-I, fármacos no controlados y arquitectura del sueño en abstinencia prolongada (PAWS).',
 };

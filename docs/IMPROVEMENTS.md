@@ -381,4 +381,33 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual export without PII.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
+
+## 19. Wave 21 — Sleep Restoration, Insomnia & Post-Acute Withdrawal (PAWS) Navigator
+
+### Clinical, Neurobiological & Behavioral Objectives
+- **Relapse Prevention Through Sleep Stabilization**: Insomnia is the #1 neurobiological predictor of relapse in early addiction recovery across opioids, alcohol, and stimulants (SAMHSA TIP 63 / TIP 45, ASAM Guidelines).
+- **Substance-Specific Sleep Architectures**:
+  - **Opioids**: Loss of restorative slow-wave delta sleep and REM sleep; acute rebound insomnia lasting 1-14 days; post-acute withdrawal (PAWS) sleep fragmentation persisting 6-12 months due to depleted endogenous endorphinergic tone. Explains why split-dose buprenorphine stabilizes nocturnal withdrawal.
+  - **Alcohol**: Severe REM rebound with autonomic nightmares and diaphoresis; protracted slow-wave sleep impairment lasting up to 2 years post-cessation. Recommends acamprosate to re-balance GABA/glutamate neurotransmission.
+  - **Stimulants**: Initial hypersomnia crash (14-20 hrs/day) transitioning to delayed sleep phase, circadian inversion, and nighttime anhedonia lasting 1-6 months.
+  - **Benzodiazepines**: Catastrophic rebound insomnia, seizure vulnerability, and nocturnal panic requiring gradual Ashton Protocol tapering over 12-24+ weeks.
+  - **Cannabis**: REM suppression; acute withdrawal triggers intense sleep latency and vivid bizarre rebound dreams for 2-4 weeks. Normalizing REM rebound prevents panic and relapse.
+- **Evidence-Based Non-Controlled Pharmacotherapy**:
+  - Trazodone (25-100 mg): 5-HT2A and H1 antagonist; increases slow-wave sleep without addiction or respiratory depression with MOUD.
+  - Mirtazapine (7.5-15 mg): Paradoxical dosing effect (lower doses 7.5-15 mg are vastly more sedating than 30-45 mg); ideal for co-occurring anorexia/depression.
+  - Hydroxyzine (25-50 mg): Rapid-onset peripheral/central H1 blocker; calms somatic withdrawal restlessness without habituation.
+  - Low-Dose Doxepin (3-6 mg, Silenor): Highly selective nanomolar H1 blockade; FDA-approved specifically for middle-of-the-night sleep maintenance awakenings.
+  - Prazosin (1-5 mg): Central alpha-1 adrenergic antagonist; evidence-based treatment for PTSD trauma nightmares and nocturnal hyperarousal.
+  - Ramelteon (8 mg): High-affinity melatonin MT1/MT2 agonist; resets circadian phase with zero abuse potential.
+  - Strict Boxed Warnings against Benzodiazepines and Z-drugs (Ambien/Lunesta) with MOUD due to fatal synergistic central respiratory arrest.
+- **Core CBT-I Behavioral Protocols**:
+  - Stimulus Control Therapy (Bootzin technique): Bed is for sleep only; the 20-minute rule (leave bed if awake after 20 minutes); fixed wake time 7 days a week.
+  - Sleep Restriction Therapy: Calculating Sleep Efficiency = `(Time Asleep / Time in Bed) * 100`; restricting window if <85% to rebuild homeostatic sleep pressure.
+  - Circadian Entrainment: 10,000 lux natural morning sunlight anchor within 45 minutes of waking; evening blue light curfew.
+  - Using Dreams Psychoeducation: Reframing vivid dreams of using as healthy REM neuro-regeneration, not relapse.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual plain-text summary generator for patient-clinician sleep dialogue without PII.
+  - WCAG 2.2 AA compliant accessible DOM structure.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

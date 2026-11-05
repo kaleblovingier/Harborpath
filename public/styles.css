@@ -2121,6 +2121,98 @@ body.sensory-mode-active [tabindex]:focus-visible {
   font-weight: 500;
 }
 
+/* ------------------------------------------------------------ Wave 21: Sleep Restoration & Insomnia */
+.sleep-care-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sleep-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.sleep-care-view .form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.sleep-care-view .form-select {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.sleep-care-view .form-range {
+  width: 100%;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.symptoms-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+}
+
+.efficiency-summary {
+  margin: 0.75rem 0 1rem;
+  font-size: 1.05rem;
+}
+
+.paws-timeline-card {
+  padding: 1.25rem;
+  background: var(--surface-alt);
+  border-left: 4px solid var(--brand);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 1rem 0;
+}
+
+.paws-timeline-card h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.recommendations-list {
+  margin-top: 1.25rem;
+}
+
+.meds-grid, .cbti-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.med-card, .cbti-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.med-mechanism, .med-advantages, .med-side-effects {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.cbti-summary {
+  font-weight: 500;
+  color: var(--brand);
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

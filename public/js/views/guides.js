@@ -165,6 +165,7 @@ export function harmReductionView() {
       p('For clinical adulterant profiles, alpha-2 sedation triage, and test strip dilution protocols, visit the ', h('a', { href: '#/adulterant-care' }, 'Emerging Adulterants, Xylazine & Wound Care Guide'), '.'),
       p('For synergistic overdose risks, multi-depressant respiratory collapse, and airway protocols when naloxone alone does not reverse sedation, explore the ', h('a', { href: '#/polysubstance-care' }, 'Polysubstance Overdose Synergy & Drug Interaction Navigator'), '.'),
       p('For festival safety, MDMA hydration, ketamine bladder health, nitrous B12 risks, and reagent testing standards, explore the ', h('a', { href: '#/nightlife-care' }, 'Nightlife & Festival Harm Reduction Guide'), '.'),
+      p('For insomnia in recovery, CBT-I stimulus control, non-controlled sleep aids, and post-acute withdrawal sleep architecture, explore the ', h('a', { href: '#/sleep-care' }, 'Sleep Restoration & Insomnia in Recovery Navigator'), '.'),
       fine('Wound care guidance from the ',
         ext('https://www.cdc.gov/overdose-prevention/media/pdfs/2024/07/Xylazine-Clinical-Management-and-Harm-Reduction.pdf', 'CDC xylazine fact sheet'), '.'),
     ),

@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'sleep-care': () => import('./views/sleepCare.js').then((m) => {
+    viewCache.set('sleep-care', m.sleepCareView);
+    routeResets.set('sleep-care', m.resetSleepState);
+    return m.sleepCareView;
+  }),
   'nightlife-care': () => import('./views/nightlifeCare.js').then((m) => {
     viewCache.set('nightlife-care', m.nightlifeCareView);
     routeResets.set('nightlife-care', m.resetNightlifeState);
@@ -191,6 +196,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'sleep-care': () => t('route.sleepCare', 'Sleep restoration & insomnia in recovery'),
   'nightlife-care': () => t('route.nightlifeCare', 'Nightlife, club drugs & festival harm reduction'),
   'polysubstance-care': () => t('route.polysubstanceCare', 'Polysubstance overdose synergy & interactions'),
   'dual-diagnosis': () => t('route.dualDiagnosis', 'Dual diagnosis & integrated mental health'),
@@ -279,6 +285,7 @@ export function preloadAllLazyViews() {
     preloadRoute('family-support'),
     preloadRoute('adulterant-care'),
     preloadRoute('methadone-access'),
+    preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
     preloadRoute('dual-diagnosis'),
