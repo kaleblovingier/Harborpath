@@ -760,5 +760,35 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII Sexual Health Consultation & SBAR Note Generator**:
   - Instant clipboard export of structured Situation, Background, Assessment, and Recommendation notes for urgent care, telehealth, or primary care consultations.
 
+### 30. Wave 32: Novel Psychoactive Substances, Kratom, Tianeptine & Emerging OTC Misuse Navigator (`#/novel-substances`)
+- **Tianeptine ("Gas Station Heroin", ZaZa, Tianaa, Pegasus, TD Red)**:
+  - Clinical consensus: ACMT, ASAM, and FDA Public Health Alerts.
+  - Pharmacology: Atypical tricyclic antidepressant operating as a full mu-opioid receptor agonist and glutamatergic modulator at supra-therapeutic doses (1,000–5,000+ mg/day vs 37.5 mg therapeutic).
+  - Cardiotoxicity Hazard: Severe cardiac potassium (hERG) and sodium channel blockade causing profound QTc prolongation (> 500 ms), Torsades de Pointes, and ventricular arrhythmias.
+  - Urine Drug Screen Blindspot: 100% negative on standard hospital 5-to-12 panel urine immunoassay drug cups; requires send-out LC-MS/MS.
+  - Clinical Treatment: CA Bridge rapid high-dose buprenorphine induction once COWS >= 8; continuous ECG telemetry; IV magnesium sulfate (2 g) for ventricular arrhythmias.
+- **Kratom Alkaloids & Concentrated 7-Hydroxymitragynine (7-OH)**:
+  - Mitragyna speciosa leaves contain mitragynine (partial mu-agonist, alpha-2 adrenergic agonist) and 7-hydroxymitragynine (7-OH, isolated semi-synthetic alkaloid up to 13-fold more potent than morphine).
+  - Urine Drug Screen Reality: Routine hospital immunoassay cups are 100% negative for kratom/7-OH; requires dedicated mitragynine panel.
+  - Clinical Management: ASAM Clinical Guidelines support buprenorphine induction for moderate-to-severe kratom use disorder; comfort medications (clonidine, gabapentin).
+- **Phenibut & Fluorophenibut (GABA-B Receptor Agonists)**:
+  - Pharmacology: Synthetic GABA derivative crossing blood-brain barrier; high-affinity agonist at GABAB receptors and alpha-2-delta VGCC blocker.
+  - Life-Threatening Withdrawal: Mimics severe Delirium Tremens or GHB withdrawal (visual/auditory hallucinations, acute delirium, psychosis, autonomic tremors, status epilepticus).
+  - Baclofen Substitution Protocol: 10 mg oral baclofen roughly bio-equivalent to 1,000 mg oral phenibut; cross-titration over 3–5 days, stabilization, and gradual taper over 2–4 weeks; ICU benzodiazepines for acute delirium.
+- **ZaZa Silver Dual-Dependence Hazard**:
+  - Co-formulates tianeptine (opioid) PLUS phenibut (GABA-B agonist).
+  - Abrupt cessation causes simultaneous severe opioid withdrawal and life-threatening GABAergic delirium/seizures.
+  - Dual Protocol: Concurrent buprenorphine induction AND baclofen cross-titration.
+- **High-Dose Loperamide Megadosing ("Poor Man's Methadone")**:
+  - Megadoses (50–300+ mg/day vs 16 mg therapeutic) saturate intestinal P-glycoprotein efflux pumps, crossing blood-brain barrier.
+  - Severe hERG potassium channel (IKr) blockade causing massive QTc prolongation (> 600 ms), QRS widening, Torsades de Pointes, and cardiac arrest.
+  - Emergency Management: Continuous telemetry, IV Magnesium Sulfate (2 g IV over 15 min), isoproterenol/pacing, avoidance of QTc-prolonging antiarrhythmics, monitored buprenorphine transition.
+- **DXM & Diphenhydramine (DPH) Overuse**:
+  - NMDA receptor antagonism, serotonin syndrome risk with antidepressants, anticholinergic toxidrome.
+  - False positive urine screens: DXM triggers false positives for PCP and opioids; DPH triggers false positives for TCAs and methadone.
+- **Immunoassay Blindspot Matrix**:
+  - Educational table comparing standard UDS results, clinical realities, and required confirmatory testing to prevent withholding care or misdiagnosing patients as malingering.
+- **Zero-PII SBAR Clinical Handoff Generator**:
+  - 1-click clipboard export in English and Spanish for Emergency Department triage, inpatient addiction consultation, and primary care.
 
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

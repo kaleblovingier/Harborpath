@@ -58,4 +58,5 @@ export default {
   'workspace.link.hospitalCare': 'Atención hospitalaria y dolor en MOUD',
   'workspace.link.needleExposure': 'Pinchazos de aguja y protocolo PEP',
   'workspace.link.sexualHealth': 'Salud sexual, Doxy-PEP y anticoncepción',
+  'workspace.link.novelSubstances': 'Sustancias novedosas, kratom y tianeptina',
 };

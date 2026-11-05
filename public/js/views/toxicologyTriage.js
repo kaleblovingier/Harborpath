@@ -1385,6 +1385,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(hospLink);
 
+    const novelLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Alerta de Sustancias Novedosas y Puntos Ciegos en Toxicológicos (UDS)' : 'Novel Substances & Immunoassay Blindspots Alert'),
+      h('p', { class: 'fine' }, isEs
+        ? 'La tianeptina (ZaZa), el kratom (7-OH), el fenibut y la loperamida resultan 100% negativos en los paneles de orina habituales. Para cardiotoxicidad por QTc, inducción de buprenorfina y sustitución de fenibut con baclofeno: '
+        : 'Tianeptine (ZaZa), kratom (7-OH), phenibut, and loperamide are 100% negative on standard hospital urine screens. For QTc cardiotoxicity, buprenorphine induction, and phenibut baclofen tapers: '),
+      h('a', { href: '#/novel-substances' }, isEs
+        ? 'Abrir Navegador de Sustancias Novedosas, Kratom y Tianeptina →'
+        : 'Open Novel Substances, Kratom, Tianeptine & OTC Misuse Navigator →')
+    );
+    container.appendChild(novelLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

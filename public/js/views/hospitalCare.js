@@ -709,6 +709,17 @@ function renderSbarTab(localState, isEs, isClinician) {
   ]);
   container.appendChild(staffExposureCard);
 
+  const novelSubstancesCard = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+    h('strong', {}, isEs ? '¿Uso o abstinencia de Tianeptina ("Gas Station Heroin"), ZaZa o Fenibut? ' : 'Tianeptine ("Gas Station Heroin"), ZaZa or Phenibut Misuse / Withdrawal? '),
+    h('span', {}, isEs
+      ? 'La tianeptina y la megadosis de loperamida causan prolongación severa del QTc (> 500 ms) y no aparecen en el toxicológico de orina habitual. Para inducción CA Bridge, sulfato de magnesio y sustitución con baclofeno: '
+      : 'Tianeptine and loperamide cause severe QTc prolongation (> 500 ms) and are 100% negative on standard hospital UDS. For CA Bridge induction, IV magnesium, and phenibut baclofen tapers: '),
+    h('a', { href: '#/novel-substances' }, isEs
+      ? 'Abrir Navegador de Sustancias Novedosas y Toxicología →'
+      : 'Open Novel Substances & Clinical Toxicology Navigator →')
+  ]);
+  container.appendChild(novelSubstancesCard);
+
   return container;
 }
 

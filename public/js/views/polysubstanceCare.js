@@ -850,6 +850,17 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
       : 'Open Acute Toxicology Triage & Project BETA De-Escalation →')
   ]);
   wrapper.appendChild(triageCard);
+
+  const novelCard = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Uso de ZaZa Silver, Tianeptina o Mezclas de Tienda de Conveniencia?' : 'ZaZa Silver, Tianeptine or Gas Station Co-Ingestions?'),
+    h('p', {}, isEs
+      ? 'Productos como ZaZa Silver combinan tianeptina (opioide mu) con fenibut (agonista GABA-B). Su cese brusco desencadena abstinencia dual simultánea con riesgo de delirio y convulsiones. '
+      : 'Products like ZaZa Silver co-formulate tianeptine (opioid) with phenibut (GABA-B agonist). Sudden cessation causes simultaneous opioid withdrawal and life-threatening GABAergic delirium/seizures. '),
+    h('a', { href: '#/novel-substances' }, isEs
+      ? 'Abrir Navegador de Sustancias Novedosas y Protocolos de Desintoxicación →'
+      : 'Open Novel Substances & Clinical Detox Navigator →')
+  ]);
+  wrapper.appendChild(novelCard);
   wrapper.appendChild(exportSection);
   return wrapper;
 }

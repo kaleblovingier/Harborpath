@@ -2003,6 +2003,7 @@ export function medicationsView({ query } = {}) {
         h('a', { class: 'preset', href: '#/benzodiazepine-care' }, icon('shield'), ' Benzodiazepine Ashton Taper & BIND Guide'),
         h('a', { class: 'preset', href: '#/adhd-care' }, icon('activity'), ' ADHD & Non-Stimulant Medications Guide'),
         h('a', { class: 'preset', href: '#/hospital-care' }, icon('shield'), ' Hospital Addiction Care, Acute Pain on MOUD & Patient Rights'),
+        h('a', { class: 'preset', href: '#/novel-substances' }, icon('alert'), ' Novel Substances, Kratom, Tianeptine & OTC Misuse'),
       ),
     ),
 

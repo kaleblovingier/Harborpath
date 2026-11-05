@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'novel-substances': () => import('./views/novelSubstances.js').then((m) => {
+    viewCache.set('novel-substances', m.novelSubstancesView);
+    routeResets.set('novel-substances', m.resetNovelState);
+    return m.novelSubstancesView;
+  }),
   'sexual-health': () => import('./views/sexualHealth.js').then((m) => {
     viewCache.set('sexual-health', m.sexualHealthView);
     routeResets.set('sexual-health', m.resetSexualHealthState);
@@ -246,6 +251,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'novel-substances': () => t('route.novelSubstances', 'Novel substances, kratom, tianeptine & OTC misuse'),
   'sexual-health': () => t('route.sexualHealth', 'Doxy-PEP, HIV PrEP & emergency contraception'),
   'needle-exposure': () => t('route.needleExposure', 'Needle stick, sharps injury & bloodborne pathogen PEP protocol'),
   'hospital-care': () => t('route.hospitalCare', 'Hospital addiction care, pain on MOUD & patient rights'),
@@ -355,6 +361,7 @@ export function preloadAllLazyViews() {
     preloadRoute('hospital-care'),
     preloadRoute('needle-exposure'),
     preloadRoute('sexual-health'),
+    preloadRoute('novel-substances'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
