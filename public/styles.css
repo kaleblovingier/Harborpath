@@ -1883,6 +1883,32 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 12px 0;
 }
 
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--brand);
+}
+
+.adulterant-care-view .badge-pill.bg-warning {
+  background: var(--surface-alt);
+  border: 1px solid #d97706;
+  color: #b45309;
+}
+
+.adulterant-care-view .badge-pill.bg-success {
+  background: var(--surface-alt);
+  border: 1px solid #059669;
+  color: #047857;
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

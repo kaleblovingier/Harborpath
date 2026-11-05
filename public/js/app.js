@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'adulterant-care': () => import('./views/adulterantCare.js').then((m) => {
+    viewCache.set('adulterant-care', m.adulterantCareView);
+    routeResets.set('adulterant-care', m.resetAdulterantState);
+    return m.adulterantCareView;
+  }),
   'family-support': () => import('./views/familySupport.js').then((m) => {
     viewCache.set('family-support', m.familySupportView);
     routeResets.set('family-support', m.resetFamilyState);
@@ -166,6 +171,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'adulterant-care': () => t('route.adulterantCare', 'Emerging adulterants, xylazine & wound care'),
   'family-support': () => t('route.familySupport', 'Family support & CRAFT guide'),
   'alcohol-care': () => t('route.alcoholCare', 'Alcohol care, withdrawal & MAUD'),
   'chronic-pain': () => t('route.chronicPain', 'Chronic pain & sedative deprescribing'),
@@ -247,6 +253,7 @@ export function preloadAllLazyViews() {
     preloadRoute('chronic-pain'),
     preloadRoute('alcohol-care'),
     preloadRoute('family-support'),
+    preloadRoute('adulterant-care'),
     preloadRoute('harm-reduction'),
   ]);
 }

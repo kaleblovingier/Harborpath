@@ -248,4 +248,27 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
     - Accessible WCAG 2.2 AA compliant tabs, screen reader announcements (`aria-live="polite"`), and bilingual English/Spanish localization (`es.js`, `es-tools.js`).
     - Service Worker elective precaching (`ELECTIVE_SHELL` in `public/sw.js`).
 
+## 14. Wave 16 Emerging Synthetic Adulterants, Xylazine ("Tranq"), Nitazenes & Wound Care Specialist
+
+- **Emerging Adulterants Clinical Profiles & Pharmacology (`#/adulterant-care`, `adulterantCare.js`)**:
+  - Xylazine ("Tranq", "Tranq Dope"): Non-opioid central alpha-2 adrenergic receptor agonist. Induces profound sedation, central bradycardia, systemic hypotension, hypothermia, and microvascular vasoconstriction. Reversal directive: Naloxone does NOT reverse alpha-2 sedation; it must be administered to reverse the opioid (fentanyl) component. Once breathing is restored (>=8–10 bpm), excess repeated naloxone must be stopped to avoid precipitating violent opioid withdrawal while failing to wake the patient. Place in recovery position, maintain airway, and keep warm.
+  - Nitazenes (Benzimidazole Opioids: Isotonitazene, Protonitazene, Metonitazene): Ultra-potent synthetic mu-opioid full agonists (10x–40x fentanyl potency, up to 1,000x morphine). Induces rapid fatal respiratory arrest and rigid chest wall syndrome ("wooden chest"). Fully responsive to naloxone but may require multiple repeated 4 mg doses every 2–3 minutes alongside sustained rescue breathing / bag-valve-mask ventilation. Standard FTS test strips do not detect nitazenes.
+  - Medetomidine & Dexmedetomidine: Ultra-potent alpha-2 adrenoceptor agonist (100x–200x more potent than clonidine). Causes extreme bradycardia (<40 bpm), severe hypotension, and prolonged unresponsiveness lasting up to 12 hours. Atropine often ineffective; requires emergency EMS transport for supportive hemodynamic management.
+- **Evidence-Based Harm Reduction Necrotic Wound Care Protocols**:
+  - Pathophysiology: Xylazine-induced peripheral microvascular vasoconstriction produces severe necrotic ulcers anywhere on the body, not only at injection sites.
+  - 4 Clinical Rules:
+    1. Gentle Cleansing: Irrigate with sterile normal saline or clean tap water with mild unscented soap. Strict contraindication: NEVER use hydrogen peroxide, rubbing alcohol, iodine, or bleach (cytotoxic chemicals destroying granulating tissue).
+    2. Moist Healing: Apply medical-grade petroleum jelly (Vaseline) or non-adherent dressing (Xeroform); moist environments accelerate re-epithelialization by up to 40% compared to dry scabs.
+    3. Non-Adherent Covering: Sterile Telfa pads wrapped with flexible gauze (Kerlix). Never debride or cut away black necrotic tissue at home.
+    4. Border Marking & Sepsis Surveillance: Trace outer red margin with pen, date, and time. Emergency ED evaluation for redness spreading >2 cm, systemic fever (>100.4°F), crepitus, or foul odor.
+- **Xylazine Withdrawal & Adrenergic Rebound Protocol**:
+  - Symptoms: Severe autonomic storm (hypertension, resting tachycardia, diaphoresis, tremors) and severe psychological agitation/panic occurring 8–24 hours after last use. Opioids alone do not relieve alpha-2 withdrawal.
+  - Pharmacotherapy: Alpha-2 agonists (Clonidine 0.1–0.3 mg PO TID or Tizanidine 2–4 mg PO TID) titrated to blood pressure and pulse, paired with concurrent MOUD (buprenorphine or methadone).
+- **Drug Checking & Test Strip Dilution Standards (XTS & FTS)**:
+  - Fentanyl powder / pressed pills: 10 mg sample diluted in 5 mL (1 tsp) water, dipped for 15s, read in 3–5 min.
+  - Stimulants (methamphetamine / MDMA): Requires 1 full cup (200 mL) water per 10 mg sample to prevent false positives from secondary amines.
+- **Sedation vs. Overdose Triage Engine & Bilingual Reporting**:
+  - Stratifies patient signs into Opioid Overdose (911 + Naloxone), Sepsis/Infection (Urgent ED), Alpha-2 Sedation (Recovery position, airway protection, avoid extra naloxone), Xylazine Rebound (Clonidine protocol), or Routine Harm Reduction.
+  - Generates zero-PII bilingual plain-text clinical summaries.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

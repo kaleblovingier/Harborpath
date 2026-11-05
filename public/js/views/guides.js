@@ -162,6 +162,7 @@ export function harmReductionView() {
       h('div', { class: 'callout callout-warn' },
         p(strong('Get medical care right away for: '), 'fever or chills, redness or red streaks spreading from a wound, a wound that turns black or smells bad, ',
           'severe pain, or bone or tendon showing. ', h('a', { href: '#/health' }, 'Find a low-cost health center'), '.')),
+      p('For clinical adulterant profiles, alpha-2 sedation triage, and test strip dilution protocols, visit the ', h('a', { href: '#/adulterant-care' }, 'Emerging Adulterants, Xylazine & Wound Care Guide'), '.'),
       fine('Wound care guidance from the ',
         ext('https://www.cdc.gov/overdose-prevention/media/pdfs/2024/07/Xylazine-Clinical-Management-and-Harm-Reduction.pdf', 'CDC xylazine fact sheet'), '.'),
     ),

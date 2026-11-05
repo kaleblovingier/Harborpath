@@ -94,4 +94,6 @@ export default {
   'tools.item.alcohol-care.description': 'Evalúe el riesgo de abstinencia de alcohol (PAWSS), la prevención de Wernicke y los medicamentos aprobados por la FDA (MAUD).',
   'tools.item.family-support.title': 'Apoyo familiar y guía CRAFT',
   'tools.item.family-support.description': 'Use el Entrenamiento Familiar y Refuerzo Comunitario (CRAFT) para mejorar la comunicación, establecer límites y apoyar a un ser querido.',
+  'tools.item.adulterant-care.title': 'Adulterantes emergentes, xilacina y cuidado de heridas por tranq',
+  'tools.item.adulterant-care.description': 'Reducción de daños clínicos para xilacina (tranq), nitazenos, triaje de sedación alfa-2, manejo de heridas necróticas y estándares de tiras reactivas.',
 };

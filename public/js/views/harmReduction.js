@@ -485,6 +485,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-ghost btn-small',
         href: '#/medications?substance=xylazine',
       }, icon('pill'), tr('Xylazine pharmacology & interactions', 'Farmacología e interacciones de la xilacina')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/adulterant-care',
+      }, icon('shield'), tr('Clinical adulterants & sedation triage guide', 'Guía clínica de adulterantes y triaje de sedación')),
     ),
   );
 }
