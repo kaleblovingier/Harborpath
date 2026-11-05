@@ -2213,6 +2213,60 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: var(--brand);
 }
 
+/* ------------------------------------------------------------ Wave 22: Dental & Oral Health */
+.dental-care-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dental-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.indent-checkbox {
+  margin-left: 1.75rem;
+}
+
+.text-warning {
+  color: #b45309;
+  font-weight: 500;
+}
+
+.enamel-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.enamel-alert-card {
+  padding: 1rem;
+  background: var(--surface-alt);
+  border-left: 4px solid #d97706;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.pearls-list {
+  margin-top: 1.25rem;
+}
+
+.stim-grid, .endo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.stim-card, .endo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

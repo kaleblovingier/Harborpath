@@ -2055,6 +2055,7 @@ export function medicationsView({ query } = {}) {
           onclick: () => window.print(),
         }, icon('printer'), tr('Print Low-Dose Micro-Induction ("Bernese Method") & Pharmacist Handout', 'Imprimir folleto de microinducción ("Método Bernese") y preguntas')),
       ),
+      p(h('a', { class: 'btn btn-secondary btn-small', href: '#/dental-care' }, icon('shield'), tr('FDA 2022 Buprenorphine Dental Safety & Enamel Protocol', 'Protocolo de Seguridad Dental y Protección del Esmalte FDA 2022'))),
     ),
 
     section('naltrexone-washout', t('meds.washout.title', 'Naltrexone 7–14 Day Opioid Washout Calculator & Non-Opioid Pain Guide'),

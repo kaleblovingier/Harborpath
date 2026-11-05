@@ -410,4 +410,36 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual plain-text summary generator for patient-clinician sleep dialogue without PII.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
+## 20. Wave 22 — Dental & Oral Health, Buprenorphine Enamel Protocol & Endocarditis Prevention
+
+### Clinical, Stomatological & Systemic Objectives
+- **FDA 2022 Drug Safety Communication on Transmucosal Buprenorphine**:
+  - Addresses acidic oral dissolution (Suboxone/Subutex tablets and buccal/sublingual films, pKa ~3.5–4.5) causing severe dental decay, cervical caries, tooth fractures, and enamel erosion.
+  - Implements the critical 6-step oral harm reduction protocol:
+    1. Pre-rinse and moisten mouth with water before dose placement to optimize salivary buffer capacity.
+    2. Complete dissolution sublingually or buccally without talking, eating, or drinking.
+    3. Swish a full glass of water thoroughly across all teeth and swallow after complete dissolution.
+    4. **Mandatory 1-Hour Brushing Delay**: Strictly avoid brushing teeth for at least 60 minutes post-dose. Brushing while enamel is acid-softened mechanically abrades the demineralized hydroxyapatite prism structure.
+    5. High-concentration neutral sodium fluoride: Prescribe 1.1% Neutral Sodium Fluoride toothpaste (Prevident 5000 / 5,000 ppm F-) nightly for remineralization.
+    6. Depot Alternative Consideration: Discuss subcutaneous extended-release buprenorphine depots (Sublocade / Brixadi) to completely bypass oral acid exposure while maintaining full MOUD therapeutic efficacy.
+- **Stimulant-Induced Xerostomia & Bruxism/Clenching**:
+  - Pathophysiology: Sympathetic alpha-1/alpha-2 adrenergic salivary vasoconstriction dramatically reduces protective salivary flow, precipitating rapid rampant smooth-surface decay ("meth mouth").
+  - Salivary stimulation: 100% xylitol lozenges and chewing gum (inhibits *Streptococcus mutans* enzymatic glycolysis) and carboxymethylcellulose/biotène artificial saliva substitutes.
+  - Bruxism and clenching: Magnesium glycinate supplementation (200–400 mg elemental magnesium) for masseter muscle relaxation, custom or boiling-water vacuum nightguards, and warm compresses.
+  - Avoidance of sugary/acidic carbonated beverages and acidic sports drinks.
+- **Infective Endocarditis (IE) & Oral Bacteremic Portals**:
+  - Highlights *Streptococcus viridans* and oral flora bacteremia colonizing cardiac endothelium and tricuspid/mitral valves, particularly in individuals with pre-existing valvular disease, prosthetic valves, or history of injection drug use.
+  - Endocarditis symptom screening: Unexplained prolonged fevers, night sweats, petechiae on oral mucosa or conjunctivae, Osler's nodes, Janeway lesions, and splinter hemorrhages.
+  - Ludwig's Angina Red-Flag Triage: Immediate life-threatening floor-of-mouth deep neck infection causing airway obstruction (elevated tongue, bull neck swelling, stridor, drooling/inability to swallow secretions) requiring immediate emergency 911 activation and awake fiberoptic intubation.
+- **Community Dental Resource Navigation**:
+  - Guidance on locating Federally Qualified Health Centers (FQHCs) offering sliding-fee scale dental clinics regardless of insurance.
+  - Ryan White Part A & Part B Dental Programs for individuals living with HIV.
+  - Dental School and Dental Hygiene teaching clinics for low-cost comprehensive care.
+  - Clear advice on self-advocacy and non-stigmatizing dental communication.
+- **In-RAM Ephemeral State & Export**:
+  - Zero persistent storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual exportable plain-text summary for dental visits without PII.
+  - WCAG 2.2 AA compliant accessible DOM structure.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'dental-care': () => import('./views/dentalCare.js').then((m) => {
+    viewCache.set('dental-care', m.dentalCareView);
+    routeResets.set('dental-care', m.resetDentalState);
+    return m.dentalCareView;
+  }),
   'sleep-care': () => import('./views/sleepCare.js').then((m) => {
     viewCache.set('sleep-care', m.sleepCareView);
     routeResets.set('sleep-care', m.resetSleepState);
@@ -196,6 +201,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'dental-care': () => t('route.dentalCare', 'Dental, oral health & endocarditis prevention'),
   'sleep-care': () => t('route.sleepCare', 'Sleep restoration & insomnia in recovery'),
   'nightlife-care': () => t('route.nightlifeCare', 'Nightlife, club drugs & festival harm reduction'),
   'polysubstance-care': () => t('route.polysubstanceCare', 'Polysubstance overdose synergy & interactions'),
@@ -285,6 +291,7 @@ export function preloadAllLazyViews() {
     preloadRoute('family-support'),
     preloadRoute('adulterant-care'),
     preloadRoute('methadone-access'),
+    preloadRoute('dental-care'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
