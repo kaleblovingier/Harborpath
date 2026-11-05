@@ -56,4 +56,5 @@ export default {
   'workspace.link.harmReduction': 'Recursos de reducción de daños',
   'workspace.link.toxicologyTriage': 'Triage toxicológico y desescalada',
   'workspace.link.hospitalCare': 'Atención hospitalaria y dolor en MOUD',
+  'workspace.link.needleExposure': 'Pinchazos de aguja y protocolo PEP',
 };

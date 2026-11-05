@@ -698,5 +698,17 @@ function renderSbarTab(localState, isEs, isClinician) {
   exportCard.appendChild(copyStatus);
   container.appendChild(exportCard);
 
+  const staffExposureCard = h('div', { class: 'info-callout', role: 'note' }, [
+    h('strong', {}, isEs ? '¿Pinchazo accidental de aguja o salpicadura en el personal del hospital? ' : 'Hospital staff needle stick or blood splash exposure? '),
+    h('span', {}, isEs
+      ? 'Active de inmediato el protocolo de Profilaxis Post-Exposición (PEP < 72h) y derechos OSHA 1910.1030 (100% financiado por el empleador): '
+      : 'Activate the immediate 72-hour Post-Exposure Prophylaxis (PEP) protocol and OSHA 1910.1030 rights (100% employer-paid): '),
+    h('a', { href: '#/needle-exposure' }, isEs
+      ? 'Abrir Protocolo de Exposición Ocupacional y PEP →'
+      : 'Open Occupational Exposure & PEP Protocol →')
+  ]);
+  container.appendChild(staffExposureCard);
+
   return container;
 }
+

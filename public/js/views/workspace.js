@@ -23,6 +23,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/medications', key: 'workspace.link.medications', label: 'Medication information' },
       { href: '#/toxicology-triage', key: 'workspace.link.toxicologyTriage', label: 'Toxicology triage & de-escalation' },
       { href: '#/hospital-care', key: 'workspace.link.hospitalCare', label: 'Hospital addiction & pain on MOUD' },
+      { href: '#/needle-exposure', key: 'workspace.link.needleExposure', label: 'Needle stick & PEP protocol' },
     ],
   },
   {

@@ -53,6 +53,7 @@ const entries = [
   ['adhd-care', 'care', 'ADHD, neurodiversity and stimulant harm reduction', 'ASRS v1.1 clinical screener, non-stimulant pharmacotherapy in SUD recovery, counterfeit pill FTS dilution, and executive function tools.', ['individual', 'supporter', 'care-team']],
   ['toxicology-triage', 'emergency', 'Acute toxicology triage & Project BETA crisis de-escalation', 'Multi-toxidrome differential engine across 5 conditions, Project BETA 10-domain verbal de-escalation, RASS scoring, restraint-avoidance pharmacotherapy, and SBAR clinical handoffs.', ['individual', 'supporter', 'care-team']],
   ['hospital-care', 'care', 'Hospital addiction care, pain on MOUD & patient rights', 'CA Bridge high-dose ED buprenorphine induction, acute surgical pain on MOUD, precipitated withdrawal rescue, and patient-directed discharge (AMA) harm reduction.', ['individual', 'supporter', 'care-team']],
+  ['needle-exposure', 'harm-reduction', 'Needle stick, sharps injury & bloodborne pathogen PEP protocol', 'CDC/USPHS 72-hour golden window PEP regimens (Biktarvy/Truvada), HBV titer algorithms, OSHA 1910.1030 100% employer-paid care, and safe community sharps disposal.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

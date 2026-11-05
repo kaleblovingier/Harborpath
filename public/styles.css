@@ -3597,3 +3597,404 @@ body.sensory-mode-active [tabindex]:focus-visible {
     word-break: break-all;
   }
 }
+
+/* ==========================================================================
+   WAVE 30: NEEDLE STICK, SHARPS INJURY & PEP PROTOCOL VIEW
+   ========================================================================== */
+
+.needle-exposure-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.exposure-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.exposure-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--danger-soft, #fee4e2);
+  color: var(--danger-strong, #8f1c13);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  width: fit-content;
+}
+
+.exposure-header-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.exposure-header-desc {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.exposure-timer-card {
+  display: flex;
+  gap: 1rem;
+  background: var(--surface);
+  border: 2px solid var(--danger, #b42318);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.timer-card-icon {
+  color: var(--danger, #b42318);
+  flex-shrink: 0;
+}
+
+.timer-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--danger-strong, #8f1c13);
+  margin: 0 0 0.25rem 0;
+}
+
+.timer-card-text {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.exposure-mode-switcher {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.mode-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  transition: all 0.15s ease-in-out;
+}
+
+.mode-toggle-btn.active {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+
+.exposure-tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.25rem;
+}
+
+.exposure-tab-btn {
+  padding: 0.5rem 0.85rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -0.25rem;
+  border-radius: 0.25rem 0.25rem 0 0;
+  transition: all 0.15s ease-in-out;
+}
+
+.exposure-tab-btn:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.exposure-tab-btn.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  background: var(--surface);
+}
+
+.exposure-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.input-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.exposure-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.evaluation-result-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.evaluation-result-card.emergency_immediate {
+  border-color: var(--danger);
+  background: var(--danger-soft, #fef3f2);
+}
+
+.evaluation-result-card.urgent_pep {
+  border-color: var(--accent, #f2b84b);
+  background: #fffdf5;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.result-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.result-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.badge-danger {
+  background: var(--danger);
+  color: #ffffff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  width: fit-content;
+}
+
+.badge-neutral {
+  background: var(--surface-2);
+  color: var(--muted);
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  width: fit-content;
+}
+
+.sbar-export-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+.sbar-header h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.05rem;
+}
+
+.sbar-header p {
+  margin: 0 0 1rem 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.sbar-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-copy-sbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--brand);
+  color: var(--on-brand);
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.btn-copy-sbar.secondary {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.decontamination-steps-grid,
+.pep-regimens-grid,
+.hbv-algorithm-grid,
+.osha-rights-grid,
+.pickup-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.decon-card,
+.regimen-card,
+.hbv-row-card,
+.osha-card,
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+.contraindications-card {
+  margin-top: 1.5rem;
+  background: var(--danger-soft, #fef3f2);
+  border: 2px solid var(--danger);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+.contra-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--danger-strong);
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.contra-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.contra-item {
+  background: var(--surface);
+  border: 1px solid var(--danger);
+  border-radius: 0.375rem;
+  padding: 0.85rem;
+}
+
+.contra-header {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--danger-strong);
+  margin: 0 0 0.35rem 0;
+}
+
+.contra-danger {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.transmission-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+}
+
+.transmission-matrix-table th,
+.transmission-matrix-table td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
+
+.transmission-matrix-table th {
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+.community-myth-card {
+  display: flex;
+  gap: 1rem;
+  background: var(--brand-soft);
+  border: 2px solid var(--brand);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.myth-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+  color: var(--brand-strong);
+}
+
+.myth-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.parent-reassurance-card {
+  margin-top: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+.reassurance-quote {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+  border-left: 4px solid var(--brand);
+  padding-left: 1rem;
+  margin: 0.5rem 0 0 0;
+}

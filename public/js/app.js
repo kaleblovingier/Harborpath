@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'needle-exposure': () => import('./views/needleExposure.js').then((m) => {
+    viewCache.set('needle-exposure', m.needleExposureView);
+    routeResets.set('needle-exposure', m.resetExposureState);
+    return m.needleExposureView;
+  }),
   'hospital-care': () => import('./views/hospitalCare.js').then((m) => {
     viewCache.set('hospital-care', m.hospitalCareView);
     routeResets.set('hospital-care', m.resetHospitalState);
@@ -236,6 +241,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'needle-exposure': () => t('route.needleExposure', 'Needle stick, sharps injury & bloodborne pathogen PEP protocol'),
   'hospital-care': () => t('route.hospitalCare', 'Hospital addiction care, pain on MOUD & patient rights'),
   'toxicology-triage': () => t('route.toxicologyTriage', 'Acute toxicology triage, Project BETA de-escalation & SBAR handoff'),
   'adhd-care': () => t('route.adhdCare', 'ADHD, neurodiversity & stimulant harm reduction'),
@@ -341,6 +347,7 @@ export function preloadAllLazyViews() {
     preloadRoute('adhd-care'),
     preloadRoute('toxicology-triage'),
     preloadRoute('hospital-care'),
+    preloadRoute('needle-exposure'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

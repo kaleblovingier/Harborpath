@@ -693,4 +693,42 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
 
+
+
+## 28. Wave 30 — Needle Stick, Sharps Injury & Bloodborne Pathogen Post-Exposure Prophylaxis (PEP) Navigator
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **CDC / USPHS Antiretroviral Post-Exposure Prophylaxis (PEP) Protocols (oPEP & nPEP)**:
+  - Implements CDC / USPHS Guidelines for Occupational Exposures to HIV and Recommendations for Postexposure Prophylaxis (Kuhar et al., Updated) and Nonoccupational PEP (nPEP):
+    - **72-Hour Golden Window**: PEP must be initiated immediately (< 2 hours ideal window, up to 72 hours maximum post-exposure). Beyond 72 hours, animal and human trials show no preventive benefit.
+    - **Full 28-Day Regimen**: Unbroken once-daily adherence for 28 consecutive days is required to abort viral replication and eliminate cellular reservoirs.
+    - **Preferred Regimen (1-Pill Once Daily)**: Biktarvy (Bictegravir 50 mg / Emtricitabine 200 mg / Tenofovir Alafenamide 25 mg) once daily PO with or without food. Favorable bone/renal safety profile via TAF.
+    - **Alternative Regimen**: Tivicay (Dolutegravir 50 mg) once daily + Truvada (TDF 300 mg / FTC 200 mg) once daily.
+    - **Immediate Starter Pack Strategy**: Emergency departments and urgent care clinics dispense a 3-to-7-day starter pack immediately on site with rapid follow-up arranged within 72 hours.
+- **Hepatitis B Post-Exposure Management (CDC MMWR)**:
+  - Titer-based risk stratification:
+    - *Vaccinated Responder (anti-HBs >= 10 mIU/mL)*: Fully protected; no treatment or HBIG needed.
+    - *Vaccinated Non-Responder (2 completed series, anti-HBs < 10 mIU/mL)*: Administer Hepatitis B Immune Globulin (HBIG 0.06 mL/kg IM) immediately (< 24 hours) + repeat second dose in 1 month.
+    - *Vaccinated, Response Unknown*: Draw anti-HBs immediately + administer 1 vaccine booster dose. If source confirmed HBsAg-positive, administer HBIG.
+    - *Unvaccinated*: Administer HBIG (0.06 mL/kg IM) immediately (< 24 hours) + initiate standard 3-dose Hepatitis B vaccine series.
+- **Hepatitis C (HCV) Management Post-Exposure**:
+  - Crucial clinical rule: Prophylactic antivirals, immunoglobulins, and corticosteroids are **NOT recommended for HCV post-exposure prophylaxis**.
+  - Protocol: Baseline anti-HCV and HCV RNA; follow-up HCV RNA at 4–6 weeks post-exposure (detects acute viremia). If positive, initiate direct-acting antivirals (DAAs, e.g. Epclusa or Mavyret), which achieve > 98% cure rates.
+- **Tetanus Toxoid Prophylaxis**:
+  - Clean minor wound: Td/Tdap booster if > 10 years since last dose.
+  - Contaminated/deep wound or outdoor discarded sharps: Tdap booster if > 5 years since last dose. If < 3 lifetime doses, administer Tdap + Tetanus Immune Globulin (TIG 250 units IM).
+- **Immediate Decontamination & Banned Harmful Actions**:
+  - Mechanical washing with soap and running water for >= 30–60 seconds; 15-minute continuous eye flush for mucous splashes.
+  - Strict Contraindications: **DO NOT squeeze, press, or "milk" the wound** (suctions viral particles deeper into capillaries); **DO NOT pour caustic chemicals (bleach, iodine, alcohol)** (causes chemical tissue necrosis); **DO NOT suck wound by mouth** (introduces oral bacteria).
+- **OSHA Bloodborne Pathogens Standard (29 CFR § 1910.1030) Worker Rights**:
+  - 100% employer-paid confidential medical evaluation, laboratory testing, and 28-day PEP medications at **zero financial cost to the employee** (no copays, no deductibles).
+  - Absolute legal protection against retaliation, discipline, or demotion under OSH Act Section 11(c).
+  - Mandatory Sharps Injury Log documentation to isolate defective safety devices.
+- **Community Needle Safety & Parental Panic De-escalation**:
+  - Epidemiological reality: Global health tracking of thousands of accidental community needle sticks shows **0 confirmed cases of HIV seroconversion**. Ambient sunlight and rapid evaporation inactivate HIV within hours. HBV is the only hardy virus, and HBV immunization neutralizes risk.
+  - 5-step safe syringe pickup protocol into rigid heavy-duty containers (detergent bottles), sealed with duct tape and labeled "SHARPS - DO NOT RECYCLE".
+- **Zero-PII Exposure SBAR Generator**:
+  - Instant clipboard export of structured Situation, Background, Assessment, and Recommendation notes for Emergency Department triage and Employee Health handoffs.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

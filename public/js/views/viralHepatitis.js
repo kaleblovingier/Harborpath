@@ -919,6 +919,17 @@ function renderAdvocacyTab(localState, isEs) {
     h('span', {}, isEs ? 'Restablecer Estado' : 'Reset State')
   ]);
 
+  const needleBanner = h('div', { class: 'info-callout', role: 'note' }, [
+    h('strong', {}, isEs ? '¿Exposición reciente o pinchazo de aguja (< 72 horas)? ' : 'Recent sharps exposure or needle stick (< 72 hours)? '),
+    h('span', {}, isEs
+      ? 'Revise el protocolo de profilaxis post-exposición (PEP), IGHB y seguimiento serológico: '
+      : 'Review the post-exposure prophylaxis (PEP) protocol, HBIG, and follow-up serology: '),
+    h('a', { href: '#/needle-exposure' }, isEs
+      ? 'Abrir Protocolo de Exposición a Agujas y PEP →'
+      : 'Open Needle Stick & PEP Protocol Navigator →')
+  ]);
+  wrapper.appendChild(needleBanner);
+
   const btnRow = h('div', { class: 'btn-row' }, [copyBtn, resetBtn, copyStatus]);
   exportSection.appendChild(textArea);
   exportSection.appendChild(btnRow);

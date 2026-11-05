@@ -122,4 +122,6 @@ export default {
   'tools.item.toxicology-triage.description': 'Motor diferencial de 5 toxidromes, 10 dominios de desescalada verbal del Proyecto BETA, escala RASS, farmacoterapia de prevención de contenciones y traspasos SBAR.',
   'tools.item.hospital-care.title': 'Atención hospitalaria de adicciones, dolor en MOUD y derechos',
   'tools.item.hospital-care.description': 'Inducción rápida a altas dosis de buprenorfina CA Bridge en urgencias, analgesia quirúrgica en MOUD, rescate de abstinencia precipitada y reducción de daños en altas voluntarias (AMA).',
+  'tools.item.needle-exposure.title': 'Protocolo de pinchazos de aguja y PEP',
+  'tools.item.needle-exposure.description': 'Motor de decisión para profilaxis post-exposición (PEP 72h) de VIH/VHB, derechos OSHA 1910.1030 y desecho seguro de punzocortantes.',
 };

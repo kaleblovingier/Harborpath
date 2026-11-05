@@ -793,6 +793,16 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       : 'Open Hospital Addiction Care, Pain on MOUD & Patient Rights Navigator →')
   );
   root.append(hospCard);
+  const needleCard = h('div', { class: 'info-callout', role: 'note', style: undefined },
+    h('strong', {}, isEs ? '¿Pinchazo accidental de aguja o lesión por objeto cortopunzante? ' : 'Accidental needle stick or sharps injury? '),
+    h('span', {}, isEs
+      ? 'Consulte el protocolo de Profilaxis Post-Exposición (PEP) dentro de las 72 horas, algoritmo de Hepatitis B y derechos laborales OSHA: '
+      : 'Consult the 72-hour Post-Exposure Prophylaxis (PEP) protocol, Hepatitis B algorithm, and OSHA worker rights: '),
+    h('a', { href: '#/needle-exposure' }, isEs
+      ? 'Abrir Protocolo de Pinchazos de Aguja y PEP →'
+      : 'Open Needle Stick & PEP Protocol Navigator →')
+  );
+  root.append(needleCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);
