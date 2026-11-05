@@ -138,6 +138,8 @@ export default {
   'tools.item.vein-care.description': 'Zonas anatómicas de riesgo (zonas verdes vs rojas), triaje de punción arterial accidental, prevención de TVP y pseudoaneurismas, filtros de 0.22 micras y rehabilitación venosa.',
   'tools.item.inhalant-care.title': 'Inhalantes, solventes y seguridad con óxido nitroso',
   'tools.item.inhalant-care.description': 'Pautas clínicas para la inactivación de B12 por óxido nitroso, degeneración combinada subaguda, muerte súbita por inhalación (SSDS), metahemoglobinemia por poppers y congelación criogénica.',
+  'tools.item.weather-care.title': 'Navegador de hipotermia, congelación y golpe de calor',
+  'tools.item.weather-care.description': 'Protocolos basados en evidencia para hipotermia accidental (Estadios Suizos I–IV), regla de RCP «nadie está muerto hasta estar caliente», preservación tisular en congelación, cuidado de pie de trinchera y enfriamiento de emergencia en golpe de calor.',
   'tools.item.ketamine-care.title': 'Reducción de daños de ketamina y navegador de uropatía',
   'tools.item.ketamine-care.description': 'Pautas clínicas para la uropatía por ketamina (vejiga K, estadios 1 a 4), cólicos biliares (K-cramps), protección antioxidante con EGCG y seguridad ante ahogamientos.',
 };

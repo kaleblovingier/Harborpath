@@ -65,4 +65,5 @@ export default {
   'workspace.link.veinCare': 'Cuidado de venas y anatomía de inyección',
   'workspace.link.inhalantCare': 'Inhalantes, solventes y seguridad con óxido nitroso',
   'workspace.link.ketamineCare': 'Uropatía por ketamina y reducción de daños',
+  'workspace.link.weatherCare': 'Hipotermia, congelación y clima extremo',
 };

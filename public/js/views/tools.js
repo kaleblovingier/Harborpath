@@ -62,6 +62,7 @@ const entries = [
   ['vein-care', 'harm-reduction', 'Vein care, vascular health & injection anatomy', 'Anatomical injection risk zones (green vs red), inadvertent arterial puncture emergency triage, DVT and pseudoaneurysm prevention, 0.22-micron filtration, and vein rehabilitation.', ['individual', 'supporter', 'care-team']],
   ['inhalant-care', 'harm-reduction', 'Inhalants, solvents & nitrous oxide safety', 'Clinical guidance for nitrous oxide B12 inactivation, Subacute Combined Degeneration, Sudden Sniffing Death Syndrome (SSDS), alkyl nitrite methemoglobinemia, and cryogenic freeze injury prevention.', ['individual', 'supporter', 'care-team']],
   ['ketamine-care', 'harm-reduction', 'Ketamine harm reduction & uropathy navigator', 'Clinical guidance for Ketamine-Induced Uropathy (KIU / "K-Bladder") staging, biliary "K-cramps" management, EGCG antioxidant protection, and water drowning safety.', ['individual', 'supporter', 'care-team']],
+  ['weather-care', 'emergency', 'Weather care, hypothermia, frostbite & heat stroke safety navigator', 'Evidence-based protocols for accidental hypothermia (Swiss Stages I–IV), "warm and dead" CPR rule, frostbite tissue preservation, trench foot care, and emergency heat stroke cooling.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

@@ -603,4 +603,15 @@ function renderSaferUseTab(container, isEs) {
   ]);
   container.appendChild(triageTip);
 
+  const weatherTip = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Hipertermia Maligna, Golpe de Calor o Sospecha de Rabdomiólisis?' : 'Malignant Hyperthermia, Heat Stroke or Rhabdomyolysis?'),
+    h('p', {}, isEs
+      ? 'Consulte protocolos de inmersión en agua helada, hidratación para protección renal y diferenciación de rabdomiólisis (orina oscura / té). NUNCA administre paracetamol.'
+      : 'Review ice-water immersion protocols, high-rate crystalloid renal protection, and rhabdomyolysis triage (cola-colored urine). NEVER give acetaminophen for environmental or stimulant heat stroke.'),
+    h('a', { href: '#/weather-care' }, isEs
+      ? 'Abrir Navegador de Seguridad Climática, Golpe de Calor e Hipotermia →'
+      : 'Open Weather Care, Heat Stroke & Hypothermia Navigator →')
+  ]);
+  container.appendChild(weatherTip);
+
 }

@@ -7116,3 +7116,282 @@ body.sensory-mode-active [tabindex]:focus-visible {
   line-height: 1.55;
   margin: 0;
 }
+
+/* ==========================================================================
+   Wave 39: Weather Care & Environmental Extremes Navigator
+   ========================================================================== */
+
+.weather-care-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.wc-header {
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(234, 88, 12, 0.08));
+  border-left: 4px solid #0284c7;
+  padding: 1.75rem 2rem;
+  border-radius: 0.75rem;
+}
+
+.wc-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.wc-header-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.wc-header-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted, #475569);
+  line-height: 1.6;
+  max-width: 950px;
+  margin: 0;
+}
+
+.wc-mode-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.wc-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  background: var(--card-bg, #ffffff);
+  color: var(--text-main, #334155);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.wc-mode-btn:hover {
+  border-color: #0284c7;
+  background: rgba(2, 132, 199, 0.05);
+}
+
+.wc-mode-btn.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+.wc-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.wc-tab-btn {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.wc-tab-btn:hover {
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.06);
+}
+
+.wc-tab-btn.active {
+  color: #0284c7;
+  background: #e0f2fe;
+  font-weight: 700;
+}
+
+.wc-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.wc-result-card {
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  border: 2px solid;
+}
+
+.wc-result-card.standard {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.wc-result-card.emergency {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.wc-result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.wc-result-header h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.wc-result-card.standard .wc-result-header h3 {
+  color: #15803d;
+}
+
+.wc-result-card.emergency .wc-result-header h3 {
+  color: #b91c1c;
+}
+
+.wc-result-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wc-rec-item p {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 0.25rem 0 0 0;
+  color: var(--text-main, #334155);
+}
+
+.wc-sbar-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.wc-stages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.wc-stage-card {
+  background: var(--card-bg, #ffffff);
+  border: 2px solid;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wc-stage-card.mild_caution {
+  border-color: #38bdf8;
+}
+
+.wc-stage-card.moderate_warning {
+  border-color: #f59e0b;
+}
+
+.wc-stage-card.severe_danger {
+  border-color: #ea580c;
+}
+
+.wc-stage-card.critical_ecmo_transfer {
+  border-color: #ef4444;
+  background: #fff1f2;
+}
+
+.wc-diffs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.wc-diff-card {
+  background: var(--card-bg, #ffffff);
+  border: 2px solid;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wc-diff-card.emergency_tissue_loss {
+  border-color: #ea580c;
+}
+
+.wc-diff-card.urgent_neurovascular {
+  border-color: #0284c7;
+}
+
+.wc-diff-card.critical_hyperthermia {
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+.wc-diff-card.urgent_renal_shutdown {
+  border-color: #b45309;
+}
+
+.wc-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.wc-rule-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.wc-rule-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.wc-rule-card p {
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.55;
+  margin: 0;
+}

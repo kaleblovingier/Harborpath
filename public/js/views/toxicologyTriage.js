@@ -1451,6 +1451,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(ketamineLink);
 
+    const weatherLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Hipotermia, Congelación y Golpe de Calor (Extremos Climáticos)' : 'Hypothermia, Frostbite & Heat Stroke (Environmental Extremes)'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para estadificación suiza de hipotermia (estadios I-IV), regla de RCP «nadie está muerto hasta estar caliente», congelación tisular y enfriamiento agresivo de golpe de calor: '
+        : 'For Swiss hypothermia staging (Stages I–IV), "warm and dead" CPR rule, frostbite tissue preservation, trench foot care, and emergency heat stroke cooling: '),
+      h('a', { href: '#/weather-care' }, isEs
+        ? 'Abrir Navegador de Seguridad Climática y Temperaturas Extremas →'
+        : 'Open Weather Care, Hypothermia & Heat Stroke Navigator →')
+    );
+    container.appendChild(weatherLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

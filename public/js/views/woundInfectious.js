@@ -814,6 +814,16 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       : 'Open Needle Stick & PEP Protocol Navigator →')
   );
   root.append(needleCard);
+  const frostbiteCard = h('div', { class: 'info-callout', role: 'note', style: undefined },
+    h('strong', {}, isEs ? '¿Sospecha de congelación (frostbite), ampollas oscuras o pie de trinchera macerado? ' : 'Suspected frostbite, dark blisters, or macerated trench foot? '),
+    h('span', {}, isEs
+      ? 'Consulte los protocolos de estadificación suiza de hipotermia, preservación tisular por congelación y baño de agua templada: '
+      : 'Consult Swiss hypothermia staging, rapid water bath rewarming, and frostbite tissue preservation protocols: '),
+    h('a', { href: '#/weather-care' }, isEs
+      ? 'Abrir Navegador de Hipotermia, Congelación y Clima Extremo →'
+      : 'Open Hypothermia, Frostbite & Weather Care Navigator →')
+  );
+  root.append(frostbiteCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);

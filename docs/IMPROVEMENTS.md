@@ -951,4 +951,28 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Urologists, Emergency Physicians, and Addiction Specialists.
 
+### 37. Wave 39: Accidental Hypothermia, Frostbite, Trench Foot & Heat Stroke Safety Navigator (`#/weather-care`)
+- **Thermal Pharmacology & Substance Thermoregulation Dysregulation**:
+  - *Depressants & Alcohol in Extreme Cold*: Ethanol triggers prominent cutaneous vasodilation (creating a false subjective sensation of warmth while rapidly dumping core heat to the ambient environment) and inhibits hepatic gluconeogenesis, producing profound hypoglycemia. Opioids directly suppress hypothalamic thermal setpoints and abolish shivering thermogenesis. Sedatives cause prolonged outdoor immobility on freezing ground or wet concrete.
+  - *Stimulants & Psychotropics in Extreme Heat*: Methamphetamine, cocaine, and MDMA stimulate central alpha-1 and beta-adrenergic receptors, uncouple mitochondrial oxidative phosphorylation, and drive severe hyperlocomotion, generating massive endogenous metabolic heat. Anticholinergics and typical/atypical antipsychotics block muscarinic receptors on sweat glands, causing anhidrosis (inability to dissipate heat via sweating).
+- **Accidental Hypothermia Clinical Staging (Swiss Staging System I–IV)**:
+  - *Stage I: Mild Hypothermia (32°C–35°C / 90°F–95°F)*: Conscious, alert, vigorous shivering (body's primary active defense mechanism). Passive external rewarming (shelter, remove wet clothes, warm dry layers, warm sweet non-alcoholic drinks).
+  - *Stage II: Moderate Hypothermia (28°C–32°C / 82°F–90°F)*: Shivering cessation (critical red flag of glycogen depletion), impaired consciousness, confusion, lethargy, paradoxical undressing. Active external trunk rewarming (chemical warm packs to axillae, groin, and chest; heated humidified oxygen). **Gentle Handling Mandate**: keep patient strictly horizontal; avoid rough movement to prevent triggering fatal Ventricular Fibrillation.
+  - *Stage III: Severe Hypothermia (24°C–28°C / 75°F–82°F)*: Unconscious, comatose, profound bradycardia, Osborn J-waves on ECG, extreme myocardial irritability. Active internal rewarming (warmed 42°C IV crystalloids, thoracic/bladder lavage, ICU management).
+  - *Stage IV: Apparent Death / Hypothermic Cardiac Arrest (< 24°C / < 75°F)*: Pulseless, apneic, stiff cold body mimicking rigor mortis. Cardinal clinical rule: **"No one is dead until warm and dead!"** Continuous CPR during transport to an Extracorporeal Life Support (ECLS / ECMO) center.
+- **Clinical Differential Engines**:
+  - *Frostbite (Freezing Tissue Injury)*: Ice crystal formation and progressive microvascular thrombosis mediated by thromboxane A2. Clear blisters (Stage 2) vs dark hemorrhagic blisters (Stage 3) and deep tissue necrosis/gangrene (Stage 4). PROTOCOL: NEVER rub or massage frozen skin; NEVER rewarm if there is any chance of refreezing; rapid water bath rewarming at 37°C–39°C (99°F–102°F) for 15–30 min; Ibuprofen 12 mg/kg/day to block thromboxane; emergency hospital evaluation for IV iloprost or intra-arterial tPA within 24 hours of thawing.
+  - *Non-Freezing Cold Injury (Trench Foot / Immersion Foot)*: Prolonged wet, damp, cold exposure (> 12 hours) producing neurovascular vasospasm, white wrinkled maceration, and severe throbbing pain. Treatment: remove wet footwear, air-dry at room temperature, elevate feet above heart level, clean dry wool/synthetic sock exchange twice daily, avoid walking on macerated feet.
+  - *Exertional & Stimulant Heat Stroke*: Core temp > 40°C (104°F) + CNS dysfunction (delirium, seizures, coma) + flushed skin. Emergency rapid aggressive whole-body cold/ice-water immersion targeting core temp < 39°C within 30 min. **Strict Antipyretic Prohibition**: NEVER give acetaminophen or aspirin (ineffective for environmental heat; causes acute liver failure and coagulopathy).
+  - *Rhabdomyolysis & Myoglobinuric AKI*: Hyperthermia or prolonged pressure immobilization causing skeletal muscle necrosis, releasing myoglobin into blood, producing dark "tea-colored" or "cola-colored" urine. Aggressive IV isotonic saline (200–300 mL/hr) targeting urine output > 200 mL/hr, urine alkalinization.
+- **Harm Reduction & Environmental Safety Directives**:
+  - *Rule 1*: Gentle handling mandate in moderate and severe hypothermia to prevent fatal V-Fib.
+  - *Rule 2*: "No one is dead until warm and dead" prolonged resuscitation rule.
+  - *Rule 3*: Frostbite: Never rub tissue and never rewarm if refreezing is possible.
+  - *Rule 4*: Heat stroke: Rapid ice-water cooling and strict antipyretic prohibition.
+  - *Rule 5*: Trench foot prevention: The 12-hour dry sock rule.
+  - *Rule 6*: Alcohol and sedatives in cold: Beware false warmth and hepatic gluconeogenesis shutdown.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for EMS, Emergency Physicians, Street Medicine Clinicians, and Shelter Outreach Workers.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

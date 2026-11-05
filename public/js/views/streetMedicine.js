@@ -611,6 +611,11 @@ export function streetMedicineView(containerOrOptions = {}, maybeOptions = {}) {
     heatBox.append(p(strong(isEs ? 'Consejo de supervivencia: ' : 'Survival Guidance: '), ENVIRONMENTAL_EXPOSURE_RISKS.extreme_heat.actionAdvice[lang] || ENVIRONMENTAL_EXPOSURE_RISKS.extreme_heat.actionAdvice.en));
     weatherCard.append(heatBox);
 
+    const weatherLinkBox = h('div', { class: 'mt-3' }, [
+      h('a', { href: '#/weather-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador Clínico de Hipotermia, Congelación y Golpe de Calor →' : 'Open Hypothermia, Frostbite & Heat Stroke Clinical Navigator →'),
+    ]);
+    weatherCard.append(weatherLinkBox);
+
     tabPanel.append(weatherCard);
   }
 
