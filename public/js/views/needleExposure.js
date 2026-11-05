@@ -874,6 +874,16 @@ export function needleExposureView() {
         ]),
       ]),
 
+      // Vein Care and Injection Vascular Safety Card
+      h('div', { class: 'pep-prep-banner mt-2', role: 'note' }, [
+        icon('activity'),
+        h('div', {}, [
+          h('strong', {}, 'Injection Harm Reduction & Vascular Safety: '),
+          h('span', {}, 'Review safer injection anatomy, tourniquet release physics, arterial puncture emergency de-escalation, and 0.22-micron bacterial wheel filtration: '),
+          h('a', { href: '#/vein-care' }, 'Open Vein Care & Vascular Health Navigator →'),
+        ]),
+      ]),
+
       // Starter Pack Banner
       h('div', { class: 'starter-pack-banner' }, [
         icon('alert'),

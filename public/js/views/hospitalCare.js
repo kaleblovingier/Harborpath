@@ -720,6 +720,17 @@ function renderSbarTab(localState, isEs, isClinician) {
   ]);
   container.appendChild(novelSubstancesCard);
 
+  const veinCareCard = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+    h('strong', {}, isEs ? '¿Evaluación de TVP, pseudoaneurismas o daño vascular en personas que se inyectan? ' : 'Evaluating DVT, pseudoaneurysms, or vascular damage in injection drug use? '),
+    h('span', {}, isEs
+      ? 'Consulte el protocolo de triaje de punción arterial, ecografía Doppler para TVP, diagnóstico diferencial de pseudoaneurismas y preservación venosa: '
+      : 'Review arterial puncture triage, duplex ultrasound for DVT, pseudoaneurysm surgical precautions, and vein preservation protocols: '),
+    h('a', { href: '#/vein-care' }, isEs
+      ? 'Abrir Navegador de Cuidado de Venas y Salud Vascular →'
+      : 'Open Vein Care & Vascular Health Navigator →')
+  ]);
+  container.appendChild(veinCareCard);
+
   return container;
 }
 

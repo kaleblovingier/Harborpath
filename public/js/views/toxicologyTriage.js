@@ -1418,6 +1418,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(ghbLink);
 
+    const veinLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Salud Vascular, Punción Arterial y Zonas de Inyección' : 'Vascular Health, Arterial Puncture & Injection Zones'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para triaje urgente de punción arterial accidental, compresión manual continua (>= 15 min), sospecha de TVP, pseudoaneurismas y zonas de riesgo anatómico: '
+        : 'For accidental arterial puncture emergency compression (>= 15 min), DVT triage, pseudoaneurysm surgical alerts, and anatomical injection risk zones: '),
+      h('a', { href: '#/vein-care' }, isEs
+        ? 'Abrir Navegador de Cuidado de Venas y Salud Vascular →'
+        : 'Open Vein Care, Vascular Health & Injection Anatomy Navigator →')
+    );
+    container.appendChild(veinLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

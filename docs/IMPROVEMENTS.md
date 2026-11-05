@@ -872,4 +872,34 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Generator**:
   - 1-click clipboard export in English and Spanish for Emergency Department triage, ICU transfer, or addiction consultation.
 
+### 34. Wave 36: Vein Care, Vascular Health, Arterial Puncture Triage & Safer Injection Anatomy Navigator (`#/vein-care`)
+- **Anatomical Injection Risk Stratification (Green, Yellow & Red Zones)**:
+  - *Green Zone (Safer)*: Forearm & inside elbow (cephalic, basilic, median cubital veins). Superficial, prominent, robust valves, high blood flow velocity, separated from deep arteries by muscular fascial planes.
+  - *Yellow Zone (Caution - Fragility & Sclerosis)*: Dorsum of hands and wrists. Thin-walled, fragile veins that roll; sluggish flow; rapid sclerosis and chemical phlebitis; high risk of missed shots and deep abscesses.
+  - *Red Zone (Extreme Hazard - Life & Limb Threat)*:
+    - *Neck & Throat (Internal/External Jugular)*: Proximity to carotid artery and vagus nerve; accidental carotid injection causes catastrophic cerebral infarction (stroke) or status epilepticus; deep neck space hematomas/abscesses compress trachea causing suffocating airway collapse within minutes; extreme air embolism risk.
+    - *Groin & Inguinal Canal (Femoral Vein / "Femoral Hit")*: NAVEL bundle anatomy (femoral vein, artery, nerve); high risk of femoral artery puncture, massive exsanguinating hemorrhage, and false aneurysm (pseudoaneurysm); chronic femoral injection destroys venous return causing severe deep vein thrombosis (DVT) and limb loss.
+    - *Legs, Ankles & Feet (Saphenous Veins & Dorsal Pedis)*: Sluggish venous return against gravity; valve destruction; ankle extravasations degenerate into chronic, necrotic, non-healing venous stasis ulcers and osteomyelitis.
+- **Arterial Puncture vs. Venous Access Bedside Differential**:
+  - *Venous (Safe Target)*: Dark crimson red blood, steady non-pulsatile draw, painless or mild pressure.
+  - *Arterial (Critical Emergency)*: Bright scarlet red, frothy, high pressure; blood pushes the syringe plunger back out without drawing; excruciating burning electric-shock pain radiating down limb into digits; immediate pale blanching or purple discoloration.
+  - *Immediate Arterial Action*: DO NOT INJECT. Withdraw needle immediately. Apply firm, continuous direct manual pressure with clean gauze/cloth for AT LEAST 15 MINUTES uninterrupted (do not peek). Elevate limb above heart level. NEVER APPLY A TOURNIQUET AFTER AN ARTERIAL HIT. If bleeding persists beyond 15 minutes or limb is cold/numb/pulseless, call 911 / seek emergency vascular surgery.
+- **Vascular Complications & Infection Differential Engine**:
+  - *Deep Vein Thrombosis (DVT)*: Unilateral arm/leg swelling, persistent dull aching pain, erythema, warmth. Emergency duplex ultrasound and anticoagulation (DOAC/enoxaparin). Strict contraindication: NEVER massage or rub a swollen extremity (dislodges clot into pulmonary circulation, causing fatal pulmonary embolism).
+  - *Infected Arterial Pseudoaneurysm*: Tender, expanding, pulsatile mass with audible bruit. Misdiagnosis hazard: often mistaken for an abscess; attempting bedside incision and drainage (I&D) triggers fatal exsanguination. Mandatory emergency vascular surgery consultation and Doppler ultrasound / CT angiography before any intervention.
+  - *Acute Compartment Syndrome*: The 6 Ps (Pain out of proportion, Pain on passive stretch, Pallor, Paresthesias, Paralysis, Pulselessness); rock-hard "wooden" compartment. Emergency surgical fasciotomy required within 6 hours to prevent irreversible muscle necrosis and amputation.
+  - *Cotton Fever vs. Sepsis/Endocarditis*: Cotton fever is an endotoxin reaction (*Pantoea agglomerans*) from cotton filters causing shaking rigors 15–30 min post-injection, resolving within 12–24 hours. Critical rule: Fever or chills persisting beyond 24 hours is NOT cotton fever—it is bacteremia, sepsis, or infective endocarditis requiring blood cultures and IV antibiotics.
+- **Vein Preservation & Biomechanical Protocols**:
+  - *Rule 1*: Release tourniquet BEFORE depressing plunger (prevents high venous back-pressure blowout and missed shot abscesses).
+  - *Rule 2*: Bevel up at 15° to 45° angle pointing toward the heart.
+  - *Rule 3*: Never "boot" or pump blood back and forth (causes rapid platelet activation and thrombophlebitis).
+  - *Rule 4*: Single-use sterile needles only (electron microscopy reveals blunted fishhook barbs after a single puncture).
+  - *Rule 5*: 0.22-micron sterile wheel filtration (eliminates 100% of bacteria, fungal spores, and insoluble pill binders/talc).
+- **Vein Healing & Non-Injection Transition**:
+  - Warm compresses (10–15 min twice daily) and systemic hydration (2 L water daily) to stimulate vasodilation.
+  - 48-Hour Rotation Rule: Move 1 inch upward toward heart; allow 48–72 hours of uninterrupted endothelial healing.
+  - Transition to smoking, boofing/rectal (~80% bioavailability), or snorting to allow damaged veins to recover.
+- **Zero-PII SBAR Clinical Handoff & Vascular Triage Note Generator**:
+  - 1-click clipboard export in English and Spanish for Emergency Department triage, vascular surgery consultations, and street medicine teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

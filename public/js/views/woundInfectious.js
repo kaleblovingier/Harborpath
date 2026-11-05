@@ -765,6 +765,17 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       vcCard.append(sec);
     });
 
+    const fullVeinNavCard = h('div', { class: 'callout callout-info mt-2' }, [
+      h('h4', {}, isEs ? 'Navegador Integral de Salud Vascular y Anatomía de Inyección' : 'Dedicated Vascular Health & Injection Anatomy Navigator'),
+      h('p', {}, isEs
+        ? 'Para triaje de punción arterial de emergencia, protocolo de trombosis venosa profunda (TVP), pseudoaneurismas, síndrome compartimental y zonas de riesgo anatómico (brazos vs cuello/ingle): '
+        : 'For emergency arterial puncture management, deep vein thrombosis (DVT), pseudoaneurysms, compartment syndrome, and anatomical risk zones (arms vs neck/groin): '),
+      h('a', { href: '#/vein-care' }, isEs
+        ? 'Abrir Navegador Completo de Cuidado de Venas y Salud Vascular →'
+        : 'Open Complete Vein Care, Vascular Health & Injection Anatomy Navigator →')
+    ]);
+    vcCard.append(fullVeinNavCard);
+
     tabPanel.append(vcCard);
   }
 

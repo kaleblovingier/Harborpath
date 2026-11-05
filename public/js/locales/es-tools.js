@@ -134,4 +134,6 @@ export default {
   'tools.item.psychedelic-care.description': 'Protocolos de soporte de pares de Fireside Project, 4 pilares de desescalada de crisis, anclaje sensorial, contraindicaciones mortales de litio con convulsiones, alertas de 25I-NBOMe y guía neurooftalmológica de HPPD.',
   'tools.item.ghb-care.title': 'Reducción de daños de GHB/GBL, triaje de coma y abstinencia',
   'tools.item.ghb-care.description': 'Guías clínicas para el coma por G-out, posición lateral de seguridad, la trampa de la enzima ADH con 1,4-BDO, abstinencia severa y sustitución con baclofeno según la BAP.',
+  'tools.item.vein-care.title': 'Cuidado de venas, salud vascular y anatomía de inyección',
+  'tools.item.vein-care.description': 'Zonas anatómicas de riesgo (zonas verdes vs rojas), triaje de punción arterial accidental, prevención de TVP y pseudoaneurismas, filtros de 0.22 micras y rehabilitación venosa.',
 };

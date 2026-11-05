@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'vein-care': () => import('./views/veinCare.js').then((m) => {
+    viewCache.set('vein-care', m.veinCareView);
+    routeResets.set('vein-care', m.resetVeinState);
+    return m.veinCareView;
+  }),
   'ghb-care': () => import('./views/ghbCare.js').then((m) => {
     viewCache.set('ghb-care', m.ghbCareView);
     routeResets.set('ghb-care', m.resetGhbState);
@@ -266,6 +271,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'vein-care': () => t('route.veinCare', 'Vein care, vascular health & injection anatomy'),
   'ghb-care': () => t('route.ghbCare', 'GHB, GBL & 1,4-BDO harm reduction, coma triage & withdrawal'),
   'psychedelic-care': () => t('route.psychedelicCare', 'Psychedelic harm reduction, 5-HT2A de-escalation & HPPD'),
   'gabapentinoid-care': () => t('route.gabapentinoidCare', 'Gabapentinoids, respiratory synergy & deprescribing'),
@@ -340,6 +346,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('vein-care'),
     preloadRoute('ghb-care'),
     preloadRoute('psychedelic-care'),
     preloadRoute('tools'),
