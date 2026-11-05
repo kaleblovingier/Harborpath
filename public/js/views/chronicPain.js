@@ -587,6 +587,13 @@ export function chronicPainView() {
     )
   );
 
+  const gabapentinoidLinkBanner = h('div', { class: 'card banner-tip mt-2' },
+    h('p', null,
+      h('strong', null, 'Taking Gabapentin or Lyrica for neuropathic pain or reducing concurrent opioids? '),
+      h('a', { href: '#/gabapentinoid-care' }, 'Open the dedicated Gabapentinoid Safety & Hyperbolic Deprescribing Navigator →')
+    )
+  );
+
 
   const sedativeIntroCard = h('article', { class: 'card' },
     h('h2', null, BENZODIAZEPINE_STANDARDS.ASHTON_TAPER_PROTOCOL.titleEn),
@@ -700,7 +707,7 @@ export function chronicPainView() {
   }
 
   updateSedativeResults();
-  panelSedative.append(dedicatedLinkBanner, sedativeIntroCard, sedativeCalcForm, sedativeResults);
+  panelSedative.append(dedicatedLinkBanner, gabapentinoidLinkBanner, sedativeIntroCard, sedativeCalcForm, sedativeResults);
 
   // ---------------- Tab 3: Non-Opioid Multimodal Care ----------------
   const panelMultimodal = h('div', {

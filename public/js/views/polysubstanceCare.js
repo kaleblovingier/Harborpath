@@ -861,6 +861,17 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
       : 'Open Novel Substances & Clinical Detox Navigator →')
   ]);
   wrapper.appendChild(novelCard);
+
+  const gabapentinoidCard = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Coprescripción de Gabapentina o Pregabalina (Lyrica) con Opioides?' : 'Gabapentin or Pregabalin (Lyrica) Opioid Co-Prescription?'),
+    h('p', {}, isEs
+      ? 'La FDA advierte de dificultades respiratorias graves cuando se combinan gabapentinoides con opioides o depresores del SNC. Los gabapentinoides anulan la compensación ventilatoria hipercapnica y están presentes en el 20% a 30% de las muertes por sobredosis. '
+      : 'The FDA warns of serious breathing difficulties when gabapentinoids are combined with opioids or CNS depressants. Gabapentinoids blunt hypercapnic ventilatory compensation and are involved in 20% to 30% of fatal opioid overdoses. '),
+    h('a', { href: '#/gabapentinoid-care' }, isEs
+      ? 'Abrir Navegador de Seguridad de Gabapentinoides y Desescalada Hiperbólica →'
+      : 'Open Gabapentinoid Safety & Hyperbolic Deprescribing Navigator →')
+  ]);
+  wrapper.appendChild(gabapentinoidCard);
   wrapper.appendChild(exportSection);
   return wrapper;
 }

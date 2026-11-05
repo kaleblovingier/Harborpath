@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'gabapentinoid-care': () => import('./views/gabapentinoidCare.js').then((m) => {
+    viewCache.set('gabapentinoid-care', m.gabapentinoidCareView);
+    routeResets.set('gabapentinoid-care', m.resetGabapentinoidState);
+    return m.gabapentinoidCareView;
+  }),
   'novel-substances': () => import('./views/novelSubstances.js').then((m) => {
     viewCache.set('novel-substances', m.novelSubstancesView);
     routeResets.set('novel-substances', m.resetNovelState);
@@ -251,6 +256,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'gabapentinoid-care': () => t('route.gabapentinoidCare', 'Gabapentinoids, respiratory synergy & deprescribing'),
   'novel-substances': () => t('route.novelSubstances', 'Novel substances, kratom, tianeptine & OTC misuse'),
   'sexual-health': () => t('route.sexualHealth', 'Doxy-PEP, HIV PrEP & emergency contraception'),
   'needle-exposure': () => t('route.needleExposure', 'Needle stick, sharps injury & bloodborne pathogen PEP protocol'),
@@ -362,6 +368,7 @@ export function preloadAllLazyViews() {
     preloadRoute('needle-exposure'),
     preloadRoute('sexual-health'),
     preloadRoute('novel-substances'),
+    preloadRoute('gabapentinoid-care'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

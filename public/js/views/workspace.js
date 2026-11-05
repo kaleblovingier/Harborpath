@@ -26,6 +26,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/needle-exposure', key: 'workspace.link.needleExposure', label: 'Needle stick & PEP protocol' },
       { href: '#/sexual-health', key: 'workspace.link.sexualHealth', label: 'Sexual health, Doxy-PEP & contraception' },
       { href: '#/novel-substances', key: 'workspace.link.novelSubstances', label: 'Novel substances, kratom & tianeptine' },
+      { href: '#/gabapentinoid-care', key: 'workspace.link.gabapentinoidCare', label: 'Gabapentinoid safety & deprescribing' },
     ],
   },
   {

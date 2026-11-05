@@ -128,4 +128,6 @@ export default {
   'tools.item.sexual-health.description': 'Guías CDC 2024 de Doxy-PEP (doxiciclina 200 mg), modalidades de PrEP (Truvada/Descovy/Apretude), transición de PEP a PrEP y umbrales de peso para anticoncepción.',
   'tools.item.novel-substances.title': 'Sustancias novedosas, kratom, tianeptina y mal uso de OTC',
   'tools.item.novel-substances.description': 'Directrices ACMT/ASAM/FDA para la cardiotoxicidad por tianeptina (ZaZa), alcaloides de kratom (7-OH), abstinencia de fenibut con baclofeno y puntos ciegos en toxicológicos.',
+  'tools.item.gabapentinoid-care.title': 'Gabapentinoides, sinergia respiratoria y desescalada',
+  'tools.item.gabapentinoid-care.description': 'Directrices de la FDA de 2019 para la sinergia respiratoria con opioides, modelo de desescalada hiperbólica de Horowitz-Taylor, límites renales CrCl y prevención del síndrome de abstinencia.',
 };

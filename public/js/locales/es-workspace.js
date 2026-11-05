@@ -59,4 +59,5 @@ export default {
   'workspace.link.needleExposure': 'Pinchazos de aguja y protocolo PEP',
   'workspace.link.sexualHealth': 'Salud sexual, Doxy-PEP y anticoncepción',
   'workspace.link.novelSubstances': 'Sustancias novedosas, kratom y tianeptina',
+  'workspace.link.gabapentinoidCare': 'Gabapentinoides y desescalada hiperbólica',
 };

@@ -791,4 +791,27 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Generator**:
   - 1-click clipboard export in English and Spanish for Emergency Department triage, inpatient addiction consultation, and primary care.
 
+### 31. Wave 33: Gabapentinoid Misuse, Respiratory Depression Synergy & Deprescribing Navigator (`#/gabapentinoid-care`)
+- **Comparative Pharmacology: Gabapentin (Neurontin) vs. Pregabalin (Lyrica)**:
+  - Gabapentin: Saturable L-amino acid transporter (LAT1) absorption; non-linear bioavailability drops sharply from ~60% at 300 mg to < 27% at 4,800 mg/day; short half-life (5–7 hours) requiring TID dosing.
+  - Pregabalin: Linear, rapid absorption throughout GI tract (> 90% bioavailability across all doses); ~6-fold higher binding affinity at alpha-2-delta subunits; higher euphoric reinforcement; Schedule V controlled substance.
+- **FDA 2019 Drug Safety Communication & Synergistic Respiratory Arrest**:
+  - Opioids suppress hypoxic ventilatory drive; gabapentinoids independently blunt hypercapnic ventilatory compensation and upper airway muscle tone.
+  - Presence in 20% to 30% of all fatal opioid overdoses; co-prescription increases overdose mortality risk by 49% to 60%.
+  - High-risk cohorts: Concurrent opioids, COPD/asthma, Obstructive Sleep Apnea (OSA), age >= 65, and sedative co-ingestion (benzodiazepines, alcohol, Z-drugs).
+  - Immediate Take-Home Naloxone co-prescription protocol.
+- **Gabapentinoid Withdrawal Syndrome (GWS) Triad**:
+  - *Autonomic Dysregulation*: Profuse diaphoresis, tachycardia, flushing, labile blood pressure, nausea, loose stools.
+  - *Neurological & Sensory*: Severe tactile paresthesias ("crawling skin"), akathisia, intention tremors, myoclonic jerks, and seizure risk / status epilepticus after abrupt cessation.
+  - *Psychological*: Severe panic, terror, rebound generalized anxiety, dysphoria, depersonalization, and intractable multi-night insomnia.
+- **Horowitz & Taylor Hyperbolic Deprescribing Protocol**:
+  - Addresses the non-linear hyperbolic receptor occupancy curve: linear milligram reductions cause catastrophic receptor occupancy drops at low doses.
+  - Speed tiers: Conservative (10% drop of previous dose every 3–4 weeks), Standard (15% drop every 2–3 weeks), Accelerated (20%–25% weekly inpatient).
+  - Mandatory commercial oral liquid solution transition (Gabapentin 250 mg/5 mL; Pregabalin 20 mg/mL) for the final sensitive tail below 300 mg / 50 mg.
+- **Cockcroft-Gault Renal Creatinine Clearance (CrCl) Dosing & Neurotoxicity Calculator**:
+  - Gabapentinoids are eliminated 100% unchanged in urine; age-related decline in CrCl causes massive drug accumulation, leading to asterixis, myoclonus, ataxia, falls, and toxic encephalopathy.
+  - Real-time CrCl calculation and renal dose ceiling adjustments (CrCl >= 60, 30–59, 15–29, < 15 mL/min and hemodialysis).
+- **Zero-PII Clinical SBAR Note Generator**:
+  - 1-click clipboard export in English and Spanish for Primary Care, Pain Specialists, Neurology, and Emergency Department handoffs.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

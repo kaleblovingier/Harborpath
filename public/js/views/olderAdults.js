@@ -1016,6 +1016,19 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
 
   root.append(tabPanel);
 
+  const gabapentinoidRenalNotice = h('div', { class: 'card banner-tip mt-3', role: 'note' },
+    h('p', null,
+      h('strong', null, isEs ? '¿Adulto mayor en tratamiento con Gabapentina o Pregabalina? ' : 'Older adult taking Gabapentin or Pregabalin (Lyrica)? '),
+      h('span', null, isEs
+        ? 'El declive renal fisiológico causa acumulación masiva y neurotoxicidad (mioclonías, ataxia, caídas). '
+        : 'Physiological age-related decline in CrCl causes massive drug accumulation, ataxia, and falls. '),
+      h('a', { href: '#/gabapentinoid-care' }, isEs
+        ? 'Abrir Calculadora de Ajuste Renal CrCl y Desescalada Hiperbólica →'
+        : 'Open Cockcroft-Gault CrCl Renal Dosing & Hyperbolic Deprescribing Calculator →')
+    )
+  );
+  root.append(gabapentinoidRenalNotice);
+
   // Crisis line footer
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },

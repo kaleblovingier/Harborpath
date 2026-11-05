@@ -56,6 +56,7 @@ const entries = [
   ['needle-exposure', 'harm-reduction', 'Needle stick, sharps injury & bloodborne pathogen PEP protocol', 'CDC/USPHS 72-hour golden window PEP regimens (Biktarvy/Truvada), HBV titer algorithms, OSHA 1910.1030 100% employer-paid care, and safe community sharps disposal.', ['individual', 'supporter', 'care-team']],
   ['sexual-health', 'harm-reduction', 'Sexual health, Doxy-PEP, HIV PrEP & emergency contraception', 'CDC 2024 Doxy-PEP bacterial STI protocol (doxycycline 200 mg < 72h), HIV PrEP options (Truvada/Descovy/Apretude), seamless PEP-to-PrEP transition, and emergency contraception weight thresholds.', ['individual', 'supporter', 'care-team']],
   ['novel-substances', 'emergency', 'Novel substances, kratom, tianeptine & OTC misuse', 'ACMT/ASAM/FDA clinical decision support for tianeptine cardiotoxicity (ZaZa), kratom alkaloids (7-OH), phenibut GABA-B withdrawal baclofen tapers, and urine drug screen immunoassay blindspots.', ['individual', 'supporter', 'care-team']],
+  ['gabapentinoid-care', 'care', 'Gabapentinoids, respiratory synergy & deprescribing', 'FDA 2019 opioid respiratory synergy alerts, Gabapentin and Pregabalin (Lyrica) Horowitz-Taylor hyperbolic deprescribing calculator, Cockcroft-Gault renal CrCl dosing ceilings, and withdrawal syndrome prevention.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({
