@@ -855,6 +855,7 @@ export default {
   'route.benzodiazepineCare': 'Desescalada de benzodiazepinas, método Ashton y BIND',
   'route.adhdCare': 'TDAH, neurodiversidad y reducción de daños de estimulantes',
   'route.toxicologyTriage': 'Triage toxicológico agudo, desescalada BETA y nota SBAR',
+  'route.hospitalCare': 'Atención hospitalaria de adicciones, dolor en MOUD y derechos del paciente',
   'route.sleepCare': 'Restauración del sueño e insomnio en recuperación',
   'route.nightlifeCare': 'Reducción de daños en ocio nocturno, drogas de club y festivales',
   'route.polysubstanceCare': 'Sinergia de sobredosis de polisustancias e interacciones',

@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'hospital-care': () => import('./views/hospitalCare.js').then((m) => {
+    viewCache.set('hospital-care', m.hospitalCareView);
+    routeResets.set('hospital-care', m.resetHospitalState);
+    return m.hospitalCareView;
+  }),
   'toxicology-triage': () => import('./views/toxicologyTriage.js').then((m) => {
     viewCache.set('toxicology-triage', m.toxicologyTriageView);
     routeResets.set('toxicology-triage', m.resetToxicologyTriageState);
@@ -231,6 +236,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'hospital-care': () => t('route.hospitalCare', 'Hospital addiction care, pain on MOUD & patient rights'),
   'toxicology-triage': () => t('route.toxicologyTriage', 'Acute toxicology triage, Project BETA de-escalation & SBAR handoff'),
   'adhd-care': () => t('route.adhdCare', 'ADHD, neurodiversity & stimulant harm reduction'),
   'benzodiazepine-care': () => t('route.benzodiazepineCare', 'Benzodiazepines, Ashton tapering & BIND care'),
@@ -334,6 +340,7 @@ export function preloadAllLazyViews() {
     preloadRoute('benzodiazepine-care'),
     preloadRoute('adhd-care'),
     preloadRoute('toxicology-triage'),
+    preloadRoute('hospital-care'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

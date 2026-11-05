@@ -650,4 +650,47 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
 
+## 27. Wave 29 — Inpatient Addiction Medicine, Acute Hospital Care, Pain on MOUD & Patient-Directed Discharge ("AMA") Navigator
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **CA Bridge High-Dose Emergency & Inpatient Buprenorphine Rapid Induction Protocol**:
+  - Implements the landmark CA Bridge protocol (Herring et al., 2021) for acute hospital and emergency settings:
+    - Step 1: Objective withdrawal confirmation (COWS >= 8).
+    - Step 2: Immediate 8 mg sublingual test dose (held 10 min under tongue without swallowing).
+    - Step 3: Reassessment at 45–60 minutes: if withdrawal persists, immediately administer second 8 mg or 16 mg dose.
+    - Step 4: High-dose consolidation reaching 16 mg to 24 mg (up to 32 mg/day) on Day 1.
+    - Pathophysiology: Fentanyl's lipophilic volume of distribution causes prolonged clearance; high-dose buprenorphine rapidly achieves > 80% mu-receptor occupancy, suppressing cravings and preventing precipitated withdrawal rebound.
+- **Precipitated Opioid Withdrawal Recognition & Rescue Protocol**:
+  - Definition: Rapid displacement of full agonists by buprenorphine causing severe acute withdrawal within 30–60 minutes.
+  - Core Mandate: Never abandon the patient; leaving them without relief leads to hospital flight and fatal overdose.
+  - Three-tier rescue strategy:
+    1. High-Dose Buprenorphine Override (preferred first-line: additional 8–16 mg SL every 45–60 min up to 32 mg total to saturate receptors).
+    2. Full-Agonist Opioid Rescue (monitored inpatient setting: IV hydromorphone or fentanyl under continuous pulse oximetry).
+    3. Multimodal Comfort Medication Bundle (clonidine, ondansetron, loperamide, ketorolac/ibuprofen, lorazepam).
+- **Inpatient Acute Pain & Surgical Analgesia in Patients on MOUD**:
+  - ASAM / ACOG / American Pain Society consensus: **NEVER STOP BUPRENORPHINE OR METHADONE FOR ACUTE PAIN OR SURGERY.**
+  - Buprenorphine split-dosing: Divide total daily dose into every 6 to 8 hours (q6–8h) to recruit its 6-to-8-hour analgesic duration.
+  - Titrating full-agonist opioids: Add short-acting full agonists (hydromorphone, oxycodone, fentanyl) titrated to higher required doses due to tolerance and receptor occupancy.
+  - Methadone inpatient verification: Confirm daily dose with OTP and maintain once daily; treat surgical pain with short-acting full agonists.
+  - Contraindicated analgesics: Mixed agonist-antagonists (nalbuphine [Nubain], butorphanol [Stadol], pentazocine) strictly avoided due to violent precipitated withdrawal; tramadol avoided due to seizure risk and erratic metabolism.
+- **Patient-Directed Discharge ("AMA") Harm Reduction & Rights Consensus**:
+  - **Debunking the Destructive Insurance Billing Myth**:
+    - Over 65% of clinicians and patients mistakenly believe insurers deny hospital payment if a patient leaves AMA.
+    - Landmark evidence (Schaefer et al., *J Gen Intern Med*; Alfandre et al., *Ann Intern Med*): **0% of insurance claims are denied solely due to leaving against medical advice.** Insurers pay for all medically necessary care delivered prior to departure.
+  - **Harm Reduction "Discharge with Dignity" Care Bundle**:
+    1. *Oral Step-Down Antibiotic Therapy*: If a patient with bacteremia, endocarditis, osteomyelitis, or abscess cannot stay for 4–6 weeks of IV antibiotics, prescribe oral step-down regimens (Linezolid 600 mg bid, Cefpodoxime, or single-dose Dalbavancin 1500 mg IV prior to departure). Partial antibiotic therapy is vastly superior to zero treatment.
+    2. *7-to-14-Day Bridge MOUD Prescription*: Provide bridge buprenorphine prescription to prevent acute withdrawal and fatal overdose.
+    3. *Naloxone & Sterile Supplies*: Dispense two doses of naloxone nasal spray (Narcan 4 mg) and sterile wound care supplies.
+    4. *Unconditional Open-Door Reassurance*: Explicitly tell the patient that hospital doors remain open without penalty if they need to return.
+- **Federal EMTALA (42 U.S.C. § 1395dd) & Patient Rights in the Hospital**:
+  - Federal legal entitlement to Medical Screening Examination (MSE) and stabilizing treatment regardless of ability to pay or substance use.
+  - Strict confidentiality under HIPAA and 42 CFR Part 2 (hospital staff prohibited from reporting drug use to law enforcement).
+  - Legal right to receive evidence-based withdrawal and pain management as a medical emergency.
+- **Inpatient Addiction Consult SBAR Clinical Note Generator (Zero PII)**:
+  - Formats structured Situation, Background, Assessment (MOUD status, infection, COWS score, AMA risk), and Recommendation sections ready for EHR documentation or warm handoff with Zero PII.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

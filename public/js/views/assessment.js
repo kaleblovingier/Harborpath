@@ -993,6 +993,7 @@ export function assessmentView({ query } = {}) {
       'Standard Induction Rule: Wait until the patient exhibits clear objective signs of withdrawal with a validated COWS score of >= 12–13 before administering the first sublingual test dose (typically 2–4 mg).',
       'COWS < 12 Management: Do not give standard buprenorphine. Comfort medications (clonidine 0.1–0.2 mg every 6 hours, ondansetron 4–8 mg, loperamide, ibuprofen) can relieve subjective misery while awaiting receptor clearance.',
       'Low-Dose Bernese Micro-Induction: When high-potency synthetic opioids (fentanyl) are present in the supply, lipid storage prolongs clearance. Bernese micro-dosing introduces microgram doses of buprenorphine (e.g. 0.2–0.5 mg daily) while full agonists continue, gradually saturating receptors over 7–10 days without triggering withdrawal.',
+      'CA Bridge High-Dose Protocol & Inpatient Pain: For acute hospital and ED inductions (8-16 mg initial dose) and acute surgical pain management on MOUD, see the Hospital Addiction & Patient Rights Guide (#/hospital-care).',
     ]),
     h('h3', null, '2. CIWA-Ar & Alcohol Withdrawal: Preventing Seizures & Delirium Tremens'),
     p(

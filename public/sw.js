@@ -115,6 +115,7 @@ const ELECTIVE_SHELL = [
   '/js/views/benzodiazepineCare.js',
   '/js/views/adhdCare.js',
   '/js/views/toxicologyTriage.js',
+  '/js/views/hospitalCare.js',
 ];
 
 self.addEventListener('install', (event) => {

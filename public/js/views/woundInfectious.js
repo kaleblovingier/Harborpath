@@ -783,6 +783,16 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       tel('1-800-222-1222', { class: 'hotline-link' })
     )
   );
+  const hospCard = h('div', { class: 'card mt-3 no-print' },
+    h('h4', {}, isEs ? '¿Hospitalización por Endocarditis, Sepsis o Abscesos Complejos?' : 'Hospital Admission for Endocarditis, Sepsis or Complex Wounds?'),
+    h('p', {}, isEs
+      ? 'Conozca sus derechos en el hospital (EMTALA), el manejo del dolor y abstinencia en MOUD, y el paquete de reducción de daños con antibióticos orales si debe marcharse de alta voluntaria (AMA): '
+      : 'Review your legal rights in the hospital (EMTALA), acute surgical pain on MOUD, and harm reduction bundles with oral step-down antibiotics if leaving against medical advice (AMA): '),
+    h('a', { href: '#/hospital-care' }, isEs
+      ? 'Abrir Guía de Atención Hospitalaria de Adicciones y Derechos del Paciente →'
+      : 'Open Hospital Addiction Care, Pain on MOUD & Patient Rights Navigator →')
+  );
+  root.append(hospCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);

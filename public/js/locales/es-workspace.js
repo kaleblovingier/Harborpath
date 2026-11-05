@@ -55,4 +55,5 @@ export default {
   'workspace.link.chronicPain': 'Guía de dolor y reducción de sedantes',
   'workspace.link.harmReduction': 'Recursos de reducción de daños',
   'workspace.link.toxicologyTriage': 'Triage toxicológico y desescalada',
+  'workspace.link.hospitalCare': 'Atención hospitalaria y dolor en MOUD',
 };

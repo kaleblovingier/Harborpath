@@ -120,4 +120,6 @@ export default {
   'tools.item.adhd-care.description': 'Cribado clínico ASRS v1.1, farmacoterapia no estimulante en recuperación de adicciones, dilución de tiras FTS para pastillas falsas y herramientas de función ejecutiva.',
   'tools.item.toxicology-triage.title': 'Triage toxicológico y desescalada de crisis BETA',
   'tools.item.toxicology-triage.description': 'Motor diferencial de 5 toxidromes, 10 dominios de desescalada verbal del Proyecto BETA, escala RASS, farmacoterapia de prevención de contenciones y traspasos SBAR.',
+  'tools.item.hospital-care.title': 'Atención hospitalaria de adicciones, dolor en MOUD y derechos',
+  'tools.item.hospital-care.description': 'Inducción rápida a altas dosis de buprenorfina CA Bridge en urgencias, analgesia quirúrgica en MOUD, rescate de abstinencia precipitada y reducción de daños en altas voluntarias (AMA).',
 };

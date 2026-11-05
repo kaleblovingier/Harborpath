@@ -1374,6 +1374,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
       : 'Under federal law, all Medicare-participating emergency departments must provide an appropriate medical screening examination and stabilizing treatment for any emergency medical condition, regardless of insurance status, ability to pay, citizenship, or history of substance use.'));
     container.appendChild(emtalaCard);
 
+    const hospLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Continuación de Cuidados en Planta de Hospitalización' : 'Inpatient Care & Addiction Consultation'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para protocolos de inducción rápida CA Bridge a altas dosis, manejo del dolor quirúrgico en pacientes en MOUD y pautas de alta voluntaria (AMA) con antibióticos orales: '
+        : 'For CA Bridge high-dose buprenorphine induction, acute surgical pain on MOUD, and patient-directed discharge (AMA) harm reduction: '),
+      h('a', { href: '#/hospital-care' }, isEs
+        ? 'Abrir Navegador de Atención Hospitalaria de Adicciones y Dolor en MOUD →'
+        : 'Open Inpatient Addiction Medicine, Pain on MOUD & Hospital Care Navigator →')
+    );
+    container.appendChild(hospLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });
