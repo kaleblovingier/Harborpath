@@ -41,6 +41,7 @@ const entries = [
   ['family-support', 'planning', 'Family support and CRAFT guide', 'Use Community Reinforcement and Family Training (CRAFT) to improve communication, set boundaries, and support a loved one.', ['supporter', 'care-team']],
   ['adulterant-care', 'care', 'Emerging adulterants, xylazine and tranq wound care', 'Evidence-based guidance for xylazine (tranq), nitazenes, alpha-2 sedation triage, necrotic wound management, and test strip standards.', ['individual', 'supporter', 'care-team']],
   ['methadone-access', 'care', 'Methadone clinic access and 2024 Part 8 rules', 'Explore 2024 SAMHSA Part 8 rules, calculate take-home bottle eligibility, prevent dangerous rapid tapers, and advocate for patient rights.', ['individual', 'supporter', 'care-team']],
+  ['dual-diagnosis', 'care', 'Dual diagnosis and integrated mental health', 'Explore integrated dual disorder treatment (IDDT), psychotropic and MOUD compatibility, false-positive toxicology rights, and crisis safety planning.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'dual-diagnosis': () => import('./views/dualDiagnosis.js').then((m) => {
+    viewCache.set('dual-diagnosis', m.dualDiagnosisView);
+    routeResets.set('dual-diagnosis', m.resetDualDiagnosisState);
+    return m.dualDiagnosisView;
+  }),
   'methadone-access': () => import('./views/methadoneAccess.js').then((m) => {
     viewCache.set('methadone-access', m.methadoneAccessView);
     routeResets.set('methadone-access', m.resetMethadoneState);
@@ -176,6 +181,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'dual-diagnosis': () => t('route.dualDiagnosis', 'Dual diagnosis & integrated mental health'),
   'methadone-access': () => t('route.methadoneAccess', 'Methadone clinic access & 2024 Part 8 rules'),
   'adulterant-care': () => t('route.adulterantCare', 'Emerging adulterants, xylazine & wound care'),
   'family-support': () => t('route.familySupport', 'Family support & CRAFT guide'),
@@ -261,6 +267,7 @@ export function preloadAllLazyViews() {
     preloadRoute('family-support'),
     preloadRoute('adulterant-care'),
     preloadRoute('methadone-access'),
+    preloadRoute('dual-diagnosis'),
     preloadRoute('harm-reduction'),
   ]);
 }

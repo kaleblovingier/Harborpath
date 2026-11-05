@@ -100,3 +100,4 @@ test('Wave 17: Static Security & Privacy Compliance Audit', () => {
     assert.doesNotMatch(content, /style\s*=/, `${file} must not use inline style attributes`);
   }
 });
+

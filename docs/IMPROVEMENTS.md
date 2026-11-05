@@ -299,4 +299,32 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
     3. Coordinating guest dosing for travel or work.
     4. Requesting a safe, patient-paced voluntary taper.
 
+## 16. Wave 18 Dual Diagnosis, Integrated Dual Disorder Treatment (IDDT), Psychotropic Compatibility & Crisis Planning
+
+- **Integrated Dual Disorder Treatment (IDDT) Clinical Framework (`#/dual-diagnosis`, `dualDiagnosis.js`)**:
+  - Encodes the SAMHSA & ASAM Evidence-Based Practice (EBP) IDDT model for individuals with co-occurring psychiatric and substance use disorders.
+  - Core Mandates: Both conditions are primary biological disorders. Rejects outdated sequential care ("get 90 days sober before we treat depression") and siloed parallel care. Mandates simultaneous, unified care delivered by the same multidisciplinary team. Stage-wise motivational interventions adapt to each disorder independently.
+- **Psychotropic Medications & MOUD Clinical Compatibility**:
+  - Antidepressants (SSRIs/SNRIs: Sertraline, Escitalopram, Duloxetine): Highly compatible with buprenorphine and naltrexone; safe with standard-dose methadone (monitored for mild serotonergic additive effects). Non-addictive, zero respiratory depression risk.
+  - Mood Stabilizers (Lamotrigine, Lithium, Valproate): Lamotrigine is preferred due to minimal hepatic/metabolic interactions. Critical Lithium Alert: Alcohol dehydration or NSAIDs sharply increase lithium serum concentrations, triggering neurotoxicity and renal damage.
+  - ADHD Pharmacotherapy in SUD: Untreated ADHD triples relapse risk due to executive dysfunction and impulsivity. Prioritizes non-stimulants (Atomoxetine, Viloxazine, Bupropion, Guanfacine ER) and enzymatic prodrug/OROS stimulants (Vyvanse, Concerta) under strict monitoring.
+  - Bupropion (Wellbutrin) Seizure Warning: Lowers seizure threshold. Strictly contraindicated during acute alcohol or benzodiazepine withdrawal, and in active bulimia/anorexia.
+- **Immunoassay Toxicology False-Positive Registry & Patient Rights**:
+  - Documents widespread cross-reactivity on point-of-care rapid urine cups:
+    * Bupropion -> Amphetamine / Methamphetamine
+    * Sertraline -> Benzodiazepines
+    * Quetiapine -> Methadone
+    * Venlafaxine -> Phencyclidine (PCP)
+    * Diphenhydramine / Doxylamine -> Methadone, Opiates, or PCP
+  - Mandatory Advocacy Directive: Rapid screens are presumptive only. Under ASAM, SAMHSA, and CLIA federal laboratory standards, any disputed screen must be confirmed with Gas Chromatography-Mass Spectrometry (GC-MS) or LC-MS/MS before punitive consequences are imposed.
+- **Trauma & Seeking Safety Grounding Protocols**:
+  - Sensory Grounding (5-4-3-2-1 technique).
+  - Cognitive Orientation ("The trauma happened in the past; I am safe in this room right now").
+  - Physiological Vagal Calming (4-4-6 diaphragmatic box breathing, mammalian dive reflex ice reset).
+- **Columbia-Suicide Severity Rating Scale (C-SSRS) Screener & Crisis Safety Planning**:
+  - Stratifies risk: Imminent Emergency (Intent with Plan -> 988, 911 under EMTALA, lethal means lockup), Moderate Risk (Thoughts with method -> urgent psychiatric linkage), Passive Ideation (Supportive crisis text line), and Routine Care.
+  - 24/7 Crisis Access: 988 Suicide & Crisis Lifeline, Veterans Crisis Line (988 press 1), The Trevor Project (866-488-7386), Trans Lifeline (877-565-8860).
+- **Self-Advocacy Script Composer**:
+  - Plain-language scripts for requesting IDDT care, demanding confirmatory GC-MS testing, seeking adult ADHD evaluation, and setting trauma-informed care boundaries.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

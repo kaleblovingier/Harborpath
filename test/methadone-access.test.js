@@ -304,3 +304,4 @@ test('Static security and privacy audit of methadoneAccess.js', () => {
   assert.doesNotMatch(content, /outerHTML/, 'Must not use outerHTML');
   assert.doesNotMatch(content, /style\s*=/, 'Must not use inline style attributes');
 });
+

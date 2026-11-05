@@ -218,6 +218,7 @@ export function supportView() {
         h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=PEER' }, 'Find programs with peer support'),
         ' ',
         h('a', { class: 'btn btn-ghost', href: '#/plan' }, 'Personal Safety Plan & Urge Surfing Timer'),
+      p(h('a', { class: 'btn btn-secondary', href: '#/dual-diagnosis' }, 'Explore Dual Diagnosis & Integrated Mental Health (IDDT)')),
       ),
     ),
 
