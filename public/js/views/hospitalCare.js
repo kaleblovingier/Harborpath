@@ -731,6 +731,17 @@ function renderSbarTab(localState, isEs, isClinician) {
   ]);
   container.appendChild(veinCareCard);
 
+  const ketamineCareCard = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+    h('strong', {}, isEs ? '¿Evaluación de dolor abdominal intenso o cólico biliar en pacientes consumidores de ketamina? ' : 'Evaluating acute abdominal pain or severe biliary colic in ketamine users? '),
+    h('span', {}, isEs
+      ? 'Consulte el protocolo de cólicos biliares por ketamina («K-cramps»), espasmo del esfínter de Oddi (¡evitar opioides!), estadios 1-4 de uropatía y triaje de hidronefrosis: '
+      : 'Review ketamine biliary colic ("K-cramps"), sphincter of Oddi spasm (strictly avoid opioids!), Stages 1–4 uropathy staging, and hydronephrosis triage: '),
+    h('a', { href: '#/ketamine-care' }, isEs
+      ? 'Abrir Navegador de Uropatía por Ketamina y Salud Vesical →'
+      : 'Open Ketamine Uropathy & Bladder Health Navigator →')
+  ]);
+  container.appendChild(ketamineCareCard);
+
   return container;
 }
 

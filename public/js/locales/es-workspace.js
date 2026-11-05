@@ -64,4 +64,5 @@ export default {
   'workspace.link.ghbCare': 'GHB/GBL, triaje de coma y abstinencia',
   'workspace.link.veinCare': 'Cuidado de venas y anatomía de inyección',
   'workspace.link.inhalantCare': 'Inhalantes, solventes y seguridad con óxido nitroso',
+  'workspace.link.ketamineCare': 'Uropatía por ketamina y reducción de daños',
 };

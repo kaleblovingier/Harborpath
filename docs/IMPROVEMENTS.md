@@ -927,4 +927,28 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Emergency Department triage, neurology consultation, and poison center handoffs.
 
+### 36. Wave 38: Ketamine Harm Reduction, Dissociative Care & Uropathy ("K-Bladder" & "K-Cramps") Navigator (`#/ketamine-care`)
+- **Pharmacology, Cytotoxicity & Biliary Dyskinesia**:
+  - *NMDA Antagonism & Norketamine Excretion*: Hepatic CYP3A4/CYP2B6 demethylates ketamine into Norketamine, which concentrates in the urinary bladder at orders of magnitude higher than serum levels.
+  - *Direct Urothelial Cytotoxicity*: Ketamine and norketamine trigger intrinsic mitochondrial apoptosis of umbrella cells, disruption of tight junctions, microvascular ischemia, and breakdown of the protective glycosaminoglycan (GAG) layer, leading to neurogenic detrusor contracture and progressive transmural muscular fibrosis.
+  - *Sphincter of Oddi Dyskinesia ("K-Cramps")*: Ketamine triggers violent hypertonicity and intermittent spasm of the Sphincter of Oddi, causing acute biliary obstruction, common bile duct dilation, and severe stabbing epigastric/RUQ colic.
+- **Ketamine-Induced Uropathy (KIU) Clinical Staging**:
+  - *Stage 1: Irritative & Overactive Bladder (Reversible)*: Frequency every 30–60 min (15–20x/day), nocturia (3–6x/night), sterile pyuria on dipstick. Completely reversible with immediate cessation.
+  - *Stage 2: Ulcerative Chemical Cystitis*: Intense "razor blade" / "hot glass" dysuria, macroscopic hematuria (blood and mucosal tissue sloughing in urine), functional capacity reduced to 150–250 mL.
+  - *Stage 3: Fibrotic Bladder Contracture (Irreversible)*: Frequency every 5–15 min (50–80+ times/24h), severe urge incontinence, constant pelvic pain, micro-bladder capacity shrinking below 50–100 mL. Requires bladder reconstruction or cystectomy.
+  - *Stage 4: Obstructive Hydronephrosis & Post-Renal AKI*: Ureteral strictures and vesicoureteral reflux cause bilateral hydronephrosis, severe flank pain, oliguria, sharp serum creatinine elevation, and renal cortical atrophy. Life-threatening emergency requiring percutaneous nephrostomy tubes or double-J stents.
+- **Clinical Differential Engines**:
+  - *KIU vs. Recurrent Bacterial UTI (Diagnostic Misdirection Trap)*: Sterile chemical cystitis produces positive leukocyte dipsticks, leading clinicians to prescribe 4–8 futile antibiotic courses while bladder fibrosis advances. Mandatory rule: obtain quantitative urine culture and renal/bladder ultrasound in young patients with recurrent dysuria/hematuria.
+  - *K-Cramps Biliary Colic*: Antispasmodics (hyoscine butylbromide 20 mg PO/IV, dicyclomine), warm baths. Strict contraindication: Avoid opioids, which directly contract the Sphincter of Oddi and paradoxically worsen biliary colic.
+  - *Post-Renal AKI*: Bilateral ureteral fibrosis causing hydronephrosis; emergency urology diversion.
+  - *K-Hole Dissociative Immobility & Drowning Hazard*: Motor catatonia renders users physically incapable of lifting their heads; strict prohibition on ketamine use in bathtubs, spas, or near water. Lateral recovery position for vomit aspiration prevention.
+- **Harm Reduction & Bladder Preservation Directives**:
+  - *Rule 1*: Complete and permanent cessation is the ONLY definitive cure for uropathy.
+  - *Rule 2*: EGCG (Green tea extract 400–800 mg) antioxidant shielding protects urothelial cells from ketamine-induced apoptosis.
+  - *Rule 3*: Heavy hydration (2–3 L daily) and spitting the bitter post-nasal drip (reduces GI absorption and biliary K-cramps).
+  - *Rule 4*: Never use in bathtubs, hot tubs, or near water.
+  - *Rule 5*: Immediate urological evaluation and renal ultrasound if hematuria, nocturia, or flank pain occurs.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Urologists, Emergency Physicians, and Addiction Specialists.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

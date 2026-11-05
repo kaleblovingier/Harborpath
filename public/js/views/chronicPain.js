@@ -594,6 +594,13 @@ export function chronicPainView() {
     )
   );
 
+  const ketamineLinkBanner = h('div', { class: 'card banner-tip mt-2' },
+    h('p', null,
+      h('strong', null, 'Using therapeutic ketamine infusions or troches for chronic refractory pain? '),
+      h('a', { href: '#/ketamine-care' }, 'Review the Ketamine Harm Reduction, Bladder Protection & Uropathy Navigator →')
+    )
+  );
+
 
   const sedativeIntroCard = h('article', { class: 'card' },
     h('h2', null, BENZODIAZEPINE_STANDARDS.ASHTON_TAPER_PROTOCOL.titleEn),
@@ -707,7 +714,7 @@ export function chronicPainView() {
   }
 
   updateSedativeResults();
-  panelSedative.append(dedicatedLinkBanner, gabapentinoidLinkBanner, sedativeIntroCard, sedativeCalcForm, sedativeResults);
+  panelSedative.append(dedicatedLinkBanner, gabapentinoidLinkBanner, ketamineLinkBanner, sedativeIntroCard, sedativeCalcForm, sedativeResults);
 
   // ---------------- Tab 3: Non-Opioid Multimodal Care ----------------
   const panelMultimodal = h('div', {

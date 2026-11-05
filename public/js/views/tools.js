@@ -61,6 +61,7 @@ const entries = [
   ['ghb-care', 'emergency', 'GHB, GBL & 1,4-BDO harm reduction, coma triage & withdrawal', 'Evidence-based clinical guidelines for GHB/GBL G-out coma triage, lateral recovery position, 1,4-BDO alcohol dehydrogenase trap, severe withdrawal delirium, and BAP Baclofen substitution protocols.', ['individual', 'supporter', 'care-team']],
   ['vein-care', 'harm-reduction', 'Vein care, vascular health & injection anatomy', 'Anatomical injection risk zones (green vs red), inadvertent arterial puncture emergency triage, DVT and pseudoaneurysm prevention, 0.22-micron filtration, and vein rehabilitation.', ['individual', 'supporter', 'care-team']],
   ['inhalant-care', 'harm-reduction', 'Inhalants, solvents & nitrous oxide safety', 'Clinical guidance for nitrous oxide B12 inactivation, Subacute Combined Degeneration, Sudden Sniffing Death Syndrome (SSDS), alkyl nitrite methemoglobinemia, and cryogenic freeze injury prevention.', ['individual', 'supporter', 'care-team']],
+  ['ketamine-care', 'harm-reduction', 'Ketamine harm reduction & uropathy navigator', 'Clinical guidance for Ketamine-Induced Uropathy (KIU / "K-Bladder") staging, biliary "K-cramps" management, EGCG antioxidant protection, and water drowning safety.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

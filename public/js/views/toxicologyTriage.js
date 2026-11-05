@@ -1440,6 +1440,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(inhalantLink);
 
+    const ketamineLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Ketamina, Uropatía Vesical y Cólicos «K-Cramps»' : 'Ketamine Uropathy, Bladder Health & K-Cramps'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para triaje de cistitis ulcerativa («orinar cristales»), estadios 1-4 de uropatía, espasmo biliar del esfínter de Oddi («K-cramps») y protección con EGCG: '
+        : 'For ketamine cystitis triage ("urinating razor blades"), Stages 1–4 uropathy, sphincter of Oddi biliary colic ("K-cramps"), and EGCG antioxidant protocols: '),
+      h('a', { href: '#/ketamine-care' }, isEs
+        ? 'Abrir Navegador de Uropatía por Ketamina →'
+        : 'Open Ketamine Harm Reduction & Uropathy Navigator →')
+    );
+    container.appendChild(ketamineLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

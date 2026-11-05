@@ -31,6 +31,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/ghb-care', key: 'workspace.link.ghbCare', label: 'GHB/GBL coma triage & withdrawal' },
       { href: '#/vein-care', key: 'workspace.link.veinCare', label: 'Vein care & injection anatomy' },
       { href: '#/inhalant-care', key: 'workspace.link.inhalantCare', label: 'Inhalants, solvents & nitrous oxide safety' },
+      { href: '#/ketamine-care', key: 'workspace.link.ketamineCare', label: 'Ketamine uropathy & harm reduction' },
     ],
   },
   {

@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'ketamine-care': () => import('./views/ketamineCare.js').then((m) => {
+    viewCache.set('ketamine-care', m.ketamineCareView);
+    routeResets.set('ketamine-care', m.resetKetamineState);
+    return m.ketamineCareView;
+  }),
   'inhalant-care': () => import('./views/inhalantCare.js').then((m) => {
     viewCache.set('inhalant-care', m.inhalantCareView);
     routeResets.set('inhalant-care', m.resetInhalantState);
@@ -276,6 +281,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'ketamine-care': () => t('route.ketamineCare', 'Ketamine harm reduction & uropathy navigator'),
   'inhalant-care': () => t('route.inhalantCare', 'Inhalants, solvents & nitrous oxide safety'),
   'vein-care': () => t('route.veinCare', 'Vein care, vascular health & injection anatomy'),
   'ghb-care': () => t('route.ghbCare', 'GHB, GBL & 1,4-BDO harm reduction, coma triage & withdrawal'),
@@ -352,6 +358,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('ketamine-care'),
     preloadRoute('inhalant-care'),
     preloadRoute('vein-care'),
     preloadRoute('ghb-care'),

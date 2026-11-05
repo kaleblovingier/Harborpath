@@ -607,6 +607,12 @@ function renderBladderNeuroTab(isEs, localState, evalResult, reRender) {
     ])
   ]);
 
+  bladderCard.appendChild(h('p', { class: 'cross-nav-p' }, [
+    h('a', { class: 'btn btn-secondary', href: '#/ketamine-care' }, isEs
+      ? 'Ver Navegador Completo de Uropatía por Ketamina y Cólicos'
+      : 'View Full Ketamine Uropathy & Bladder Health Navigator'),
+  ]));
+
   // Nitrous & B12 Neuropathy Section
   const b12Card = h('section', { class: 'card' }, [
     h('h3', {}, isEs ? 'Óxido Nitroso y Neuropatía por Inactivación de Vitamina B12' : 'Nitrous Oxide & Vitamin B12 Spinal Demyelination'),
