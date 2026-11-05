@@ -2005,6 +2005,7 @@ export function medicationsView({ query } = {}) {
         h('a', { class: 'preset', href: '#/hospital-care' }, icon('shield'), ' Hospital Addiction Care, Acute Pain on MOUD & Patient Rights'),
         h('a', { class: 'preset', href: '#/novel-substances' }, icon('alert'), ' Novel Substances, Kratom, Tianeptine & OTC Misuse'),
         h('a', { class: 'preset', href: '#/gabapentinoid-care' }, icon('shield'), ' Gabapentinoid Safety & Hyperbolic Deprescribing Guide'),
+        h('a', { class: 'preset', href: '#/psychedelic-care' }, icon('alert'), ' Psychedelic Harm Reduction, Lithium Seizures & HPPD Guide'),
       ),
     ),
 

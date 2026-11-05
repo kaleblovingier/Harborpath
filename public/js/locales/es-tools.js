@@ -130,4 +130,6 @@ export default {
   'tools.item.novel-substances.description': 'Directrices ACMT/ASAM/FDA para la cardiotoxicidad por tianeptina (ZaZa), alcaloides de kratom (7-OH), abstinencia de fenibut con baclofeno y puntos ciegos en toxicológicos.',
   'tools.item.gabapentinoid-care.title': 'Gabapentinoides, sinergia respiratoria y desescalada',
   'tools.item.gabapentinoid-care.description': 'Directrices de la FDA de 2019 para la sinergia respiratoria con opioides, modelo de desescalada hiperbólica de Horowitz-Taylor, límites renales CrCl y prevención del síndrome de abstinencia.',
+  'tools.item.psychedelic-care.title': 'Cuidados psicodélicos, desescalada 5-HT2A y HPPD',
+  'tools.item.psychedelic-care.description': 'Protocolos de soporte de pares de Fireside Project, 4 pilares de desescalada de crisis, anclaje sensorial, contraindicaciones mortales de litio con convulsiones, alertas de 25I-NBOMe y guía neurooftalmológica de HPPD.',
 };

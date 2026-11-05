@@ -1396,6 +1396,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(novelLink);
 
+    const psychedelicLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Crisis Psicodélica, Desescalada y Alerta de Litio' : 'Psychedelic Crisis, De-Escalation & Lithium Alert'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para crisis por 5-HT2A (LSD, psilocibina), riesgo mortal de convulsiones con litio, detección de secantes amargos (25I-NBOMe), los 4 pilares de soporte de pares de Fireside Project y manejo del HPPD: '
+        : 'For 5-HT2A distress (LSD, psilocybin), fatal status epilepticus risk with Lithium, bitter blotter 25I-NBOMe alerts, Fireside Project 4 Pillars of peer de-escalation, and HPPD guidance: '),
+      h('a', { href: '#/psychedelic-care' }, isEs
+        ? 'Abrir Navegador de Cuidados Psicodélicos, Desescalada 5-HT2A y HPPD →'
+        : 'Open Psychedelic Harm Reduction, 5-HT2A De-Escalation & HPPD Navigator →')
+    );
+    container.appendChild(psychedelicLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

@@ -57,6 +57,7 @@ const entries = [
   ['sexual-health', 'harm-reduction', 'Sexual health, Doxy-PEP, HIV PrEP & emergency contraception', 'CDC 2024 Doxy-PEP bacterial STI protocol (doxycycline 200 mg < 72h), HIV PrEP options (Truvada/Descovy/Apretude), seamless PEP-to-PrEP transition, and emergency contraception weight thresholds.', ['individual', 'supporter', 'care-team']],
   ['novel-substances', 'emergency', 'Novel substances, kratom, tianeptine & OTC misuse', 'ACMT/ASAM/FDA clinical decision support for tianeptine cardiotoxicity (ZaZa), kratom alkaloids (7-OH), phenibut GABA-B withdrawal baclofen tapers, and urine drug screen immunoassay blindspots.', ['individual', 'supporter', 'care-team']],
   ['gabapentinoid-care', 'care', 'Gabapentinoids, respiratory synergy & deprescribing', 'FDA 2019 opioid respiratory synergy alerts, Gabapentin and Pregabalin (Lyrica) Horowitz-Taylor hyperbolic deprescribing calculator, Cockcroft-Gault renal CrCl dosing ceilings, and withdrawal syndrome prevention.', ['individual', 'supporter', 'care-team']],
+  ['psychedelic-care', 'care', 'Psychedelic care, 5-HT2A crisis de-escalation & HPPD', 'Fireside Project peer support protocols, 4 Pillars of compassionate crisis de-escalation, sensory grounding, Lithium seizure contraindications, bitter NBOMe adulterant alerts, and HPPD neuro-ophthalmology guidance.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

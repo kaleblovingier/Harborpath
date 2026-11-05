@@ -814,4 +814,36 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII Clinical SBAR Note Generator**:
   - 1-click clipboard export in English and Spanish for Primary Care, Pain Specialists, Neurology, and Emergency Department handoffs.
 
+### 32. Wave 34: Psychedelic Harm Reduction, 5-HT2A Pharmacology, Crisis De-Escalation & HPPD Navigator (`#/psychedelic-care`)
+- **5-HT2A Pharmacology & Substance Duration Profiles**:
+  - *Psilocybin / Psilocin*: Prodrug dephosphorylated to psilocin; 5-HT2A partial agonist; temporary disintegration of default mode network (DMN); 4–6 hour duration.
+  - *LSD (Lysergic Acid Diethylamide)*: 5-HT2A agonist with molecular "lid" trapping compound in receptor pocket; microgram potency (25–100+ mcg); protracted 8–14 hour duration.
+  - *DMT & 5-MeO-DMT*: Short-acting tryptamines (15–30 min inhaled). 5-MeO-DMT induces profound non-visual ego dissolution with transient apnea risk requiring physical supervision.
+  - *Mescaline & 2C-B*: Phenethylamines with steep non-linear dose-response curves (e.g. 2C-B: 25 mg vastly stronger than 18 mg).
+- **Toxic Adulterant Alert & 25I-NBOMe Identification ("Bitter Blotter")**:
+  - Synthetic high-potency full 5-HT2A agonists sold on blotters disguised as LSD.
+  - Hallmark warning: Intense chemical, metallic, bitter numbing taste ("If it's bitter, it's a spitter").
+  - Severe peripheral vasoconstriction (cyanosis, necrosis), hyperpyrexia, rhabdomyolysis, and fatal seizures at microgram doses; negative on Ehrlich reagent.
+- **Dangerous Pharmacological Contraindications**:
+  - *Lithium + Psychedelics*: Fatal contraindication. Literature documents near-100% incidence of grand mal seizures, non-convulsive status epilepticus, severe fugue states, coma, and cardiac arrest.
+  - *MAOIs (Ayahuasca Harmala Alkaloids) + SSRIs/SNRIs/MDMA/Tramadol/DXM*: Catastrophic hyperpyrexic Serotonin Syndrome and hypertensive crisis; requires 2–5 week washout period.
+  - *SSRIs/SNRIs + Classical Psychedelics*: 5-HT2A downregulation causes blunted visual/mystical effects; risk of dangerous dose escalation.
+  - *Tramadol / Bupropion + Psychedelics*: Severe lowering of seizure threshold.
+- **Fireside Project & Zendo Project 4 Pillars of Compassionate Crisis Support**:
+  - *Pillar 1: Create a safe, quiet space* (remove noise, crowds, police; provide dim lighting, warm blanket).
+  - *Pillar 2: Sitting, not guiding* (be a calm anchor, eye-level posture, slow rhythmic breathing).
+  - *Pillar 3: Talk through, not down* (validate experience, reassure that effects are chemical and temporary).
+  - *Pillar 4: Difficult is not necessarily bad* (cathartic reframing of grief or repressed emotion).
+  - 62-FIRESIDE Peer Support Integration (Call/Text 623-473-7433).
+- **5-4-3-2-1 Sensory Grounding Tool & Restraint Reduction**:
+  - Step-by-step sensory grounding sequence for acute panic and ego dissolution.
+  - Restraint Warning: Physical restraints trigger violent panic-induced resistance, rhabdomyolysis, hyperthermia, and cardiac arrest. Haloperidol is contraindicated due to lowering seizure thresholds.
+- **Hallucinogen Persisting Perception Disorder (HPPD) Neuro-Ophthalmology Framework**:
+  - DSM-5 292.89 diagnostic criteria.
+  - HPPD Type 1 (benign flashbacks) vs Type 2 (persistent visual snow, trailing/palinopsia, halos).
+  - Cardinal Reassurances: HPPD is NOT progressive psychosis, NOT schizophrenia, NOT brain damage (normal MRI).
+  - Trigger cessation (cannabis is #1 trigger), lamotrigine/clonazepam under psychiatric care, CBT for hyper-focus anxiety.
+- **Zero-PII SBAR Clinical Handoff & Dispatch Note Generator**:
+  - 1-click clipboard export in English and Spanish for Emergency Department triage, festival medical teams, or crisis intervention responders.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

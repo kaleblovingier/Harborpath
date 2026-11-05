@@ -738,5 +738,16 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
 
   wrapper.appendChild(planCard);
   wrapper.appendChild(exportSection);
+
+  const psychCard = h('section', { class: 'card mt-2' }, [
+    h('h3', {}, isEs ? 'Atención en Crisis Psicodélicas, 2C-B y Fenetilaminas' : 'Psychedelic Crisis Care, 2C-B & Phenethylamines'),
+    h('p', {}, isEs
+      ? 'Para desescalada de viajes difíciles (Zendo / Fireside), dosificación no lineal de 2C-B, alerta de secantes amargos (25I-NBOMe) y contraindicaciones mortales con litio: '
+      : 'For psychedelic "bad trip" de-escalation (Zendo / Fireside protocols), steep 2C-B dose curves, bitter NBOMe blotter warnings, and fatal lithium seizure contraindications: '),
+    h('a', { href: '#/psychedelic-care' }, isEs
+      ? 'Abrir Navegador de Cuidados Psicodélicos y Desescalada 5-HT2A →'
+      : 'Open Psychedelic Harm Reduction, 5-HT2A De-Escalation & HPPD Navigator →')
+  ]);
+  wrapper.appendChild(psychCard);
   return wrapper;
 }

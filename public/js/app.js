@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'psychedelic-care': () => import('./views/psychedelicCare.js').then((m) => {
+    viewCache.set('psychedelic-care', m.psychedelicCareView);
+    routeResets.set('psychedelic-care', m.resetPsychedelicState);
+    return m.psychedelicCareView;
+  }),
   'gabapentinoid-care': () => import('./views/gabapentinoidCare.js').then((m) => {
     viewCache.set('gabapentinoid-care', m.gabapentinoidCareView);
     routeResets.set('gabapentinoid-care', m.resetGabapentinoidState);
@@ -256,6 +261,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'psychedelic-care': () => t('route.psychedelicCare', 'Psychedelic harm reduction, 5-HT2A de-escalation & HPPD'),
   'gabapentinoid-care': () => t('route.gabapentinoidCare', 'Gabapentinoids, respiratory synergy & deprescribing'),
   'novel-substances': () => t('route.novelSubstances', 'Novel substances, kratom, tianeptine & OTC misuse'),
   'sexual-health': () => t('route.sexualHealth', 'Doxy-PEP, HIV PrEP & emergency contraception'),
@@ -328,6 +334,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('psychedelic-care'),
     preloadRoute('tools'),
     preloadRoute('workspace'),
     preloadRoute('match'),

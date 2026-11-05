@@ -120,6 +120,7 @@ const ELECTIVE_SHELL = [
   '/js/views/sexualHealth.js',
   '/js/views/novelSubstances.js',
   '/js/views/gabapentinoidCare.js',
+  '/js/views/psychedelicCare.js',
 ];
 
 self.addEventListener('install', (event) => {

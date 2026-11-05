@@ -593,6 +593,13 @@ export function dualDiagnosisView() {
     panel.appendChild(h('h2', null, t('dual.meds.title', 'Psychotropic Medications & MOUD Clinical Compatibility')));
     panel.appendChild(h('p', null, t('dual.meds.intro', 'Taking medications for depression, bipolar disorder, ADHD, or anxiety alongside buprenorphine, methadone, or naltrexone is safe, evidence-based, and saves lives.')));
 
+    const psychNotice = h('div', { class: 'callout callout-warning mt-2' },
+      h('h3', null, 'Bipolar & Psychosis Clinical Alert: Lithium & Psychedelics'),
+      h('p', null, 'Co-ingestion of Lithium with classical 5-HT2A psychedelics (LSD, psilocybin) carries a near-100% incidence of grand mal seizures and status epilepticus. Furthermore, HPPD (visual snow, trailing) must NOT be misdiagnosed as schizophrenia or psychosis. For full clinical protocols, see the '),
+      h('a', { href: '#/psychedelic-care' }, 'Psychedelic Care, 5-HT2A Crisis & HPPD Navigator →')
+    );
+    panel.appendChild(psychNotice);
+
     const grid = h('div', { class: 'pathway-cards-grid' });
     for (const med of PSYCHOTROPIC_MOUD_PROFILES) {
       const card = h('article', { class: 'action-card' },
