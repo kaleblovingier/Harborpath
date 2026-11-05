@@ -96,4 +96,6 @@ export default {
   'tools.item.family-support.description': 'Use el Entrenamiento Familiar y Refuerzo Comunitario (CRAFT) para mejorar la comunicación, establecer límites y apoyar a un ser querido.',
   'tools.item.adulterant-care.title': 'Adulterantes emergentes, xilacina y cuidado de heridas por tranq',
   'tools.item.adulterant-care.description': 'Reducción de daños clínicos para xilacina (tranq), nitazenos, triaje de sedación alfa-2, manejo de heridas necróticas y estándares de tiras reactivas.',
+  'tools.item.methadone-access.title': 'Acceso a clínicas de metadona y reglas Parte 8 de 2024',
+  'tools.item.methadone-access.description': 'Explore las reglas de SAMHSA Parte 8 de 2024, calcule la elegibilidad para botellas para llevar, prevenga reducciones rápidas y defienda sus derechos.',
 };

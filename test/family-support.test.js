@@ -265,3 +265,4 @@ test('Static security and privacy audit of familySupport.js', () => {
   assert.doesNotMatch(content, /fetch\s*\(/);
   assert.doesNotMatch(content, /XMLHttpRequest/);
 });
+

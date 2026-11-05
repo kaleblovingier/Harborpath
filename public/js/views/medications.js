@@ -2072,6 +2072,7 @@ export function medicationsView({ query } = {}) {
         [strong('Counseling is never a barrier to medication: '), 'Refusing or missing counseling sessions cannot be used to automatically deny or terminate life-saving medication.'],
       ]),
       p(h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=OTP' }, icon('pin'), 'Search certified OTP methadone clinics near me')),
+      p(h('a', { class: 'btn btn-secondary', href: '#/methadone-access' }, icon('shield'), 'Open Methadone 2024 Take-Home Calculator & Patient Rights Guide')),
     ),
 
     section('reversal-science', t('meds.reversal.title', 'Overdose Reversal Pharmacology: 4 mg vs. 8 mg Naloxone, Nalmefene & Xylazine'),

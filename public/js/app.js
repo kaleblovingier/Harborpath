@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'methadone-access': () => import('./views/methadoneAccess.js').then((m) => {
+    viewCache.set('methadone-access', m.methadoneAccessView);
+    routeResets.set('methadone-access', m.resetMethadoneState);
+    return m.methadoneAccessView;
+  }),
   'adulterant-care': () => import('./views/adulterantCare.js').then((m) => {
     viewCache.set('adulterant-care', m.adulterantCareView);
     routeResets.set('adulterant-care', m.resetAdulterantState);
@@ -171,6 +176,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'methadone-access': () => t('route.methadoneAccess', 'Methadone clinic access & 2024 Part 8 rules'),
   'adulterant-care': () => t('route.adulterantCare', 'Emerging adulterants, xylazine & wound care'),
   'family-support': () => t('route.familySupport', 'Family support & CRAFT guide'),
   'alcohol-care': () => t('route.alcoholCare', 'Alcohol care, withdrawal & MAUD'),
@@ -254,6 +260,7 @@ export function preloadAllLazyViews() {
     preloadRoute('alcohol-care'),
     preloadRoute('family-support'),
     preloadRoute('adulterant-care'),
+    preloadRoute('methadone-access'),
     preloadRoute('harm-reduction'),
   ]);
 }

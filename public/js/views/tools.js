@@ -40,6 +40,7 @@ const entries = [
   ['alcohol-care', 'care', 'Alcohol care and medical withdrawal', 'Evaluate alcohol withdrawal risk (PAWSS), Wernicke-Korsakoff prevention, and FDA-approved medications (MAUD).', ['individual', 'supporter', 'care-team']],
   ['family-support', 'planning', 'Family support and CRAFT guide', 'Use Community Reinforcement and Family Training (CRAFT) to improve communication, set boundaries, and support a loved one.', ['supporter', 'care-team']],
   ['adulterant-care', 'care', 'Emerging adulterants, xylazine and tranq wound care', 'Evidence-based guidance for xylazine (tranq), nitazenes, alpha-2 sedation triage, necrotic wound management, and test strip standards.', ['individual', 'supporter', 'care-team']],
+  ['methadone-access', 'care', 'Methadone clinic access and 2024 Part 8 rules', 'Explore 2024 SAMHSA Part 8 rules, calculate take-home bottle eligibility, prevent dangerous rapid tapers, and advocate for patient rights.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

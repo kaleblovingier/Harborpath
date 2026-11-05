@@ -271,4 +271,32 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Stratifies patient signs into Opioid Overdose (911 + Naloxone), Sepsis/Infection (Urgent ED), Alpha-2 Sedation (Recovery position, airway protection, avoid extra naloxone), Xylazine Rebound (Clonidine protocol), or Routine Harm Reduction.
   - Generates zero-PII bilingual plain-text clinical summaries.
 
+## 15. Wave 17 Federal Opioid Treatment Program (OTP) Regulations, Methadone Access & Patient Rights
+
+- **2024 SAMHSA 42 CFR Part 8 Final Rule Implementation (`#/methadone-access`, `methadoneAccess.js`)**:
+  - Encodes the historic 2024 modernization of federal Opioid Treatment Program (OTP) regulations—the most comprehensive statutory overhaul in over 20 years.
+  - Accelerated Take-Home Schedule Flexibilities (§ 8.12(i)):
+    - Days 0–14: Up to 7 days of take-home doses based on clinical assessment (permanently eliminates the archaic 1-bottle/week restriction).
+    - Days 15–30: Up to 14 days of take-home doses.
+    - Days 31+: Up to 28 days of take-home doses (full monthly supply), permanently eliminating the multi-year waiting ladder.
+  - 8-Point Clinical Safety Assessment Engine: Evaluates the 8 federal criteria under § 8.12(i)(2) (toxicity absence, clinic attendance, behavioral stability, absence of diversion, safe home lockbox storage, rehabilitative benefit vs risk, recovery stage, and transportation access).
+  - Mandatory Lockbox Safety Gating: Enforces federal child/pet poison prevention standards, requiring a locked container before dispensing multi-day take-home doses.
+- **Federal Patient Rights & Anti-Punitive Protections**:
+  - Elimination of 1-Year Addiction History Rule: Programs can no longer require patients to prove a 12-month history of continuous opioid addiction before admission.
+  - Anti-Punitive Toxicology Protections: Federal regulations explicitly state that positive drug toxicology screens (including cannabis/THC or isolated substance recurrence) CANNOT be the sole basis for punitive take-home bottle revocations or administrative discharge.
+  - Protection Against Forced Rapid Tapers: Declares dangerous administrative "curb tapering" (3–7 day forced detox) a violation of modern clinical standards of care. Tapers must be voluntary, collaborative, and patient-paced.
+  - Telehealth Initiation: Authorizes audio-visual telehealth evaluations for methadone induction in OTP settings.
+- **Methadone Pharmacokinetics & Life-Safety Directives**:
+  - Induction Safety & "Dose Stacking" Prevention: Standard starting dose 20–30 mg PO (maximum 30–40 mg on Day 1). Warns against rapid increases in days 2–4; methadone's long half-life (24–36+ hours) vs shorter analgesic duration (4–8 hours) leads to fatal cumulative tissue accumulation ("dose stacking") between days 3 and 7.
+  - Long-Acting Naloxone Rebound Directive: Naloxone half-life is 30–90 minutes while methadone lasts 24–36+ hours. Following naloxone reversal of methadone overdose, secondary respiratory arrest is medically expected once naloxone clears. Mandatory 12–24 hour emergency department hospital monitoring.
+  - Cardiac QTc Prolongation Safety: Details hERG potassium channel blockade mechanisms, risk factors (doses >100 mg/day, concomitant QT-prolonging drugs, hypokalemia/hypomagnesemia), and baseline ECG screening recommendations.
+- **Guest Dosing (Courtesy Dosing) & Travel Navigator**:
+  - Step-by-step advance planning checklist (3–7 business days advance notice, physician sign-off, clinic DEA/SAMHSA license verification, interstate Medicaid coordination, and guest dosing fee navigation).
+- **Interactive Self-Advocacy Script Composer**:
+  - Generates plain-language, legally grounded scripts for:
+    1. Requesting 2024 Part 8 Take-Home schedule reviews.
+    2. Advocating against punitive take-home loss following a positive drug screen.
+    3. Coordinating guest dosing for travel or work.
+    4. Requesting a safe, patient-paced voluntary taper.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.
