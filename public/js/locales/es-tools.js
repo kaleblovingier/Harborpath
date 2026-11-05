@@ -108,4 +108,6 @@ export default {
   'tools.item.sleep-care.description': 'Pautas basadas en evidencia para restaurar el sueño, protocolos TCC-I, fármacos no controlados y arquitectura del sueño en abstinencia prolongada (PAWS).',
   'tools.item.dental-care.title': 'Salud dental, buprenorfina y endocarditis',
   'tools.item.dental-care.description': 'Pautas de la FDA de 2022 para proteger el esmalte con buprenorfina, reducción de daños en boca seca por estimulantes y prevención de endocarditis.',
+  'tools.item.cannabis-care.title': 'Hiperémesis cannabinoide (SHC) y concentrados',
+  'tools.item.cannabis-care.description': 'Criterios de Roma IV, triaje de vómitos cíclicos, protocolo de capsaicina tópica, por qué falla el Zofran y recuperación del receptor CB1 en 90 días.',
 };

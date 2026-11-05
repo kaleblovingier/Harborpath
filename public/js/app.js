@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'cannabis-care': () => import('./views/cannabisCare.js').then((m) => {
+    viewCache.set('cannabis-care', m.cannabisCareView);
+    routeResets.set('cannabis-care', m.resetCannabisState);
+    return m.cannabisCareView;
+  }),
   'dental-care': () => import('./views/dentalCare.js').then((m) => {
     viewCache.set('dental-care', m.dentalCareView);
     routeResets.set('dental-care', m.resetDentalState);
@@ -201,6 +206,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'cannabis-care': () => t('route.cannabisCare', 'Cannabinoid hyperemesis (CHS) & concentrates care'),
   'dental-care': () => t('route.dentalCare', 'Dental, oral health & endocarditis prevention'),
   'sleep-care': () => t('route.sleepCare', 'Sleep restoration & insomnia in recovery'),
   'nightlife-care': () => t('route.nightlifeCare', 'Nightlife, club drugs & festival harm reduction'),
@@ -292,6 +298,7 @@ export function preloadAllLazyViews() {
     preloadRoute('adulterant-care'),
     preloadRoute('methadone-access'),
     preloadRoute('dental-care'),
+    preloadRoute('cannabis-care'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

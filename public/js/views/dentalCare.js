@@ -772,3 +772,4 @@ function renderClinicNavTab(isEs, localState, evalResult, reRender) {
   wrapper.appendChild(exportSection);
   return wrapper;
 }
+

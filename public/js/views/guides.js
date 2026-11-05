@@ -167,6 +167,7 @@ export function harmReductionView() {
       p('For festival safety, MDMA hydration, ketamine bladder health, nitrous B12 risks, and reagent testing standards, explore the ', h('a', { href: '#/nightlife-care' }, 'Nightlife & Festival Harm Reduction Guide'), '.'),
       p('For insomnia in recovery, CBT-I stimulus control, non-controlled sleep aids, and post-acute withdrawal sleep architecture, explore the ', h('a', { href: '#/sleep-care' }, 'Sleep Restoration & Insomnia in Recovery Navigator'), '.'),
       p('For FDA buprenorphine enamel protection protocols, stimulant dry mouth mitigation, endocarditis bacteremia prevention, and low-cost dental clinics, visit the ', h('a', { href: '#/dental-care' }, 'Dental, Oral Health & Endocarditis Prevention Guide'), '.'),
+      p('For cannabinoid hyperemesis syndrome (CHS), cyclic vomiting triage, topical capsaicin protocols, why Zofran fails, and 90-day CB1 recovery, visit the ', h('a', { href: '#/cannabis-care' }, 'Cannabinoid Hyperemesis (CHS) & Concentrates Navigator'), '.'),
       fine('Wound care guidance from the ',
         ext('https://www.cdc.gov/overdose-prevention/media/pdfs/2024/07/Xylazine-Clinical-Management-and-Harm-Reduction.pdf', 'CDC xylazine fact sheet'), '.'),
     ),

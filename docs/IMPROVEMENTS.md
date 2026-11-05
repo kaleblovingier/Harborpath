@@ -442,4 +442,31 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - WCAG 2.2 AA compliant accessible DOM structure.
 
 
+## 21. Wave 23 — Cannabinoid Hyperemesis Syndrome (CHS), High-Potency Concentrates & Cannabis Harm Reduction
+
+### Clinical, Gastroenterological & Toxicological Objectives
+- **Rome IV Diagnostic Framework & Pathophysiological Staging**:
+  - Addresses the paradoxical phenomenon where chronic, supraphysiological stimulation of central and enteric Cannabinoid-1 (CB1) receptors induces severe downregulation, uncoupling, and gastrointestinal dysmotility.
+  - Diagnostic criteria: Regular cannabinoid exposure (>1 year, high-frequency/concentrate use), cyclic violent vomiting (5–15+ episodes/hour), pathognomonic compulsive hot bathing ("scald-seeking" behavior through TRPV1 vanilloid cutaneous activation), and permanent symptom resolution post-cessation.
+  - Clinical phase staging: Prodromal phase (early morning nausea, paradoxical self-medication trap where increasing cannabis intake exacerbates receptor saturation), Hyperemetic phase (acute cyclic crisis), and Recovery phase (normalization across weeks to months).
+- **The Antiemetic Failure Paradox & Evidence-Based Acute Interventions**:
+  - Clarifies why conventional 5-HT3 antagonists (Ondansetron / Zofran), dopamine antagonists (Metoclopramide / Reglan), and antihistamines (Promethazine / Phenergan) fail to abort acute CHS crises.
+  - **First-Line Topical Capsaicin 0.025%–0.075% Cream**: TRPV1 vanilloid receptor agonist. Activates and desensitizes peripheral cutaneous vanilloid receptors on abdominal sensory nerves, mimicking hot shower relief without burn risks. Strict application and glove safety guidance.
+  - **Dopamine D2 & 5-HT2A Antagonists (Haloperidol / Droperidol)**: Central dopamine blockade in the chemoreceptor trigger zone (CTZ) and area postrema; clinical trial-backed efficacy in aborting cyclic emesis and significantly shortening emergency room length of stay.
+  - **Aggressive IV Rehydration & Electrolyte Replacement**: Rapid volume expansion with Lactated Ringer's or Normal Saline, with urgent potassium/magnesium repletion to reverse hypokalemic metabolic alkalosis.
+- **Emergency Red-Flag Complications & Triage**:
+  - Pre-renal Acute Kidney Injury (AKI) from profound volume loss and elevated creatinine.
+  - Hypokalemic metabolic alkalosis with lethal ventricular arrhythmia vulnerability.
+  - Mallory-Weiss mucosal lacerations and Boerhaave syndrome (esophageal rupture) from violent retching.
+  - Severe thermal scald burns from prolonged scalding water exposure.
+  - Synthetic Cannabinoids ("K2", "Spice", Pinaca/Fubinaca families) toxidrome: full high-affinity CB1 agonists with severe cardiovascular toxicity (myocardial infarction, malignant tachycardia), seizures, catatonia, and acute psychosis requiring immediate 911 activation.
+- **The 90-Day CB1 Receptor Upregulation Timeline & Withdrawal Management**:
+  - Detailed recovery phases: Days 1–3 (acute rebound & BRAT re-feeding), Days 4–14 (peak withdrawal, insomnia, vivid REM dreams, hyperhidrosis), Weeks 3–6 (motility normalization & natural appetite return), Weeks 6–12 (full central and enteric CB1 receptor density recovery).
+  - Non-controlled supportive pharmacotherapy: Trazodone / Melatonin for insomnia, Hydroxyzine for somatic restlessness and sweating, N-acetylcysteine (NAC 1,200 mg BID) for craving attenuation and glutamate homeostasis.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual exportable plain-text summary for Emergency Department or Gastroenterology encounters to prevent unnecessary invasive procedures (cholecystectomies, repeated CTs) and advocate for evidence-based capsaicin and haloperidol therapy without stigma.
+  - WCAG 2.2 AA compliant accessible DOM structure.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

@@ -46,6 +46,7 @@ const entries = [
   ['nightlife-care', 'harm', 'Nightlife, club drugs and festival harm reduction', 'Evidence-based harm reduction for MDMA, ketamine, GHB/GBL, nitrous oxide, reagent testing, hyponatremia prevention, and bladder health.', ['individual', 'supporter', 'care-team']],
   ['sleep-care', 'health', 'Sleep restoration and insomnia in recovery', 'Evidence-based sleep restoration, CBT-I protocols, non-controlled sleep pharmacotherapy, and post-acute withdrawal sleep architecture.', ['individual', 'supporter', 'care-team']],
   ['dental-care', 'health', 'Dental, oral health and endocarditis prevention', 'FDA 2022 buprenorphine oral safety protocol, meth mouth harm reduction, endocarditis bacteremia prevention, and low-cost dental clinic navigation.', ['individual', 'supporter', 'care-team']],
+  ['cannabis-care', 'health', 'Cannabinoid hyperemesis (CHS) and concentrates care', 'Rome IV diagnostic criteria, cyclic vomiting triage, topical capsaicin protocols, why Zofran fails, and 90-day CB1 receptor recovery.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

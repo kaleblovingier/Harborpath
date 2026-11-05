@@ -497,6 +497,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-secondary btn-small',
         href: '#/nightlife-care',
       }, icon('shield'), tr('Nightlife, club drugs & reagent testing', 'Ocio nocturno, drogas de club y reactivos')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/cannabis-care',
+      }, icon('shield'), tr('Cannabinoid hyperemesis (CHS) & concentrates', 'Hiperémesis cannabinoide (SHC) y concentrados')),
     ),
   );
 }

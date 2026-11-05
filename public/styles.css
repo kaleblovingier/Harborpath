@@ -2267,6 +2267,237 @@ body.sensory-mode-active [tabindex]:focus-visible {
   gap: 0.65rem;
 }
 
+/* Wave 23: Cannabinoid Hyperemesis Syndrome (CHS) & Concentrates Care */
+.cannabis-care-view {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.cannabis-care-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cannabis-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.red-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.flag-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease;
+}
+
+.flag-active {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.flag-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.flag-text strong {
+  font-size: 0.95rem;
+}
+
+.flag-text .action-advice {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.checkboxes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.highlight-checkbox {
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius);
+}
+
+.evaluation-result-card {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+}
+
+.evaluation-result-card.high_chs {
+  border-left: 5px solid #dc2626;
+  background: rgba(220, 38, 38, 0.06);
+}
+
+.evaluation-result-card.prodromal_or_probable {
+  border-left: 5px solid #d97706;
+  background: rgba(217, 119, 6, 0.06);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.therapies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.therapy-card {
+  padding: 1.25rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.therapy-name {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--brand);
+}
+
+.therapy-safety {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+.capsaicin-protocol-card {
+  border-left: 4px solid var(--brand);
+}
+
+.capsaicin-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.recovery-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.recovery-timeline-card {
+  padding: 1rem 1.25rem;
+  background: var(--surface-alt);
+  border-left: 4px solid #10b981;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.timeline-period {
+  margin: 0;
+  font-size: 1rem;
+  color: #10b981;
+}
+
+.meds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.med-item {
+  padding: 0.85rem 1rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.concentrate-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.highlight-box {
+  padding: 1rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.synthetic-alert-card {
+  border-left: 4px solid #dc2626;
+  background: rgba(220, 38, 38, 0.04);
+}
+
+.synthetic-risks-list {
+  margin: 0.75rem 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.callout-911 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #dc2626;
+  color: #ffffff;
+  border-radius: var(--radius);
+  margin-top: 1rem;
+}
+
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,
