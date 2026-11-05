@@ -241,6 +241,8 @@ export function supportView() {
         [strong('Meet them where they are. '), 'Staying connected matters more than getting them to agree to everything at once. Need help calling a clinic for a loved one? Use the ',
           h('a', { href: '#/plan' }, 'Intake Call Script Builder'), '.'],
       ]),
+      
+      p(h('a', { class: 'btn btn-secondary', href: '#/family-support' }, 'Open Interactive CRAFT Family Guide & Script Builder')),
       hotlineGrid(HOTLINES.substanceUse.filter((l) => l.name.startsWith('Partnership'))),
       resourceList([
         { name: 'SMART Recovery Family & Friends', href: 'https://smartrecovery.org/family', desc: 'CRAFT-based meetings and tools for loved ones.' },

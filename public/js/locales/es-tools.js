@@ -92,4 +92,6 @@ export default {
   'tools.item.chronic-pain.description': 'Revise la guía de dolor de los CDC 2022, la dosis dividida de buprenorfina analgésica y la reducción segura de benzodiazepinas Ashton.',
   'tools.item.alcohol-care.title': 'Atención de alcohol y desintoxicación médica',
   'tools.item.alcohol-care.description': 'Evalúe el riesgo de abstinencia de alcohol (PAWSS), la prevención de Wernicke y los medicamentos aprobados por la FDA (MAUD).',
+  'tools.item.family-support.title': 'Apoyo familiar y guía CRAFT',
+  'tools.item.family-support.description': 'Use el Entrenamiento Familiar y Refuerzo Comunitario (CRAFT) para mejorar la comunicación, establecer límites y apoyar a un ser querido.',
 };

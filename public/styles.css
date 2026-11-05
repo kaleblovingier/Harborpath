@@ -1856,6 +1856,33 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 12px 0;
 }
 
+/* Wave 15: Family CRAFT & Loved One Support */
+.craft-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.rule-card {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.rule-card strong {
+  display: block;
+  color: var(--brand);
+  margin-bottom: 4px;
+}
+.script-preview-card .script-text {
+  font-size: 1.1rem;
+  font-style: italic;
+  padding: 14px 18px;
+  border-left: 4px solid var(--brand);
+  background: var(--surface-alt);
+  margin: 12px 0;
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

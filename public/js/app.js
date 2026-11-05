@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'family-support': () => import('./views/familySupport.js').then((m) => {
+    viewCache.set('family-support', m.familySupportView);
+    routeResets.set('family-support', m.resetFamilyState);
+    return m.familySupportView;
+  }),
   'alcohol-care': () => import('./views/alcoholCare.js').then((m) => {
     viewCache.set('alcohol-care', m.alcoholCareView);
     routeResets.set('alcohol-care', m.resetAlcoholState);
@@ -161,6 +166,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'family-support': () => t('route.familySupport', 'Family support & CRAFT guide'),
   'alcohol-care': () => t('route.alcoholCare', 'Alcohol care, withdrawal & MAUD'),
   'chronic-pain': () => t('route.chronicPain', 'Chronic pain & sedative deprescribing'),
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
@@ -240,6 +246,7 @@ export function preloadAllLazyViews() {
     preloadRoute('stimulant-care'),
     preloadRoute('chronic-pain'),
     preloadRoute('alcohol-care'),
+    preloadRoute('family-support'),
     preloadRoute('harm-reduction'),
   ]);
 }

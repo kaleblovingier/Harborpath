@@ -221,4 +221,31 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Registered `alcohol-care` in `TOOL_CATALOG`, lazy loaders, route titles, preloading, and elective service worker caching.
   - Full bilingual Spanish translations in `es.js` and `es-tools.js`.
 
+## 13. Wave 15 Family Support, Community Reinforcement & Family Training (CRAFT) Framework
+
+- **CRAFT (Community Reinforcement and Family Training) Framework (`#/family-support`, `familySupport.js`)**:
+  - Implements the evidence-based CRAFT protocol (Dr. Robert J. Meyers), which boasts a ~70% success rate in engaging treatment-refusing loved ones into care compared to traditional confrontational interventions (10%–30%).
+  - 7 Evidence-Based Communication Rules:
+    1. Brevity (avoiding long speeches or rehashing past grievances)
+    2. Positive focus (describing what to do rather than what to stop)
+    3. Specific requests (clear, small, observable behaviors)
+    4. Labeling feelings with "I" statements without accusatory blame
+    5. Offering understanding statements acknowledging the loved one's pressure/pain
+    6. Offering genuine, concrete shared support or company
+    7. Timing (never initiating conversations when loved one or supporter is intoxicated, angry, or exhausted)
+  - Natural Consequences vs. Enabling Matrix:
+    - Contrasts protective enabling actions (calling in sick for them, paying legal fines/bail without conditions, cleaning up messes, hiding use) with stepping back to allow natural consequences to motivate internal readiness for change.
+  - Domestic Violence, Threats & Safety Boundary Stratification:
+    - Immediate clinical screening for physical violence, verbal intimidation/threats, and firearms/weapons in the home.
+    - Automatic crisis escalation providing immediate safety planning, the National Domestic Violence Hotline (800-799-7233 / text START to 88788), and directives that loved ones must prioritize their own physical safety and children's safety over substance use interventions.
+  - Interactive CRAFT Script Builder:
+    - Step-by-step interactive script composer with customizable text areas for: Understanding Statement, Feeling ("I" statement), Specific Request, and Concrete Offer of Support.
+    - Generates real-time previews, copy-to-clipboard functionality, and downloadable/printable summaries.
+  - Supporter Take-Home Naloxone & Boundary Support:
+    - Family and supporter harm reduction education: carrying naloxone, recognizing signs of overdose, knowing state Good Samaritan immunity protections, and accessing support groups (Al-Anon, Nar-Anon, SMART Recovery Family & Friends).
+  - Architecture, Accessibility & Privacy:
+    - Zero local/session storage; purely in-RAM state with deterministic resets on navigation.
+    - Accessible WCAG 2.2 AA compliant tabs, screen reader announcements (`aria-live="polite"`), and bilingual English/Spanish localization (`es.js`, `es-tools.js`).
+    - Service Worker elective precaching (`ELECTIVE_SHELL` in `public/sw.js`).
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

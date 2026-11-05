@@ -651,3 +651,4 @@ export function alcoholCareView() {
 
   return container;
 }
+
