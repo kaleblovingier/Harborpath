@@ -846,4 +846,30 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff & Dispatch Note Generator**:
   - 1-click clipboard export in English and Spanish for Emergency Department triage, festival medical teams, or crisis intervention responders.
 
+### 33. Wave 35: GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Severe Withdrawal Navigator (`#/ghb-care`)
+- **Substance Science & Comparative Kinetics**:
+  - *GHB (Gamma-Hydroxybutyrate / Sodium Oxybate)*: Full agonist at inhibitory GABA-B and excitatory GHB receptors; steep, non-linear dose-response curve (1.0–1.5 g euphoria, 2.0–2.5 g heavy sedation, > 3.0 g coma). Rapid half-life of 30–50 minutes.
+  - *GBL (Gamma-Butyrolactone)*: Highly lipophilic chemical prodrug converted into GHB within 60 seconds by serum lactonase; ~2x potency by volume (1 mL GBL equates to ~1.6–2.0 g GHB); acrid chemical taste, corrosive to plastics.
+  - *1,4-BDO (1,4-Butanediol) & The Alcohol Dehydrogenase (ADH) Metabolic Trap*: Metabolized to GHB by ADH. Ethanol has a higher binding affinity for ADH than 1,4-BDO, completely blocking its breakdown. Once alcohol clears hours later, accumulated BDO is rapidly metabolized all at once, triggering sudden delayed catastrophic coma and respiratory arrest hours after alcohol consumption.
+- **Coma ("G-Out") Airway Triage & Lateral Recovery Position**:
+  - Airway collapse danger: GHB paralyzes upper airway muscle tone and protective laryngeal gag reflexes; snoring or gurgling indicates upper airway obstruction and impending asphyxiation.
+  - Step-by-step lateral recovery position guide to prevent fatal vomit aspiration.
+  - Emergency 911 triggers: Respiratory rate < 8 breaths/min, cyanosis, vomiting while unconscious, co-ingested alcohol or sedatives.
+- **GHB Withdrawal Syndrome (GWS) Staging**:
+  - *Stage 1: Mild Early Withdrawal (1–4 hours)*: Severe anxiety, insomnia, tremor, tachycardia (rapid onset due to short half-life).
+  - *Stage 2: Moderate Autonomic Hyperactivity (4–12 hours)*: Tachycardia (> 110–130 bpm), hypertension, nausea, marked agitation, early perceptual distortions.
+  - *Stage 3: Severe Delirium, Psychosis & Status Epilepticus (12–72+ hours)*: Life-threatening paranoid delirium, vivid hallucinations, hyperpyrexia (> 102°F / 39°C), rhabdomyolysis, seizures, and cardiovascular collapse.
+- **Evidence-Based Clinical Pharmacotherapy (BAP & Dutch National Guidelines)**:
+  - *Baclofen Protocol (GABA-B Specific Substitution)*: 10 mg PO TID titrated up to 15–20 mg TID. Directly substitutes at the depleted GABA-B receptor site, preventing delirium and cutting benzodiazepine requirements by > 75%.
+  - *Diazepam Sedation Protocol*: Symptom-triggered loading (10–20 mg PO/IV every 1–2 hours).
+  - *Phenobarbital / ICU Escalation*: For benzodiazepine-refractory agitation or status epilepticus.
+  - *Black-Box Contraindication*: Outpatient "cold turkey" cessation is strictly contraindicated in round-the-clock users; requires inpatient medical stabilization.
+- **Community, Nightlife & Chemsex Harm Reduction Rules**:
+  - Rule 1: Exact 0.1 mL oral syringe measurement only (never dose from bottle caps or drinking cups).
+  - Rule 2: Mandatory smartphone dosing timers (minimum 2–3 hours between doses; prevents anterograde amnesia dose stacking).
+  - Rule 3: Food coloring dye mandate (dye liquid blue or red to prevent accidental ingestion of clear liquid).
+  - Rule 4: Absolute prohibition on alcohol, ketamine, benzodiazepines, and opioids.
+- **Zero-PII SBAR Clinical Handoff Generator**:
+  - 1-click clipboard export in English and Spanish for Emergency Department triage, ICU transfer, or addiction consultation.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

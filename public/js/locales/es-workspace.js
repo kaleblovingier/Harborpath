@@ -61,4 +61,5 @@ export default {
   'workspace.link.novelSubstances': 'Sustancias novedosas, kratom y tianeptina',
   'workspace.link.gabapentinoidCare': 'Gabapentinoides y desescalada hiperbólica',
   'workspace.link.psychedelicCare': 'Cuidados psicodélicos, desescalada 5-HT2A y HPPD',
+  'workspace.link.ghbCare': 'GHB/GBL, triaje de coma y abstinencia',
 };

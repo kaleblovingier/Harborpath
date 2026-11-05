@@ -846,6 +846,17 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
   );
   root.append(doxyPrEpCard);
 
+  const ghbCallout = h('div', { class: 'info-callout mt-2', role: 'note' },
+    h('strong', {}, isEs ? '¿Uso de GHB/GBL en contextos de chemsex o fiestas? ' : 'GHB/GBL harm reduction in chemsex or party spaces? '),
+    h('span', {}, isEs
+      ? 'Explore el protocolo de triaje de coma por G-out, posición lateral de seguridad, dependencia física 24/7 y desintoxicación con baclofeno: '
+      : 'Explore G-out coma airway triage, lateral recovery position, 24/7 physical dependence, and BAP Baclofen detox protocols: '),
+    h('a', { href: '#/ghb-care' }, isEs
+      ? 'Abrir Navegador de GHB/GBL, Triaje de Coma y Abstinencia →'
+      : 'Open GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Withdrawal Navigator →')
+  );
+  root.append(ghbCallout);
+
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'The Trevor Project (LGBTQ+ 24/7):' : 'The Trevor Project:'),

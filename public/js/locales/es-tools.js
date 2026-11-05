@@ -132,4 +132,6 @@ export default {
   'tools.item.gabapentinoid-care.description': 'Directrices de la FDA de 2019 para la sinergia respiratoria con opioides, modelo de desescalada hiperbólica de Horowitz-Taylor, límites renales CrCl y prevención del síndrome de abstinencia.',
   'tools.item.psychedelic-care.title': 'Cuidados psicodélicos, desescalada 5-HT2A y HPPD',
   'tools.item.psychedelic-care.description': 'Protocolos de soporte de pares de Fireside Project, 4 pilares de desescalada de crisis, anclaje sensorial, contraindicaciones mortales de litio con convulsiones, alertas de 25I-NBOMe y guía neurooftalmológica de HPPD.',
+  'tools.item.ghb-care.title': 'Reducción de daños de GHB/GBL, triaje de coma y abstinencia',
+  'tools.item.ghb-care.description': 'Guías clínicas para el coma por G-out, posición lateral de seguridad, la trampa de la enzima ADH con 1,4-BDO, abstinencia severa y sustitución con baclofeno según la BAP.',
 };

@@ -749,5 +749,16 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
       : 'Open Psychedelic Harm Reduction, 5-HT2A De-Escalation & HPPD Navigator →')
   ]);
   wrapper.appendChild(psychCard);
+
+  const ghbCard = h('section', { class: 'card mt-2' }, [
+    h('h3', {}, isEs ? 'Guía Clínica de GHB, GBL, 1,4-BDO y Triaje de Coma (G-Out)' : 'GHB, GBL, 1,4-BDO Harm Reduction, Coma Triage & Withdrawal'),
+    h('p', {}, isEs
+      ? 'Para triaje de coma por G-out, posición lateral de seguridad, la trampa metabólica del alcohol con 1,4-BDO, dependencia continuada 24/7 y protocolos con baclofeno: '
+      : 'For G-out coma airway triage, lateral recovery position, the 1,4-BDO alcohol dehydrogenase trap, 24/7 round-the-clock dependence, and BAP Baclofen protocols: '),
+    h('a', { href: '#/ghb-care' }, isEs
+      ? 'Abrir Navegador de GHB/GBL, Triaje de Coma y Abstinencia →'
+      : 'Open GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Withdrawal Navigator →')
+  ]);
+  wrapper.appendChild(ghbCard);
   return wrapper;
 }

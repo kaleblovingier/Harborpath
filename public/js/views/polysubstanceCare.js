@@ -872,6 +872,17 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
       : 'Open Gabapentinoid Safety & Hyperbolic Deprescribing Navigator →')
   ]);
   wrapper.appendChild(gabapentinoidCard);
+
+  const ghbCard = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Consumo de GHB, GBL o 1,4-BDO con Alcohol u Otros Depresores?' : 'GHB, GBL or 1,4-BDO Co-Ingestion with Alcohol or Sedatives?'),
+    h('p', {}, isEs
+      ? 'La combinación de GHB con alcohol provoca paro respiratorio sinérgico inmediato mediado por GABA-B y pérdida de reflejos protectores de la vía aérea. Con 1,4-BDO, el alcohol bloquea la enzima ADH provocando un coma retrasado masivo horas después. '
+      : 'Combining GHB with alcohol produces immediate synergistic GABA-B respiratory arrest and abolishes airway protective reflexes. With 1,4-BDO, alcohol halts ADH metabolism, triggering delayed catastrophic comas hours later. '),
+    h('a', { href: '#/ghb-care' }, isEs
+      ? 'Abrir Navegador de GHB/GBL, Triaje de Coma y Abstinencia →'
+      : 'Open GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Withdrawal Navigator →')
+  ]);
+  wrapper.appendChild(ghbCard);
   wrapper.appendChild(exportSection);
   return wrapper;
 }

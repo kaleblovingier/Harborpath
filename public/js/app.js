@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'ghb-care': () => import('./views/ghbCare.js').then((m) => {
+    viewCache.set('ghb-care', m.ghbCareView);
+    routeResets.set('ghb-care', m.resetGhbState);
+    return m.ghbCareView;
+  }),
   'psychedelic-care': () => import('./views/psychedelicCare.js').then((m) => {
     viewCache.set('psychedelic-care', m.psychedelicCareView);
     routeResets.set('psychedelic-care', m.resetPsychedelicState);
@@ -261,6 +266,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'ghb-care': () => t('route.ghbCare', 'GHB, GBL & 1,4-BDO harm reduction, coma triage & withdrawal'),
   'psychedelic-care': () => t('route.psychedelicCare', 'Psychedelic harm reduction, 5-HT2A de-escalation & HPPD'),
   'gabapentinoid-care': () => t('route.gabapentinoidCare', 'Gabapentinoids, respiratory synergy & deprescribing'),
   'novel-substances': () => t('route.novelSubstances', 'Novel substances, kratom, tianeptine & OTC misuse'),
@@ -334,6 +340,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('ghb-care'),
     preloadRoute('psychedelic-care'),
     preloadRoute('tools'),
     preloadRoute('workspace'),

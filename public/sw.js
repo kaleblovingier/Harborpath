@@ -121,6 +121,7 @@ const ELECTIVE_SHELL = [
   '/js/views/novelSubstances.js',
   '/js/views/gabapentinoidCare.js',
   '/js/views/psychedelicCare.js',
+  '/js/views/ghbCare.js',
 ];
 
 self.addEventListener('install', (event) => {

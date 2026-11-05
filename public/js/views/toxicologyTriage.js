@@ -1407,6 +1407,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(psychedelicLink);
 
+    const ghbLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Alerta de Coma por GHB/GBL y Abstinencia Severa (GWS)' : 'GHB/GBL Coma & Severe Withdrawal Alert (GWS)'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para triaje de coma por G-out, obstrucción de vía aérea, posición lateral de seguridad, dependencia física 24/7 y protocolos con baclofeno y diazepam: '
+        : 'For G-out respiratory coma, lateral recovery position, the 1,4-BDO alcohol dehydrogenase trap, round-the-clock physical dependence, and BAP Baclofen protocols: '),
+      h('a', { href: '#/ghb-care' }, isEs
+        ? 'Abrir Navegador de GHB/GBL, Triaje de Coma y Abstinencia →'
+        : 'Open GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Withdrawal Navigator →')
+    );
+    container.appendChild(ghbLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

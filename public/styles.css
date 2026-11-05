@@ -5720,3 +5720,351 @@ body.sensory-mode-active [tabindex]:focus-visible {
   line-height: 1.5;
   margin: 0;
 }
+
+/* ==========================================================================
+   WAVE 35: GHB, GBL & 1,4-BDO HARM REDUCTION, COMA TRIAGE & WITHDRAWAL
+   ========================================================================== */
+
+.ghb-care-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.ghb-header {
+  margin-bottom: 2rem;
+}
+
+.ghb-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fdf4ff;
+  color: #a21caf;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.ghb-header-title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--text-heading, #0f172a);
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.ghb-header-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted, #475569);
+  max-width: 950px;
+  line-height: 1.6;
+}
+
+.ghb-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border, #e2e8f0);
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.ghb-tab-btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #64748b);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ghb-tab-btn:hover {
+  background: var(--surface-soft, #f8fafc);
+  color: var(--text-heading, #0f172a);
+}
+
+.ghb-tab-btn.active {
+  background: #9333ea;
+  color: #ffffff;
+}
+
+.ghb-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.ghb-inputs-grid .input-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ghb-select {
+  padding: 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border, #cbd5e1);
+  background: var(--surface, #ffffff);
+  color: var(--text-main, #1e293b);
+  font-size: 0.95rem;
+}
+
+.ghb-result-card {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 2px solid;
+}
+
+.ghb-result-card.emergency {
+  background: var(--danger-soft, #fef2f2);
+  border-color: var(--danger, #ef4444);
+}
+
+.ghb-result-card.standard {
+  background: #fdf4ff;
+  border-color: #c084fc;
+}
+
+.ghb-result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.ghb-result-header h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-heading, #0f172a);
+}
+
+.ghb-result-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ghb-rec-item p {
+  margin-top: 0.25rem;
+  line-height: 1.55;
+  color: var(--text-main, #334155);
+}
+
+.recovery-position-card,
+.ghb-intro-card,
+.ghb-protocols-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.recovery-position-card h3,
+.ghb-protocols-card h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin-bottom: 1rem;
+}
+
+.recovery-steps-list {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  line-height: 1.55;
+  color: var(--text-main, #334155);
+}
+
+.ghb-sbar-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ghb-compounds-grid,
+.ghb-stages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ghb-compound-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ghb-comp-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  padding-bottom: 0.5rem;
+}
+
+.badge-kinetics {
+  font-weight: 700;
+  color: #7e22ce;
+}
+
+.adh-trap-card,
+.cold-turkey-alert-card {
+  display: flex;
+  gap: 1.25rem;
+  background: #fef2f2;
+  border: 2px solid #ef4444;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.adh-trap-card h3,
+.cold-turkey-alert-card h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #991b1b;
+  margin-bottom: 0.5rem;
+}
+
+.adh-trap-card p,
+.cold-turkey-alert-card p {
+  color: #7f1d1d;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.gws-stage-card {
+  background: var(--surface, #ffffff);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border, #cbd5e1);
+  border-left: 6px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gws-stage-card.mild {
+  border-left-color: #f59e0b;
+}
+
+.gws-stage-card.moderate {
+  border-left-color: #ea580c;
+}
+
+.gws-stage-card.severe {
+  border-left-color: #dc2626;
+  background: #fffafa;
+}
+
+.gws-stage-card h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.gws-symptoms-list {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.45;
+}
+
+.gws-mgmt-box {
+  background: var(--surface-soft, #f8fafc);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-heading, #0f172a);
+}
+
+.proto-box {
+  background: var(--surface-soft, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.proto-box h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #6b21a8;
+  margin-bottom: 0.5rem;
+}
+
+.proto-box p {
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.ghb-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.ghb-rule-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rule-badge {
+  display: inline-block;
+  align-self: flex-start;
+  background: #f3e8ff;
+  color: #7e22ce;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.ghb-rule-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.ghb-rule-card p {
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.5;
+  margin: 0;
+}
