@@ -66,4 +66,5 @@ export default {
   'workspace.link.inhalantCare': 'Inhalantes, solventes y seguridad con óxido nitroso',
   'workspace.link.ketamineCare': 'Uropatía por ketamina y reducción de daños',
   'workspace.link.weatherCare': 'Hipotermia, congelación y clima extremo',
+  'workspace.link.liverCare': 'Salud hepática, cirrosis y seguridad de APAP',
 };

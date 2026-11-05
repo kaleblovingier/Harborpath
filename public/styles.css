@@ -7395,3 +7395,294 @@ body.sensory-mode-active [tabindex]:focus-visible {
   line-height: 1.55;
   margin: 0;
 }
+
+/* ==========================================================================
+   Wave 40: Liver Care & Hepatic Safety Navigator
+   ========================================================================== */
+
+.liver-care-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.lc-header {
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08), rgba(185, 28, 28, 0.08));
+  border-left: 4px solid #d97706;
+  padding: 1.75rem 2rem;
+  border-radius: 0.75rem;
+}
+
+.lc-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.lc-header-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.lc-header-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted, #475569);
+  line-height: 1.6;
+  max-width: 950px;
+  margin: 0;
+}
+
+.lc-mode-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.lc-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  background: var(--card-bg, #ffffff);
+  color: var(--text-main, #334155);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.lc-mode-btn:hover {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.05);
+}
+
+.lc-mode-btn.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+.lc-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.lc-tab-btn {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.lc-tab-btn:hover {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.06);
+}
+
+.lc-tab-btn.active {
+  color: #d97706;
+  background: #fef3c7;
+  font-weight: 700;
+}
+
+.lc-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.lc-result-card {
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  border: 2px solid;
+}
+
+.lc-result-card.standard {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.lc-result-card.emergency {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.lc-result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.lc-result-header h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.lc-result-card.standard .lc-result-header h3 {
+  color: #15803d;
+}
+
+.lc-result-card.emergency .lc-result-header h3 {
+  color: #b91c1c;
+}
+
+.lc-result-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lc-rec-item p {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 0.25rem 0 0 0;
+  color: var(--text-main, #334155);
+}
+
+.lc-sbar-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.lc-stages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.lc-stage-card {
+  background: var(--card-bg, #ffffff);
+  border: 2px solid;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lc-stage-card.mild_caution {
+  border-color: #38bdf8;
+}
+
+.lc-stage-card.moderate_warning {
+  border-color: #f59e0b;
+}
+
+.lc-stage-card.critical_emergency {
+  border-color: #ef4444;
+  background: #fff1f2;
+}
+
+.lc-diffs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.lc-diff-card {
+  background: var(--card-bg, #ffffff);
+  border: 2px solid #cbd5e1;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lc-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.lc-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.lc-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main, #334155);
+}
+
+.lc-card ul {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.lc-card li {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main, #334155);
+}
+
+.lc-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.lc-rule-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lc-rule-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.lc-rule-card p {
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.55;
+  margin: 0;
+}

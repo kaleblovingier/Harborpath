@@ -63,6 +63,7 @@ const entries = [
   ['inhalant-care', 'harm-reduction', 'Inhalants, solvents & nitrous oxide safety', 'Clinical guidance for nitrous oxide B12 inactivation, Subacute Combined Degeneration, Sudden Sniffing Death Syndrome (SSDS), alkyl nitrite methemoglobinemia, and cryogenic freeze injury prevention.', ['individual', 'supporter', 'care-team']],
   ['ketamine-care', 'harm-reduction', 'Ketamine harm reduction & uropathy navigator', 'Clinical guidance for Ketamine-Induced Uropathy (KIU / "K-Bladder") staging, biliary "K-cramps" management, EGCG antioxidant protection, and water drowning safety.', ['individual', 'supporter', 'care-team']],
   ['weather-care', 'emergency', 'Weather care, hypothermia, frostbite & heat stroke safety navigator', 'Evidence-based protocols for accidental hypothermia (Swiss Stages I–IV), "warm and dead" CPR rule, frostbite tissue preservation, trench foot care, and emergency heat stroke cooling.', ['individual', 'supporter', 'care-team']],
+  ['liver-care', 'clinical-support', 'Liver health, APAP toxicity & cirrhosis safety navigator', 'AASLD/ACMT consensus for acetaminophen (APAP) toxicity, Rumack-Matthew nomogram, 21-hour IV NAC protocol, Child-Pugh cirrhosis staging, MOUD in hepatic failure (Suboxone vs Subutex), and hepatic encephalopathy triage.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

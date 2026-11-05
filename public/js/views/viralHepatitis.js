@@ -930,6 +930,17 @@ function renderAdvocacyTab(localState, isEs) {
   ]);
   wrapper.appendChild(needleBanner);
 
+  const liverBanner = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+    h('strong', {}, isEs ? '¿Cirrosis avanzada, ictericia, ascitis o dudas sobre medicamentos? ' : 'Advanced cirrhosis, jaundice, ascites, or medication questions? '),
+    h('span', {}, isEs
+      ? 'Consulte la estadificación Child-Pugh, límites de paracetamol y dosificación segura de buprenorfina y metadona: '
+      : 'Consult Child-Pugh cirrhosis staging, acetaminophen thresholds, and safe MOUD dosing protocols: '),
+    h('a', { href: '#/liver-care' }, isEs
+      ? 'Abrir Navegador de Salud Hepática, Cirrosis y Seguridad de MOUD →'
+      : 'Open Liver Health, Cirrhosis & MOUD Safety Navigator →')
+  ]);
+  wrapper.appendChild(liverBanner);
+
   const btnRow = h('div', { class: 'btn-row' }, [copyBtn, resetBtn, copyStatus]);
   exportSection.appendChild(textArea);
   exportSection.appendChild(btnRow);

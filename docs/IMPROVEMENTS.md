@@ -975,4 +975,31 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for EMS, Emergency Physicians, Street Medicine Clinicians, and Shelter Outreach Workers.
 
+### 38. Wave 40: Hepatic Health, Cirrhosis, Acetaminophen (APAP) Toxicity & MOUD Liver Safety Navigator (`#/liver-care`)
+- **MOUD Pharmacokinetics in Hepatic Impairment**:
+  - *Buprenorphine & Suboxone vs. Subutex*: Buprenorphine undergoes hepatic CYP3A4 metabolism and UGT1A1/1A3 glucuronidation. In mild to moderate hepatic impairment (Child-Pugh A & B), buprenorphine is safe and effective. In decompensated cirrhosis (Child-Pugh Class C), buprenorphine clearance drops ~35%, but clearance of naloxone plunges over 14-fold due to loss of first-pass hepatic metabolism. Sublingual naloxone reaches active systemic circulation, triggering acute precipitated withdrawal. Clinical directive: Switch patients in Child-Pugh C to buprenorphine mono-product (Subutex). Never withhold life-saving buprenorphine from individuals with liver disease.
+  - *Methadone Bioaccumulation Hazard*: Methadone is 85%–90% protein-bound and cleared by hepatic CYP3A4/2B6. In advanced cirrhosis, impaired protein synthesis increases the free active drug fraction and dramatically prolongs elimination half-life beyond 36 hours. Requires lower initial dosing, longer titration intervals, and serial 12-lead ECG monitoring for QTc prolongation and torsades de pointes.
+- **Acetaminophen (APAP) Toxicity & Rumack-Matthew Nomogram**:
+  - *Pathophysiology*: Overdose (> 150 mg/kg or > 7.5–10 g; > 4 g/day in chronic alcohol/cirrhosis) exhausts hepatocyte glutathione (< 30%), leaving toxic electrophile NAPQI to bind mitochondrial proteins and trigger centrilobular (Zone 3) hepatic necrosis.
+  - *Rumack-Matthew Nomogram*: Evaluates single acute ingestions between 4 and 24 hours. The treatment line starts at 150 ug/mL at 4 hours and connects to 37.5 ug/mL at 12 hours. Any level on or above mandates immediate N-Acetylcysteine (NAC).
+  - *IV N-Acetylcysteine (NAC 21-Hour Protocol)*: 150 mg/kg loading dose over 60 min, 50 mg/kg over 4 hours, and 100 mg/kg over 16 hours.
+  - *King’s College Criteria for Emergency Liver Transplantation*: Arterial pH < 7.30 after fluid resuscitation, OR concurrent PT/INR > 6.5 + serum creatinine > 3.4 mg/dL + Grade III/IV encephalopathy.
+- **Cirrhosis Staging & Surgical Risk (Child-Pugh A–C)**:
+  - *Class A (Score 5–6)*: Well-compensated cirrhosis, 100% 1-year survival, standard MOUD dosing, routine HCC surveillance.
+  - *Class B (Score 7–9)*: Significant functional compromise, 80% 1-year survival, 25%–50% sedative dose reduction, strict NSAID avoidance.
+  - *Class C (Score 10–15)*: Decompensated cirrhosis, 45% 1-year survival, Suboxone to Subutex transition, transplant evaluation.
+- **Clinical Differential Engines**:
+  - *Acute APAP Toxicity*: Multi-phase poisoning, RUQ pain, skyrocketing AST/ALT (> 3,000–10,000 IU/L), activated charcoal < 4h, IV NAC.
+  - *Hepatic Encephalopathy (HE)*: Hyperammonemia, asterixis ("liver flap"), lactulose titration to 2–3 soft stools/day, Rifaximin 550 mg BID, avoidance of sedatives.
+  - *Variceal Hemorrhage*: Portal hypertension, hematemesis, melena, hypovolemic shock. Emergency 911, large-bore IVs, IV octreotide, restrictive transfusion (Hb 7–8 g/dL), emergent band ligation.
+  - *HCV Direct-Acting Antivirals (DAAs)*: Pan-genotypic once-daily regimens (glecaprevir/pibrentasvir or sofosbuvir/velpatasvir) with > 95% cure rates. AASLD universal directive: active substance use is NEVER a contraindication to HCV cure.
+- **Harm Reduction Directives**:
+  - *Rule 1*: Acetaminophen daily ceilings: 4,000 mg in healthy adults; strictly 2,000 mg in chronic alcohol use, malnutrition, or cirrhosis.
+  - *Rule 2*: Strict prohibition on NSAIDs in cirrhosis and portal hypertension to prevent fatal Hepatorenal Syndrome.
+  - *Rule 3*: Buprenorphine is safe in liver disease; switch to Subutex in Child-Pugh C to prevent naloxone accumulation.
+  - *Rule 4*: Lactulose titration for hepatic encephalopathy: target exactly 2–3 soft bowel movements per day.
+  - *Rule 5*: Active substance use is NOT a contraindication to curative Hepatitis C treatment.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Hepatologists, Toxicologists, Emergency Physicians, and Addiction Consult Teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

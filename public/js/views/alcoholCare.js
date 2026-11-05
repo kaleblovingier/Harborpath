@@ -546,7 +546,12 @@ export function alcoholCareView() {
   }
 
   updateMaudResults();
-  panelMaud.append(maudIntro, maudForm, maudResults);
+  const liverCareLink = h('div', { class: 'alert-callout info mt-2' },
+    h('h4', null, 'Advanced Hepatic Cirrhosis or Liver Impairment?'),
+    h('p', null, 'Consult Child-Pugh staging (Classes A–C), APAP daily limits, and safe MOUD/MAUD pharmacokinetics: '),
+    h('a', { href: '#/liver-care' }, 'Open Liver Health, Cirrhosis & APAP Safety Navigator →')
+  );
+  panelMaud.append(maudIntro, maudForm, maudResults, liverCareLink);
 
   // ---------------- Tab 3: Wernicke Prevention ----------------
   const panelWernicke = h('div', {

@@ -2006,6 +2006,7 @@ export function medicationsView({ query } = {}) {
         h('a', { class: 'preset', href: '#/novel-substances' }, icon('alert'), ' Novel Substances, Kratom, Tianeptine & OTC Misuse'),
         h('a', { class: 'preset', href: '#/gabapentinoid-care' }, icon('shield'), ' Gabapentinoid Safety & Hyperbolic Deprescribing Guide'),
         h('a', { class: 'preset', href: '#/psychedelic-care' }, icon('alert'), ' Psychedelic Harm Reduction, Lithium Seizures & HPPD Guide'),
+        h('a', { class: 'preset', href: '#/liver-care' }, icon('activity'), ' Liver Health, Cirrhosis & MOUD Safety Navigator'),
       ),
     ),
 

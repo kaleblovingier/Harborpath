@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'liver-care': () => import('./views/liverCare.js').then((m) => {
+    viewCache.set('liver-care', m.liverCareView);
+    routeResets.set('liver-care', m.resetLiverState);
+    return m.liverCareView;
+  }),
   'weather-care': () => import('./views/weatherCare.js').then((m) => {
     viewCache.set('weather-care', m.weatherCareView);
     routeResets.set('weather-care', m.resetWeatherState);
@@ -286,6 +291,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'liver-care': () => t('route.liverCare', 'Liver health, APAP toxicity & cirrhosis safety navigator'),
   'weather-care': () => t('route.weatherCare', 'Hypothermia, frostbite & heat stroke safety navigator'),
   'ketamine-care': () => t('route.ketamineCare', 'Ketamine harm reduction & uropathy navigator'),
   'inhalant-care': () => t('route.inhalantCare', 'Inhalants, solvents & nitrous oxide safety'),
@@ -364,6 +370,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('liver-care'),
     preloadRoute('weather-care'),
     preloadRoute('ketamine-care'),
     preloadRoute('inhalant-care'),

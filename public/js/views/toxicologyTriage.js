@@ -1462,6 +1462,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(weatherLink);
 
+    const liverLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Toxicidad por Paracetamol, Nomograma Rumack-Matthew y Salud Hepática' : 'Acetaminophen Toxicity, Rumack-Matthew Nomogram & Liver Safety'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para nomograma Rumack-Matthew, protocolo de N-acetilcisteína (NAC) en 21 horas, criterios de King’s College, cirrosis Child-Pugh y dosificación de buprenorfina/metadona: '
+        : 'For Rumack-Matthew APAP nomogram evaluation, 21-hour IV N-Acetylcysteine protocol, King’s College criteria, Child-Pugh cirrhosis staging, and MOUD liver safety: '),
+      h('a', { href: '#/liver-care' }, isEs
+        ? 'Abrir Navegador de Salud Hepática, Toxicidad por APAP y Cirrosis →'
+        : 'Open Liver Health, APAP Toxicity & Cirrhosis Navigator →')
+    );
+    container.appendChild(liverLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });
