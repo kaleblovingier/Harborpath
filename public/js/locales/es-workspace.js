@@ -67,4 +67,5 @@ export default {
   'workspace.link.ketamineCare': 'Uropatía por ketamina y reducción de daños',
   'workspace.link.weatherCare': 'Hipotermia, congelación y clima extremo',
   'workspace.link.liverCare': 'Salud hepática, cirrosis y seguridad de APAP',
+  'workspace.link.endocarditisCare': 'Endocarditis infecciosa y protección valvular',
 };

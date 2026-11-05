@@ -1002,4 +1002,29 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Hepatologists, Toxicologists, Emergency Physicians, and Addiction Consult Teams.
 
+### 39. Wave 41: Infective Endocarditis (IE), Valve Destruction, Septic Emboli & POET Protocol Navigator (`#/endocarditis-care`)
+- **Anatomical & Pathological Divergence: Right-Sided vs. Left-Sided Endocarditis**:
+  - *Right-Sided Endocarditis (Tricuspid Valve - ~60–75% of IDU Cases)*: Particulate micro-abrasions (talc, chalk, insoluble binders) create turbulent shear stress and sterile platelet-fibrin thrombi, colonized by bacteremic skin pathogens (*Staphylococcus aureus* in > 70% of cases, MRSA). Classically presents with **respiratory symptoms**: Septic Pulmonary Emboli, pleuritic chest pain, cough, hemoptysis (coughing up blood), dyspnea, and multiple peripheral cavitary nodules or wedge-shaped infiltrates mimicking pneumonia. Murmur (Carvallo sign) may be faint or absent early on.
+  - *Left-Sided Endocarditis (Aortic & Mitral Valves - ~25–35% of Cases)*: High-pressure valves suffer rapid leaflet perforation, chordae tendineae rupture, and acute severe regurgitation leading to cardiogenic pulmonary edema. Systemic arterial embolic shower produces classic peripheral vasculitic stigmata: Janeway lesions (painless erythematous macules on palms/soles from septic micro-emboli), Osler nodes (tender, painful, violaceous nodules on finger/toe pads from immune complex vasculitis), Roth spots (retinal hemorrhages with pale centers), and embolic stroke. Perivalvular aortic root extension directly invades the Atrioventricular (AV) Node, producing PR interval prolongation (first-degree heart block) progressing to complete heart block.
+- **Diagnostic Staging: 2023 Duke-ISCVID Criteria & Cardinal Blood Culture Rule**:
+  - *The Cardinal Blood Culture Rule*: Obtain **at least 3 sets of blood cultures from separate peripheral venipuncture sites (with at least 30–60 minutes between the first and last draw) BEFORE starting antimicrobial therapy**, whenever the patient is clinically stable. Administering empiric antibiotics prior to blood cultures causes culture-negative endocarditis in > 50% of cases, crippling pathogen identification.
+  - *Echocardiography*: Transthoracic Echocardiogram (TTE) for initial screening (60–75% sensitivity); Transesophageal Echocardiogram (TEE) is the gold standard (> 90–95% sensitivity), mandatory for perivalvular root abscesses, prosthetic valves, and equivocal TTE.
+  - *Duke-ISCVID Criteria*: Definite IE (2 Major, OR 1 Major + 3 Minor, OR 5 Minor); Possible IE (1 Major + 1 Minor, OR 3 Minor).
+- **Cardiothoracic Surgery Indications & Ethical Harm Reduction Consensus**:
+  - *Surgical Indications (AHA/ACC Consensus)*: Refractory cardiogenic shock/pulmonary edema, perivalvular aortic ring abscess, new-onset AV block (prolonged PR interval), persistent bacteremia > 5–7 days despite targeted IV therapy, large mobile vegetations > 10 mm on left-sided valves or > 20 mm on tricuspid valve with recurrent pulmonary emboli.
+  - *AHA/ACC Ethical Mandate*: Denying life-saving cardiac valve replacement surgery solely on the basis of past or current injection drug use is medically and ethically unjustifiable. When paired with in-hospital addiction medicine and MOUD (buprenorphine or methadone), PWUD achieve survival rates equivalent to non-users. Withholding surgery is a death sentence in acute refractory heart failure.
+- **Antimicrobial Paradigms: IV vs. POET Oral Step-Down vs. Dalbavancin**:
+  - *Full IV Bactericidal Therapy*: 4–6 weeks of high-dose IV therapy requiring indwelling central venous catheter (PICC line).
+  - *POET Trial Oral Step-Down Protocol (NEJM)*: Safe transition to high-dose oral combination antimicrobial therapy once clinically stable and afebrile >= 7 days. Prevents prolonged hospitalization and line-associated complications for patients who cannot tolerate or maintain indwelling PICC lines.
+  - *Long-Acting Lipoglycopeptide (Dalbavancin)*: Single 1,500 mg IV infusion providing weeks of sustained bactericidal tissue levels without indwelling catheters.
+- **Harm Reduction Directives & Field Valve Protection**:
+  - *Rule 1*: Three Blood Culture Sets BEFORE Antibiotics Rule.
+  - *Rule 2*: Recognize the Septic Pulmonary Emboli Cough Triad in Tricuspid IE (pleuritic chest pain, cough, hemoptysis).
+  - *Rule 3*: Never Lick Needles: The Oral Flora Endocarditis Hazard (viridans streptococci and HACEK organisms).
+  - *Rule 4*: Use 0.22-Micron Wheel Filters to Protect Heart Valves from Particle Damage.
+  - *Rule 5*: Watch for PR Interval Lengthening & New Heart Block (Aortic Abscess Alert).
+  - *Rule 6*: Right to Valve Surgery & POET Oral Step-Down Antibiotics.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Cardiothoracic Surgery, Infectious Disease, Cardiology, and Addiction Consult Teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

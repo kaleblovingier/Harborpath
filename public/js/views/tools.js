@@ -64,6 +64,7 @@ const entries = [
   ['ketamine-care', 'harm-reduction', 'Ketamine harm reduction & uropathy navigator', 'Clinical guidance for Ketamine-Induced Uropathy (KIU / "K-Bladder") staging, biliary "K-cramps" management, EGCG antioxidant protection, and water drowning safety.', ['individual', 'supporter', 'care-team']],
   ['weather-care', 'emergency', 'Weather care, hypothermia, frostbite & heat stroke safety navigator', 'Evidence-based protocols for accidental hypothermia (Swiss Stages I–IV), "warm and dead" CPR rule, frostbite tissue preservation, trench foot care, and emergency heat stroke cooling.', ['individual', 'supporter', 'care-team']],
   ['liver-care', 'clinical-support', 'Liver health, APAP toxicity & cirrhosis safety navigator', 'AASLD/ACMT consensus for acetaminophen (APAP) toxicity, Rumack-Matthew nomogram, 21-hour IV NAC protocol, Child-Pugh cirrhosis staging, MOUD in hepatic failure (Suboxone vs Subutex), and hepatic encephalopathy triage.', ['individual', 'supporter', 'care-team']],
+  ['endocarditis-care', 'emergency', 'Infective endocarditis, valve destruction & POET protocol navigator', 'AHA/IDSA consensus for right-sided tricuspid septic pulmonary emboli vs. left-sided aortic root abscess, 3-blood-culture rule, 2023 Duke criteria, POET oral step-down, dalbavancin, and ethical valve surgery.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

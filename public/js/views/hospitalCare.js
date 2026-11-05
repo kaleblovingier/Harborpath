@@ -741,6 +741,16 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open Ketamine Uropathy & Bladder Health Navigator →')
   ]);
   container.appendChild(ketamineCareCard);
+  const endocarditisCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Endocarditis Infecciosa y Cirugía Cardiotorácica: ' : 'Infective Endocarditis, Valve Surgery & POET Protocol: '),
+    h('span', {}, isEs
+      ? 'Guía clínica de endocarditis en PWID, derecho ético al recambio valvular (AHA/ACC), alternativas al catéter PICC y régimen POET vía oral: '
+      : 'Clinical guidance for endocarditis in PWID, AHA/ACC ethical mandate for valve replacement, PICC line alternatives, and POET oral step-down protocol: '),
+    h('a', { href: '#/endocarditis-care' }, isEs
+      ? 'Abrir Navegador de Endocarditis Infecciosa y Cirugía Valvular →'
+      : 'Open Infective Endocarditis & Valve Surgery Navigator →')
+  ]);
+  container.appendChild(endocarditisCard);
 
   return container;
 }

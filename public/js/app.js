@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'endocarditis-care': () => import('./views/endocarditisCare.js').then((m) => {
+    viewCache.set('endocarditis-care', m.endocarditisCareView);
+    routeResets.set('endocarditis-care', m.resetEndocarditisState);
+    return m.endocarditisCareView;
+  }),
   'liver-care': () => import('./views/liverCare.js').then((m) => {
     viewCache.set('liver-care', m.liverCareView);
     routeResets.set('liver-care', m.resetLiverState);
@@ -291,6 +296,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'endocarditis-care': () => t('route.endocarditisCare', 'Infective endocarditis, valve destruction & POET protocol navigator'),
   'liver-care': () => t('route.liverCare', 'Liver health, APAP toxicity & cirrhosis safety navigator'),
   'weather-care': () => t('route.weatherCare', 'Hypothermia, frostbite & heat stroke safety navigator'),
   'ketamine-care': () => t('route.ketamineCare', 'Ketamine harm reduction & uropathy navigator'),
@@ -370,6 +376,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('endocarditis-care'),
     preloadRoute('liver-care'),
     preloadRoute('weather-care'),
     preloadRoute('ketamine-care'),

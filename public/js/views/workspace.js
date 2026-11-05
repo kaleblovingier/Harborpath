@@ -34,6 +34,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/ketamine-care', key: 'workspace.link.ketamineCare', label: 'Ketamine uropathy & harm reduction' },
       { href: '#/weather-care', key: 'workspace.link.weatherCare', label: 'Hypothermia, frostbite & heat stroke' },
       { href: '#/liver-care', key: 'workspace.link.liverCare', label: 'Liver health, cirrhosis & APAP safety' },
+      { href: '#/endocarditis-care', key: 'workspace.link.endocarditisCare', label: 'Infective endocarditis & valve protection' },
     ],
   },
   {

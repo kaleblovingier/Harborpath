@@ -844,6 +844,14 @@ export function veinCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rehabGrid);
+    const endocarditisCard = h('div', { class: 'rehab-card mt-3' }, [
+      h('h3', {}, '4. Protecting Heart Valves & Preventing Endocarditis'),
+      h('p', {}, 'Particulate matter (crushed pill binders, talc) and non-sterile injection shear tricuspid valve leaflets, predisposing to bacterial seeding: '),
+      h('p', {}, [
+        h('a', { href: '#/endocarditis-care', class: 'btn btn-secondary' }, 'Open Infective Endocarditis & Valve Protection Navigator →'),
+      ]),
+    ]);
+    section.appendChild(endocarditisCard);
     return section;
   }
 

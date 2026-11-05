@@ -615,6 +615,14 @@ export function streetMedicineView(containerOrOptions = {}, maybeOptions = {}) {
       h('a', { href: '#/weather-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador Clínico de Hipotermia, Congelación y Golpe de Calor →' : 'Open Hypothermia, Frostbite & Heat Stroke Clinical Navigator →'),
     ]);
     weatherCard.append(weatherLinkBox);
+    const endocarditisCard = h('div', { class: 'card p-3 mt-3' }, [
+      h('strong', {}, isEs ? 'Sospecha de Endocarditis y Émbolos Sépticos: ' : 'Suspected Endocarditis & Septic Pulmonary Emboli: '),
+      h('p', {}, isEs
+        ? 'En pacientes que se inyectan con fiebre, dolor pleurítico o tos persistente, sospeche endocarditis tricuspídea con émbolos sépticos pulmonares: '
+        : 'In individuals who inject drugs presenting with fever, pleuritic chest pain, or persistent cough, suspect tricuspid endocarditis with septic pulmonary emboli: '),
+      h('a', { href: '#/endocarditis-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Endocarditis Infecciosa →' : 'Open Infective Endocarditis Navigator →'),
+    ]);
+    weatherCard.append(endocarditisCard);
 
     tabPanel.append(weatherCard);
   }

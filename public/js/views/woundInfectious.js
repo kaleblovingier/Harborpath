@@ -824,6 +824,18 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       : 'Open Hypothermia, Frostbite & Weather Care Navigator →')
   );
   root.append(frostbiteCard);
+  const endocarditisCard = h(
+    'div',
+    { class: 'info-card mb-4' },
+    h('strong', {}, isEs ? 'Endocarditis Infecciosa y Émbolos Sépticos: ' : 'Infective Endocarditis & Septic Emboli: '),
+    h('span', {}, isEs
+      ? 'Consulte el protocolo de endocarditis tricuspídea vs aórtica, hemocultivos x3 previos a antibióticos, y protocolo POET de paso a vía oral: '
+      : 'Consult right-sided tricuspid septic emboli vs left-sided aortic abscess, 3-blood-culture timing, and POET oral step-down protocol: '),
+    h('a', { href: '#/endocarditis-care' }, isEs
+      ? 'Abrir Navegador de Endocarditis y Protección Valvular →'
+      : 'Open Infective Endocarditis & Valve Care Navigator →')
+  );
+  root.append(endocarditisCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);
