@@ -926,3 +926,4 @@ function renderAdvocacyTab(localState, isEs) {
 
   return wrapper;
 }
+

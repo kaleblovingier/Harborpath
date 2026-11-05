@@ -505,6 +505,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-secondary btn-small',
         href: '#/viral-hepatitis',
       }, icon('shield'), tr('Hepatitis C cure, DAA & HIV PrEP/PEP', 'Curación VHC, AAD y PrEP/PEP VIH')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/nicotine-care',
+      }, icon('heart'), tr('Tobacco, nicotine & vaping recovery', 'Cesación de tabaco, nicotina y vapeo')),
     ),
   );
 }

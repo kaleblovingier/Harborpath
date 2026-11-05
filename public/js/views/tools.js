@@ -48,6 +48,7 @@ const entries = [
   ['dental-care', 'health', 'Dental, oral health and endocarditis prevention', 'FDA 2022 buprenorphine oral safety protocol, meth mouth harm reduction, endocarditis bacteremia prevention, and low-cost dental clinic navigation.', ['individual', 'supporter', 'care-team']],
   ['cannabis-care', 'health', 'Cannabinoid hyperemesis (CHS) and concentrates care', 'Rome IV diagnostic criteria, cyclic vomiting triage, topical capsaicin protocols, why Zofran fails, and 90-day CB1 receptor recovery.', ['individual', 'supporter', 'care-team']],
   ['viral-hepatitis', 'health', 'Hepatitis C cure, DAA regimens, FIB-4 & HIV PrEP/PEP', 'AASLD/IDSA 8-to-12-week DAA cure protocols, non-invasive FIB-4 scoring, HBV screening, HIV 72-hour PEP, and patient rights without sobriety barriers.', ['individual', 'supporter', 'care-team']],
+  ['nicotine-care', 'health', 'Tobacco, nicotine, vaping and smoking cessation', 'Fagerström dependence scoring, combination NRT dosing protocols, varenicline guidance, vape salt down-titration, and craving defusal.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

@@ -502,4 +502,32 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - WCAG 2.2 AA compliant accessible DOM structure.
 
 
+## 23. Wave 25 — Tobacco, Nicotine, Vaping & Smoking Cessation in Recovery
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **Concurrent Tobacco Treatment in Addiction Recovery**:
+  - Dispels the harmful clinical myth that quitting smoking during substance use treatment threatens sobriety.
+  - Implements the ASAM/SAMHSA consensus: **Concurrent smoking cessation during treatment for opioids, alcohol, or stimulants increases overall long-term abstinence by 25% or more.**
+  - Directly addresses the leading cause of death in recovery: more than 50% of individuals with opioid or alcohol use disorder die from preventable tobacco-related cardiovascular and pulmonary diseases.
+  - Details the ACA / Medicaid $0-copay mandate covering both prescription and OTC cessation medications with zero cost-sharing.
+- **Fagerström Test for Nicotine Dependence (FTND) Interactive Assessment**:
+  - Full 6-question validated clinical screener calculating dependence scores (0–10) and stratifying into Very Low (0–2), Low-Moderate (3–4), Moderate (5), High (6–7), and Very High (8–10) physiological dependence tiers with tailored treatment recommendations.
+- **Combination Nicotine Replacement Therapy (NRT) Protocols**:
+  - Explains the basal controller + acute reliever mechanism: pairing a 24-hour transdermal patch (21 mg, 14 mg, 7 mg) with short-acting oral NRT (gum, lozenges, inhaler 2 mg or 4 mg) nearly doubles quit success over single-agent therapy.
+  - Clinical guidance on the "Chew and Park" gum technique to ensure transmucosal buccal absorption and avoid dyspepsia/hiccups from swallowed nicotine.
+- **Non-Nicotine Pharmacotherapy Guidance**:
+  - *Varenicline (Chantix)*: Alpha-4 beta-2 partial agonist. Reviews the 8,000-patient EAGLES trial proving neuropsychiatric safety in individuals with substance use and psychiatric disorders; pre-loading ("reduce to quit") titration schedules.
+  - *Bupropion SR (Zyban)*: NDRI mechanism, benefits for co-occurring depression/ADHD, and strict boxed contraindications for seizure disorders, eating disorders, or acute alcohol/benzo withdrawal.
+- **High-Potency Vape Salts & Nicotine Pouches Harm Reduction**:
+  - Explains the pharmacokinetics of protonated nicotine salts (35–50 mg/mL benzoic acid salts) and provides a structured 5-stage down-titration ladder to freebase and zero-nicotine liquids.
+  - Guidance on oral synthetic pouches (gum recession prevention and tapering).
+- **The "4 D's" Acute Craving Defusal Protocol**:
+  - Interactive behavioral guide: Delay (3–5 min), Deep breathing (parasympathetic vagal activation), Drink cold water, and Distract (breaking motor cue loops).
+  - Direct connection to free state quitlines (1-800-QUIT-NOW and Spanish 1-855-DÉJALO-YA) for mailed free NRT.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual exportable plain-text summary for clinician/quitline consultation without PII.
+  - WCAG 2.2 AA compliant accessible DOM structure.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

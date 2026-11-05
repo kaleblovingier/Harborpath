@@ -1999,6 +1999,7 @@ export function medicationsView({ query } = {}) {
         h('a', { class: 'preset', href: '#/treatment?codes=NOE' }, icon('shield'), ' Free naloxone & training (NOE)'),
         h('a', { class: 'preset', href: '#/treatment?codes=CMI' }, icon('check-circle'), ' Contingency management (CMI)'),
         h('a', { class: 'preset', href: '#/treatment?codes=NRT' }, icon('heart'), ' Nicotine replacement (NRT)'),
+        h('a', { class: 'preset', href: '#/nicotine-care' }, icon('heart'), ' Tobacco, Nicotine & Vaping Recovery Guide'),
       ),
     ),
 
