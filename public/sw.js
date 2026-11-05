@@ -99,6 +99,7 @@ const ELECTIVE_SHELL = [
   '/js/views/postOverdose.js',
   '/js/views/stimulantCare.js',
   '/js/components/medicalRespiteFinder.js',
+  '/js/views/chronicPain.js',
 ];
 
 self.addEventListener('install', (event) => {

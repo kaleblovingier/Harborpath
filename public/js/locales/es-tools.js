@@ -88,4 +88,6 @@ export default {
   'tools.item.stimulant-care.description': 'Explore riesgos relacionados con estimulantes, opciones de apoyo e información de tratamiento.',
   'tools.item.workplace-rights.title': 'Apoyo laboral y profesional',
   'tools.item.workplace-rights.description': 'Explore adaptaciones laborales, licencias y consideraciones de apoyo profesional.',
+  'tools.item.chronic-pain.title': 'Dolor crónico y reducción de sedantes',
+  'tools.item.chronic-pain.description': 'Revise la guía de dolor de los CDC 2022, la dosis dividida de buprenorfina analgésica y la reducción segura de benzodiazepinas Ashton.',
 };

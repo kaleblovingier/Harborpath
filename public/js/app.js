@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'chronic-pain': () => import('./views/chronicPain.js').then((m) => {
+    viewCache.set('chronic-pain', m.chronicPainView);
+    routeResets.set('chronic-pain', m.resetPainState);
+    return m.chronicPainView;
+  }),
   tools: () => import('./views/tools.js').then((m) => {
     viewCache.set('tools', m.careToolsView);
     routeResets.set('tools', m.resetCareToolsState);
@@ -151,6 +156,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'chronic-pain': () => t('route.chronicPain', 'Chronic pain & sedative deprescribing'),
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
   tools: () => t('route.tools', 'Care tools and guides'),
   workspace: () => t('route.workspace', 'Care team workspace'),
@@ -226,6 +232,7 @@ export function preloadAllLazyViews() {
     preloadRoute('immigrant-health'),
     preloadRoute('post-overdose'),
     preloadRoute('stimulant-care'),
+    preloadRoute('chronic-pain'),
     preloadRoute('harm-reduction'),
   ]);
 }

@@ -36,6 +36,7 @@ const entries = [
   ['immigrant-health', 'populations', 'Immigrant health and language access', 'Explore language assistance, health-care access, and coverage information.', ['individual', 'supporter', 'care-team']],
   ['stimulant-care', 'care', 'Stimulant care and support', 'Explore stimulant-related risks, support options, and treatment information.', ['individual', 'supporter', 'care-team']],
   ['workplace-rights', 'populations', 'Work and professional support', 'Explore workplace accommodation, leave, and professional support considerations.', ['individual', 'supporter', 'care-team']],
+  ['chronic-pain', 'care', 'Chronic pain and sedative tapering', 'Review CDC 2022 pain guidance, buprenorphine analgesia split-dosing, and safe Ashton benzodiazepine tapering.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

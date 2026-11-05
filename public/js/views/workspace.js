@@ -42,6 +42,24 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
     ],
   },
   {
+    id: 'postvisit',
+    titleKey: 'workspace.postvisit.title',
+    title: '4. Documentation, safety & harm reduction summary',
+    descriptionKey: 'workspace.postvisit.description',
+    description: 'Ensure harm reduction materials are provided and record referral status in approved systems.',
+    tasks: [
+      { id: 'documentation', key: 'workspace.task.documentation', label: 'Document checklist actions in your organization’s approved electronic health record without copying personal notes into HarborPath.' },
+      { id: 'harmreduction', key: 'workspace.task.harmreduction', label: 'Confirm take-home naloxone, fentanyl/xylazine test strips, and safer-use instructions were provided or offered.' },
+      { id: 'transportation', key: 'workspace.task.transportation', label: 'Verify transportation logistics, transit passes, or Medicaid Non-Emergency Medical Transportation (NEMT) arrangements.' },
+      { id: 'crisissupport', key: 'workspace.task.crisissupport', label: 'Provide 24/7 crisis numbers (988, Never Use Alone: 877-696-1996) and local peer support resources to the individual.' },
+    ],
+    links: [
+      { href: '#/chronic-pain', key: 'workspace.link.chronicPain', label: 'Pain & sedative taper guide' },
+      { href: '#/harm-reduction', key: 'workspace.link.harmReduction', label: 'Harm reduction resources' },
+      { href: '#/plan', key: 'workspace.link.plan', label: 'Safety and next-steps plan' },
+    ],
+  },
+  {
     id: 'followup',
     titleKey: 'workspace.followup.title',
     title: '3. Before leaving and after the handoff',

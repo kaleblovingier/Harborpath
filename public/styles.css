@@ -1811,6 +1811,51 @@ body.sensory-mode-active [tabindex]:focus-visible {
   border-top: 1px solid var(--border);
 }
 
+/* Wave 13: Chronic Pain & Sedative Taper View */
+.tab-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.tab-btn {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.15s ease;
+}
+.tab-btn:hover { border-color: var(--brand); }
+.tab-btn.active, .tab-btn[aria-selected="true"] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+}
+.interactive-calc .form-group { margin-bottom: 14px; }
+.interactive-calc label { display: block; font-weight: 500; margin-bottom: 4px; }
+.interactive-calc .checkbox-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; }
+.alert-callout {
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  margin: 14px 0;
+  border-left: 4px solid var(--brand);
+  background: var(--surface-alt);
+}
+.alert-callout.danger {
+  border-left-color: #c92a2a;
+  background: #fff5f5;
+  color: #c92a2a;
+}
+.sensory-mode .alert-callout.danger {
+  background: var(--surface);
+  color: var(--text);
+  border-left-color: var(--border);
+}
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 12px 0;
+}
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,
