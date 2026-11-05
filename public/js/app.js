@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'toxicology-triage': () => import('./views/toxicologyTriage.js').then((m) => {
+    viewCache.set('toxicology-triage', m.toxicologyTriageView);
+    routeResets.set('toxicology-triage', m.resetToxicologyTriageState);
+    return m.toxicologyTriageView;
+  }),
   'adhd-care': () => import('./views/adhdCare.js').then((m) => {
     viewCache.set('adhd-care', m.adhdCareView);
     routeResets.set('adhd-care', m.resetAdhdState);
@@ -226,6 +231,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'toxicology-triage': () => t('route.toxicologyTriage', 'Acute toxicology triage, Project BETA de-escalation & SBAR handoff'),
   'adhd-care': () => t('route.adhdCare', 'ADHD, neurodiversity & stimulant harm reduction'),
   'benzodiazepine-care': () => t('route.benzodiazepineCare', 'Benzodiazepines, Ashton tapering & BIND care'),
   'nicotine-care': () => t('route.nicotineCare', 'Tobacco, nicotine, vaping & smoking cessation'),
@@ -327,6 +333,7 @@ export function preloadAllLazyViews() {
     preloadRoute('nicotine-care'),
     preloadRoute('benzodiazepine-care'),
     preloadRoute('adhd-care'),
+    preloadRoute('toxicology-triage'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

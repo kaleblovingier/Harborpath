@@ -51,6 +51,7 @@ const entries = [
   ['nicotine-care', 'health', 'Tobacco, nicotine, vaping and smoking cessation', 'Fagerström dependence scoring, combination NRT dosing protocols, varenicline guidance, vape salt down-titration, and craving defusal.', ['individual', 'supporter', 'care-team']],
   ['benzodiazepine-care', 'care', 'Benzodiazepines, Ashton tapering and BIND care', 'Diazepam equivalence calculator, Ashton Manual crossover schedules, flumazenil toxicity alerts, protracted withdrawal (BIND) validation, and seizure safety.', ['individual', 'supporter', 'care-team']],
   ['adhd-care', 'care', 'ADHD, neurodiversity and stimulant harm reduction', 'ASRS v1.1 clinical screener, non-stimulant pharmacotherapy in SUD recovery, counterfeit pill FTS dilution, and executive function tools.', ['individual', 'supporter', 'care-team']],
+  ['toxicology-triage', 'emergency', 'Acute toxicology triage & Project BETA crisis de-escalation', 'Multi-toxidrome differential engine across 5 conditions, Project BETA 10-domain verbal de-escalation, RASS scoring, restraint-avoidance pharmacotherapy, and SBAR clinical handoffs.', ['individual', 'supporter', 'care-team']],
 ];
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

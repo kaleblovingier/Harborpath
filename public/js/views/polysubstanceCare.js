@@ -840,6 +840,16 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
   exportSection.appendChild(btnRow);
 
   wrapper.appendChild(planCard);
+  const triageCard = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Evaluación de Emergencia Diferencial y Criterios de Hunter?' : 'Acute Differential Triage & Hunter Clonus Criteria?'),
+    h('p', {}, isEs
+      ? 'Para triaje rápido entre sedación por xilacina/opioides, toxicidad serotoninérgica con clono, hipertermia por estimulantes o sepsis, utilice el Asistente de Triage Toxicológico con desescalada verbal BETA y notas SBAR. '
+      : 'For bedside differential diagnosis across xylazine sedation, serotonin toxicity with clonus, stimulant hyperthermia, or sepsis, access the Acute Toxicology Triage Assistant with Project BETA de-escalation and SBAR handoffs. '),
+    h('a', { href: '#/toxicology-triage' }, isEs
+      ? 'Abrir Triage Toxicológico Agudo y Desescalada BETA →'
+      : 'Open Acute Toxicology Triage & Project BETA De-Escalation →')
+  ]);
+  wrapper.appendChild(triageCard);
   wrapper.appendChild(exportSection);
   return wrapper;
 }

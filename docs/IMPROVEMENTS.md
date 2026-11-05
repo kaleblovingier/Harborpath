@@ -601,4 +601,53 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
 
+## 26. Wave 28 — Acute Toxicology Triage, Project BETA Verbal De-Escalation, Restraint Avoidance & SBAR Clinical Handoff
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **Multi-Toxidrome Differential Engine (5 Conditions)**:
+  - Expands acute clinical differential diagnosis to 5 life-threatening toxicological and psychiatric crises:
+    1. *Opioid & Alpha-2 Adrenergic (Xylazine / Medetomidine) Toxicity*: Distinguishes opioid-induced mu-receptor respiratory depression from central alpha-2 adrenergic refractory sedation and bradycardia; guides rescue breathing and clarifies why naloxone does not reverse alpha-2 sedation.
+    2. *Stimulant Overamping (Physical Malignant vs Psychological Panic)*: Distinguishes life-threatening malignant hyperthermia (> 104°F / 40°C), crushing chest pain, active seizures, and rhabdomyolysis from distressing, self-limiting psychological overamping (paranoia, hypervigilance, racing thoughts).
+    3. *Serotonin Toxicity / Syndrome (Hunter Criteria with Clonus)*: Implements Dunkley et al.'s Hunter Serotonin Toxicity Criteria (84% sensitivity, 97% specificity) establishing clonus (spontaneous, inducible, or ocular roving clonus) as the hallmark distinguishing serotonin toxicity from pure sympathomimetic toxicity and NMS.
+    4. *Soft Tissue Sepsis, Severe Necrotic Ulcers & Endocarditis*: Triages severe pain out of proportion (necrotizing fasciitis surgical emergency), septic shock (hypotension, mottled skin, confusion), bacteremic violent shaking chills (rigors), and necrotic xylazine ulcers.
+    5. *Acute Substance-Induced Agitation, Delirium & Psychosis*: Evaluates acute behavioral agitation, persecutory paranoia, tactile hallucinations ("formication"), and disorientation across sympathomimetic, anticholinergic, dissociative (PCP/ketamine), and sedative/alcohol withdrawal delirium etiologies.
+- **Dual Mode Switcher (Clinician / Healthcare Worker Mode vs Patient / Bystander Mode)**:
+  - *Clinician / Healthcare Worker Mode*: Tailored for ED physicians, triage nurses, EMTs, street medicine clinicians, and crisis response teams; features formal RASS agitation scoring, Hunter criteria diagnostic rules, receptor mechanisms, pharmacokinetics, EMTALA federal mandates (42 U.S.C. § 1395dd), and 1-click exportable SBAR clinical handoff notes.
+  - *Patient / Bystander Mode*: Tailored for families, friends, and community bystanders; provides plain-language warning signs, crisis calming steps, compassionate grounding, emergency low-conflict 911 dispatch scripts, and tranq rescue breathing instructions.
+- **Richmond Agitation-Sedation Scale (RASS) Bedside Integration**:
+  - Full 10-tier bedside scale from +4 (Combative, violent, immediate danger) down to -5 (Unarousable, deep coma).
+  - Dynamically links RASS scores to clinical intervention urgency (RASS >= +3 triggers high-acuity de-escalation; RASS <= -3 triggers opioid/tranq respiratory depression protocols).
+- **American Association for Emergency Psychiatry (AAEP) Project BETA 10-Domain Verbal De-Escalation Consensus**:
+  - Encapsulates the landmark consensus (Richmond et al., 2012) across all 10 evidence-based verbal de-escalation domains:
+    1. *Respect Personal Space*: Maintain at least 2 arm's lengths (6 feet) distance; keep exit paths clear; never corner the patient.
+    2. *Do Not Be Provocative*: Keep hands open and visible at waist level; avoid defensive, closed, or staring posture.
+    3. *Establish Verbal Contact*: Designate ONE speaker to avoid sensory and cognitive overload.
+    4. *Be Concise & Use Simple Language*: Short, calm sentences repeating core reassurances.
+    5. *Identify Wants & Feelings*: Validate emotional distress without disputing delusional reality.
+    6. *Listen Closely (Active Listening)*: Paraphrase concerns to drop sympathetic fight-or-flight output.
+    7. *Agree or Agree to Disagree*: Never argue against hallucinations or persecutory delusions.
+    8. *Set Clear, Safe Boundaries*: Establish non-punitive external boundaries calmly.
+    9. *Offer Choices & Genuine Optimism*: Restore patient autonomy (seating choices, water, oral calming medications).
+    10. *Debrief Patient & Care Team*: Post-crisis reflection to identify future triggers and support staff.
+- **Calming Pharmacotherapy Matrix & Restraint Avoidance Mandate**:
+  - *Restraint Avoidance Consensus*: Physical restraints are strictly contraindicated for substance-induced agitation unless immediate lethal violence is occurring and all verbal/pharmacologic options failed; isometric struggling against physical restraints in hyperadrenergic states is the primary cause of fatal rhabdomyolysis, severe hyperthermia, and cardiac arrest.
+  - *Tier 1: Oral Non-Coercive Second-Generation Antipsychotics (SGAs) - Preferred First-Line*:
+    - Olanzapine Zydis (ODT, 5–10 mg PO/sublingual): Rapid onset (15–30 min), low EPS, excellent calming.
+    - Risperidone M-Tab (ODT, 1–2 mg PO/sublingual): Targeted calming for paranoid agitation.
+    - Quetiapine (25–50 mg PO): Gentle, respectful calming for anxiety and mild agitation.
+  - *Tier 2: Oral / Sublingual Benzodiazepines (Sympathomimetic & Withdrawal)*:
+    - Lorazepam (Ativan, 1–2 mg SL/PO): Drug of choice for pure sympathomimetic overamping, hyperthermia, seizures, or alcohol/benzo withdrawal agitation.
+    - Diazepam (Valium, 5–10 mg PO): Long-acting coverage for protracted withdrawal.
+  - *Tier 3: Emergency Parenteral Regimens (Hospital Setting - Absolute Last Resort)*:
+    - Haloperidol 5 mg IM + Lorazepam 2 mg IM + Diphenhydramine 50 mg IM ("B52" protocol).
+    - Ketamine (3–4 mg/kg IM): Reserved for severe excited delirium with extreme hyperthermia under continuous pulse oximetry.
+- **1-Click Clinical SBAR Handoff Note Generator (Zero PII)**:
+  - Formats structured Situation, Background, Assessment (differential ranking + RASS score + Hunter criteria), and Recommendation sections ready for clipboard export with Zero PII.
+- **1-Click Bystander 911 Dispatch Script Generator (Zero PII)**:
+  - Formats a calm, low-conflict script requesting emergency medical paramedics and a Crisis Intervention Team (CIT) while reassuring dispatch of non-violent posture to minimize police confrontation risks.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

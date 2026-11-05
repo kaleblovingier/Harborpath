@@ -21,6 +21,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/navigator', key: 'workspace.link.navigator', label: 'Care navigator' },
       { href: '#/assessment', key: 'workspace.link.assessment', label: 'Assessment guide' },
       { href: '#/medications', key: 'workspace.link.medications', label: 'Medication information' },
+      { href: '#/toxicology-triage', key: 'workspace.link.toxicologyTriage', label: 'Toxicology triage & de-escalation' },
     ],
   },
   {

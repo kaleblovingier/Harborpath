@@ -54,4 +54,5 @@ export default {
   'workspace.task.crisissupport': 'Proporcione números de crisis 24/7 (988, Never Use Alone: 877-696-1996) y recursos locales de apoyo entre pares a la persona.',
   'workspace.link.chronicPain': 'Guía de dolor y reducción de sedantes',
   'workspace.link.harmReduction': 'Recursos de reducción de daños',
+  'workspace.link.toxicologyTriage': 'Triage toxicológico y desescalada',
 };

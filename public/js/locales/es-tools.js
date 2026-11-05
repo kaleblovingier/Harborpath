@@ -118,4 +118,6 @@ export default {
   'tools.item.benzodiazepine-care.description': 'Calculadora de equivalencia en diazepam, calendario de sustitución y reducción paulatina Ashton, alertas de contraindicación de flumazenil, validación de BIND y seguridad ante convulsiones.',
   'tools.item.adhd-care.title': 'TDAH, neurodiversidad y reducción de daños',
   'tools.item.adhd-care.description': 'Cribado clínico ASRS v1.1, farmacoterapia no estimulante en recuperación de adicciones, dilución de tiras FTS para pastillas falsas y herramientas de función ejecutiva.',
+  'tools.item.toxicology-triage.title': 'Triage toxicológico y desescalada de crisis BETA',
+  'tools.item.toxicology-triage.description': 'Motor diferencial de 5 toxidromes, 10 dominios de desescalada verbal del Proyecto BETA, escala RASS, farmacoterapia de prevención de contenciones y traspasos SBAR.',
 };

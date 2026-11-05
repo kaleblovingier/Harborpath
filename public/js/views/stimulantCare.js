@@ -592,5 +592,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Explore the ADHD, Neurodiversity & Safe Pharmacotherapy Navigator →')
   ]);
   container.appendChild(adhdTip);
+  const triageTip = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Sobreestimulación Aguda, Crisis de Paranoia o Agitación?' : 'Acute Overamping, Paranoia, or Crisis Agitation?'),
+    h('p', {}, isEs
+      ? 'Diferencie el sobreestímulo psicológico del peligro físico de hipertermia (> 104°F) y aplique técnicas de desescalada verbal del Proyecto BETA sin recurrir a contenciones físicas peligrosas. '
+      : 'Differentiate psychological panic from life-threatening malignant hyperthermia (> 104°F) and apply Project BETA 10-domain verbal de-escalation without coercive restraints. '),
+    h('a', { href: '#/toxicology-triage' }, isEs
+      ? 'Abrir Asistente de Triage Toxicológico Agudo y Desescalada BETA →'
+      : 'Open Acute Toxicology Triage & Project BETA De-Escalation Assistant →')
+  ]);
+  container.appendChild(triageTip);
 
 }
