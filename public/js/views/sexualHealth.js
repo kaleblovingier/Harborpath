@@ -798,6 +798,9 @@ export function sexualHealthView() {
       // Materials Table
       h('div', { class: 'barrier-materials-card' }, [
         h('h3', {}, 'Barrier Materials & Lubricant Compatibility'),
+        h('p', { class: 'cross-nav-p' }, [
+          h('a', { class: 'btn btn-secondary', href: '#/inhalant-care' }, 'Poppers (Alkyl Nitrites) & PDE-5 Interaction Safety'),
+        ]),
         h('div', { class: 'materials-grid' }, BARRIER_HARM_REDUCTION.materials.map((m) => h('div', { class: 'material-item' }, [
           h('h4', {}, m.material),
           h('p', {}, [h('strong', {}, 'Compatible Lubricant: '), m.lubeEn]),

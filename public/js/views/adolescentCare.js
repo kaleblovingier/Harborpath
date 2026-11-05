@@ -1913,6 +1913,18 @@ export function adolescentCareView({ query } = {}) {
     }
 
     // ------------------------------------------------------------------------
+    const inhalantAdolescentCard = h('article', { class: 'card harm-reduction-card' },
+      h('h3', null, tr('Volatile Substances, Inhalants & Nitrous Oxide Safety', 'Sustancias Volátiles, Inhalantes y Seguridad con Óxido Nitroso')),
+      p(tr(
+        'Youth and young adults face severe risks from pressurized nitrous oxide tanks (B12 spinal degeneration and frostbite) and aerosol computer dusters (Sudden Sniffing Death Syndrome from adrenaline spikes). Access clinical decision support and harm reduction directives:',
+        'Los jóvenes enfrentan graves riesgos por el óxido nitroso presurizado (degeneración medular y congelación) y aerosoles/dusters (síndrome de muerte súbita por descarga de adrenalina). Acceda a pautas clínicas de reducción de daños:'
+      )),
+      h('p', { class: 'cross-nav-p' },
+        h('a', { class: 'btn btn-secondary', href: '#/inhalant-care' }, tr('Inhalants, Solvents & Nitrous Oxide Navigator →', 'Navegador de Inhalantes, Solventes y Óxido Nitroso →'))
+      )
+    );
+    harmReductionPanel.append(inhalantAdolescentCard);
+
     // Tab Panel 7: Interactive Youth Pathway Decision Aid (Navigator)
     // ------------------------------------------------------------------------
     const navPanel = section('panel-navigator', tr('Interactive Ephemeral Pathway Navigator & Decision Aid', 'Navegador de Rutas y Asistente de Decisión Efímero'));

@@ -30,6 +30,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/psychedelic-care', key: 'workspace.link.psychedelicCare', label: 'Psychedelic care, 5-HT2A de-escalation & HPPD' },
       { href: '#/ghb-care', key: 'workspace.link.ghbCare', label: 'GHB/GBL coma triage & withdrawal' },
       { href: '#/vein-care', key: 'workspace.link.veinCare', label: 'Vein care & injection anatomy' },
+      { href: '#/inhalant-care', key: 'workspace.link.inhalantCare', label: 'Inhalants, solvents & nitrous oxide safety' },
     ],
   },
   {

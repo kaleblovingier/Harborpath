@@ -902,4 +902,29 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff & Vascular Triage Note Generator**:
   - 1-click clipboard export in English and Spanish for Emergency Department triage, vascular surgery consultations, and street medicine teams.
 
+### 35. Wave 37: Inhalants, Solvents & Nitrous Oxide Safety Navigator (`#/inhalant-care`)
+- **Substance Science & Molecular Mechanisms**:
+  - *Nitrous Oxide (N₂O / Whippets, Cylinders, "Galaxy Gas")*: Irreversibly oxidizes cobalt core of Vitamin B12 (cobalamin) from active Co⁺ to inactive Co³⁺, shutting down methionine synthase and arresting myelin sheath synthesis.
+  - *Volatile Hydrocarbons, Aerosols & Dusters (Butane, Difluoroethane [DFE], Propane, Toluene)*: Highly lipophilic membrane disrupters. Halogenated hydrocarbons sensitize myocardial beta-adrenergic receptors to endogenous catecholamines (epinephrine).
+  - *Alkyl Nitrites ("Poppers" / Isobutyl, Isopentyl, Amyl Nitrite)*: Release nitric oxide to generate cGMP, causing profound vasodilation. In erythrocytes, nitrites oxidize ferrous iron (Fe²⁺) in hemoglobin to ferric iron (Fe³⁺), producing methemoglobin.
+- **Diagnostic Paradoxes & ACLS Modifications**:
+  - *N₂O B12 Diagnostic Trap*: Standard serum B12 assays are deceptively NORMAL or elevated because immunoassays detect inactive oxidized cobalamin. Diagnosis requires measuring serum Methylmalonic Acid (MMA) and Homocysteine (both markedly elevated).
+  - *ACLS Hydrocarbon Modification*: Epinephrine and isoproterenol are RELATIVELY CONTRAINDICATED in cardiac arrest from volatile hydrocarbons; exogenous catecholamines worsen myocardial sensitization and refractory ventricular fibrillation. Short-acting beta-blockers (esmolol) and lidocaine are preferred.
+  - *Pulse Oximetry Methemoglobin Artifact*: Pulse oximeter SpO₂ values plateau at ~85% regardless of true arterial PaO₂. Arterial blood gas with Co-Oximetry is mandatory.
+- **Clinical Differential Engines & Syndromes**:
+  - *Subacute Combined Degeneration (SCD) of Spinal Cord*: Glove-and-stocking paresthesias, sensory ataxia, foot drop, positive Lhermitte’s sign. High-dose IM Hydroxocobalamin (1,000 mcg IM daily x 7 days). Contraindication: never administer folic acid alone (precipitates spinal degeneration).
+  - *Sudden Sniffing Death Syndrome (SSDS)*: Fatal ventricular fibrillation or asystole triggered by adrenaline surges during panic, fright, or exertion. Mandatory first responder directive: never chase, startle, or physically restrain someone actively inhaling hydrocarbons.
+  - *Acquired Methemoglobinemia*: "Chocolate brown" blood that fails to turn scarlet on room air exposure; refractory cyanosis. Antidote: Methylene Blue (1–2 mg/kg IV over 5 min). Strict contraindication: G6PD deficiency triggers fatal hemolytic anemia (use high-dose IV ascorbic acid instead).
+  - *Toluene Distal Renal Tubular Acidosis (Type 1 RTA)*: Impaired tubular proton excretion and massive urinary potassium wasting causing severe hypokalemia (K⁺ < 2.0 mEq/L), flaccid quadriparesis, and paradoxical alkaline urine (pH > 5.5). Urgent IV potassium and bicarbonate.
+  - *Popper Maculopathy*: Foveal photoreceptor phototoxicity causing central scotoma and yellow foveal spot on OCT. Immediate permanent cessation.
+  - *Lethal PDE-5 Inhibitor Synergy*: Poppers + sildenafil (Viagra) / tadalafil (Cialis) causes unchecked cGMP accumulation and catastrophic, fatal vasodilatory shock. Trendelenburg position, rapid IV crystalloids, and direct alpha-1 vasopressors (norepinephrine).
+- **Harm Reduction & Administration Safety Directives**:
+  - *Rule 1*: Always use balloons for N₂O (never inhale directly from tanks or crackers to prevent cryogenic freeze burns at -40°C to -60°C and tension pneumothorax).
+  - *Rule 2*: Never use masks, bags, or straps over face or head (causes silent anoxic loss of consciousness and suffocating death in 3–5 min).
+  - *Rule 3*: Never combine alkyl nitrites with erectile dysfunction medications.
+  - *Rule 4*: Never chase, startle, or physically restrain someone inhaling solvents.
+  - *Rule 5*: B12 replacement requires high-dose intramuscular hydroxocobalamin only (oral B12 pills are ineffective).
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Emergency Department triage, neurology consultation, and poison center handoffs.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

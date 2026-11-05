@@ -621,6 +621,11 @@ function renderBladderNeuroTab(isEs, localState, evalResult, reRender) {
     ])
   ]);
 
+  b12Card.appendChild(h('p', { class: 'cross-nav-p' }, [
+    h('a', { class: 'btn btn-secondary', href: '#/inhalant-care' }, isEs
+      ? 'Ver Navegador Completo de Inhalantes, N₂O y Toxicología'
+      : 'View Full Inhalants, Nitrous Oxide & Toxicology Navigator'),
+  ]));
   wrapper.appendChild(bladderCard);
   wrapper.appendChild(b12Card);
   return wrapper;

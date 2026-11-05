@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'inhalant-care': () => import('./views/inhalantCare.js').then((m) => {
+    viewCache.set('inhalant-care', m.inhalantCareView);
+    routeResets.set('inhalant-care', m.resetInhalantState);
+    return m.inhalantCareView;
+  }),
   'vein-care': () => import('./views/veinCare.js').then((m) => {
     viewCache.set('vein-care', m.veinCareView);
     routeResets.set('vein-care', m.resetVeinState);
@@ -271,6 +276,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'inhalant-care': () => t('route.inhalantCare', 'Inhalants, solvents & nitrous oxide safety'),
   'vein-care': () => t('route.veinCare', 'Vein care, vascular health & injection anatomy'),
   'ghb-care': () => t('route.ghbCare', 'GHB, GBL & 1,4-BDO harm reduction, coma triage & withdrawal'),
   'psychedelic-care': () => t('route.psychedelicCare', 'Psychedelic harm reduction, 5-HT2A de-escalation & HPPD'),
@@ -346,6 +352,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('inhalant-care'),
     preloadRoute('vein-care'),
     preloadRoute('ghb-care'),
     preloadRoute('psychedelic-care'),

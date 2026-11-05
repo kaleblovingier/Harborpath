@@ -123,6 +123,7 @@ const ELECTIVE_SHELL = [
   '/js/views/psychedelicCare.js',
   '/js/views/ghbCare.js',
   '/js/views/veinCare.js',
+  '/js/views/inhalantCare.js',
 ];
 
 self.addEventListener('install', (event) => {

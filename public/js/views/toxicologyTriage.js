@@ -1429,6 +1429,17 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(veinLink);
 
+    const inhalantLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Inhalantes, Óxido Nitroso y Toxicología de Solventes' : 'Inhalants, Nitrous Oxide & Solvent Toxicology'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para degeneración medular por N₂O (déficit funcional de B12), riesgo de muerte súbita por hidrocarburos (SSDS), metahemoglobinemia por poppers y quemaduras criogénicas: '
+        : 'For nitrous oxide spinal cord neuropathy (functional B12 shutdown), Sudden Sniffing Death Syndrome (SSDS), alkyl nitrite methemoglobinemia, and cryo-burn prevention: '),
+      h('a', { href: '#/inhalant-care' }, isEs
+        ? 'Abrir Navegador de Inhalantes y Óxido Nitroso →'
+        : 'Open Inhalants, Solvents & Nitrous Oxide Navigator →')
+    );
+    container.appendChild(inhalantLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

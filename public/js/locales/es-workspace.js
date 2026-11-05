@@ -63,4 +63,5 @@ export default {
   'workspace.link.psychedelicCare': 'Cuidados psicodélicos, desescalada 5-HT2A y HPPD',
   'workspace.link.ghbCare': 'GHB/GBL, triaje de coma y abstinencia',
   'workspace.link.veinCare': 'Cuidado de venas y anatomía de inyección',
+  'workspace.link.inhalantCare': 'Inhalantes, solventes y seguridad con óxido nitroso',
 };

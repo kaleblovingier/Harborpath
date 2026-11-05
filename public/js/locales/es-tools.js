@@ -136,4 +136,6 @@ export default {
   'tools.item.ghb-care.description': 'Guías clínicas para el coma por G-out, posición lateral de seguridad, la trampa de la enzima ADH con 1,4-BDO, abstinencia severa y sustitución con baclofeno según la BAP.',
   'tools.item.vein-care.title': 'Cuidado de venas, salud vascular y anatomía de inyección',
   'tools.item.vein-care.description': 'Zonas anatómicas de riesgo (zonas verdes vs rojas), triaje de punción arterial accidental, prevención de TVP y pseudoaneurismas, filtros de 0.22 micras y rehabilitación venosa.',
+  'tools.item.inhalant-care.title': 'Inhalantes, solventes y seguridad con óxido nitroso',
+  'tools.item.inhalant-care.description': 'Pautas clínicas para la inactivación de B12 por óxido nitroso, degeneración combinada subaguda, muerte súbita por inhalación (SSDS), metahemoglobinemia por poppers y congelación criogénica.',
 };
