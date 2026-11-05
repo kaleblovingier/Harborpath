@@ -114,4 +114,6 @@ export default {
   'tools.item.viral-hepatitis.description': 'Guías de la AASLD/IDSA para curar el VHC en 8-12 semanas con AAD, calculadora no invasiva FIB-4, cribado de VHB, PEP de emergencia 72h y derechos sin barreras de sobriedad.',
   'tools.item.nicotine-care.title': 'Cesación de tabaco, nicotina y vapeo',
   'tools.item.nicotine-care.description': 'Test de Fagerström, pautas de TRN combinada (parches y chicles), vareniclina, reducción gradual de sales de vapeo y desescalada de deseos.',
+  'tools.item.benzodiazepine-care.title': 'Desescalada de benzodiazepinas, método Ashton y BIND',
+  'tools.item.benzodiazepine-care.description': 'Calculadora de equivalencia en diazepam, calendario de sustitución y reducción paulatina Ashton, alertas de contraindicación de flumazenil, validación de BIND y seguridad ante convulsiones.',
 };

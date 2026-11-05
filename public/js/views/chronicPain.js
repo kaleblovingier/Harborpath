@@ -580,6 +580,14 @@ export function chronicPainView() {
     hidden: inMemoryState.activeTab !== 'sedative'
   });
 
+  const dedicatedLinkBanner = h('div', { class: 'card banner-tip' },
+    h('p', null,
+      h('strong', null, 'Looking for full multi-stage crossover schedules, BIND symptom validation, or Z-drug deprescribing? '),
+      h('a', { href: '#/benzodiazepine-care' }, 'Open the dedicated Benzodiazepine & Ashton Taper Navigator →')
+    )
+  );
+
+
   const sedativeIntroCard = h('article', { class: 'card' },
     h('h2', null, BENZODIAZEPINE_STANDARDS.ASHTON_TAPER_PROTOCOL.titleEn),
     h('p', null, BENZODIAZEPINE_STANDARDS.ASHTON_TAPER_PROTOCOL.summaryEn),
@@ -692,7 +700,7 @@ export function chronicPainView() {
   }
 
   updateSedativeResults();
-  panelSedative.append(sedativeIntroCard, sedativeCalcForm, sedativeResults);
+  panelSedative.append(dedicatedLinkBanner, sedativeIntroCard, sedativeCalcForm, sedativeResults);
 
   // ---------------- Tab 3: Non-Opioid Multimodal Care ----------------
   const panelMultimodal = h('div', {

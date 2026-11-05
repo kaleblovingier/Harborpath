@@ -852,6 +852,7 @@ export default {
   'route.cannabisCare': 'Hiperémesis cannabinoide (SHC) y concentrados',
   'route.viralHepatitis': 'Curación de hepatitis C, pautas AAD, FIB-4 y PrEP/PEP',
   'route.nicotineCare': 'Cesación de tabaco, nicotina y vapeo en recuperación',
+  'route.benzodiazepineCare': 'Desescalada de benzodiazepinas, método Ashton y BIND',
   'route.sleepCare': 'Restauración del sueño e insomnio en recuperación',
   'route.nightlifeCare': 'Reducción de daños en ocio nocturno, drogas de club y festivales',
   'route.polysubstanceCare': 'Sinergia de sobredosis de polisustancias e interacciones',

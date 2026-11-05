@@ -2000,6 +2000,7 @@ export function medicationsView({ query } = {}) {
         h('a', { class: 'preset', href: '#/treatment?codes=CMI' }, icon('check-circle'), ' Contingency management (CMI)'),
         h('a', { class: 'preset', href: '#/treatment?codes=NRT' }, icon('heart'), ' Nicotine replacement (NRT)'),
         h('a', { class: 'preset', href: '#/nicotine-care' }, icon('heart'), ' Tobacco, Nicotine & Vaping Recovery Guide'),
+        h('a', { class: 'preset', href: '#/benzodiazepine-care' }, icon('shield'), ' Benzodiazepine Ashton Taper & BIND Guide'),
       ),
     ),
 

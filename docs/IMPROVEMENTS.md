@@ -530,4 +530,36 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - WCAG 2.2 AA compliant accessible DOM structure.
 
 
+## 24. Wave 26 — Benzodiazepine & Z-Drug Deprescribing, Ashton Manual Tapering, Flumazenil Toxicity Alerts & Protracted Withdrawal (BIND) Navigator
+
+### Clinical, Behavioral & Pharmacological Objectives
+- **Evidence-Based Ashton Manual Deprescribing Protocols**:
+  - Implements the gold-standard Ashton Manual (Heather Ashton DM, FRCP) gradual tapering and crossover methodology.
+  - Formulates multi-stage substitution schedules into Diazepam (Valium) for high-potency, short-half-life agents (Alprazolam/Xanax, Lorazepam/Ativan, Clonazepam/Klonopin, Triazolam/Halcion) to eliminate interdose peak-and-valley rebound panic attacks.
+  - Highlights Diazepam's unique pharmacokinetics ($t_{1/2} = 20\text{--}100\text{ hours}$ plus active desmethyldiazepam $36\text{--}200\text{ hours}$), providing a smooth, continuous pharmacokinetic plateau.
+  - Enforces patient-led pacing: conservative 5% to 10% reductions of current dose every 2 to 4 weeks with explicit "hold" rules if withdrawal symptoms flare.
+  - Incorporates micro-tapering guidance in the final low-dose stages ($< 5\text{ mg}$ Diazepam) using scored 2 mg tablets and oral liquid solutions (1 mg/mL).
+- **Comprehensive Diazepam Milligram Equivalence (DME) Matrix**:
+  - Covers 12 benzodiazepines and non-benzodiazepine Z-drugs: Alprazolam, Clonazepam, Lorazepam, Diazepam, Temazepam, Chlordiazepoxide, Oxazepam, Clorazepate, Triazolam, Zolpidem (Ambien), Eszopiclone (Lunesta), and Zaleplon (Sonata).
+  - Pharmacokinetic profiles detailing elimination half-life, onset, receptor affinity, interdose rebound risk, and stage-by-stage substitution steps.
+- **FDA Black Box Warning & Flumazenil Contraindication Alert**:
+  - Highlights the FDA 2020 Drug Safety Communication and updated Boxed Warning on abuse, misuse, addiction, physical dependence, and withdrawal reactions for the entire benzodiazepine class.
+  - **CRITICAL LIFE SAFETY MANDATE: Flumazenil (Romazicon) is strictly CONTRAINDICATED in patients with chronic benzodiazepine tolerance or suspected polysubstance overdose.**
+  - Educates that Flumazenil instantaneously strips GABA-A receptor occupancy, precipitating unstoppable, refractory status epilepticus (grand mal seizures) and death.
+  - Contrasts Flumazenil with Naloxone: in suspected polysubstance depressant overdoses (opioid + benzodiazepine), **ALWAYS ADMINISTER NALOXONE TO RESTORE BREATHING, BUT NEVER GIVE FLUMAZENIL.**
+- **Benzodiazepine-Induced Neurological Dysfunction (BIND) & Protracted Withdrawal**:
+  - Formally validates BIND symptoms acknowledged in the FDA 2020 warning: tinnitus, sensory hyperacusis (sound/light sensitivity), paresthesias ("burning skin", electric shock sensations), fasciculations (muscle twitches), akathisia, depersonalization/derealization, gastrointestinal dysmotility ("benzo belly"), and morning cortisol awakening spikes.
+  - Normalizes the "windows and waves" nonlinear neuro-recovery pattern, validating that symptoms represent physical receptor recalibration rather than permanent brain damage or psychiatric relapse.
+  - Interactive BIND symptom validator providing neurobiological psychoeducation and coping strategies.
+- **Evidence-Based Non-Controlled Adjunctive Comfort Medications & Drug Interactions**:
+  - Reviews non-controlled supportive agents that do not act on GABA receptors: Propranolol (peripheral adrenergic autonomic tremor/tachycardia blockade), Melatonin (circadian reset), Hydroxyzine (non-scheduled H1 anxiolysis), and Trazodone (delta slow-wave sleep restoration).
+  - Critical Drug Interaction Warning: **Fluoroquinolone antibiotics (Ciprofloxacin, Levofloxacin)** act as competitive GABA-A receptor antagonists and must be strictly avoided during tapering or recovery due to severe withdrawal flare and seizure risk.
+- **Bilingual Clinician Discussion Brief Generator (Zero PII)**:
+  - Generates comprehensive, respectful, plain-text proposals in English and Spanish for patients to present to their prescribers to negotiate safe, patient-controlled tapering schedules.
+  - 1-click clipboard export with polite live ARIA status notifications.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'benzodiazepine-care': () => import('./views/benzodiazepineCare.js').then((m) => {
+    viewCache.set('benzodiazepine-care', m.benzodiazepineCareView);
+    routeResets.set('benzodiazepine-care', m.resetBenzodiazepineState);
+    return m.benzodiazepineCareView;
+  }),
   'nicotine-care': () => import('./views/nicotineCare.js').then((m) => {
     viewCache.set('nicotine-care', m.nicotineCareView);
     routeResets.set('nicotine-care', m.resetNicotineState);
@@ -216,6 +221,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'benzodiazepine-care': () => t('route.benzodiazepineCare', 'Benzodiazepines, Ashton tapering & BIND care'),
   'nicotine-care': () => t('route.nicotineCare', 'Tobacco, nicotine, vaping & smoking cessation'),
   'viral-hepatitis': () => t('route.viralHepatitis', 'Hepatitis C cure, DAA regimens, FIB-4 & HIV PrEP/PEP'),
   'cannabis-care': () => t('route.cannabisCare', 'Cannabinoid hyperemesis (CHS) & concentrates care'),
@@ -313,6 +319,7 @@ export function preloadAllLazyViews() {
     preloadRoute('cannabis-care'),
     preloadRoute('viral-hepatitis'),
     preloadRoute('nicotine-care'),
+    preloadRoute('benzodiazepine-care'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
