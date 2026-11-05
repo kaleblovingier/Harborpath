@@ -501,6 +501,10 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-secondary btn-small',
         href: '#/cannabis-care',
       }, icon('shield'), tr('Cannabinoid hyperemesis (CHS) & concentrates', 'Hiperémesis cannabinoide (SHC) y concentrados')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/viral-hepatitis',
+      }, icon('shield'), tr('Hepatitis C cure, DAA & HIV PrEP/PEP', 'Curación VHC, AAD y PrEP/PEP VIH')),
     ),
   );
 }

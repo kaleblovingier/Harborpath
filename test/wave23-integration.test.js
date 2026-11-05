@@ -73,3 +73,4 @@ describe('Wave 23 Architecture & Cannabis Care Integration', () => {
     });
   });
 });
+

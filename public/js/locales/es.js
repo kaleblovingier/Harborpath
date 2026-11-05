@@ -850,6 +850,7 @@ export default {
   'route.methadoneAccess': 'Acceso a clínicas de metadona y reglas Parte 8 de 2024',
   'route.dentalCare': 'Salud dental, buprenorfina y prevención de endocarditis',
   'route.cannabisCare': 'Hiperémesis cannabinoide (SHC) y concentrados',
+  'route.viralHepatitis': 'Curación de hepatitis C, pautas AAD, FIB-4 y PrEP/PEP',
   'route.sleepCare': 'Restauración del sueño e insomnio en recuperación',
   'route.nightlifeCare': 'Reducción de daños en ocio nocturno, drogas de club y festivales',
   'route.polysubstanceCare': 'Sinergia de sobredosis de polisustancias e interacciones',

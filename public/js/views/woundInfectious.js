@@ -691,6 +691,11 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       class: 'btn btn-primary',
     }, icon('map-pin'), isEs ? ' Buscar Centros de Salud FQHC' : ' Find Community Health Centers');
     btnRow.append(treatLink);
+    const hepLink = h('a', {
+      href: '#/viral-hepatitis',
+      class: 'btn btn-secondary',
+    }, icon('shield'), isEs ? ' Guía de Curación VHC y PrEP/PEP' : ' Hepatitis C Cure & PrEP/PEP Guide');
+    btnRow.append(hepLink);
 
     resultsCard.append(btnRow);
     tabPanel.append(resultsCard);

@@ -2498,6 +2498,269 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 
 
+/* Wave 24: Viral Hepatitis (HCV/HBV), DAA Regimens, FIB-4 & HIV PrEP/PEP */
+.viral-hepatitis-view {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.viral-hepatitis-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mandate-card {
+  border-left: 5px solid #10b981;
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.mandate-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mandate-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #10b981;
+}
+
+.mandate-text {
+  font-weight: 500;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.cascade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cascade-step-card {
+  padding: 1rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.step-title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--brand);
+}
+
+.step-detail {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.daa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.daa-card {
+  padding: 1.25rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.daa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.daa-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--brand);
+}
+
+.daa-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border-radius: 9999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.daa-dosing, .daa-highlights {
+  font-size: 0.88rem;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.daa-compatibility {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #10b981;
+  font-weight: 500;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+.fib4-input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.fib4-result-card {
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+.fib4-result-card.fib4-low {
+  border-left: 5px solid #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.fib4-result-card.fib4-indeterminate {
+  border-left: 5px solid #d97706;
+  background: rgba(217, 119, 6, 0.08);
+}
+
+.fib4-result-card.fib4-high {
+  border-left: 5px solid #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.thresholds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.threshold-card {
+  padding: 1rem;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.thresh-low {
+  border-left: 4px solid #10b981;
+}
+
+.thresh-indeterminate {
+  border-left: 4px solid #d97706;
+}
+
+.thresh-high {
+  border-left: 4px solid #dc2626;
+}
+
+.thresh-title {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.95rem;
+}
+
+.thresh-meaning {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.pep-emergency-card {
+  border-left: 5px solid #dc2626;
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.pep-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.pep-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #dc2626;
+}
+
+.pep-steps {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.pep-steps ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.reinf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.reinf-card {
+  padding: 1rem;
+  background: var(--surface-alt);
+  border-left: 4px solid var(--brand);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.reinf-title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--brand);
+}
+
+.reinf-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.rights-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
   .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,

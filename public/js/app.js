@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'viral-hepatitis': () => import('./views/viralHepatitis.js').then((m) => {
+    viewCache.set('viral-hepatitis', m.viralHepatitisView);
+    routeResets.set('viral-hepatitis', m.resetViralState);
+    return m.viralHepatitisView;
+  }),
   'cannabis-care': () => import('./views/cannabisCare.js').then((m) => {
     viewCache.set('cannabis-care', m.cannabisCareView);
     routeResets.set('cannabis-care', m.resetCannabisState);
@@ -206,6 +211,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'viral-hepatitis': () => t('route.viralHepatitis', 'Hepatitis C cure, DAA regimens, FIB-4 & HIV PrEP/PEP'),
   'cannabis-care': () => t('route.cannabisCare', 'Cannabinoid hyperemesis (CHS) & concentrates care'),
   'dental-care': () => t('route.dentalCare', 'Dental, oral health & endocarditis prevention'),
   'sleep-care': () => t('route.sleepCare', 'Sleep restoration & insomnia in recovery'),
@@ -299,6 +305,7 @@ export function preloadAllLazyViews() {
     preloadRoute('methadone-access'),
     preloadRoute('dental-care'),
     preloadRoute('cannabis-care'),
+    preloadRoute('viral-hepatitis'),
     preloadRoute('sleep-care'),
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),

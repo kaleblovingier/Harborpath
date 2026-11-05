@@ -469,4 +469,37 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - WCAG 2.2 AA compliant accessible DOM structure.
 
 
+## 22. Wave 24 — Viral Hepatitis (HCV/HBV), Direct-Acting Antivirals (DAAs), FIB-4 Fibrosis Scoring & HIV PrEP/PEP
+
+### Clinical, Hepatological & Infectious Disease Objectives
+- **AASLD / IDSA Simplified Treatment Guidance & Patient Rights**:
+  - Establishes the clear, non-negotiable clinical standard: **Active substance use, ongoing injection, or engagement in MOUD (methadone/buprenorphine) is NEVER a reason to withhold, delay, or deny Hepatitis C curative treatment.**
+  - Overcomes historical Medicaid sobriety restrictions with evidence-based patient self-advocacy tools.
+  - Modern pan-genotypic Direct-Acting Antivirals (DAAs) achieve >95–98% Sustained Virologic Response (SVR12) with once-daily oral pills for 8 to 12 weeks:
+    - *Mavyret (glecaprevir/pibrentasvir)*: 8-week course, 3 tablets once daily taken WITH FOOD. Active against genotypes 1–6. Contraindicated in decompensated cirrhosis (Child-Pugh B or C).
+    - *Epclusa (sofosbuvir/velpatasvir)*: 12-week course, 1 tablet once daily with or without food. Crucial PPI drug interaction warning: Omeprazole decreases velpatasvir absorption by 50%—Epclusa must be taken 4 hours before omeprazole (≤ 20 mg).
+    - 100% pharmacokinetic compatibility with buprenorphine and methadone maintenance without dose alterations.
+- **The 4-Step HCV Diagnostic Cascade**:
+  - Step 1: HCV Antibody Screen (Anti-HCV) detects lifetime exposure (20–25% clear spontaneously).
+  - Step 2: Reflex HCV RNA Quantitative PCR / Viral Load confirms active replicating infection.
+  - Step 3: FDA Black Box Hepatitis B Reactivation Screen (HBsAg and anti-HBc prior to DAA start to avoid fatal fulminant reactivation).
+  - Step 4: Non-invasive fibrosis staging via the FIB-4 index.
+- **In-RAM Ephemeral FIB-4 Liver Fibrosis Calculator**:
+  - Formula: FIB-4 = (Age × AST) / (Platelets × √ALT).
+  - Tri-level risk stratification:
+    - FIB-4 < 1.45 (or < 2.0 if age > 65): Low risk of advanced fibrosis (>90% negative predictive value); candidate for simplified primary care DAA treatment.
+    - FIB-4 1.45–3.25: Indeterminate; secondary non-invasive elastography (FibroScan) or APRI indicated.
+    - FIB-4 > 3.25: High risk of advanced fibrosis or cirrhosis (F3–F4); requires hepatology referral and lifelong bi-annual abdominal ultrasound surveillance for hepatocellular carcinoma (HCC) even post-cure.
+- **HIV PrEP & 72-Hour Emergency Post-Exposure Prophylaxis (PEP)**:
+  - CDC clinical guidelines on PrEP for PWID (daily oral Truvada or bi-monthly injectable Apretude).
+  - Emergency 72-hour PEP window: Urgent initiation within 72 hours of needle-stick or shared syringe exposure with a full 28-day antiretroviral course.
+  - HCV environmental resilience: Educates that Hepatitis C survives in dried blood on cookers, filters, and water for up to 3 to 6 weeks (unlike HIV). Clarifies that SVR12 cure does not confer immunity and reinforces sterile point-of-use equipment.
+- **Emergency Red Flags & Hepatic Decompensation**:
+  - Ascites, jaundice, asterixis, hepatic encephalopathy, and esophageal variceal bleeding -> Immediate 911 activation.
+- **In-RAM Ephemeral State & Export**:
+  - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
+  - Bilingual exportable plain-text clinical summary for primary care or hepatology consultations without PII.
+  - WCAG 2.2 AA compliant accessible DOM structure.
+
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

@@ -110,4 +110,6 @@ export default {
   'tools.item.dental-care.description': 'Pautas de la FDA de 2022 para proteger el esmalte con buprenorfina, reducción de daños en boca seca por estimulantes y prevención de endocarditis.',
   'tools.item.cannabis-care.title': 'Hiperémesis cannabinoide (SHC) y concentrados',
   'tools.item.cannabis-care.description': 'Criterios de Roma IV, triaje de vómitos cíclicos, protocolo de capsaicina tópica, por qué falla el Zofran y recuperación del receptor CB1 en 90 días.',
+  'tools.item.viral-hepatitis.title': 'Curación de hepatitis C, AAD, FIB-4 y PrEP/PEP',
+  'tools.item.viral-hepatitis.description': 'Guías de la AASLD/IDSA para curar el VHC en 8-12 semanas con AAD, calculadora no invasiva FIB-4, cribado de VHB, PEP de emergencia 72h y derechos sin barreras de sobriedad.',
 };

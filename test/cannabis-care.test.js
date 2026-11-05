@@ -259,3 +259,4 @@ describe('Cannabinoid Hyperemesis Syndrome (CHS) & Concentrates Care Module (Wav
     assert.strictEqual(content.includes('style='), false);
   });
 });
+
