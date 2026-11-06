@@ -628,3 +628,4 @@ export function metabolicCareView() {
 
   return container;
 }
+
