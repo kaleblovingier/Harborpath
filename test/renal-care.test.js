@@ -346,3 +346,4 @@ describe('Renal Health, Rhabdomyolysis & MOUD Dialysis Navigator Module (Wave 42
     assert.ok(!fileContent.includes('outerHTML'), 'Must not use outerHTML');
   });
 });
+

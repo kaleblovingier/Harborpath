@@ -631,6 +631,14 @@ export function streetMedicineView(containerOrOptions = {}, maybeOptions = {}) {
       h('a', { href: '#/renal-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Salud Renal y Rabdomiólisis →' : 'Open Renal Health & Rhabdomyolysis Navigator →'),
     ]);
     weatherCard.append(renalCard);
+    const pulmonaryCard = h('div', { class: 'card p-3 mt-3' }, [
+      h('strong', {}, isEs ? 'Salud Pulmonar, "Pulmón de Crack" y Materiales de Fumar Seguro: ' : 'Pulmonary Health, "Crack Lung" & Safer Inhalation Kits: '),
+      h('p', {}, isEs
+        ? 'Dificultad para respirar, tos con sangre tras fumar o broncoespasmo severo. Directivas de pipas Pyrex y boquillas de silicona: '
+        : 'Shortness of breath, hemoptysis post-smoking, or severe bronchospasm. Guidance for Pyrex glass stems and silicone tips: '),
+      h('a', { href: '#/pulmonary-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Salud Pulmonar e Inhalación →' : 'Open Pulmonary Health & Inhalation Navigator →'),
+    ]);
+    weatherCard.append(pulmonaryCard);
 
     tabPanel.append(weatherCard);
   }

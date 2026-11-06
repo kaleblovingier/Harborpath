@@ -69,4 +69,5 @@ export default {
   'workspace.link.liverCare': 'Salud hepática, cirrosis y seguridad de APAP',
   'workspace.link.endocarditisCare': 'Endocarditis infecciosa y protección valvular',
   'workspace.link.renalCare': 'Salud renal, rabdomiólisis y MOUD en diálisis',
+  'workspace.link.pulmonaryCare': 'Salud pulmonar, pulmón de crack y seguridad inhalatoria',
 };

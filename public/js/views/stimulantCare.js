@@ -623,5 +623,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open Renal Health, Rhabdomyolysis & AKI Navigator →')
   ]);
   container.appendChild(renalTip);
+  const pulmonaryTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? '"Pulmón de Crack", Hemorragia Alveolar y Daño Inhalatorio: ' : '"Crack Lung", Alveolar Hemorrhage & Inhalation Injury: '),
+    h('span', {}, isEs
+      ? 'Fumar estimulantes puede causar hemorragia alveolar aguda (tos con sangre, fiebre, dolor torácico) y broncoespasmo severo: '
+      : 'Smoking stimulants can trigger acute diffuse alveolar hemorrhage ("Crack Lung", hemoptysis, fever) and severe bronchospasm: '),
+    h('a', { href: '#/pulmonary-care' }, isEs
+      ? 'Abrir Navegador de Salud Pulmonar e Inhalación Segura →'
+      : 'Open Pulmonary Health, Crack Lung & Inhalation Safety Navigator →')
+  ]);
+  container.appendChild(pulmonaryTip);
 
 }

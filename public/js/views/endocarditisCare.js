@@ -745,6 +745,14 @@ export function endocarditisCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rulesGrid);
+    const pulmonaryCard = h('div', { class: 'ec-card mt-3' }, [
+      h('h3', {}, 'Septic Pulmonary Emboli & Respiratory CDS Alert'),
+      h('p', {}, 'Right-sided tricuspid endocarditis frequently embolizes into pulmonary circulation, presenting with pleuritic chest pain, hemoptysis, and cavitary infiltrates: '),
+      h('p', {}, [
+        h('a', { href: '#/pulmonary-care', class: 'btn btn-secondary' }, 'Open Pulmonary Health & Respiratory Care Navigator →'),
+      ]),
+    ]);
+    section.appendChild(pulmonaryCard);
     return section;
   }
 

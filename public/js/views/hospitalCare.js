@@ -761,6 +761,16 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open Renal Health, Rhabdomyolysis & Dialysis Navigator →')
   ]);
   container.appendChild(renalCareCard);
+  const pulmonaryCareCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Complicaciones Pulmonares en Hospital: Edema Post-Naloxona y Neumonitis: ' : 'Inpatient Pulmonary Complications: NCPE & Aspiration Pneumonitis: '),
+    h('span', {}, isEs
+      ? 'Manejo en UCI de edema por presión negativa post-naloxona (CPAP/PEEP, evitar furosemida) y regla de 48h sin antibióticos en aspiración química: '
+      : 'ICU management of post-naloxone negative pressure pulmonary edema (CPAP/PEEP, avoid loop diuretics) and 48h antibiotic delay for chemical aspiration: '),
+    h('a', { href: '#/pulmonary-care' }, isEs
+      ? 'Abrir Navegador de Salud Pulmonar Hospitalaria y Cuidados Críticos →'
+      : 'Open Inpatient Pulmonary Care & Critical Care Navigator →')
+  ]);
+  container.appendChild(pulmonaryCareCard);
 
   return container;
 }

@@ -585,4 +585,14 @@ function renderResponderSupportTab(container, isEs) {
       : 'Open Rhabdomyolysis, Compartment Syndrome & Renal Care Navigator →')
   ]);
   container.appendChild(rhabdoCard);
+  const pulmonaryCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Edema Pulmonar Post-Naloxona y Broncoaspiración Química: ' : 'Post-Naloxone Pulmonary Edema (NCPE) & Aspiration Pneumonitis: '),
+    h('span', {}, isEs
+      ? 'El esputo rosado espumoso tras revertir una sobredosis indica edema pulmonar (requiere CPAP, NO más naloxona). Conozca la regla de 48h de aspiración: '
+      : 'Pink frothy sputum post-reversal indicates non-cardiogenic pulmonary edema (requires CPAP/O2, NOT more naloxone). Learn the 48h aspiration rule: '),
+    h('a', { href: '#/pulmonary-care' }, isEs
+      ? 'Abrir Navegador de Salud Pulmonar Post-Sobredosis →'
+      : 'Open Post-Overdose Pulmonary Care & NCPE Navigator →')
+  ]);
+  container.appendChild(pulmonaryCard);
 }
