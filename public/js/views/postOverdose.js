@@ -605,4 +605,14 @@ function renderResponderSupportTab(container, isEs) {
       : 'Open Neurological Health & Brain Injury Navigator →')
   ]);
   container.appendChild(neurologyCard);
+  const metabolicCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Descarte de Hipoglucemia (< 50 mg/dL) y Crisis Suprarrenal: ' : 'Rule-Out Hypoglycemia (< 50 mg/dL) & Adrenal Crisis: '),
+    h('span', {}, isEs
+      ? 'La hipoglucemia grave simula coma por sobredosis de opioides. Mida siempre la glucemia capilar y evalúe insuficiencia suprarrenal inducida por opioides (ISIO): '
+      : 'Severe hypoglycemia mimics opioid overdose coma. Always check capillary glucose immediately and evaluate for opioid-induced adrenal insufficiency (OIAI): '),
+    h('a', { href: '#/metabolic-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Metabólicas y Endocrinas →'
+      : 'Open Metabolic Emergencies & Adrenal Crisis Navigator →')
+  ]);
+  container.appendChild(metabolicCard);
 }

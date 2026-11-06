@@ -576,6 +576,12 @@ export function alcoholCareView() {
     h('a', { href: '#/neurology-care' }, 'Open Neurological Health & Neuroprotection Navigator →')
   ]);
   panelWernicke.append(neuroLinkCard);
+  const akaLinkCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', null, 'Alcoholic Ketoacidosis (AKA) & Hypoglycemia Warning: '),
+    h('span', null, 'Heavy drinking followed by persistent vomiting causes alcoholic ketoacidosis (severe acidosis with normal/low glucose). Requires IV Dextrose + Saline + Thiamine; INSULIN IS CONTRAINDICATED: '),
+    h('a', { href: '#/metabolic-care' }, 'Open Alcoholic Ketoacidosis & Metabolic Care Navigator →')
+  ]);
+  panelWernicke.append(akaLinkCard);
 
   panelsContainer.append(panelPawss, panelMaud, panelWernicke);
   container.append(panelsContainer);

@@ -643,5 +643,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open Neurological Health & Neuroprotection Navigator →')
   ]);
   container.appendChild(neurologyTip);
+  const metabolicTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'CAD por Estimulantes, CAD Euglucémica (SGLT2) y Tormenta Tiroidea: ' : 'Stimulant DKA, SGLT2 Euglycemic DKA & Thyroid Storm: '),
+    h('span', {}, isEs
+      ? 'Las descargas adrenérgicas por estimulantes pueden desencadenar CAD severa, cetoacidosis euglucémica con fármacos SGLT2 o tormenta tiroidea: '
+      : 'Stimulant catecholamine surges can trigger fulminant DKA, euglycemic DKA with SGLT2 inhibitors, or life-threatening thyroid storm: '),
+    h('a', { href: '#/metabolic-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Metabólicas y Endocrinas →'
+      : 'Open Metabolic Emergencies & Endocrine Care Navigator →')
+  ]);
+  container.appendChild(metabolicTip);
 
 }

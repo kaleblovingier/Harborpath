@@ -38,6 +38,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/renal-care', key: 'workspace.link.renalCare', label: 'Renal health, rhabdomyolysis & dialysis MOUD' },
       { href: '#/pulmonary-care', key: 'workspace.link.pulmonaryCare', label: 'Pulmonary health, crack lung & inhalation safety' },
       { href: '#/neurology-care', key: 'workspace.link.neurologyCare', label: 'Neurological health, post-overdose brain injury & neuroprotection' },
+      { href: '#/metabolic-care', key: 'workspace.link.metabolicCare', label: 'Metabolic emergencies, ketoacidosis & adrenal crisis' },
     ],
   },
   {

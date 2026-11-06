@@ -771,6 +771,16 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open Inpatient Pulmonary Care & Critical Care Navigator →')
   ]);
   container.appendChild(pulmonaryCareCard);
+  const metabolicCareCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Emergencias Metabólicas Hospitalarias: Cetoacidosis Alcohólica y Crisis Suprarrenal: ' : 'Inpatient Metabolic Emergencies: Alcoholic Ketoacidosis & Adrenal Crisis: '),
+    h('span', {}, isEs
+      ? 'Diferenciación de CAA (D5W + salino + tiamina, insulina contraindicada), CAD euglucémica por SGLT2 y sospecha de crisis suprarrenal por opioides (ISIO): '
+      : 'Inpatient triage of AKA (IV Dextrose + Saline + Thiamine; insulin contraindicated), SGLT2 euglycemic DKA, and opioid-induced adrenal crisis (OIAI): '),
+    h('a', { href: '#/metabolic-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Metabólicas y Endocrinas →'
+      : 'Open Metabolic Emergencies & Adrenal Crisis Navigator →')
+  ]);
+  container.appendChild(metabolicCareCard);
 
   return container;
 }

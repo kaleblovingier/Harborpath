@@ -1119,4 +1119,35 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Neurology, Neurocritical Care, Emergency Medicine, and Addiction Consult Teams.
 
+### 43. Wave 45: Endocrine & Metabolic Emergencies, Alcoholic Ketoacidosis, euDKA & Adrenal Crisis Navigator (`#/metabolic-care`)
+- **Alcoholic Ketoacidosis (AKA) vs. Diabetic Ketoacidosis**:
+  - *Pathophysiology*: Severe starvation and volume depletion following chronic heavy alcohol consumption and abrupt cessation due to intractable vomiting. Ethanol-induced suppression of gluconeogenesis causes severe glycogen depletion, triggering massive lipolysis and ketogenesis.
+  - *The False-Negative Urine Dipstick Trap*: High NADH/NAD+ redox ratio driven by alcohol dehydrogenase shifts the ketone equilibrium heavily toward beta-hydroxybutyrate (BOHB:acetoacetate often > 5:1 to 10:1). Routine nitroprusside urine dipsticks (which only detect acetoacetate) are falsely negative or trace, masking severe high anion gap metabolic acidosis (anion gap > 20 mEq/L, HCO3 < 10–15 mEq/L).
+  - *Cardinal Life-Saving Rule*: **Treatment requires IV Dextrose (D5W or D5 1/2NS) + Normal Saline + High-Dose Parenteral Thiamine!** Dextrose stimulates endogenous insulin release and halts lipolysis. **INSULIN IS STRICTLY CONTRAINDICATED in pure AKA**: administering exogenous insulin precipitates catastrophic fatal hypoglycemia and hypokalemia!
+- **Stimulant-Induced DKA & Hyperosmolar Hyperglycemic State (HHS)**:
+  - *Sympathoadrenal Surge*: Cocaine and methamphetamine provoke massive epinephrine, cortisol, and glucagon discharge, driving uninhibited glycogenolysis and lipolysis into fulminant DKA or Hyperosmolar Hyperglycemic State (HHS).
+  - *Severe Fluid Deficits*: 3–6 liter fluid deficit in DKA; 8–12 liter deficit in HHS (glucose > 600–1000+ mg/dL, serum osmolarity > 320 mOsm/kg).
+  - *The Cardinal Potassium Before Insulin Rule*: Check serum potassium before starting IV insulin. If K+ < 3.3 mEq/L, hold insulin and infuse potassium until K+ > 3.3 mEq/L; giving insulin into hypokalemia drives potassium intracellularly and triggers fatal ventricular fibrillation or asystole.
+- **Euglycemic DKA (euDKA) with SGLT2 Inhibitors & Stimulants / Fasting**:
+  - *Mechanism*: SGLT2 inhibitors (empagliflozin, dapagliflozin, canagliflozin) promote persistent glucosuria, lowering plasma glucose while stimulating glucagon. Combined with stimulant anorexia or alcohol fasting, heavy ketogenesis occurs with **NORMAL blood glucose (< 200–250 mg/dL)**!
+  - *Therapy*: Discontinue SGLT2 inhibitor; administer concurrent IV Regular Insulin infusion (0.05–0.1 units/kg/h) AND IV Dextrose (D5W/D10W) to close the anion gap without inducing hypoglycemia.
+- **Severe Hypoglycemia Masked by Stimulants or Sedatives / Beta-Blockers**:
+  - *Pathophysiology*: Glycogen depletion and alcohol gluconeogenesis inhibition drop plasma glucose < 40–50 mg/dL. Stimulants mask autonomic warning signs (sweating, tremor attributed to drugs), while opioids or sedatives blunt neuroglycopenic arousal, presenting as coma or pseudo-stroke.
+  - *Cardinal Directive*: Point-of-care capillary blood glucose in EVERY patient with altered mental status, coma, or suspected overdose. Treat with D50W 25–50 mL IV bolus.
+- **Opioid-Induced Adrenal Insufficiency (OIAI) & Acute Adrenal Crisis**:
+  - *Mechanism*: Chronic high-potency opioids (methadone, fentanyl, morphine) suppress the hypothalamic-pituitary-adrenal (HPA) axis via central mu-receptors, producing secondary adrenal insufficiency in 9%–29% of chronic users.
+  - *Acute Adrenal Crisis*: Precipitated by systemic stress (sepsis, abscess, trauma, surgery), presenting with vasopressor-resistant circulatory shock, severe abdominal pain, and hypoglycemia. Mandates immediate stress-dose IV Hydrocortisone (100 mg IV bolus stat).
+- **Thyroid Storm vs. Sympathomimetic Stimulant Toxicity**:
+  - *Pathology*: Stimulants trigger decompensated hyperthyroidism in patients with underlying Graves disease or multinodular goiter (Burch-Wartofsky score > 45).
+  - *Therapeutic Sequence*: Active cooling + benzodiazepines -> Antithyroid thionamide (PTU/methimazole) -> Potassium Iodide (SSKI) given AT LEAST 1 HOUR AFTER thionamides (Wolff-Chaikoff effect) -> IV Dexamethasone -> Cautious esmolol.
+- **Harm Reduction Directives & Field Metabolic Preservation**:
+  - *Rule 1*: Check Capillary Glucose in EVERY Altered Mental Status or Overdose.
+  - *Rule 2*: Alcoholic Ketoacidosis (AKA): IV Dextrose & Saline YES, Insulin NO.
+  - *Rule 3*: SGLT2 Inhibitor Alert: Normal Blood Sugar Does NOT Rule Out DKA (euDKA).
+  - *Rule 4*: Potassium Before Insulin in DKA: Check Levels to Prevent Asystole.
+  - *Rule 5*: Chronic Opioid Fatigue May Be Adrenal Failure (OIAI): Test Cortisol.
+  - *Rule 6*: Hydrate with Carbohydrates and Electrolytes During Stimulant Use.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Endocrinology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

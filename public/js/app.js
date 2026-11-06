@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'metabolic-care': () => import('./views/metabolicCare.js').then((m) => {
+    viewCache.set('metabolic-care', m.metabolicCareView);
+    routeResets.set('metabolic-care', m.resetMetabolicState);
+    return m.metabolicCareView;
+  }),
   'neurology-care': () => import('./views/neurologyCare.js').then((m) => {
     viewCache.set('neurology-care', m.neurologyCareView);
     routeResets.set('neurology-care', m.resetNeurologyState);
@@ -311,6 +316,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'metabolic-care': () => t('route.metabolicCare', 'Metabolic emergencies, alcoholic ketoacidosis & adrenal crisis'),
   'neurology-care': () => t('route.neurologyCare', 'Neurological health, post-overdose brain injury & neuroprotection'),
   'pulmonary-care': () => t('route.pulmonaryCare', 'Pulmonary health, post-overdose lung injury & inhalation safety'),
   'renal-care': () => t('route.renalCare', 'Renal health, rhabdomyolysis, AKI & dialysis MOUD navigator'),
@@ -394,6 +400,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('metabolic-care'),
     preloadRoute('neurology-care'),
     preloadRoute('pulmonary-care'),
     preloadRoute('renal-care'),

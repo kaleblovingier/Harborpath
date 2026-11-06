@@ -71,4 +71,5 @@ export default {
   'workspace.link.renalCare': 'Salud renal, rabdomiólisis y MOUD en diálisis',
   'workspace.link.pulmonaryCare': 'Salud pulmonar, pulmón de crack y seguridad inhalatoria',
   'workspace.link.neurologyCare': 'Salud neurológica, lesión cerebral post-sobredosis y neuroprotección',
+  'workspace.link.metabolicCare': 'Emergencias metabólicas, cetoacidosis y crisis suprarrenal',
 };
