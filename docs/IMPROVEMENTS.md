@@ -1087,4 +1087,36 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Pulmonology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
 
+### 42. Wave 44: Neurological Health, Post-Overdose Brain Injury, PRES, Toxic Leukoencephalopathy & Osmotic Demyelination Navigator (`#/neurology-care`)
+- **Hypoxic-Ischemic Encephalopathy (HIE) & Delayed Post-Hypoxic Leukoencephalopathy (DPHL)**:
+  - *Acute Anoxic Pathophysiology*: Prolonged respiratory depression (SpO2 < 70%, agonal respirations, or apnea > 3–5 minutes) selectively destroys oxygen-vulnerable regions: cerebral cortex (laminar necrosis), hippocampus (CA1 Sommer sector - acute anterograde amnesia), cerebellar Purkinje cells (ataxia), and basal ganglia (bilateral globus pallidus and putamen infarction - acute parkinsonism, dystonia).
+  - *Delayed Post-Hypoxic Leukoencephalopathy (DPHL - Grinker Myelinopathy)*: Biphasic course characterized by apparent complete recovery post-resuscitation followed by a lucid interval of **2 to 40 days** (median 14–21 days). Insidious relapse into apathy, mutism, catastrophic cognitive decline, extrapyramidal rigidity, and coma due to delayed apoptotic death of oligodendrocytes.
+  - *Management*: Supportive care, high-dose antioxidant therapy (CoQ10 300–600 mg/day, vitamins C and E), amantadine/carbidopa-levodopa for rigidity, and early hyperbaric oxygen in select patients.
+- **Toxic Leukoencephalopathy ("Chasing the Dragon" / Inhalation Leukoencephalopathy)**:
+  - *Etiology & Pathology*: Inhalation of heated heroin or synthetic opioid vapor from aluminum foil ("chasing the dragon") or adulterated lipophilic toxins. Progressive, symmetric spongiform vacuolization of cerebral and cerebellar white matter with strict sparing of the overlying cortex and axons.
+  - *Three Clinical Stages*: 1) Pseudobulbar/Cerebellar (ataxia, scanning dysarthria, pathological laughing/crying); 2) Extrapyramidal (spastic quadriparesis, hyperreflexia, Babinski signs, choreiform movements); 3) Terminal Akinetic (akinetic mutism, central pyrexia, respiratory arrest).
+  - *Therapy*: Immediate cessation of inhalation, high-dose Coenzyme Q10, antioxidant vitamins, and aggressive neuro-rehabilitation.
+- **Posterior Reversible Encephalopathy Syndrome (PRES)**:
+  - *Sympathomimetic Autoregulatory Breakthrough*: Acute severe hypertension from cocaine, amphetamines, methamphetamine, or synthetic cathinones overwhelms cerebral myogenic autoregulation (MAP > 140–150 mmHg). Sparse sympathetic perivascular innervation in the posterior cerebral circulation makes parieto-occipital capillary beds vulnerable to capillary leakage and vasogenic edema.
+  - *Clinical Tetrad*: Acute severe headache, fluctuating encephalopathy, visual disturbances (blurring, visual field loss, hallucinations, cortical blindness [Anton syndrome]), and generalized tonic-clonic seizures.
+  - *Controlled Blood Pressure Reduction Mandate*: Gradual reduction of Mean Arterial Pressure (MAP) by **15% to 25% in the first 1–2 hours** using IV titratable agents (nicardipine infusion 5–15 mg/h or labetalol 10–20 mg IV boluses). Precipitous drops in BP induce ischemic watershed cerebral infarction.
+- **Osmotic Demyelination Syndrome (ODS / Central Pontine Myelinolysis) & Severe Hyponatremia**:
+  - *Pathophysiology*: Severe chronic hyponatremia (Na+ < 120 mEq/L) in chronic heavy alcohol misuse ("beer potomania" / poor solute intake with free water excess) and MDMA/Ecstasy use (MDMA-induced SIADH + hyperthermic polydipsia with massive plain water drinking). Astrocytes adapt by expelling organic osmolytes.
+  - *The Cardinal 8 mEq/L/24hr Safe Correction Rule*: Correcting sodium too rapidly (> 8–10 mEq/L in 24 hours, or > 6–8 mEq/L in malnourished/cirrhotic patients) causes rapid astrocyte dehydration, blood-brain barrier disruption, and oligodendrocyte apoptosis in the basis pontis.
+  - *Locked-In Syndrome Disaster*: Initial cognitive improvement followed 2 to 6 days later by catastrophic spastic quadriplegia, pseudobulbar palsy (anarthria, dysphagia), with intact consciousness and preserved vertical eye movements.
+  - *Emergency Re-Lowering Protocol*: If overcorrection occurs, immediately infuse D5W and administer desmopressin (DDAVP 1–2 mcg IV/subQ) to re-lower serum sodium back into safe limits.
+- **Wernicke Encephalopathy & Korsakoff Syndrome (Caine Criteria & Thiamine Emergency)**:
+  - *Thiamine Depletion & Petechial Necrosis*: Thiamine pyrophosphate (TPP) deficiency halts pyruvate dehydrogenase in cerebral glucose metabolism, causing focal lactic acidosis and hemorrhagic necrosis of mammillary bodies, dorsomedial thalamus, and periaqueductal gray.
+  - *Validated Caine Criteria*: Classic triad occurs in < 16% of patients. Diagnosis requires >= 2 of 4 criteria: 1) Dietary deficiency / severe malnutrition / alcohol use disorder; 2) Oculomotor abnormalities (nystagmus, bilateral lateral rectus palsy); 3) Cerebellar dysfunction (ataxia, wide-based gait); 4) Altered mental state or mild memory deficit.
+  - *Cardinal Life-Saving Rule*: **ALWAYS administer high-dose parenteral thiamine (500 mg IV TID for 3–5 days) BEFORE or concurrently with any intravenous dextrose/glucose solution!** Glucose without thiamine metabolizes remaining cofactor reserves and triggers acute fatal brainstem necrosis.
+- **Harm Reduction Directives & Field Neuroprotection**:
+  - *Rule 1*: Rescue Breathing Over Repeated Naloxone (Brain Needs Oxygen to Prevent Necrosis).
+  - *Rule 2*: Watch for Delayed Post-Hypoxic Relapse (DPHL - 2 to 40 Days Post-Overdose).
+  - *Rule 3*: High-Dose IV Thiamine BEFORE Glucose (Prevent Fatal Brainstem Necrosis).
+  - *Rule 4*: The 8 mEq/L/24hr Hyponatremia Rule: Slow Sodium Correction to Prevent Locked-In ODS.
+  - *Rule 5*: Controlled Blood Pressure Lowering in Stimulant PRES (Avoid Watershed Stroke).
+  - *Rule 6*: Safer Inhalation & Early CoQ10 in "Chasing the Dragon" Leukoencephalopathy.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Neurology, Neurocritical Care, Emergency Medicine, and Addiction Consult Teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

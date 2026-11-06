@@ -694,6 +694,12 @@ export function pulmonaryCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rulesGrid);
+    const neuroCrossLink = h('div', { class: 'pc-card mt-3' }, [
+      h('h3', {}, 'Anoxic Brain Injury & Post-Hypoxic Protection'),
+      h('p', {}, 'Prolonged hypoxemia from non-cardiogenic pulmonary edema or respiratory arrest causes acute neuronal ischemia. Explore post-overdose anoxic brain injury (HIE) and delayed leukoencephalopathy (DPHL): '),
+      h('a', { href: '#/neurology-care' }, 'Open Neurological Health & Brain Injury Navigator →'),
+    ]);
+    section.appendChild(neuroCrossLink);
     return section;
   }
 
@@ -703,3 +709,4 @@ export function pulmonaryCareView() {
 
   return container;
 }
+

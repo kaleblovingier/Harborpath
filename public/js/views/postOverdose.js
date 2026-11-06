@@ -595,4 +595,14 @@ function renderResponderSupportTab(container, isEs) {
       : 'Open Post-Overdose Pulmonary Care & NCPE Navigator →')
   ]);
   container.appendChild(pulmonaryCard);
+  const neurologyCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Lesión Cerebral Anóxica (EHI) y Recaída Tardía (LPHT): ' : 'Anoxic Brain Injury (HIE) & Delayed Relapse (DPHL): '),
+    h('span', {}, isEs
+      ? 'La apnea prolongada daña la corteza y los ganglios basales. Alerte a familiares sobre la recaída tardía (LPHT) de 2 a 40 días post-sobredosis: '
+      : 'Prolonged hypoxia causes cortical and basal ganglia injury. Alert survivors to delayed post-hypoxic leukoencephalopathy (DPHL) 2 to 40 days post-overdose: '),
+    h('a', { href: '#/neurology-care' }, isEs
+      ? 'Abrir Navegador de Salud Neurológica y Lesión Cerebral →'
+      : 'Open Neurological Health & Brain Injury Navigator →')
+  ]);
+  container.appendChild(neurologyCard);
 }

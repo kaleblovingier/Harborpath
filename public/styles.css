@@ -8558,3 +8558,504 @@ body.sensory-mode-active [tabindex]:focus-visible {
     font-size: 1.4rem;
   }
 }
+
+/* ==========================================================================
+   Wave 44: Neurological Health & Neuroprotection Navigator (.neurology-care-view)
+   ========================================================================== */
+
+.neurology-care-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  color: var(--text-main, #334155);
+}
+
+.neurology-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+  color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+}
+
+.neurology-title-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.85rem;
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.neurology-badge-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.neurology-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+  line-height: 1.25;
+}
+
+.neurology-subtitle {
+  font-size: 1.05rem;
+  color: #e0e7ff;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 900px;
+}
+
+.neurology-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  padding-bottom: 0.5rem;
+}
+
+.neurology-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.15rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.neurology-tab-btn:hover {
+  background: var(--bg-hover, #f1f5f9);
+  color: var(--text-heading, #0f172a);
+}
+
+.neurology-tab-btn.active {
+  background: #312e81;
+  color: #ffffff;
+}
+
+.neurology-tab-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.neurology-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.neurology-panel-intro h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.5rem;
+}
+
+.neurology-panel-intro p {
+  font-size: 1rem;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Syndromes List */
+.neurology-syndromes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.neurology-syndrome-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.neurology-syndrome-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #312e81;
+  margin: 0 0 1rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  padding-bottom: 0.5rem;
+}
+
+.neurology-section {
+  margin-bottom: 0.85rem;
+}
+
+.neurology-section:last-child {
+  margin-bottom: 0;
+}
+
+.neurology-section strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-heading, #0f172a);
+  margin-bottom: 0.25rem;
+}
+
+.neurology-section p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-main, #334155);
+}
+
+/* Checklist Evaluator */
+.neurology-evaluator-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 0.75rem;
+}
+
+.neurology-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.neurology-check-item:hover {
+  background: var(--bg-hover, #f8fafc);
+  border-color: #94a3b8;
+}
+
+.neurology-check-item.selected {
+  background: #f5f3ff;
+  border-color: #7c3aed;
+}
+
+.neurology-checkbox {
+  margin-top: 0.2rem;
+  accent-color: #7c3aed;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.neurology-check-label {
+  font-size: 0.925rem;
+  line-height: 1.45;
+  color: var(--text-heading, #0f172a);
+}
+
+.neurology-evaluator-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.neurology-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.neurology-reset-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Evaluation Results Card */
+.neurology-eval-results {
+  background: var(--card-bg, #ffffff);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border-left: 6px solid #64748b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.neurology-eval-results.acuity-emergency_911 {
+  border-left-color: #dc2626;
+  background: #fef2f2;
+}
+
+.neurology-eval-results.acuity-urgent_eval {
+  border-left-color: #d97706;
+  background: #fffbeb;
+}
+
+.neurology-eval-results.acuity-specialty_consult {
+  border-left-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.neurology-eval-results.acuity-precautionary {
+  border-left-color: #059669;
+  background: #f0fdf4;
+}
+
+.neurology-eval-urgency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+}
+
+.acuity-emergency_911 .neurology-eval-urgency-badge {
+  color: #b91c1c;
+}
+
+.acuity-urgent_eval .neurology-eval-urgency-badge {
+  color: #b45309;
+}
+
+.acuity-specialty_consult .neurology-eval-urgency-badge {
+  color: #3730a3;
+}
+
+.acuity-precautionary .neurology-eval-urgency-badge {
+  color: #047857;
+}
+
+.neurology-urgency-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.neurology-eval-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.neurology-flag-item {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.neurology-flag-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.35rem;
+}
+
+.neurology-flag-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-main, #334155);
+}
+
+/* Wernicke & Caine Grid */
+.neurology-critical-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fef2f2;
+  border: 2px solid #ef4444;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  color: #991b1b;
+}
+
+.neurology-alert-icon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  color: #dc2626;
+}
+
+.neurology-critical-alert strong {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.neurology-critical-alert p {
+  font-size: 0.925rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.neurology-caine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.neurology-caine-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.neurology-caine-badge {
+  display: inline-block;
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.neurology-caine-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.5rem;
+}
+
+.neurology-caine-desc {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+}
+
+/* Directives Grid */
+.neurology-directives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.neurology-directive-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.neurology-directive-num {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #c7d2fe;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.neurology-directive-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.5rem;
+}
+
+.neurology-directive-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-main, #334155);
+  margin: 0;
+}
+
+/* SBAR Note Panel */
+.neurology-sbar-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.neurology-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: #312e81;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.neurology-copy-btn:hover {
+  background: #1e1b4b;
+}
+
+.neurology-sbar-output {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #334155;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Footer Notice */
+.neurology-footer-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 1rem;
+}
+
+.neurology-footer-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.neurology-footer-notice p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .neurology-care-view {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .neurology-header {
+    padding: 1.25rem;
+  }
+  .neurology-title {
+    font-size: 1.4rem;
+  }
+}

@@ -570,6 +570,12 @@ export function alcoholCareView() {
     )
   );
   panelWernicke.append(wernickeCard);
+  const neuroLinkCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', null, 'Advanced Neurological Evaluation & Osmotic Demyelination (ODS): '),
+    h('span', null, 'Explore full Caine criteria for Wernicke encephalopathy, the 8 mEq/L/24hr hyponatremia correction limit in beer potomania, and post-hypoxic brain protection: '),
+    h('a', { href: '#/neurology-care' }, 'Open Neurological Health & Neuroprotection Navigator →')
+  ]);
+  panelWernicke.append(neuroLinkCard);
 
   panelsContainer.append(panelPawss, panelMaud, panelWernicke);
   container.append(panelsContainer);

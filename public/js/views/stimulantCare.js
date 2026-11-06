@@ -633,5 +633,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open Pulmonary Health, Crack Lung & Inhalation Safety Navigator →')
   ]);
   container.appendChild(pulmonaryTip);
+  const neurologyTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Síndrome de Encefalopatía Posterior Reversible (SEPR) y Convulsiones: ' : 'Posterior Reversible Encephalopathy Syndrome (PRES) & Seizures: '),
+    h('span', {}, isEs
+      ? 'Picos hipertensivos por estimulantes pueden desencadenar cefalea intensa, ceguera cortical y convulsiones (SEPR, requiere reducción tensional suave): '
+      : 'Stimulant hypertensive surges can trigger acute severe headache, cortical blindness, and seizures (PRES, requires controlled gradual BP lowering): '),
+    h('a', { href: '#/neurology-care' }, isEs
+      ? 'Abrir Navegador de Salud Neurológica y Neuroprotección →'
+      : 'Open Neurological Health & Neuroprotection Navigator →')
+  ]);
+  container.appendChild(neurologyTip);
 
 }

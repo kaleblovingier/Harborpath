@@ -70,4 +70,5 @@ export default {
   'workspace.link.endocarditisCare': 'Endocarditis infecciosa y protección valvular',
   'workspace.link.renalCare': 'Salud renal, rabdomiólisis y MOUD en diálisis',
   'workspace.link.pulmonaryCare': 'Salud pulmonar, pulmón de crack y seguridad inhalatoria',
+  'workspace.link.neurologyCare': 'Salud neurológica, lesión cerebral post-sobredosis y neuroprotección',
 };

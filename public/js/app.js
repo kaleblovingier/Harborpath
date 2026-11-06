@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'neurology-care': () => import('./views/neurologyCare.js').then((m) => {
+    viewCache.set('neurology-care', m.neurologyCareView);
+    routeResets.set('neurology-care', m.resetNeurologyState);
+    return m.neurologyCareView;
+  }),
   'pulmonary-care': () => import('./views/pulmonaryCare.js').then((m) => {
     viewCache.set('pulmonary-care', m.pulmonaryCareView);
     routeResets.set('pulmonary-care', m.resetPulmonaryState);
@@ -306,6 +311,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'neurology-care': () => t('route.neurologyCare', 'Neurological health, post-overdose brain injury & neuroprotection'),
   'pulmonary-care': () => t('route.pulmonaryCare', 'Pulmonary health, post-overdose lung injury & inhalation safety'),
   'renal-care': () => t('route.renalCare', 'Renal health, rhabdomyolysis, AKI & dialysis MOUD navigator'),
   'endocarditis-care': () => t('route.endocarditisCare', 'Infective endocarditis, valve destruction & POET protocol navigator'),
@@ -388,6 +394,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('neurology-care'),
     preloadRoute('pulmonary-care'),
     preloadRoute('renal-care'),
     preloadRoute('endocarditis-care'),
