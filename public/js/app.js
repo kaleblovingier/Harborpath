@@ -46,6 +46,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'renal-care': () => import('./views/renalCare.js').then((m) => {
+    viewCache.set('renal-care', m.renalCareView);
+    routeResets.set('renal-care', m.resetRenalState);
+    return m.renalCareView;
+  }),
   'endocarditis-care': () => import('./views/endocarditisCare.js').then((m) => {
     viewCache.set('endocarditis-care', m.endocarditisCareView);
     routeResets.set('endocarditis-care', m.resetEndocarditisState);
@@ -296,6 +301,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'renal-care': () => t('route.renalCare', 'Renal health, rhabdomyolysis, AKI & dialysis MOUD navigator'),
   'endocarditis-care': () => t('route.endocarditisCare', 'Infective endocarditis, valve destruction & POET protocol navigator'),
   'liver-care': () => t('route.liverCare', 'Liver health, APAP toxicity & cirrhosis safety navigator'),
   'weather-care': () => t('route.weatherCare', 'Hypothermia, frostbite & heat stroke safety navigator'),
@@ -376,6 +382,7 @@ export function preloadRoute(path) {
 
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('renal-care'),
     preloadRoute('endocarditis-care'),
     preloadRoute('liver-care'),
     preloadRoute('weather-care'),

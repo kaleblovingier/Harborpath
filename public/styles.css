@@ -7947,3 +7947,354 @@ body.sensory-mode-active [tabindex]:focus-visible {
   line-height: 1.55;
   margin: 0;
 }
+
+
+/* ==========================================================================
+   Renal Care & Rhabdomyolysis Navigator View (.renal-care-view)
+   ========================================================================== */
+
+.renal-care-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rc-header {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border: 1.5px solid rgba(14, 165, 233, 0.25);
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rc-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(14, 165, 233, 0.15);
+  color: #0284c7;
+  padding: 0.35rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.825rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.rc-header-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.rc-header-desc {
+  font-size: 0.975rem;
+  color: var(--text-main, #334155);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 950px;
+}
+
+.rc-mode-switcher {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rc-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  background: var(--card-bg, #ffffff);
+  color: var(--text-main, #334155);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rc-mode-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+}
+
+.rc-tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.rc-tab-btn {
+  padding: 0.6rem 1.1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #64748b);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.rc-tab-btn.active {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  font-weight: 700;
+}
+
+.rc-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.rc-result-card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rc-result-card.emergency {
+  background: rgba(239, 68, 68, 0.08);
+  border: 2px solid #ef4444;
+}
+
+.rc-result-card.standard {
+  background: rgba(16, 185, 129, 0.08);
+  border: 2px solid #10b981;
+}
+
+.rc-result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rc-result-header h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.rc-result-card.emergency .rc-result-header h3 {
+  color: #dc2626;
+}
+
+.rc-result-card.standard .rc-result-header h3 {
+  color: #059669;
+}
+
+.rc-result-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rc-rec-item strong {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-heading, #0f172a);
+  margin-bottom: 0.25rem;
+}
+
+.rc-rec-item p {
+  font-size: 0.925rem;
+  color: var(--text-main, #334155);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.rc-sbar-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rc-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.rc-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rc-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.rc-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.rc-card p {
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.rc-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.5;
+}
+
+.rc-stages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.rc-stage-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rc-stage-card.stage-3 {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.rc-stage-card .stage-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.375rem;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.rc-stage-card.stage-3 .stage-badge {
+  background: #dc2626;
+}
+
+.rc-moud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.rc-moud-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rc-moud-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.moud-status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.moud-status-badge.safe {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+}
+
+.moud-status-badge.caution {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.moud-status-badge.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.rc-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.rc-rule-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rc-rule-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  margin: 0;
+}
+
+.rc-rule-card p {
+  font-size: 0.9rem;
+  color: var(--text-main, #334155);
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .renal-care-view {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .rc-header {
+    padding: 1.25rem;
+  }
+  .rc-header-title {
+    font-size: 1.4rem;
+  }
+}

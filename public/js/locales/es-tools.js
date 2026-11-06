@@ -138,6 +138,8 @@ export default {
   'tools.item.vein-care.description': 'Zonas anatómicas de riesgo (zonas verdes vs rojas), triaje de punción arterial accidental, prevención de TVP y pseudoaneurismas, filtros de 0.22 micras y rehabilitación venosa.',
   'tools.item.inhalant-care.title': 'Inhalantes, solventes y seguridad con óxido nitroso',
   'tools.item.inhalant-care.description': 'Pautas clínicas para la inactivación de B12 por óxido nitroso, degeneración combinada subaguda, muerte súbita por inhalación (SSDS), metahemoglobinemia por poppers y congelación criogénica.',
+  'tools.item.renal-care.title': 'Navegador de salud renal, rabdomiólisis, FRA y MOUD en diálisis',
+  'tools.item.renal-care.description': 'Consenso KDIGO y ASN para rabdomiólisis tras sobredosis, estabilización de hiperpotasemia en ECG, 6 P del síndrome compartimental, MOUD en hemodiálisis y contraindicación de morfina/AINEs.',
   'tools.item.endocarditis-care.title': 'Navegador de endocarditis infecciosa, daño valvular y protocolo POET',
   'tools.item.endocarditis-care.description': 'Consenso AHA/IDSA para émbolos sépticos tricuspídeos vs absceso aórtico, regla de hemocultivos x3, criterios de Duke 2023, paso a vía oral POET, dalbavancina y cirugía valvular ética.',
   'tools.item.liver-care.title': 'Navegador de salud hepática, toxicidad por paracetamol y cirrosis',

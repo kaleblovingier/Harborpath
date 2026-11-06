@@ -68,4 +68,5 @@ export default {
   'workspace.link.weatherCare': 'Hipotermia, congelación y clima extremo',
   'workspace.link.liverCare': 'Salud hepática, cirrosis y seguridad de APAP',
   'workspace.link.endocarditisCare': 'Endocarditis infecciosa y protección valvular',
+  'workspace.link.renalCare': 'Salud renal, rabdomiólisis y MOUD en diálisis',
 };

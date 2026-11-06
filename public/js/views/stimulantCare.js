@@ -613,5 +613,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open Weather Care, Heat Stroke & Hypothermia Navigator →')
   ]);
   container.appendChild(weatherTip);
+  const renalTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Rabdomiólisis y Daño Renal por Estimulantes: ' : 'Stimulant Rhabdomyolysis & Renal Safety: '),
+    h('span', {}, isEs
+      ? 'La hipertermia y agitación extrema por estimulantes provocan rotura muscular (orina color cola, CK elevada) e insuficiencia renal aguda: '
+      : 'Stimulant hyperthermia and extreme motor hyperactivity cause severe muscle breakdown (cola-colored urine, high CK) and acute kidney injury: '),
+    h('a', { href: '#/renal-care' }, isEs
+      ? 'Abrir Navegador de Salud Renal y Rabdomiólisis →'
+      : 'Open Renal Health, Rhabdomyolysis & AKI Navigator →')
+  ]);
+  container.appendChild(renalTip);
 
 }

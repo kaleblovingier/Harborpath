@@ -751,6 +751,16 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open Infective Endocarditis & Valve Surgery Navigator →')
   ]);
   container.appendChild(endocarditisCard);
+  const renalCareCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Insuficiencia Renal, Rabdomiólisis y Seguridad de MOUD: ' : 'Renal Impairment, Rhabdomyolysis & Dialysis MOUD: '),
+    h('span', {}, isEs
+      ? 'MOUD en hemodiálisis (buprenorfina segura sin ajuste), contraindicación estricta de morfina/meperidina y prevención de AINEs: '
+      : 'MOUD on hemodialysis (buprenorphine safe without dose reduction), strict morphine/meperidine toxicity contraindications, and NSAID avoidance: '),
+    h('a', { href: '#/renal-care' }, isEs
+      ? 'Abrir Navegador de Salud Renal, Rabdomiólisis y Diálisis →'
+      : 'Open Renal Health, Rhabdomyolysis & Dialysis Navigator →')
+  ]);
+  container.appendChild(renalCareCard);
 
   return container;
 }

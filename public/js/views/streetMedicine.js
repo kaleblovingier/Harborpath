@@ -623,6 +623,14 @@ export function streetMedicineView(containerOrOptions = {}, maybeOptions = {}) {
       h('a', { href: '#/endocarditis-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Endocarditis Infecciosa →' : 'Open Infective Endocarditis Navigator →'),
     ]);
     weatherCard.append(endocarditisCard);
+    const renalCard = h('div', { class: 'card p-3 mt-3' }, [
+      h('strong', {}, isEs ? 'Tiempo en el Suelo, Rabdomiólisis y Orina Oscura: ' : 'Overdose Down Time, Rhabdomyolysis & Cola-Colored Urine: '),
+      h('p', {}, isEs
+        ? 'Si una persona despierta tras horas de sedación en el suelo con dolor muscular u orina color té/cola, sospeche rabdomiólisis aguda: '
+        : 'If someone wakes up after prolonged sedation on hard ground with limb swelling or tea-colored urine, suspect acute rhabdomyolysis: '),
+      h('a', { href: '#/renal-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Salud Renal y Rabdomiólisis →' : 'Open Renal Health & Rhabdomyolysis Navigator →'),
+    ]);
+    weatherCard.append(renalCard);
 
     tabPanel.append(weatherCard);
   }

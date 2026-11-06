@@ -1027,4 +1027,35 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Cardiothoracic Surgery, Infectious Disease, Cardiology, and Addiction Consult Teams.
 
+### 40. Wave 42: Renal Health, Rhabdomyolysis, AKI & MOUD in Renal Impairment / Dialysis Navigator (`#/renal-care`)
+- **Rhabdomyolysis Pathophysiology & Pigment Nephropathy**:
+  - *Compressive Muscle Necrosis*: Prolonged immobilization ("down time") following opioid overdose or sedative coma, as well as stimulant hyperthermia (methamphetamine, cocaine, MDMA) and severe agitation, causes skeletal muscle compression, ischemia, and cellular lysis.
+  - *Nephrotoxicity Mechanism*: Intracellular myoglobin filters freely through glomeruli and precipitates with Tamm-Horsfall protein in acidic distal tubules (pH < 5.6), forming obstructing casts. Ferrihemate generates hydroxyl free radicals, driving direct cytotoxic Acute Tubular Necrosis (ATN) and renal vasoconstriction.
+  - *Classical Triad & Dipstick Discordance*: Muscle pain/swelling, muscle weakness, and dark "tea-colored" or "cola-colored" urine. Discordance hallmark: Urine dipstick tests strongly positive for "blood" due to myoglobin pseudoperoxidase activity, while urine microscopy reveals 0–5 intact red blood cells.
+  - *Creatine Kinase (CK) Risk Cutoffs*: Serum CK typically > 5,000 U/L and frequently exceeds 20,000 to > 100,000 U/L. The risk of acute kidney injury escalates sharply above 5,000 U/L.
+  - *Emergency Hyperkalemia Protocol*: Massive muscle breakdown releases lethal potassium quantities (K+ > 6.0 mEq/L) causing peaked T waves, PR prolongation, QRS widening, and sine wave patterns. Life-saving protocol: 1) IV Calcium Gluconate 1–2 g over 2–5 min to stabilize cardiac membranes; 2) Regular Insulin 10 units IV + D50W 50 mL; 3) Nebulized Albuterol 10–20 mg; 4) IV Sodium Bicarbonate; 5) Emergent hemodialysis.
+  - *Aggressive Fluid Resuscitation*: Early IV crystalloids (400–1,000 mL/h) titrating to maintain target diuresis of 200–300 mL/h to wash out myoglobin casts.
+- **Acute Compartment Syndrome & Fasciotomy Timing**:
+  - *The 6 P's*: Pain out of proportion, Pressure (tense woody compartment), Pain on passive stretch (earliest and most sensitive clinical sign), Paresthesias, Pallor, and Pulselessness (late, ominous finding of irreversible necrosis).
+  - *Surgical Fasciotomy Threshold*: Emergent surgical decompression is indicated when intracompartmental pressure is within 30 mmHg of diastolic blood pressure (Delta Pressure <= 30 mmHg) or absolute pressure > 30 mmHg. Ischemia > 6–8 hours causes permanent paralysis and limb loss.
+- **KDIGO Acute Kidney Injury (AKI) Staging & Renal Replacement**:
+  - *Stage 1*: Serum creatinine 1.5–1.9x baseline or increase >= 0.3 mg/dL within 48h; urine output < 0.5 mL/kg/h for 6–12h.
+  - *Stage 2*: Serum creatinine 2.0–2.9x baseline; urine output < 0.5 mL/kg/h for >= 12h.
+  - *Stage 3*: Serum creatinine >= 3.0x baseline, or >= 4.0 mg/dL, or initiation of dialysis, or anuria >= 12h. Emergent dialysis triggers (AEIOU): Acidosis, Electrolytes (hyperkalemia), Ingestion, Overload (pulmonary edema), Uremia (pericarditis, encephalopathy).
+- **MOUD & Analgesic Pharmacokinetics in Renal Impairment & Hemodialysis**:
+  - *Buprenorphine (Preferred First-Line)*: 70%–80% fecal/biliary elimination; only 10%–20% urinary excretion. High protein binding (> 96%), non-dialyzable. Safe in CKD Stages 1–5 and ESRD on hemodialysis without dose reduction. No supplemental post-dialysis dosing required.
+  - *Methadone*: Hepatic metabolism to inactive EDDP, non-dialyzable. Safe in ESRD; maintain standard daily schedule without post-dialysis boosters. Monitor QTc on ECG regularly due to dialysis electrolyte shifts.
+  - *Morphine Neurotoxicity Warning*: Morphine-6-glucuronide (M6G) and Morphine-3-glucuronide (M3G) accumulate in renal impairment. M6G causes severe prolonged respiratory depression; M3G causes neurotoxicity (hyperalgesia, allodynia, myoclonus, seizures). Strictly avoid in GFR < 30.
+  - *Meperidine (Demerol) Absolute Contraindication*: Normeperidine metabolite half-life triples in renal failure, causing severe CNS excitation, tremors, and grand mal seizures.
+  - *NSAID Strict Prohibition*: Inhibits afferent arteriolar vasodilatory prostaglandins, triggering ischemic ATN, severe hyperkalemia, and accelerates progression to ESRD.
+- **Harm Reduction Directives & Field Kidney Preservation**:
+  - *Rule 1*: The "Cola-Colored Urine" & Overdose Down Time Alert.
+  - *Rule 2*: Aggressive Hydration Timing: Flush Out Myoglobin Casts.
+  - *Rule 3*: Watch for Fatal Hyperkalemia ECG Changes (Calcium Gluconate Before Insulin).
+  - *Rule 4*: Compartment Syndrome: Pain on Passive Stretch is the Earliest Flag.
+  - *Rule 5*: Buprenorphine is Safe in Kidney Failure; NEVER Use Morphine or Meperidine.
+  - *Rule 6*: Strict NSAID Prohibition: Protect Every Remaining Nephron.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for Nephrology, Trauma Surgery, Emergency Medicine, and Addiction Consult Teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

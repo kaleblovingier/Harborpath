@@ -575,4 +575,14 @@ function renderResponderSupportTab(container, isEs) {
     ])
   ]);
   container.appendChild(card);
+  const rhabdoCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Tiempo Inmóvil en Sobredosis, Rabdomiólisis y Síndrome Compartimental: ' : 'Overdose Down Time, Rhabdomyolysis & Compartment Syndrome: '),
+    h('span', {}, isEs
+      ? 'Permanecer inmóvil tras una sobredosis causa compresión muscular, orina color té/cola e insuficiencia renal aguda: '
+      : 'Prolonged immobilization on hard surfaces causes muscle compression, cola-colored urine, and acute kidney injury: '),
+    h('a', { href: '#/renal-care' }, isEs
+      ? 'Abrir Navegador de Rabdomiólisis y Salud Renal →'
+      : 'Open Rhabdomyolysis, Compartment Syndrome & Renal Care Navigator →')
+  ]);
+  container.appendChild(rhabdoCard);
 }

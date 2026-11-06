@@ -778,6 +778,14 @@ export function liverCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rulesGrid);
+    const renalCard = h('div', { class: 'lc-card mt-3' }, [
+      h('h3', {}, 'Hepatorenal Syndrome & Nephroprotection Alert'),
+      h('p', {}, 'Advanced liver cirrhosis heavily predisposes to acute kidney injury (Hepatorenal Syndrome). Strict prohibition on NSAIDs and nephrotoxins is essential: '),
+      h('p', {}, [
+        h('a', { href: '#/renal-care', class: 'btn btn-secondary' }, 'Open Renal Health & Nephroprotection Navigator →'),
+      ]),
+    ]);
+    section.appendChild(renalCard);
     return section;
   }
 
