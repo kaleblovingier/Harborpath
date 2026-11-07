@@ -149,6 +149,8 @@ export const HELP_FOR_CONCERNS = Object.freeze([
   ['post-overdose', 'home.helpFor.postOverdose', 'After an overdose'],
   ['wound-care', 'home.helpFor.wounds', 'Wounds and infections'],
   ['family-support', 'home.helpFor.family', 'Helping a loved one (CRAFT)'],
+  ['recovery-support', 'home.helpFor.recovery', 'Life after treatment'],
+  ['overdose-loss', 'home.helpFor.overdoseLoss', 'After an overdose death'],
 ]);
 
 function helpForList(id, title, links) {

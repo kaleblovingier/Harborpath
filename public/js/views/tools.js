@@ -177,6 +177,10 @@ export const TOOL_KEYWORDS = Object.freeze({
   'neurology-care': ['brain', 'brain injury', 'brain damage', 'memory', 'seizure', 'hypoxia', 'cerebro', 'lesión cerebral', 'memoria', 'convulsión'],
   'metabolic-care': ['diabetes', 'blood sugar', 'low blood sugar', 'ketoacidosis', 'dka', 'adrenal', 'azúcar en la sangre', 'cetoacidosis', 'suprarrenal'],
   'endocarditis-care': ['heart infection', 'heart valve', 'endocarditis', 'fever', 'infección del corazón', 'válvula del corazón', 'fiebre'],
+  'recovery-support': ['sober living', 'sober house', 'recovery housing', 'recovery residence', 'halfway house', 'oxford house', 'peer coach', 'peer support', 'relapse', 'aftercare', 'after rehab',
+    'vivienda sobria', 'casa de recuperación', 'recaída', 'coach de recuperación', 'apoyo entre pares', 'después del tratamiento'],
+  'overdose-loss': ['grief', 'bereavement', 'died', 'death', 'loss', 'funeral', 'death certificate', 'toxicology', 'grasp', 'compassionate friends',
+    'duelo', 'murió', 'muerte', 'pérdida', 'acta de defunción', 'toxicología'],
 });
 
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({

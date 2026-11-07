@@ -30,6 +30,8 @@ export default {
   'home.helpFor.postOverdose': 'Después de una sobredosis',
   'home.helpFor.wounds': 'Heridas e infecciones',
   'home.helpFor.family': 'Ayudar a un ser querido (CRAFT)',
+  'home.helpFor.recovery': 'La vida después del tratamiento',
+  'home.helpFor.overdoseLoss': 'Después de una muerte por sobredosis',
   'topicSearch.homeTitle': '¿Busca algo en particular?',
   'topicSearch.notFoundTitle': 'Busque lo que necesita',
   'topicSearch.label': 'Buscar temas y guías',
