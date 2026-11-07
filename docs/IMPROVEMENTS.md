@@ -1150,4 +1150,20 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Endocrinology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
 
+
+### 44. Wave 46: Life After Treatment (`#/recovery-support`) & After an Overdose Death (`#/overdose-loss`)
+Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gaps families and people in recovery ask about. Both open with crisis lines from `content/hotlines.js`, use a single `h1`, support printing, link to existing guides instead of duplicating them, and keep nothing in device storage.
+- **Life after treatment (`#/recovery-support`)**:
+  - *Recovery housing*: what recovery residences are, the four NARR levels of support (peer-run to clinical), NARR-certified and Oxford House homes, questions to ask before moving in, and warning signs of patient brokering (links to `#/choosing-care` for EKRA and fraud reporting).
+  - *Medication in recovery housing*: SAMHSA *Best Practices for Recovery Housing* (2023, PEP23-10-00-002) says homes should not restrict prescribed medications; DOJ *The ADA and Opioid Use Disorder* (2022) on protections for people taking prescribed MOUD who are not using drugs illegally; where to report discrimination (DOJ, HUD).
+  - *Peer recovery support and RCOs* (SAMHSA peer support; Faces & Voices ARCO map), *mutual-aid* (links to the meeting finder on `#/support`), and *recovery-ready workplaces* (DOL hub; links to `#/workplace-rights`).
+  - *Planning for a return to use*: lower tolerance and higher overdose risk after abstinence (SAMHSA *Overdose Prevention and Response Toolkit*, 2023), naloxone, Never Use Alone / SafeSpot, fentanyl test strips, and knowing the house's return-to-use policy.
+  - *Private checklist*: eight next steps held in module memory only, cleared by Quick Exit (`resetRecoverySupportState`).
+- **After an overdose death (`#/overdose-loss`)**:
+  - *First steps*: calling 911, the medical examiner or coroner investigator and case number, and the funeral home, with no state-specific claims.
+  - *Records*: CDC notes overdose deaths are often first reported "pending investigation" while toxicology is done; certified copies and the state vital records office (CDC *Where to Write for Vital Records*).
+  - *Protecting others*: naloxone at home, lower tolerance in grief, DEA year-round collectors and Take Back Day, FDA disposal steps, and handling other substances.
+  - *Talking with children* (adapted from The Dougy Center), *grief support* (GRASP; The Compassionate Friends, phone verified on its own site; SAMHSA Helpline), *stigma and self-care* (CDC grief tips), and *helping a friend*.
+  - *988 message*: stated plainly at the top: if grief brings thoughts of ending your life, call or text 988; call 911 in immediate danger.
+- Tests: `test/recovery-support.test.js` and `test/overdose-loss.test.js` (EN and ES render, single `h1`, official sources, hotline reuse, no inline styles or storage, route / catalog / service worker / Spanish key registration).
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.
