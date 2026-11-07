@@ -3,9 +3,32 @@
  * Pure functions that return recommended SAMHSA service codes, clinical
  * action steps, safety-net health network links, and treatment search routes.
  * All client-side in ephemeral browser memory; no PHI transmitted.
+ *
+ * Privacy: every finder link built here is `#/treatment?codes=...` and carries
+ * only SAMHSA service codes that the finder already accepts. Answers, ages,
+ * and flags never go into the URL.
+ *
+ * Clinical safety: the answer-specific care-route additions at the end of this
+ * file add no medication doses, dose ranges, or schedules. Each clinical
+ * statement there carries a source comment.
  */
 
 import { t } from '../i18n.js';
+
+// Same limit as the finder (public/js/components/finder.js MAX_FILTERS) and
+// the server (src/schema.js MAX_CODES).
+export const MAX_ROUTE_CODES = 8;
+
+/** Build a finder link from SAMHSA codes: deduplicated, at most 8, codes only. */
+export function buildTreatmentHref(codes = []) {
+  const clean = [];
+  for (const raw of codes) {
+    const code = String(raw ?? '').trim().toUpperCase();
+    if (/^[A-Z0-9_]+$/.test(code) && !clean.includes(code)) clean.push(code);
+  }
+  const limited = clean.slice(0, MAX_ROUTE_CODES);
+  return limited.length ? `#/treatment?codes=${limited.join(',')}` : '#/treatment';
+}
 
 function normalizeSubstancesInput(raw) {
   if (!raw) return new Set();
@@ -335,4 +358,225 @@ export function evaluatePopulationPathways(flags = {}) {
     combinedCodes,
     priorityAlerts,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Answer-specific care-route additions (PR #2, Phase 1 population routes)
+//
+// The priority population pathways above are the navigator's single care-route
+// UI. These additions only add what the static pathways cannot: narrower
+// finder searches built from the person's own answers (one or two codes, so a
+// rural search still returns results), an urgent hospital callout for tranq,
+// and a few notes not already covered by the pathway's clinical actions or the
+// navigator's red flags. Each addition names the pathway card it belongs to.
+// ---------------------------------------------------------------------------
+
+export const CARE_ROUTE_IDS = ['pregnancy', 'youth', 'reentry', 'xylazine'];
+
+/** The population pathway card (ALL_POPULATION_RECOMMENDERS key) each route adds to. */
+export const CARE_ROUTE_PATHWAY = Object.freeze({
+  pregnancy: 'pregnancy',
+  youth: 'youth',
+  reentry: 'justice',
+  xylazine: 'xylazine',
+});
+
+/**
+ * Input the navigator passes to evaluateTransitionRisk() for the reentry route.
+ * Conservative defaults: the navigator does not ask about timing, MOUD, or
+ * naloxone, so the route assumes the highest-risk case.
+ */
+export const REENTRY_TRANSITION_INPUT = Object.freeze({
+  event: 'post_release',
+  daysSince: 'under_7',
+  onMoud: false,
+  hasNaloxone: false,
+});
+
+/**
+ * Which care routes the navigator answers point to. Pure; reads only the
+ * answers object already held in browser memory. Uses the same triggers as
+ * evaluatePopulationPathways() so each route has a matching pathway card.
+ * @returns {Array<'pregnancy'|'youth'|'reentry'|'xylazine'>}
+ */
+export function detectCareRoutes(answers = {}) {
+  const substances = normalizeSubstancesInput(answers?.substances);
+  const routes = [];
+  if (answers?.biomedical === 'pregnant') routes.push('pregnancy');
+  if (answers?.population === 'ADOL' || answers?.population === 'YA') routes.push('youth');
+  if (answers?.population === 'CJ') routes.push('reentry');
+  if (substances.has('xylazine')) routes.push('xylazine');
+  return routes;
+}
+
+function routeLink(label, codes) {
+  return { label, codes: [...codes], href: buildTreatmentHref(codes) };
+}
+
+function pregnancyRoute({ substances, withdrawalRisk }) {
+  const hasOpioids = substances.has('opioids');
+  const hasGaba = substances.has('alcohol') || substances.has('benzos');
+  const notes = [];
+  if (hasGaba) {
+    // ASAM Clinical Practice Guideline on Alcohol Withdrawal Management (2020):
+    // pregnancy is a reason for closer medical management of withdrawal.
+    notes.push(t(
+      'nav.route.pregnancy.why.gaba',
+      'Do not stop alcohol or sedatives suddenly on your own. Withdrawal can be dangerous in pregnancy, so get medically supervised care (ASAM).',
+    ));
+  }
+  // ACOG Committee Opinion 711 (2017): return to use is far more common
+  // postpartum than during pregnancy; postpartum overdose training and
+  // naloxone co-prescribing. SAMHSA Clinical Guidance for Treating Pregnant
+  // and Parenting Women With OUD (2018): continue treatment after delivery.
+  notes.push(t(
+    'nav.route.pregnancy.why.postpartum',
+    'The months after birth carry a higher risk of return to use and overdose. Keep your treatment going after delivery and keep naloxone at home (ACOG, SAMHSA).',
+  ));
+
+  const links = [routeLink(t('nav.route.pregnancy.link.pw', 'Programs for pregnant or postpartum people'), ['PW'])];
+  if (hasOpioids) {
+    // ACOG CO 711: buprenorphine or methadone is recommended in pregnancy.
+    links.push(routeLink(t('nav.route.pregnancy.link.pw_bu', 'Pregnancy programs that offer buprenorphine'), ['PW', 'BU']));
+    links.push(routeLink(t('nav.route.link.otp', 'Methadone clinics (opioid treatment programs)'), ['OTP']));
+  }
+  if (withdrawalRisk === 'severe' || (hasGaba && withdrawalRisk === 'moderate')) {
+    links.push(routeLink(t('nav.route.pregnancy.link.pw_hi', 'Pregnancy programs with hospital inpatient care'), ['PW', 'HI']));
+  }
+
+  return {
+    id: 'pregnancy',
+    notes,
+    links,
+    extraLinks: [{ label: t('nav.route.link.meds', 'Medication guide'), href: '#/medications' }],
+    sources: 'ACOG Committee Opinion 711 (2017); SAMHSA Clinical Guidance for Treating Pregnant and Parenting Women With OUD (2018); ASAM Alcohol Withdrawal Management Guideline (2020).',
+  };
+}
+
+function youthRoute({ substances, population, mentalHealth, preferTelehealth }) {
+  // The youth pathway card already covers age-specific care (NIDA), minor
+  // consent and 42 CFR Part 2, and MOUD for adolescents (ASAM, AAP); this
+  // route only adds narrower searches.
+  const ageCode = population === 'YA' ? 'YA' : 'ADOL';
+  const links = [routeLink(
+    ageCode === 'YA'
+      ? t('nav.route.youth.link.ya', 'Programs for young adults')
+      : t('nav.route.youth.link.adol', 'Programs for teens'),
+    [ageCode],
+  )];
+  if (substances.has('opioids')) {
+    links.push(routeLink(t('nav.route.youth.link.bu', 'Youth programs that offer buprenorphine'), [ageCode, 'BU']));
+  }
+  if (mentalHealth && mentalHealth !== 'none') {
+    links.push(routeLink(t('nav.route.youth.link.mhsu', 'Youth programs for mental health and substance use together'), [ageCode, 'MHSU']));
+  }
+  if (preferTelehealth) {
+    links.push(routeLink(t('nav.route.youth.link.tele', 'Youth programs with telehealth'), [ageCode, 'TELE']));
+  }
+  return {
+    id: 'youth',
+    notes: [],
+    links,
+    extraLinks: [{ label: t('nav.route.link.family', 'Family and recovery support'), href: '#/support' }],
+    sources: 'NIDA Principles of Adolescent SUD Treatment (2014); ASAM National Practice Guideline for OUD (2020); 42 CFR Part 2 § 2.14.',
+  };
+}
+
+function reentryRoute({ transition }) {
+  // Codes come from evaluateTransitionRisk({ event: 'post_release' }) in
+  // navigator.js, so the route stays consistent with the transition engine.
+  // The justice pathway card already covers the post-release tolerance drop,
+  // naloxone, and MOUD continuity (NIDA Criminal Justice DrugFacts; SAMHSA
+  // Use of MAT for OUD in Criminal Justice Settings, 2019).
+  const recommended = transition?.recommendedCodes?.length ? transition.recommendedCodes : ['CJ', 'BU', 'NOE', 'PEER'];
+  const has = (c) => recommended.includes(c);
+
+  const notes = [
+    // CDC "What You Should Know About Xylazine" (overdose prevention section):
+    // "Never use alone"; carry naloxone and learn how to use it.
+    t(
+      'nav.route.reentry.why.naloxone',
+      'Make sure someone near you has naloxone and knows how to use it, and do not use alone (CDC).',
+    ),
+  ];
+
+  const links = [];
+  if (has('CJ') && has('BU')) links.push(routeLink(t('nav.route.reentry.link.cj_bu', 'Re-entry programs that offer buprenorphine'), ['CJ', 'BU']));
+  links.push(routeLink(t('nav.route.link.otp', 'Methadone clinics (opioid treatment programs)'), ['OTP']));
+  if (has('NOE')) links.push(routeLink(t('nav.route.link.noe', 'Places that offer naloxone and overdose education'), ['NOE']));
+  if (has('CJ') && has('PEER')) links.push(routeLink(t('nav.route.reentry.link.cj_peer', 'Re-entry programs with peer support'), ['CJ', 'PEER']));
+
+  return {
+    id: 'reentry',
+    notes,
+    neverUseAlone: true,
+    links,
+    extraLinks: [{ label: t('nav.route.link.overdose', 'Overdose response steps'), href: '#/overdose' }],
+    sources: 'NIDA Criminal Justice DrugFacts; SAMHSA Use of MAT for OUD in Criminal Justice Settings (2019); CDC overdose prevention.',
+  };
+}
+
+function xylazineRoute({ withdrawalRisk, biomedical }) {
+  // Same trigger as the navigator's xylazine red flag (nav.redflag.xylazine_acuity).
+  const urgent = withdrawalRisk === 'moderate' || withdrawalRisk === 'severe' || biomedical === 'acute_infection';
+  const notes = [];
+  if (urgent) {
+    // CDC MMWR 2025;74(15) (Pittsburgh, Oct 2024 to Mar 2025): severe
+    // medetomidine withdrawal with tachycardia, severe hypertension, and
+    // agitation; 9 of 10 confirmed patients needed ICU care. CDC "What You
+    // Should Know About Xylazine": wounds can become infected and worsen quickly.
+    notes.push(t(
+      'nav.route.xylazine.why.urgent',
+      'Based on your answers, go to an emergency department or hospital now if you have a racing heart, chest pain, confusion, fever, or a wound that is spreading or turning dark (CDC).',
+    ));
+  }
+  // CDC MMWR 2025;74(15): opioids and sedatives gave minimal response; tell
+  // the care team about possible exposure so withdrawal is recognized.
+  notes.push(t(
+    'nav.route.xylazine.why.tell',
+    'Tell clinicians you may have been exposed to tranq, so they can watch for its withdrawal as well as opioid withdrawal (CDC).',
+  ));
+
+  const links = [];
+  if (urgent) links.push(routeLink(t('nav.route.xylazine.link.hi', 'Hospital inpatient care'), ['HI']));
+  links.push(routeLink(t('nav.route.xylazine.link.bu', 'Places that offer buprenorphine'), ['BU']));
+  links.push(routeLink(t('nav.route.link.otp', 'Methadone clinics (opioid treatment programs)'), ['OTP']));
+  links.push(routeLink(t('nav.route.link.noe', 'Places that offer naloxone and overdose education'), ['NOE']));
+
+  return {
+    id: 'xylazine',
+    urgent,
+    notes,
+    links,
+    extraLinks: [
+      { label: t('nav.route.link.harm', 'Wound care and harm reduction'), href: '#/harm-reduction' },
+      { label: t('nav.route.link.overdose', 'Overdose response steps'), href: '#/overdose' },
+    ],
+    sources: 'CDC What You Should Know About Xylazine; CDC MMWR 2025;74(15) medetomidine withdrawal reports.',
+  };
+}
+
+/**
+ * Build the answer-specific care-route additions for the navigator's answers.
+ *
+ * @param {object} answers - the navigator's in-memory answers
+ * @param {{ transition?: { recommendedCodes: string[] } }} [context]
+ *   `transition` is evaluateTransitionRisk(REENTRY_TRANSITION_INPUT) from navigator.js.
+ * @returns {Array<{ id: string, pathwayId: string, notes: string[],
+ *   links: Array<{ label: string, codes: string[], href: string }>,
+ *   extraLinks: Array<{ label: string, href: string }>, sources: string,
+ *   urgent?: boolean, neverUseAlone?: boolean }>}
+ */
+export function buildCareRoutes(answers = {}, { transition } = {}) {
+  const ctx = {
+    substances: normalizeSubstancesInput(answers?.substances),
+    withdrawalRisk: answers?.withdrawalRisk ?? 'none',
+    biomedical: answers?.biomedical ?? 'none',
+    mentalHealth: answers?.mentalHealth ?? 'none',
+    population: answers?.population ?? '',
+    preferTelehealth: Boolean(answers?.preferTelehealth),
+    transition,
+  };
+  const builders = { pregnancy: pregnancyRoute, youth: youthRoute, reentry: reentryRoute, xylazine: xylazineRoute };
+  return detectCareRoutes(answers).map((id) => ({ ...builders[id](ctx), pathwayId: CARE_ROUTE_PATHWAY[id] }));
 }

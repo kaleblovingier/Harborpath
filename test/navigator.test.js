@@ -5,6 +5,7 @@ import {
   scoreOpioidWithdrawal,
   scoreAlcoholSedativeRisk,
   formatAsamHandoffText,
+  getPopulationCareRoutes,
 } from '../public/js/views/navigator.js';
 
 describe('evaluateAsamCare() — ASAM Criteria (4th Edition) Clinical Engine', () => {
@@ -300,5 +301,23 @@ describe('formatAsamHandoffText() — Clinician Handoff & Referral Summary Forma
     assert.match(text, /988/);
     assert.match(text, /1-800-662-4357/);
     assert.match(text, /21 CFR 1306\.07\(b\)/);
+  });
+});
+
+describe('getPopulationCareRoutes() — Phase 1 population care routes', () => {
+  it('adds routes alongside, not instead of, the ASAM recommendation and its escalations', () => {
+    const answers = { substances: ['opioids', 'xylazine'], biomedical: 'pregnant', population: 'CJ', withdrawalRisk: 'severe' };
+    const evaluation = evaluateAsamCare(answers);
+    assert.equal(evaluation.asamLevel, 'ASAM Level 3.7-WM / 4.0');
+    assert.ok(evaluation.codes.includes('PW'));
+    const routes = getPopulationCareRoutes(answers);
+    assert.deepEqual(routes.map((r) => r.id), ['pregnancy', 'reentry', 'xylazine']);
+    const text = formatAsamHandoffText(answers, evaluation);
+    assert.match(text, /988/);
+    assert.match(text, /1-800-662-4357/);
+  });
+
+  it('shows no routes when no Phase 1 population applies', () => {
+    assert.deepEqual(getPopulationCareRoutes({ substances: ['alcohol'], population: 'VET' }), []);
   });
 });
