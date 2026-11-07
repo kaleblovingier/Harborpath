@@ -130,5 +130,49 @@ export function createRateLimiter({
       counts.set(key, n);
       return n <= max;
     },
+    /** Whole seconds until the current window ends (for Retry-After). */
+    retryAfterSeconds() {
+      return Math.max(1, Math.ceil((windowStart + windowMs - now()) / 1000));
+    },
+    get size() {
+      return counts.size;
+    },
+  };
+}
+
+// Circuit breaker for the upstream API. After `threshold` consecutive
+// failures it opens for `cooldownMs`: requests then fail fast (and are served
+// from the stale cache when possible) instead of each waiting out the full
+// upstream timeout. After the cooldown one probe request is let through; its
+// success closes the breaker, its failure reopens it.
+export function createCircuitBreaker({ threshold = 3, cooldownMs = 30 * 1000, now = Date.now } = {}) {
+  let failures = 0;
+  let openUntil = 0;
+  let probing = false;
+  return {
+    /** True when a request may go upstream. */
+    allow() {
+      if (failures < threshold) return true;
+      if (now() < openUntil || probing) return false;
+      probing = true; // half-open: exactly one probe
+      return true;
+    },
+    success() {
+      failures = 0;
+      openUntil = 0;
+      probing = false;
+    },
+    failure() {
+      failures++;
+      probing = false;
+      if (failures >= threshold) openUntil = now() + cooldownMs;
+    },
+    /** Whole seconds until a probe will be allowed (0 when closed). */
+    retryAfterSeconds() {
+      return failures >= threshold ? Math.max(1, Math.ceil((openUntil - now()) / 1000)) : 0;
+    },
+    get open() {
+      return failures >= threshold && (now() < openUntil || probing);
+    },
   };
 }
