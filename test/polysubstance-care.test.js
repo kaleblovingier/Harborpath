@@ -199,7 +199,7 @@ describe('Polysubstance Care & Synergy Navigator (Wave 19)', () => {
     assert.match(enText, /HARBORPATH POLYSUBSTANCE INTERACTION/);
     assert.match(enText, /Zero device storage/);
     assert.match(enText, /Never Use Alone/);
-    assert.match(enText, /877-696-1997/);
+    assert.match(enText, /Never Use Alone[^\n]*1-800-484-3731/); // hotlines.js primary (877-696-1997 was a wrong number)
 
     const esText = formatPolysubstanceSummaryText({
       selectedSubstances: ['opioids', 'benzodiazepines', 'alcohol'],

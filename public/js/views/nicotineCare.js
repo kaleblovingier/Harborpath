@@ -356,8 +356,8 @@ export function formatNicotineSummaryText(state, lang = 'en') {
     ? '- Técnica de chicle: "Masticar y aparcar" entre mejilla y encía; no tragar continuamente para evitar náuseas e hipo.'
     : '- "Chew and park" gum technique: park between cheek and gum; do not chew continuously to avoid dyspepsia and hiccups.');
   lines.push(isEs
-    ? '- Línea de Ayuda Gratuita: Llame al 1-855-DÉJALO-YA (855-335-2569) o 1-800-QUIT-NOW (800-784-8669) para parches gratis por correo.'
-    : '- Free State Quitlines: Call 1-800-QUIT-NOW (1-855-DÉJALO-YA in Spanish) for free coaching and NRT mailed to your home.');
+    ? '- Línea de Ayuda Gratuita: Llame al 1-855-DÉJELO-YA (855-335-3569) o 1-800-QUIT-NOW (800-784-8669) para parches gratis por correo.'
+    : '- Free State Quitlines: Call 1-800-QUIT-NOW (1-855-DÉJELO-YA in Spanish) for free coaching and NRT mailed to your home.');
   lines.push('');
 
   lines.push('================================================================');
@@ -694,7 +694,7 @@ function renderCravingPlanTab(localState, isEs) {
       ]),
       h('div', { class: 'contact-pill' }, [
         h('strong', {}, isEs ? 'Línea Nacional en Español:' : 'National Quitline (Spanish):'),
-        h('a', { href: 'tel:18553352569', class: 'tel-link' }, ' 1-855-DÉJALO-YA (855-335-2569)')
+        h('a', { href: 'tel:18553353569', class: 'tel-link' }, ' 1-855-DÉJELO-YA (855-335-3569)')
       ])
     ])
   ]);

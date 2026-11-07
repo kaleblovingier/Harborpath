@@ -51,7 +51,7 @@ export default {
   'workspace.task.documentation': 'Documente las acciones de la lista en el registro de salud electrónico aprobado de su organización sin ingresar notas personales en HarborPath.',
   'workspace.task.harmreduction': 'Confirme que se entregó u ofreció naloxona para llevar a casa, tiras reactivas de fentanilo/xilazina e instrucciones de uso más seguro.',
   'workspace.task.transportation': 'Verifique la logística de transporte, pases de tránsito o arreglos de Transporte Médico No Urgente (NEMT) de Medicaid.',
-  'workspace.task.crisissupport': 'Proporcione números de crisis 24/7 (988, Never Use Alone: 877-696-1996) y recursos locales de apoyo entre pares a la persona.',
+  'workspace.task.crisissupport': 'Proporcione números de crisis 24/7 (988, Never Use Alone: {nua}) y recursos locales de apoyo entre pares a la persona.',
   'workspace.link.chronicPain': 'Guía de dolor y reducción de sedantes',
   'workspace.link.harmReduction': 'Recursos de reducción de daños',
   'workspace.link.toxicologyTriage': 'Triage toxicológico y desescalada',

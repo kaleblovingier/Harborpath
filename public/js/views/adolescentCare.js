@@ -49,7 +49,7 @@
  *    - Fentanyl test strip (FTS) dilution protocols for counterfeit pills ("blues") and stimulants
  *      (1 tsp / 5 mL water per 10 mg substance to prevent false positives).
  *    - Naloxone possession rights (OTC in all 50 states) and Good Samaritan 911 protections for youth.
- *    - Never Use Alone (1-877-696-1996) and crisis texting (Crisis Text Line: 741741, 988, Trevor Project: 866-488-7386).
+ *    - Never Use Alone (NEVER_USE_ALONE in content/hotlines.js) and crisis texting (Crisis Text Line: 741741, 988, Trevor Project: 866-488-7386).
  *
  * 6. Interactive Ephemeral Assessment / Decision Aid & Printable Handout:
  *    - Ephemeral in-RAM state tracking (zero device storage, session storage, or cookies).
@@ -69,6 +69,7 @@ import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetAdolescentState);
@@ -1084,7 +1085,7 @@ const HARM_REDUCTION_DATA = [
       },
       {
         name: 'Never Use Alone Inc.',
-        action: 'Call 1-877-696-1996',
+        action: 'Call ' + NEVER_USE_ALONE.label,
         desc: {
           en: 'A compassionate operator stays on the phone while you use; dispatches EMS only if you stop responding.',
           es: 'Un operador capacitado permanece en la línea mientras consumes; llama al 911 solo si dejas de responder.',
@@ -1599,7 +1600,7 @@ export function formatAdolescentSummaryText(state = getAdolescentState()) {
   lines.push('  * Crisis Text Line: Text HOME to 741741');
   lines.push('  * Suicide & Crisis Lifeline: Call or Text 988');
   lines.push('  * The Trevor Project (LGBTQ+ Youth): Call 1-866-488-7386 or Text START to 678-678');
-  lines.push('  * Never Use Alone: Call 1-877-696-1996');
+  lines.push('  * Never Use Alone: Call ' + NEVER_USE_ALONE.label);
   lines.push('');
 
   if (evaluation.redFlags.length > 0) {
@@ -1760,7 +1761,7 @@ export function adolescentCareView({ query } = {}) {
         h('li', null, strong(tr('Crisis Text Line: ', 'Línea de Texto en Crisis: ')), sms('741741', 'HOME', 'Text HOME to 741741', { class: 'btn btn-small btn-secondary' }), tr(' - Free, 24/7 confidential crisis texting.', ' - Mensajes de texto confidenciales 24/7.')),
         h('li', null, strong(tr('Suicide & Crisis Lifeline: ', 'Línea 988: ')), tel('988', 'Call/Text 988', { class: 'btn btn-small btn-primary' }), tr(' - Mental health & substance crisis.', ' - Crisis de salud mental y sustancias.')),
         h('li', null, strong(tr('The Trevor Project (LGBTQ+ Youth): ', 'The Trevor Project (Jóvenes LGBTQ+): ')), tel('18664887386', '1-866-488-7386', { class: 'btn btn-small btn-secondary' }), tr(' or text START to 678-678.', ' o envíe START al 678-678.')),
-        h('li', null, strong(tr('Never Use Alone: ', 'Never Use Alone: ')), tel('18776961996', '1-877-696-1996', { class: 'btn btn-small btn-ghost' }), tr(' - Overdose detection lifeline.', ' - Línea de prevención de sobredosis.'))
+        h('li', null, strong(tr('Never Use Alone: ', 'Never Use Alone: ')), tel(NEVER_USE_ALONE.number, NEVER_USE_ALONE.label, { class: 'btn btn-small btn-ghost' }), tr(' - Overdose detection lifeline.', ' - Línea de prevención de sobredosis.'))
       )
     );
 

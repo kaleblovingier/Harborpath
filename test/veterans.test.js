@@ -158,7 +158,8 @@ test('TRICARE_CARE_LEVELS exports care levels, plans, and authorization requirem
   // Regional Contractors metadata
   assert.ok(TRICARE_CARE_LEVELS.REGIONS, 'Must export REGIONS metadata');
   assert.equal(TRICARE_CARE_LEVELS.REGIONS.east.phone, '1-800-444-5445');
-  assert.equal(TRICARE_CARE_LEVELS.REGIONS.west.phone, '1-844-866-9378');
+  assert.equal(TRICARE_CARE_LEVELS.REGIONS.west.phone, '1-888-874-9378');
+  assert.equal(TRICARE_CARE_LEVELS.REGIONS.west.contractor, 'TriWest Healthcare Alliance');
 });
 
 test('MST_PROTECTIONS exports complete statutory rights under 38 U.S.C. § 1720D & § 1720I', () => {

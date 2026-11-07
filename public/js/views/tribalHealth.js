@@ -910,12 +910,12 @@ export function tribalHealthView(containerOrOptions = {}, maybeOptions = {}) {
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'StrongHearts Native Helpline (24/7):' : 'StrongHearts Native Helpline:'),
       h('span', {}, ' '),
-      tel('1-844-762-8483', { class: 'hotline-link' })
+      tel('1-844-762-8483', null, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea 988 (Presione 4 para apoyo indígena):' : '988 Lifeline (Press 4 for Native Line):'),
       h('span', {}, ' '),
-      tel('988', { class: 'hotline-link' })
+      tel('988', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);

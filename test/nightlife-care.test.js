@@ -190,7 +190,7 @@ describe('Nightlife & Festival Harm Reduction Module (Wave 20)', () => {
     assert.match(enText, /HARBORPATH NIGHTLIFE & FESTIVAL HARM REDUCTION/);
     assert.match(enText, /Zero device storage/);
     assert.match(enText, /Never Use Alone/);
-    assert.match(enText, /877-696-1997/);
+    assert.match(enText, /Never Use Alone[^\n]*1-800-484-3731/); // hotlines.js primary (877-696-1997 was a wrong number)
 
     const esText = formatNightlifeSummaryText({
       selectedSubstances: ['mdma', 'ketamine'],

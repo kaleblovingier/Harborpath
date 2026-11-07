@@ -1043,7 +1043,7 @@ export function evaluateAsamCare(answers = {}) {
     clinicalNotes.push(
       t(
         'nav.note.telehealth',
-        'Telehealth Access (SAMHSA / DEA Telemedicine Flexibilities): Under federal rules, clinicians can initiate buprenorphine (BU) and provide outpatient counseling via audio-video or audio-only telehealth visits (code TELE) without requiring an in-person exam first.',
+        'Telehealth Access (DEA rules, as of late 2026; code TELE): Outpatient counseling can be offered by video or phone, and buprenorphine for opioid use disorder can be started by telehealth without an in-person visit. Temporary DEA/HHS telemedicine flexibilities run through Dec. 31, 2026. Separately, a permanent DEA rule (21 CFR § 1306.51, in effect since the end of 2025) allows starting it by video or audio-only phone visit for an initial supply of up to 6 months after a state prescription-monitoring (PDMP) check; after that, continued prescribing needs an in-person exam or another permitted form of telemedicine, such as a video visit. State rules and individual prescribers may be stricter, and federal rules may change after 2026.',
       ),
     );
   }

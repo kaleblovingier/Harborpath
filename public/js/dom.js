@@ -75,13 +75,35 @@ export function digits(phone) {
   return String(phone ?? '').replace(/[^\d+]/g, '');
 }
 
+// True for a plain `{ ... }` props object (not a Node, array, string or number).
+// Lets tel()/sms() tolerate a props object passed where display text was expected,
+// so a call like tel('988', { class: 'x' }) never renders "[object Object]".
+function isPlainProps(value) {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false;
+  if (typeof Node !== 'undefined' && value instanceof Node) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
 /** Phone link. `display` defaults to the number itself. */
 export function tel(number, display, props = {}) {
+  if (isPlainProps(display)) {
+    props = { ...display, ...props };
+    display = undefined;
+  }
   return h('a', { href: `tel:${digits(number)}`, class: 'tel', ...props }, display ?? number);
 }
 
 /** SMS link. "?&body=" is the form that pre-fills the message on both iOS and Android. */
 export function sms(number, body, display, props = {}) {
+  if (isPlainProps(body)) {
+    props = { ...body, ...props };
+    body = undefined;
+  }
+  if (isPlainProps(display)) {
+    props = { ...display, ...props };
+    display = undefined;
+  }
   const href = body ? `sms:${digits(number)}?&body=${encodeURIComponent(body)}` : `sms:${digits(number)}`;
   return h('a', { href, class: 'tel', ...props }, display ?? number);
 }

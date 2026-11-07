@@ -32,7 +32,7 @@ Evaluates insurance and safety-net affordability in browser RAM without transmit
 
 Step-by-step guided triage that walks visitors through care needs in plain language using pure on-device functions:
 
-- **Instant Crisis & Overdose Red-Flag Interception**: Immediately intercepts life-threatening withdrawal, overdose, or mental health crisis signals and routes to **988** (Suicide & Crisis Lifeline), **911**, **Never Use Alone (`877-696-1996` / `800-484-3731`)**, **SafeSpot (`800-972-0590`)**, and `#/overdose` before any routine directory search.
+- **Instant Crisis & Overdose Red-Flag Interception**: Immediately intercepts life-threatening withdrawal, overdose, or mental health crisis signals and routes to **988** (Suicide & Crisis Lifeline), **911**, **Never Use Alone (`800-484-3731`, backup `877-696-1996`)**, **SafeSpot (`800-972-0590`)**, and `#/overdose` before any routine directory search.
 - **Zero Network Leakage**: Executes 100% locally in browser RAM with zero `fetch()` calls, zero external URLs, and zero persistent storage.
 
 ## 4. Rural & U.S. Territory Equity & `@media print` Clinical Handouts

@@ -2,6 +2,7 @@ import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
 import { onQuickExit } from '../state.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetAssessmentState);
@@ -746,7 +747,7 @@ export function formatAssessmentReportText(state = inMemoryAssessmentState) {
     '24/7 IMMEDIATE CRISIS & OVERDOSE RESOURCES:',
     '• 988 Suicide & Crisis Lifeline: Call or text 988 (free, confidential, 24/7)',
     '• SAMHSA National Helpline: 1-800-662-4357 (treatment locator & referral, 24/7)',
-    '• Never Use Alone: 1-877-696-1996 (overdose prevention call while using)',
+    '• Never Use Alone: ' + NEVER_USE_ALONE.label + ' (overdose prevention call while using)',
     '• Overdose Emergency: If person is unresponsive, administer Naloxone (Narcan) and call 911.',
     '',
     'PATIENT RIGHTS & LEGAL PROTECTIONS:',

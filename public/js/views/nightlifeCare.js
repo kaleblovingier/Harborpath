@@ -5,6 +5,7 @@
 
 import { h, clear, icon } from '../dom.js';
 import { t, getLang } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & NIGHTLIFE SUBSTANCE PROFILES
@@ -390,7 +391,7 @@ export function formatNightlifeSummaryText(state = nightlifeState, lang = 'en') 
     lines.push(`- ${isEs ? pt.tipEs : pt.tipEn}`);
   });
   lines.push('');
-  lines.push(isEs ? 'Línea de Acompañamiento Never Use Alone: 877-696-1997' : 'Never Use Alone Hotline: 877-696-1997');
+  lines.push(isEs ? 'Línea de Acompañamiento Never Use Alone: ' + NEVER_USE_ALONE.label : 'Never Use Alone Hotline: ' + NEVER_USE_ALONE.label);
   lines.push(isEs ? 'Emergencias Médicas: 911 | Centro de Toxicología: 800-222-1222' : 'Medical Emergencies: 911 | Poison Control: 800-222-1222');
 
   return lines.join('\n');
