@@ -786,12 +786,12 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Emergencias Quirúrgicas / Sepsis:' : 'Emergency Surgical / Sepsis:'),
       h('span', {}, ' '),
-      tel('911', { class: 'hotline-link text-danger' })
+      tel('911', null, { class: 'hotline-link text-danger' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea Poison Help (24/7):' : 'Poison Help Line (24/7):'),
       h('span', {}, ' '),
-      tel('1-800-222-1222', { class: 'hotline-link' })
+      tel('1-800-222-1222', null, { class: 'hotline-link' })
     )
   );
   const hospCard = h('div', { class: 'card mt-3 no-print' },

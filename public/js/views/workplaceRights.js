@@ -841,12 +841,12 @@ In accordance with ADA Title I and EEOC enforcement guidance, I request verifica
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Ayuda SAMHSA:' : 'SAMHSA National Helpline:'),
       h('span', {}, ' '),
-      tel('800-662-4357', { class: 'hotline-link' })
+      tel('800-662-4357', null, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Crisis 988:' : '988 Suicide & Crisis Lifeline:'),
       h('span', {}, ' '),
-      tel('988', { class: 'hotline-link' })
+      tel('988', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);
