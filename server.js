@@ -6,8 +6,8 @@ const host = process.env.HOST || '0.0.0.0';
 
 const handler = createApp({
   // Behind a load balancer, rate limiting must key on the client IP from
-  // X-Forwarded-For. Vercel always sets it; elsewhere opt in with TRUST_PROXY=1
-  // (or TRUST_PROXY=2 and so on, for that many proxies in front of the server).
+  // X-Forwarded-For. Vercel always sets it; elsewhere opt in with TRUST_PROXY=1.
+  // TRUST_PROXY is the number of proxies that append to X-Forwarded-For.
   trustProxy: trustProxyFromEnv(process.env),
 });
 

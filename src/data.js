@@ -20,6 +20,7 @@ export const DATA_LOADERS = {
   vaFacilities: () => JSON.parse(readFileSync(new URL('../data/va-facilities.json', import.meta.url), 'utf8')),
   ihsFacilities: () => JSON.parse(readFileSync(new URL('../data/ihs-facilities.json', import.meta.url), 'utf8')),
   erHospitals: () => JSON.parse(readFileSync(new URL('../data/er-hospitals.json', import.meta.url), 'utf8')),
+  virtualProviders: () => JSON.parse(readFileSync(new URL('../data/virtual-providers.json', import.meta.url), 'utf8')),
   ruralHealthClinics: () => JSON.parse(readFileSync(new URL('../data/rural-health-clinics.json', import.meta.url), 'utf8')),
 };
 

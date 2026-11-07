@@ -79,6 +79,24 @@ export function setPersist(on) {
   emit();
 }
 
+// Modules that keep answers or progress in memory register a reset here when
+// they load. Quick Exit then clears exactly what is in memory, without fetching
+// (and, through an offline worker, saving again) a module that was never opened.
+const quickExitHandlers = new Set();
+
+/** Register a function that Quick Exit calls to clear this module's state. */
+export function onQuickExit(fn) {
+  if (typeof fn === 'function') quickExitHandlers.add(fn);
+  return () => quickExitHandlers.delete(fn);
+}
+
+/** Run every registered Quick Exit reset; one failure never stops the rest. */
+export function runQuickExitHandlers() {
+  for (const fn of quickExitHandlers) {
+    try { fn(); } catch { /* keep clearing the others */ }
+  }
+}
+
 /** Forget everything this site stored, in memory and on the device. */
 export function wipeAll() {
   state.location = null;

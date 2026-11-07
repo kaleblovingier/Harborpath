@@ -5,7 +5,7 @@ import { locationPicker } from './locationPicker.js';
 import { treatmentCard, healthCenterCard } from './facilityCard.js';
 import { treatmentReach, healthCenterReach } from './reach.js';
 import { statePanel } from './stateResources.js';
-import { t, tp, formatNumber } from '../i18n.js';
+import { t, tp, formatNumber, getLang } from '../i18n.js';
 
 const MAX_FILTERS = 8;
 
@@ -28,9 +28,67 @@ function errorBox(err, onRetry) {
   );
 }
 
-function skeleton(n = 3) {
+export function skeleton(n = 3) {
   return Array.from({ length: n }, () => h('div', { class: 'card skeleton', 'aria-hidden': 'true' },
-    h('div', { class: 'sk sk-title' }), h('div', { class: 'sk sk-line' }), h('div', { class: 'sk sk-line short' })));
+    h('div', { class: 'sk sk-title' }),
+    h('div', { class: 'sk sk-line' }),
+    h('div', { class: 'sk-badges sk-badgeRow' },
+      h('span', { class: 'sk sk-pill' }),
+      h('span', { class: 'sk sk-pill' }),
+      h('span', { class: 'sk sk-pill' }),
+    ),
+    h('div', { class: 'sk sk-line short' }),
+  ));
+}
+
+export function harmReductionSupplyBanner() {
+  const isEs = getLang() === 'es';
+  return h('div', {
+    class: 'callout callout-info harm-reduction-callout',
+    role: 'region',
+    'aria-label': isEs
+      ? 'Vías de acceso a suministros de reducción de daños y prevención de sobredosis'
+      : 'Harm reduction supply access pathways & overdose prevention',
+  },
+    h('p', { class: 'callout-title' },
+      icon('shield'),
+      isEs
+        ? 'Vías de acceso rápido: Suministros de reducción de daños y naloxona'
+        : 'Quick access: Harm reduction supplies, naloxone & test strips',
+    ),
+    h('p', null,
+      isEs
+        ? 'Si busca naloxona, tiras reactivas o jeringas estériles, existen vías comunitarias gratuitas y sin barreras además de las clínicas de tratamiento:'
+        : 'If you are looking for naloxone, test strips, or sterile supplies, free community options exist alongside licensed clinics:'),
+    h('ul', null,
+      h('li', null,
+        h('strong', null, isEs ? 'Programas de Servicios de Jeringas (SSP): ' : 'Syringe Services Programs (SSPs): '),
+        isEs
+          ? 'Proporcionan jeringas nuevas, eliminación segura, tiras para fentanilo/xilacina y naloxona gratuita sin preguntas ni citas. Encuentre un programa en el '
+          : 'Provide sterile syringes, safe sharps disposal, fentanyl/xylazine test strips, and free naloxone with zero judgment or appointments. Find one in the ',
+        ext('https://nasen.org/directory/', isEs ? 'Directorio nacional NASEN' : 'NASEN Syringe Access Directory'),
+        '.'),
+      h('li', null,
+        h('strong', null, isEs ? 'Máquinas expendedoras comunitarias y unidades móviles: ' : 'Community naloxone vending machines & mobile vans: '),
+        isEs
+          ? 'Muchas ciudades y condados ofrecen máquinas expendedoras 24/7 sin costo ni identificación en bibliotecas, estaciones de bomberos y centros de salud, además de camionetas móviles comunitarias.'
+          : 'Many counties offer 24/7 exterior vending machines (free, zero ID or registration required) outside health departments, fire stations, and transit centers, as well as mobile outreach vans.'),
+      h('li', null,
+        h('strong', null, isEs ? 'Envío discreto por correo (NEXT Distro): ' : 'Mail-based anonymous delivery (NEXT Distro): '),
+        isEs
+          ? 'Si no cuenta con un programa presencial cercano, solicite naloxona gratuita por correo en un paquete sin marcas a través de '
+          : 'If you lack nearby in-person access, request free mail-delivered naloxone and supplies in plain, unmarked packaging via ',
+        ext('https://nextdistro.org/naloxone', 'NEXT Distro'),
+        '.'),
+      h('li', null,
+        h('strong', null, isEs ? 'Tarjetas de acción imprimibles y leyes de protección: ' : 'Printable action cards & Good Samaritan protections: '),
+        isEs
+          ? 'Consulte la guía paso a paso de las leyes del Buen Samaritano al llamar al 911 e imprima tarjetas de respuesta rápida en la '
+          : 'Review step-by-step 911 Good Samaritan overdose legal immunities and print pocket action cards in the ',
+        h('a', { href: '#/harm-reduction' }, isEs ? 'Guía de reducción de daños' : 'Harm Reduction Hub'),
+        '.'),
+    ),
+  );
 }
 
 /**
@@ -40,6 +98,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
   const selected = new Set(initialCodes);
   let page = 1;
   let results = [];
+  let relaxed = null;
   let totalPages = 0;
   let total = 0;
   let controller;
@@ -47,7 +106,12 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
   const statusLine = h('p', { class: 'results-status', role: 'status' });
   const list = h('div', { class: 'results-list' });
   const more = h('div', { class: 'results-more' });
-  const activeChips = h('div', { class: 'active-filters' });
+  const activeChips = h('div', {
+    class: 'active-filters',
+    role: 'region',
+    'aria-label': t('finder.activeFiltersRegion', 'Active search filters'),
+  });
+  const harmNoticeSlot = h('div', { class: 'finder-harm-reduction-slot' });
   const filterCount = h('span', { class: 'count' });
   const limitNote = h('p', { class: 'help', hidden: true },
     t('finder.maxFilters', 'You can combine up to {n} filters.', { n: MAX_FILTERS }));
@@ -80,6 +144,10 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     limitNote.hidden = !full;
     filterCount.textContent = selected.size ? String(selected.size) : '';
     clear(activeChips);
+    clear(harmNoticeSlot);
+    if (selected.has('NOE')) {
+      harmNoticeSlot.append(harmReductionSupplyBanner());
+    }
     if (selected.size) {
       activeChips.append(
         ...[...selected].map((code) => h('button', {
@@ -116,6 +184,52 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
       statusLine.textContent = t('finder.noneFound', 'No {noun} found within {miles} miles of {label}.', {
         noun, miles: state.radius, label: state.location.label,
       });
+      if (relaxed?.results?.length > 0) {
+        const reqCodes = Array.isArray(relaxed.requestedCodes) && relaxed.requestedCodes.length
+          ? relaxed.requestedCodes
+          : [...selected];
+        list.append(
+          h('section', {
+            class: 'relaxed-matches',
+            role: 'region',
+            'aria-label': t('finder.relaxedRegion', 'Closest partial matches'),
+          },
+            h('div', { class: 'callout callout-info relaxed-header' },
+              h('p', { class: 'callout-title' },
+                icon('info'),
+                t('finder.relaxedHeading', 'No exact match for all {n} filters — showing closest partial matches', { n: reqCodes.length }),
+              ),
+              h('p', null,
+                t('finder.relaxedBody', 'No facility within {miles} miles listed all {n} selected filters at once. These nearby facilities match the most filters you picked—call ahead to confirm additional services.', {
+                  miles: state.radius,
+                  n: reqCodes.length,
+                }),
+              ),
+            ),
+            h('div', { class: 'results-list relaxed-list' },
+              ...relaxed.results.map((f) => treatmentCard(f, { requestedCodes: reqCodes, labelFor })),
+            ),
+          ),
+        );
+      }
+      if (selected.has('NOE')) {
+        const isEs = getLang() === 'es';
+        list.append(h('div', { class: 'callout callout-info harm-empty-help' },
+          h('p', { class: 'callout-title' }, icon('shield'),
+            isEs ? 'Opciones comunitarias y gratuitas de naloxona y suministros:' : 'Free community harm reduction supplies & naloxone options:'),
+          h('ul', null,
+            h('li', null,
+              isEs ? 'Los Programas de Servicios de Jeringas (SSP) ofrecen suministros estériles, tiras reactivas y naloxona sin citas ni costo. ' : 'Syringe Services Programs (SSPs) provide sterile supplies, test strips, and free naloxone without appointments. ',
+              ext('https://nasen.org/directory/', isEs ? 'Directorio nacional NASEN' : 'Find an SSP on the NASEN Directory'), '.'),
+            h('li', null,
+              isEs ? 'Envío gratuito y confidencial de naloxona por correo a través de ' : 'Free mail-based naloxone delivered confidentially via ',
+              ext('https://nextdistro.org/naloxone', 'NEXT Distro'), '.'),
+            h('li', null,
+              isEs ? 'Máquinas expendedoras 24/7 y camionetas móviles comunitarias. Conozca más en el ' : 'Community naloxone vending machines and mobile outreach vans offer 24/7 barrier-free supplies. Learn more in the ',
+              h('a', { href: '#/harm-reduction' }, isEs ? 'Centro de reducción de daños' : 'Harm Reduction Hub'), '.'),
+          ),
+        ));
+      }
       list.append(h('div', { class: 'empty' },
         h('p', null, selected.size
           ? t('finder.noneFiltered', 'No listings match every filter you picked. Try removing a filter or searching a wider area.')
@@ -149,11 +263,28 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     }
   }
 
+  const resultsContainer = h('div', { class: 'results', 'aria-busy': 'false' },
+    activeChips,
+    harmNoticeSlot,
+    statusLine,
+    list,
+    more,
+    h('p', { class: 'source-note' },
+      t('finder.sourceSamhsa1', 'Listings come live from '),
+      ext(t('url.findtreatment', 'https://findtreatment.gov/'), 'SAMHSA FindTreatment.gov'),
+      t('finder.sourceSamhsa2', ', the federal directory of state-licensed facilities. HarborPath never accepts payment for placement or referrals.')),
+  );
+
   async function run(nextPage) {
-    if (!state.location) return renderResults();
+    if (!state.location) {
+      resultsContainer.setAttribute('aria-busy', 'false');
+      return renderResults();
+    }
     controller?.abort();
     controller = new AbortController();
+    resultsContainer.setAttribute('aria-busy', 'true');
     if (nextPage === 1) {
+      relaxed = null;
       clear(list).append(...skeleton());
       clear(more);
       statusLine.textContent = t('finder.searchingShort', 'Searching…');
@@ -169,10 +300,13 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
       totalPages = data.totalPages;
       total = data.total;
       results = nextPage === 1 ? data.results : results.concat(data.results);
+      relaxed = nextPage === 1 ? (data.relaxed ?? null) : null;
+      resultsContainer.setAttribute('aria-busy', 'false');
       renderResults();
       if (nextPage === 1) announce(statusLine.textContent);
     } catch (err) {
       if (err.name === 'AbortError') return;
+      resultsContainer.setAttribute('aria-busy', 'false');
       clear(more);
       statusLine.textContent = '';
       if (nextPage === 1) clear(list).append(errorBox(err, () => run(1)));
@@ -183,27 +317,24 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
   const search = () => run(1);
   const loadMore = () => run(page + 1);
 
-  const wide = window.matchMedia('(min-width: 960px)').matches;
+  const wide = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia('(min-width: 960px)').matches
+    : false;
   syncFilters();
 
   const el = h('div', { class: 'finder' },
     h('div', { class: 'card finder-search' }, locationPicker({ onChange: search })),
     h('div', { class: 'finder-body' },
       // Collapsed on phones so results stay above the fold; active filters show as chips.
-      h('details', { class: 'filters', open: wide },
+      h('details', {
+        class: 'filters',
+        open: wide,
+        'aria-label': t('finder.filtersRegion', 'Search filters'),
+      },
         h('summary', null, icon('sliders'), t('finder.filters', 'Filters '), filterCount),
         h('div', { class: 'filters-inner' }, limitNote, groups),
       ),
-      h('div', { class: 'results', 'aria-busy': 'false' },
-        activeChips,
-        statusLine,
-        list,
-        more,
-        h('p', { class: 'source-note' },
-          t('finder.sourceSamhsa1', 'Listings come live from '),
-          ext(t('url.findtreatment', 'https://findtreatment.gov/'), 'SAMHSA FindTreatment.gov'),
-          t('finder.sourceSamhsa2', ', the federal directory of state-licensed facilities. HarborPath never accepts payment for placement or referrals.')),
-      ),
+      resultsContainer,
     ),
     statePanel(),
   );
@@ -217,6 +348,14 @@ export function healthCenterFinder() {
   let controller;
   const statusLine = h('p', { class: 'results-status', role: 'status' });
   const list = h('div', { class: 'results-list' });
+  const resultsContainer = h('div', { class: 'results', 'aria-busy': 'false' },
+    statusLine,
+    list,
+    h('p', { class: 'source-note' },
+      t('finder.sourceHrsa1', 'Sites from the '),
+      ext('https://data.hrsa.gov/', 'HRSA Health Center Program'),
+      t('finder.sourceHrsa2', ' dataset. Health centers serve everyone, insured or not, and offer fees based on income. Call to confirm hours and services.')),
+  );
 
   function widen(newRadius) {
     setRadius(newRadius);
@@ -226,6 +365,7 @@ export function healthCenterFinder() {
   async function search() {
     clear(list);
     if (!state.location) {
+      resultsContainer.setAttribute('aria-busy', 'false');
       statusLine.textContent = '';
       list.append(h('div', { class: 'empty' }, icon('search'),
         h('p', null, t('finder.enterLocationCenters', 'Enter a ZIP code or city to see health centers near you.'))));
@@ -233,10 +373,12 @@ export function healthCenterFinder() {
     }
     controller?.abort();
     controller = new AbortController();
+    resultsContainer.setAttribute('aria-busy', 'true');
     list.append(...skeleton(2));
     statusLine.textContent = t('finder.searchingShort', 'Searching…');
     try {
       const data = await api.healthCenters({ lat: state.location.lat, lng: state.location.lng, radius: state.radius }, controller.signal);
+      resultsContainer.setAttribute('aria-busy', 'false');
       clear(list);
       if (!data.results.length) {
         statusLine.textContent = t('finder.noCenters', 'No health center sites within {miles} miles of {label}.', {
@@ -263,6 +405,7 @@ export function healthCenterFinder() {
       }
     } catch (err) {
       if (err.name === 'AbortError') return;
+      resultsContainer.setAttribute('aria-busy', 'false');
       statusLine.textContent = '';
       clear(list).append(h('div', { class: 'callout callout-warn', role: 'alert' },
         h('p', null, err.message, ' ', ext('https://findahealthcenter.hrsa.gov/', t('finder.useHrsa', 'Use HRSA’s Find a Health Center')), '.')));
@@ -271,14 +414,7 @@ export function healthCenterFinder() {
 
   const el = h('div', { class: 'finder finder-simple' },
     h('div', { class: 'card finder-search' }, locationPicker({ onChange: search })),
-    h('div', { class: 'results' },
-      statusLine,
-      list,
-      h('p', { class: 'source-note' },
-        t('finder.sourceHrsa1', 'Sites from the '),
-        ext('https://data.hrsa.gov/', 'HRSA Health Center Program'),
-        t('finder.sourceHrsa2', ' dataset. Health centers serve everyone, insured or not, and offer fees based on income. Call to confirm hours and services.')),
-    ),
+    resultsContainer,
     statePanel(),
   );
   search();

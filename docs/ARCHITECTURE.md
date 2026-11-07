@@ -30,12 +30,13 @@ All responses are JSON with `Cache-Control: no-store` and the same security head
 | Endpoint | Parameters | Notes |
 | --- | --- | --- |
 | `GET /api/geocode` | `q` (required, up to 200 characters): a ZIP, "City, ST", or "City State" | Up to 8 matches. PO-box-only ZIPs fall back to a nearby ZIP with the same 3-digit prefix. |
-| `GET /api/treatment` | `lat`, `lng`, `radius`, `kind` (`sa` or `mh`), `codes` (comma-separated, up to 8), `page` (1 to 40) | Codes are combined with AND by SAMHSA. 25 results per page. `stale: true` marks an answer served from cache while FindTreatment.gov is down. With 2+ codes and no results, `relaxed` lists near-matches. |
+| `GET /api/treatment` | `lat`, `lng`, `radius` (5, 10, 25, 50, 100, 200, or 250), `kind` (`sa` or `mh`), `codes` (comma-separated, up to 8), `page` (1 to 40) | Codes are combined with AND by SAMHSA. 25 results per page. `stale: true` marks an answer served from cache while FindTreatment.gov is down. With 2+ codes and no results, `relaxed` lists near-matches. |
 | `GET /api/telehealth` | `state` (required), optional `lat` + `lng`, `kind`, `codes` (up to 7 besides `TELE`), `page` | Statewide telehealth programs. Without coordinates, results are sorted by name with `miles: null`. Same `stale` behavior as treatment. |
 | `GET /api/health-centers` | `lat`, `lng`, `radius` | The 30 nearest HRSA sites plus the total count in range. |
+| `GET /api/virtual-providers` | `state` (optional) | Reviewed online treatment programs available in that state. See `docs/SPEC.md`. |
 | `GET /api/providers` | `lat`, `lng`, `type` (`va`, `ihs`, `er`, `rhc`), `radius`, optional `filter` (`va`: `health`/`vetcenter`; `ihs`: `bh`/`sud`) | The 30 nearest sites plus the total count. |
 | `GET /api/nearby-summary` | `lat`, `lng`, `radius` | Counts and the nearest site per network, plus the state agency and Medicaid contacts. No upstream calls. |
-| `GET /api/region` | `zip` (5 digits, optional `-1234`), or `lat` + `lng` | `{ region, nearby }`: the state or territory, plus neighbors near a border. |
+| `GET /api/region` | `zip` (5 digits, optional `-1234`), or `lat` + `lng` | `{ region, nearby, borderingStates }`: the state or territory, plus neighbors near a border. A `zip` that is not a ZIP answers `region: null`. |
 | `GET /api/states` | | Every state and territory with resources. |
 | `GET /api/state` | `code` (two letters) | One jurisdiction's agency, Medicaid, and harm reduction links. `404` for an unknown code. |
 | `GET /api/freshness` | | When each bundled dataset was last updated (see below). |
@@ -61,7 +62,7 @@ Error messages are fixed text. They never repeat what was sent, so a response ca
 
 ### Upstream resilience
 
-Treatment and telehealth searches share one client (`fetchListingPage` in `src/findtreatment.js`):
+Treatment and telehealth searches share one client (`fetchListingPage` in `src/findtreatment.js`, built on the helpers in `src/upstream.js`):
 
 - **Hard deadline.** Each search gets 15 seconds in total, including retries. The timer aborts the fetch and also rejects on its own, so a response that never ends cannot hang a request.
 - **Retries.** Network errors and `5xx` responses are retried up to twice with jittered exponential backoff, only while time remains. `4xx`, `429`, and malformed bodies are not retried.
@@ -97,9 +98,9 @@ Treatment and telehealth searches share one client (`fetchListingPage` in `src/f
 
 ### Rate limiting and proxies
 
-Each client gets 120 API requests a minute. The limiter tracks at most 50,000 addresses per window; past that, new addresses share one bucket. Keys stay in memory for one window and are never logged.
+Each client gets 120 API requests a minute (`/api/health` is never limited, so liveness probes always answer). The limiter tracks at most 10,000 addresses per window; past that, new addresses are hashed into 1,024 overflow buckets with a per-process salt, so memory stays bounded and a flood of addresses cannot lock out every new visitor at once. IPv6 clients are keyed by /64. Keys stay in memory for one window and are never logged.
 
-Behind a load balancer, set `TRUST_PROXY` to the number of proxies in front of the server (`1` for one; Vercel counts as one automatically). The client address is then the entry that many places from the **right** of `X-Forwarded-For`, which the trusted proxies wrote. Entries further left came from the client and could be forged, so they are never used. Without `TRUST_PROXY`, the header is ignored.
+Behind a load balancer, set `TRUST_PROXY` to the number of proxies in front of the server (`1` for one; Vercel counts as one automatically). The client address is then the entry that many places from the **right** of `X-Forwarded-For`, which the trusted proxies wrote. Entries further left came from the client and could be forged, so they are never used. If the header has fewer entries than `TRUST_PROXY`, it is not trusted and the socket address is used. Without `TRUST_PROXY`, the header is ignored.
 
 ## Privacy decisions
 
@@ -113,6 +114,8 @@ Behind a load balancer, set `TRUST_PROXY` to the number of proxies in front of t
 | Location stays in memory only; saved list is opt-in persistent | `public/js/state.js` |
 | Quick exit wipes state and calls `location.replace()`; internal navigation also uses `replace()`, so the site holds one history entry | `public/js/app.js` |
 | All DOM text set through `textContent`, never `innerHTML` | `public/js/dom.js` `h()` |
+| Filters in the hash (`?codes=`, `?tab=`…) are read once, kept in memory, and stripped from the address bar with `history.replaceState`; internal links never put them in the URL | `public/js/app.js` `parseHash` and the click handler |
+| The Privacy page states the real data flows, including host access logs that can hold query strings with IP addresses, and includes a consumer health data privacy notice | `public/js/views/core.js` `privacyView` |
 
 HarborPath stores no personal health information, so it is not a HIPAA covered entity or a 42 CFR Part 2 program. The consent-vault design in `legacy/` is not part of this build.
 
@@ -136,3 +139,15 @@ There is no build step: native ES modules under `public/js/`.
 - `views/`: page content. Guidance is sourced inline from SAMHSA, CDC, FDA, NIDA, NIAAA, and HRSA.
 - `content/hotlines.js`: national support lines, the single source for every page that lists them
 - `codes.js`: plain-language filter groups and badge rules on top of SAMHSA service codes
+
+## Safety checks
+
+The client has no build step, so one missing module or misspelled import stops the whole app from loading in the browser, even while every server test passes. That once happened when a commit replaced `public/js/views/navigator.js` with the literal text `$(cat /tmp/navigator_updated.js)`. These `npm test` suites guard against it, and CI (`.github/workflows/ci.yml`) runs them on every push to `main` and every pull request against `main`, on Node 20 and 22:
+
+| Suite | What it checks |
+| --- | --- |
+| `test/client-modules.test.js` | Walks every module under `public/js`, parses static `import … from`, `export … from`, and literal dynamic `import('…')`, and fails if a relative target file is missing, if a specifier is bare or lacks `.js`, or if a named import (or `default`) is not exported by its target. Also checks that `index.html` loads `/js/app.js`. |
+| `test/file-integrity.test.js` | For tracked text files under `public/`, `src/`, `test/`, and `scripts/`: fails on files that start with an unexpanded shell substitution (`$(cat …`, a backtick `cat`, a bare `$VAR`, a heredoc marker), on empty files, on any imported `.js` module under 50 bytes, and on `.js`/`.json` files in `public/` or `src/` that do not parse (`node --check`, `JSON.parse`). |
+| `test/smoke.test.js` | Boots the real app handler on a random port and requests `index.html` plus every path in `APP_SHELL` in `public/sw.js`, requiring HTTP 200, a non-trivial body, and a JavaScript content type for `.js` files. It also walks the import graph from `app.js` and fails if a reachable module is missing from `APP_SHELL`, because offline mode would then break. |
+
+The checks use regexes and Node built-ins only, with no dependencies. When you add a client module, import it with a relative `.js` path and add it to `APP_SHELL` if the app imports it.

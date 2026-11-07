@@ -30,17 +30,159 @@ function widenButton(radius, onWiden) {
     t('reach.widenTo', 'Search within {n} miles', { n: radius }));
 }
 
+const BUP_CODES = ['BU', 'UB', 'BUM', 'BWN', 'BWON', 'BERI', 'BSDM'];
+
+export function isBupTele(c) {
+  if (!c) return false;
+  if (c.kind === 'virtual' || (Array.isArray(c.services) && Array.isArray(c.conditions))) {
+    const svcs = c.record?.services ?? c.record?.record?.services ?? c.services ?? [];
+    const tele = c.telehealth !== undefined ? c.telehealth : true;
+    return Boolean(tele && svcs.includes('moud-buprenorphine'));
+  }
+  const rawCodes = c.codes ?? c.record?.codes ?? [];
+  const codes = rawCodes instanceof Set ? rawCodes : new Set(rawCodes);
+  const hasTele = c.telehealth || codes.has('TELE');
+  const hasBup = BUP_CODES.some((code) => codes.has(code));
+  return Boolean(hasTele && hasBup);
+}
+
+export function isAudioPhone(c) {
+  if (!c) return false;
+  const isVirt = c.kind === 'virtual' || (Array.isArray(c.services) && Array.isArray(c.conditions));
+  if (isVirt) {
+    const phone = c.record?.phone ?? c.record?.record?.phone ?? c.phone;
+    const enroll = c.record?.enrollmentProcess ?? c.record?.record?.enrollmentProcess ?? c.enrollmentProcess ?? '';
+    return Boolean(phone || /phone/i.test(enroll));
+  }
+  const rawCodes = c.codes ?? c.record?.codes ?? [];
+  const codes = rawCodes instanceof Set ? rawCodes : new Set(rawCodes);
+  const hasTele = c.telehealth || codes.has('TELE');
+  const phone = c.record?.intake ?? c.record?.phone ?? c.intake ?? c.phone;
+  return Boolean(hasTele && phone);
+}
+
+export function isLowBarrier(c) {
+  if (!c) return false;
+  const isVirt = c.kind === 'virtual' || (Array.isArray(c.services) && Array.isArray(c.conditions));
+  if (isVirt) {
+    const proc = c.record?.enrollmentProcess ?? c.record?.record?.enrollmentProcess ?? c.enrollmentProcess ?? '';
+    return /same[- ]day|phone|within|instant|minutes/i.test(proc);
+  }
+  const rawCodes = c.codes ?? c.record?.codes ?? [];
+  const codes = rawCodes instanceof Set ? rawCodes : new Set(rawCodes);
+  const intake = c.record?.intake ?? c.intake;
+  return Boolean(intake) || codes.has('WI') || codes.has('ISC') || codes.has('BIA') || codes.has('BU') || codes.has('UB');
+}
+
+let reachUid = 0;
+
 /**
  * Statewide telehealth programs from SAMHSA's directory, loaded on demand.
  * With a location in the same state, results are nearest first; otherwise A to Z.
+ * Features in-RAM zero-PII filters for DEA/SAMHSA buprenorphine tele-prescribing,
+ * audio-only phone appointments for broadband-insecure rural/tribal areas,
+ * and low-barrier intake criteria.
  */
 export function telehealthList({ region, kind = 'sa', codes = [], autoload = false, headingLevel = 3 }) {
+  const uid = ++reachUid;
   const status = h('p', { class: 'results-status', role: 'status' });
-  const list = h('div', { class: 'results-list' });
+  const list = h('div', {
+    id: `r-list-${uid}`,
+    class: 'results-list telehealth-results-list',
+    tabindex: '0',
+    role: 'region',
+    'aria-label': t('reach.listAria', 'Telehealth treatment programs in {state}', { state: region.name }),
+  });
   const more = h('div', { class: 'results-more' });
   let page = 0;
   let totalPages = 0;
   let loading = false;
+  const allResults = [];
+  const activeFilters = { bupOnly: false, audioOnly: false, lowBarrierOnly: false };
+
+  function renderList(focusId) {
+    clear(list);
+    const filtered = allResults.filter((f) => {
+      if (activeFilters.bupOnly && !isBupTele(f)) return false;
+      if (activeFilters.audioOnly && !isAudioPhone(f)) return false;
+      if (activeFilters.lowBarrierOnly && !isLowBarrier(f)) return false;
+      return true;
+    });
+
+    filtered.sort((a, b) => {
+      const ma = Number.isFinite(a.miles) ? a.miles : Infinity;
+      const mb = Number.isFinite(b.miles) ? b.miles : Infinity;
+      return (ma - mb) || String(a.name).localeCompare(String(b.name));
+    });
+
+    if (!filtered.length && allResults.length > 0) {
+      list.append(h('div', { class: 'callout callout-info' },
+        h('p', null, t('reach.noFilterMatches', 'No loaded telehealth programs match the active filter criteria. Uncheck filters to show all programs.'))));
+    } else {
+      for (const f of filtered) {
+        const card = treatmentCard(f, { headingLevel });
+        const badges = [];
+        if (isBupTele(f)) {
+          badges.push(h('li', { class: 'chip chip-care badge-bup-tele' }, t('reach.chipBupTele', 'DEA/SAMHSA tele-prescribing')));
+        }
+        if (isAudioPhone(f)) {
+          badges.push(h('li', { class: 'chip chip-extra badge-audio' }, t('reach.chipAudio', 'Audio-only phone')));
+        }
+        if (isLowBarrier(f)) {
+          badges.push(h('li', { class: 'chip chip-care badge-lowbarrier' }, t('reach.chipLowBarrier', 'Low-barrier intake')));
+        }
+        if (badges.length > 0) {
+          const badgeWrap = h('ul', { class: 'chips telehealth-chips', 'aria-label': t('reach.flexibilitiesLabel', 'Telehealth flexibilities') }, ...badges);
+          const actions = card.querySelector('.actions');
+          if (actions) card.insertBefore(badgeWrap, actions);
+          else card.append(badgeWrap);
+        }
+        list.append(card);
+      }
+    }
+
+    if (focusId) {
+      const el = document.getElementById(focusId);
+      if (el) el.focus();
+    }
+  }
+
+  function toggleFilter(key, val, focusId) {
+    activeFilters[key] = val;
+    renderList(focusId);
+    const count = list.querySelectorAll('article.facility').length;
+    announce(t('reach.filterCount', 'Showing {n} of {total} telehealth programs in {state}.', {
+      n: count,
+      total: allResults.length,
+      state: region.name,
+    }));
+  }
+
+  function makeToggle(id, label, key) {
+    const input = h('input', { type: 'checkbox', id });
+    input.checked = activeFilters[key];
+    input.addEventListener('change', () => toggleFilter(key, input.checked, id));
+    return h('label', { class: 'check' }, input, label);
+  }
+
+  const bupId = `r-f-bup-${uid}`;
+  const phoneId = `r-f-phone-${uid}`;
+  const lowBarrierId = `r-f-lowbarrier-${uid}`;
+
+  const filterBar = h('div', {
+    class: 'match-filters telehealth-filters',
+    role: 'group',
+    'aria-label': t('reach.filterAria', 'Filter telehealth programs'),
+  },
+    makeToggle(bupId, t('reach.filterBup', 'DEA/SAMHSA buprenorphine tele-prescribing'), 'bupOnly'),
+    makeToggle(phoneId, t('reach.filterPhone', 'Audio-only phone appointments (rural & tribal broadband)'), 'audioOnly'),
+    makeToggle(lowBarrierId, t('reach.filterLowBarrier', 'Low-barrier intake (rapid start / phone intake)'), 'lowBarrierOnly'),
+  );
+
+  const eduCallout = h('div', { class: 'callout callout-info telehealth-guide' },
+    h('p', { class: 'callout-title' }, icon('phone'), t('reach.telehealthEduTitle', 'DEA/SAMHSA Tele-prescribing & Low-Barrier Telehealth')),
+    h('p', null, t('reach.telehealthEduBody', 'Under federal DEA rules as of late 2026, buprenorphine for opioid use disorder can be started by telehealth without an in-person visit. Temporary DEA/HHS telemedicine flexibilities run through Dec. 31, 2026. Separately, a permanent DEA rule (21 CFR § 1306.51, in effect since the end of 2025) allows starting it by video or audio-only phone visit for an initial supply of up to 6 months after a state prescription-monitoring (PDMP) check; after that, continued prescribing needs an in-person exam or another permitted form of telemedicine, such as a video visit. State rules and individual prescribers may be stricter, and federal rules may change after 2026. Audio-only phone visits provide critical access in broadband-insecure rural and tribal areas. Under SAMHSA guidelines, counseling cannot be an arbitrary barrier to starting life-saving medication.')),
+  );
 
   async function load() {
     if (loading) return;
@@ -69,7 +211,17 @@ export function telehealthList({ region, kind = 'sa', codes = [], autoload = fal
         ? t('reach.telehealthCountNear', '{n} programs in {state} offer telehealth. Nearest first.', { n: data.total, state: region.name })
         : t('reach.telehealthCountAll', '{n} programs in {state} offer telehealth, A to Z.', { n: data.total, state: region.name });
       if (page === 1) announce(status.textContent);
-      list.append(...data.results.map((f) => treatmentCard(f, { headingLevel })));
+
+      const existingIds = new Set(allResults.map((x) => x.id));
+      for (const item of data.results) {
+        if (!existingIds.has(item.id)) {
+          allResults.push(item);
+          existingIds.add(item.id);
+        }
+      }
+
+      renderList();
+
       if (page < totalPages) {
         more.append(h('button', { type: 'button', class: 'btn btn-secondary', onclick: load }, t('reach.showMore', 'Show more telehealth programs')));
       }
@@ -82,7 +234,7 @@ export function telehealthList({ region, kind = 'sa', codes = [], autoload = fal
     }
   }
 
-  const root = h('div', { class: 'telehealth-list' }, status, list, more);
+  const root = h('div', { class: 'telehealth-list' }, eduCallout, filterBar, status, list, more);
   if (autoload) load();
   else {
     more.append(h('button', { type: 'button', class: 'btn btn-secondary', onclick: load },

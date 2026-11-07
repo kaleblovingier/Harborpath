@@ -22,24 +22,50 @@ const known = offlineSupported()
 
 /** True when an offline copy is saved on this device. */
 export async function isOfflineSaved() {
-  const reg = await known;
+  await known;
+  const reg = registration;
   if (!reg?.active) return false;
   return (await caches.keys()).some((k) => k.startsWith(CACHE_PREFIX));
 }
 
 /** Register the worker and wait until it has saved the app. */
 export async function saveOffline() {
+  await known;
   registration = await sw.register('/sw.js', { scope: '/', updateViaCache: 'none' });
   const worker = registration.installing || registration.waiting || registration.active;
   if (!worker) throw new Error('Service worker did not start');
-  if (worker.state === 'activated') return;
-  await new Promise((resolve, reject) => {
-    worker.addEventListener('statechange', () => {
-      if (worker.state === 'activated') resolve();
-      // A failed install (for example, the connection dropped) is discarded.
-      if (worker.state === 'redundant') reject(new Error('Saving for offline use failed'));
+  if (worker.state !== 'activated') {
+    await new Promise((resolve, reject) => {
+      const changed = () => {
+        if (worker.state === 'activated' || worker.state === 'redundant') {
+          worker.removeEventListener('statechange', changed);
+          if (worker.state === 'activated') resolve();
+          else reject(new Error('Saving for offline use failed'));
+        }
+      };
+      worker.addEventListener('statechange', changed);
+      changed();
     });
-  });
+  }
+  // Activation precedes clients.claim(). Do not announce "saved" while this
+  // page could still lose an immediate offline navigation to the network.
+  if (!sw.controller) {
+    await new Promise((resolve, reject) => {
+      let timer;
+      const controlled = () => {
+        if (!sw.controller) return;
+        clearTimeout(timer);
+        sw.removeEventListener('controllerchange', controlled);
+        resolve();
+      };
+      timer = setTimeout(() => {
+        sw.removeEventListener('controllerchange', controlled);
+        reject(new Error('Offline control did not become ready'));
+      }, 10000);
+      sw.addEventListener('controllerchange', controlled);
+      controlled();
+    });
+  }
 }
 
 /**

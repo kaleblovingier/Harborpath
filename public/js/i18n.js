@@ -15,7 +15,7 @@
 // - Only an explicit choice in the language switch is saved. Quick exit erases
 //   it with everything else (state.js wipeAll).
 // - Static text in index.html carries data-i18n="key" (text) or
-//   data-i18n-<attr>="key" (aria-label, content, href); its English is the HTML.
+//   data-i18n-<attr>="key" (aria-label, content, href, title); its English is the HTML.
 // - Plurals: tp('key', n, { one: '…', other: '…' }) reads key.one / key.other
 //   (and key.many when a language has it), chosen with Intl.PluralRules.
 // - test/i18n.test.js scans public/ for keys and fails when one is missing from
@@ -120,7 +120,7 @@ function store(code) {
 }
 
 // ---------------------------------------------------------------- Static HTML
-const STATIC_ATTRS = ['aria-label', 'content', 'href'];
+const STATIC_ATTRS = ['aria-label', 'content', 'href', 'title'];
 const originals = new Map(); // element -> { text, attrs: { name: [key, english] } }
 
 function captureStatic(root) {

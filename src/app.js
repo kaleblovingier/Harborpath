@@ -7,12 +7,15 @@ import { createCache, createCircuitBreaker, createRateLimiter } from './cache.js
 import { createGeocoder, readLatLng } from './geo.js';
 import { createHealthCenterIndex } from './healthCenters.js';
 import { createProviderSearch } from './providers.js';
-import { createRegions } from './regions.js';
+import { createRegions, describeRegion, getBorderingStates } from './regions.js';
 import { createStateDirectory } from './stateResources.js';
+import { filterStatesByProtection, getJurisdictionSummary, getLegalProtections, LEGAL_DISCLAIMER } from './legalRegistry.js';
 import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
+import { createVirtualProviders } from './virtualProviders.js';
 import { InputError, UpstreamError, parseRadius, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
 import { DATA_LOADERS, PUBLIC_DIR } from './data.js';
+import { createPrivacyLogger, sanitizeSearchParams } from './privacy.js';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -41,6 +44,7 @@ export const SECURITY_HEADERS = {
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Resource-Policy': 'same-origin',
   'Permissions-Policy': 'geolocation=(self), camera=(), microphone=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
 // Hosts with a CDN (e.g. Vercel) may serve public/ themselves and leave it out
@@ -116,33 +120,60 @@ function acceptedEncodings(header) {
 }
 
 /**
- * The address to rate-limit on. Behind `trustProxy` proxies (true means 1),
- * the client is the entry that many hops from the right of X-Forwarded-For:
- * each trusted proxy appends the address it saw, while anything to the left
- * of those came from the client and can be forged. Taking the leftmost entry
- * would let anyone dodge the limit by sending a fresh fake address each time.
- * The key lives only in the limiter's memory and is never logged.
+ * The rate-limit key for a request.
+ *
+ * The leftmost X-Forwarded-For entries are whatever the client sent, so keying
+ * on them lets anyone dodge the limit with a fake header. Each trusted proxy
+ * appends the address it saw, so with `trustProxy` hops the client is the
+ * entry that many places from the right (Vercel replaces the header with one
+ * entry; one load balancer is 1 hop; a CDN in front of it makes 2).
  */
 export function clientKey(req, trustProxy) {
-  const hops = trustProxy === true ? 1 : Math.max(0, Math.floor(Number(trustProxy) || 0));
-  if (hops > 0) {
-    const fwd = req.headers['x-forwarded-for'];
-    const list = (Array.isArray(fwd) ? fwd.join(',') : String(fwd ?? ''))
-      .split(',').map((s) => s.trim()).filter(Boolean);
-    const picked = list[Math.max(0, list.length - hops)];
-    if (picked) return picked.slice(0, 64);
+  const hops = trustProxy === true ? 1 : Number.isInteger(trustProxy) && trustProxy > 0 ? trustProxy : 0;
+  let addr = null;
+  if (hops) {
+    const raw = req.headers['x-forwarded-for'];
+    const fwd = Array.isArray(raw) ? raw.join(',') : raw;
+    if (typeof fwd === 'string') {
+      const parts = fwd.split(',').map((s) => s.trim());
+      addr = parts.length >= hops ? parts[parts.length - hops] || null : null;
+    }
   }
-  return req.socket?.remoteAddress ?? 'unknown';
+  // The cap bounds the memory one forged entry can take in the limiter.
+  return networkKey(addr ?? req.socket?.remoteAddress ?? 'unknown').slice(0, 64);
 }
 
 /**
- * How many proxies to trust, from the environment: TRUST_PROXY=1..9, or one
- * on Vercel (which always sets X-Forwarded-For). 0 means use the socket
- * address and ignore X-Forwarded-For entirely.
+ * IPv4 addresses key as themselves. IPv6 keys by /64: one subscriber usually
+ * holds a whole /64, so keying on full addresses would hand each client 2^64
+ * fresh keys.
+ */
+export function networkKey(addr) {
+  let s = String(addr).trim().toLowerCase().replace(/%.*$/, '');
+  const mapped = s.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/);
+  if (mapped) return mapped[1];
+  if (!s.includes(':')) return s;
+  const halves = s.split('::');
+  if (halves.length > 2) return s;
+  const groups = (part) => (part ? part.split(':').flatMap((g) => (g.includes('.') ? ['0', '0'] : [g])) : []);
+  const head = groups(halves[0]);
+  const tail = halves.length === 2 ? groups(halves[1]) : [];
+  const fill = halves.length === 2 ? 8 - head.length - tail.length : 0;
+  if (fill < 0 || (halves.length === 1 && head.length !== 8)) return s;
+  if (![...head, ...tail].every((g) => /^[0-9a-f]{1,4}$/.test(g))) return s;
+  const full = [...head, ...Array(fill).fill('0'), ...tail];
+  return `${full.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, '')).join(':')}::/64`;
+}
+
+/**
+ * How many proxies to trust, from the environment: TRUST_PROXY is the number
+ * of proxies that append to X-Forwarded-For (1 to 99), or one on Vercel
+ * (which always sets X-Forwarded-For). 0 means use the socket address and
+ * ignore X-Forwarded-For entirely.
  */
 export function trustProxyFromEnv(env = {}) {
   const v = String(env.TRUST_PROXY ?? '').trim();
-  if (/^[1-9]$/.test(v)) return Number(v);
+  if (/^\d{1,2}$/.test(v) && Number(v) > 0) return Number(v);
   if (v === 'true') return 1;
   return env.VERCEL ? 1 : 0;
 }
@@ -237,6 +268,7 @@ export function createApp({
     ruralHealthClinics: DATA_LOADERS.ruralHealthClinics(),
     meta,
   }));
+  const virtualProviders = once(() => createVirtualProviders(DATA_LOADERS.virtualProviders(), { logger }));
   const staticFiles = loadStatic(fileURLToPath(PUBLIC_DIR));
   // Fresh for 30 minutes, then kept 30 more only to answer if FindTreatment.gov
   // is down: never more than the hour the privacy page promises.
@@ -245,6 +277,7 @@ export function createApp({
   const treatmentCache = createCache({ ttlMs: CACHE_FRESH_MS, staleMs: CACHE_STALE_MS, maxEntries: 1000 });
   const inflight = new Map();
   const limiter = createRateLimiter(rateLimit);
+  const safeLogger = createPrivacyLogger(logger);
   // Shared by treatment and telehealth searches: both call the same upstream.
   const breaker = upstream.breaker ?? createCircuitBreaker();
   const upstreamOptions = { fetchImpl, cache: treatmentCache, inflight, ...upstream, breaker };
@@ -326,16 +359,16 @@ export function createApp({
   }
 
   async function handleApi(req, res, url) {
+    // Liveness checks (container health probes) must never be rate limited.
+    if (url.pathname === '/api/health') return json(req, res, 200, { ok: true });
     if (!limiter.allow(clientKey(req, trustProxy))) {
       return json(req, res, 429, { error: 'Too many searches in a short time. Please wait a minute and try again.' }, {
         'Retry-After': String(limiter.retryAfterSeconds()),
       });
     }
-    const params = url.searchParams;
+    const { cleanParams: params } = sanitizeSearchParams(url.pathname, url.searchParams);
     try {
       switch (url.pathname) {
-        case '/api/health':
-          return json(req, res, 200, { ok: true });
         case '/api/meta':
           return json(req, res, 200, publicMeta);
         case '/api/freshness':
@@ -349,15 +382,19 @@ export function createApp({
         case '/api/region': {
           // A ZIP, or coordinates (coarsened by readLocation). Never logged.
           let found;
+          // forZip() answers anything that is not a ZIP with null, and the
+          // response never repeats what was sent.
           if (params.get('zip')) {
-            const zip = params.get('zip').trim();
-            if (!/^\d{5}(?:-\d{4})?$/.test(zip)) throw new InputError('zip must be a 5-digit ZIP code');
-            found = regions().forZip(zip);
+            found = regions().forZip(params.get('zip'));
           } else {
             const { lat, lng } = readLocation(params);
             found = regions().forPoint(lat, lng);
           }
-          return json(req, res, 200, { region: found?.region ?? null, nearby: found?.nearby ?? [] });
+          const borderingStates = found?.borderingStates ?? (found?.region ? getBorderingStates(found.region.code).map((c) => {
+            const r = describeRegion(c);
+            return { code: c, name: r?.name ?? c };
+          }) : []);
+          return json(req, res, 200, { region: found?.region ?? null, nearby: found?.nearby ?? [], borderingStates });
         }
         case '/api/states':
           return json(req, res, 200, { states: stateDirectory().list(), sources: stateDirectory().sources });
@@ -368,17 +405,63 @@ export function createApp({
           if (!resources) return json(req, res, 404, { error: 'Unknown state or territory' });
           return json(req, res, 200, resources);
         }
+        case '/api/legal': {
+          const isFts = params.get('fts') === '1' || params.get('fts') === 'true';
+          const isSsp = params.get('ssp') === '1' || params.get('ssp') === 'true';
+          const isSummary = params.get('summary') === '1' || params.get('summary') === 'true';
+
+          if (isSummary) {
+            const rawState = params.get('state');
+            const summary = rawState ? getJurisdictionSummary(rawState) : null;
+            if (!summary) {
+              return json(req, res, 400, { error: 'Invalid or missing state code' });
+            }
+            return json(req, res, 200, {
+              ...summary,
+              disclaimer: LEGAL_DISCLAIMER,
+              reviewStatus: summary.reviewStatus,
+            });
+          }
+
+          if (isFts || isSsp) {
+            const filters = {};
+            if (isFts) filters.ftsLegal = true;
+            if (isSsp) filters.sspLegal = true;
+            const records = filterStatesByProtection(filters).map((record) => ({
+              ...record,
+              disclaimer: LEGAL_DISCLAIMER,
+              reviewStatus: record.reviewStatus,
+            }));
+            return json(req, res, 200, records);
+          }
+
+          if (params.has('state')) {
+            const rawState = params.get('state');
+            const protections = rawState ? getLegalProtections(rawState) : null;
+            if (!protections) {
+              return json(req, res, 400, { error: 'Invalid or missing state code' });
+            }
+            return json(req, res, 200, {
+              ...protections,
+              disclaimer: LEGAL_DISCLAIMER,
+              reviewStatus: protections.reviewStatus,
+            });
+          }
+
+          return json(req, res, 400, { error: 'Invalid or missing state code' });
+        }
         case '/api/telehealth': {
           const query = parseTelehealthQuery(params, { taxonomy, anchorFor: regions().anchor });
           const result = await searchTelehealth(query, { taxonomy, ...upstreamOptions });
           // Route only: never the query string, which holds a location.
-          if (result.stale) logger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
+          if (result.stale) safeLogger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
           return json(req, res, 200, { ...result, source: 'SAMHSA FindTreatment.gov' });
         }
         case '/api/treatment': {
           const query = parseTreatmentQuery(params, taxonomy);
           const result = await searchTreatment(query, { taxonomy, ...upstreamOptions });
-          if (result.stale) logger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
+          // Route only: never the query string, which holds a location.
+          if (result.stale) safeLogger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
           return json(req, res, 200, { ...result, source: 'SAMHSA FindTreatment.gov' });
         }
         case '/api/health-centers': {
@@ -390,19 +473,26 @@ export function createApp({
             updated: publicMeta.healthCenters.updated,
           });
         }
+        case '/api/virtual-providers':
+          return json(req, res, 200, virtualProviders().search(params));
         case '/api/providers':
           return json(req, res, 200, providers().search(params, readLocation(params)));
         case '/api/nearby-summary': {
           const { lat, lng } = readLocation(params);
           const radiusMiles = parseRadius(params);
-          const hc =healthCenters().search({ lat, lng, radiusMiles });
+          const hc = healthCenters().search({ lat, lng, radiusMiles });
           const prov = providers().summary({ lat, lng, radiusMiles });
           const reg = regions().forPoint(lat, lng);
           const stateInfo = reg?.region ? stateDirectory().get(reg.region.code) : null;
+          const borderingStates = reg?.borderingStates ?? (reg?.region ? getBorderingStates(reg.region.code).map((c) => {
+            const r = describeRegion(c);
+            return { code: c, name: r?.name ?? c };
+          }) : []);
           return json(req, res, 200, {
             radiusMiles,
             region: reg?.region ?? null,
             nearbyRegions: reg?.nearby ?? [],
+            borderingStates,
             agency: stateInfo?.agency ?? null,
             medicaid: stateInfo?.medicaid ?? null,
             networks: {
@@ -422,7 +512,7 @@ export function createApp({
       // Log the route and a fixed failure code only: never the query string
       // (which holds a location), the upstream URL, or a raw error message.
       if (err instanceof UpstreamError) {
-        logger.error(`[api] ${url.pathname} upstream failed: ${err.code}${err.status ? ` ${err.status}` : ''}`);
+        safeLogger.error(`[api] ${url.pathname} upstream failed: ${err.code}${err.status ? ` ${err.status}` : ''}`);
         const retryAfter = breaker.retryAfterSeconds();
         const unavailable = err.code === 'circuit-open';
         return json(req, res, unavailable ? 503 : 502, {
@@ -432,7 +522,7 @@ export function createApp({
           ...(unavailable ? { retryAfterSeconds: retryAfter } : {}),
         }, unavailable ? { 'Retry-After': String(retryAfter) } : {});
       }
-      logger.error(`[api] ${url.pathname} failed: internal ${String(err?.name ?? 'Error').replace(/[^\w]/g, '').slice(0, 40)}`);
+      safeLogger.error(`[api] ${url.pathname} failed: internal ${String(err?.name ?? 'Error').replace(/[^\w]/g, '').slice(0, 40)}`);
       return json(req, res, 500, {
         error: 'Something went wrong on our side. Please try again.',
         reason: 'internal',
@@ -453,7 +543,14 @@ export function createApp({
       res.writeHead(400, SECURITY_HEADERS);
       return res.end();
     }
-    if (url.pathname.startsWith('/api/')) return handleApi(req, res, url);
-    return serveStatic(req, res, url.pathname);
+    try {
+      if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
+      return serveStatic(req, res, url.pathname);
+    } catch (err) {
+      // Last resort: never let one request crash the process.
+      safeLogger.error(`[http] ${url.pathname} failed: ${err?.message}`);
+      if (!res.headersSent) res.writeHead(500, SECURITY_HEADERS);
+      res.end();
+    }
   };
 }

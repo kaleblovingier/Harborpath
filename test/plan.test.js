@@ -6,10 +6,17 @@ import {
   INTAKE_STEPS,
   TRIGGER_SUGGESTIONS,
   COPING_SUGGESTIONS,
+  STANLEY_BROWN_STEPS,
   buildIntakeCallScript,
   formatSafetyPlanText,
+  getTimerCoaching,
+  urgeSurfingTimer,
+  getPlanState,
+  setPlanState,
+  resetPlanState,
   planView,
 } from '../public/js/views/plan.js';
+import { runQuickExitResets } from '../public/js/app.js';
 
 test('COUNSELING_MODALITIES exports all 7 evidence-based SUDP counseling approaches with required fields', () => {
   assert.ok(Array.isArray(COUNSELING_MODALITIES));
@@ -153,7 +160,6 @@ test('INTAKE_STEPS demystifies the 6 stages of treatment intake, rights, and bar
   });
 
   const allText = JSON.stringify(INTAKE_STEPS);
-  // Clinical & legal accuracy checks
   assert.match(allText, /biopsychosocial/i);
   assert.match(allText, /ASAM/);
   assert.match(allText, /PharmD/);
@@ -164,6 +170,28 @@ test('INTAKE_STEPS demystifies the 6 stages of treatment intake, rights, and bar
   assert.match(allText, /\bBC\b/);
   assert.match(allText, /\bHH\b/);
   assert.match(allText, /\bSS\b/);
+});
+
+test('STANLEY_BROWN_STEPS exports the 6 evidence-based Safety Planning Intervention pillars', () => {
+  assert.ok(Array.isArray(STANLEY_BROWN_STEPS));
+  assert.equal(STANLEY_BROWN_STEPS.length, 6);
+
+  const stepIds = STANLEY_BROWN_STEPS.map((s) => s.id);
+  assert.deepEqual(stepIds, [
+    'warning_signs',
+    'internal_coping',
+    'social_distraction',
+    'trusted_supports',
+    'crisis_professionals',
+    'environmental_safety',
+  ]);
+
+  STANLEY_BROWN_STEPS.forEach((step, idx) => {
+    assert.equal(step.step, idx + 1);
+    assert.equal(typeof step.label, 'string');
+    assert.ok(step.label.length > 0);
+    assert.equal(typeof step.field, 'string');
+  });
 });
 
 test('formatSafetyPlanText formats a complete user plan and includes 24/7 crisis & overdose lines', () => {
@@ -185,6 +213,7 @@ test('formatSafetyPlanText formats a complete user plan and includes 24/7 crisis
   assert.match(text, /Skipping dinner and turning off my phone\./);
   assert.match(text, /Urge surfing for 15 minutes before deciding/);
   assert.match(text, /Alex \(peer coach\): 555-0199/);
+  assert.match(text, /Keep door unlocked, never mix with benzos/);
   assert.match(text, /Top dresser drawer and front backpack pocket\./);
   assert.match(text, /A slip does not erase my progress\./);
 
@@ -210,6 +239,14 @@ test('formatSafetyPlanText handles empty input, missing fields, and array fields
   assert.match(arrayText, /Cut back safely/);
   assert.match(arrayText, /• Stress\n• Sleeplessness/);
   assert.match(arrayText, /• Drink water\n• Call a friend/);
+
+  // Malformed non-object inputs
+  const nullText = formatSafetyPlanText(null);
+  assert.match(nullText, /HARBORPATH PERSONAL SAFETY & RECOVERY ACTION PLAN/);
+  assert.match(nullText, /\(None listed yet\)/);
+
+  const stringText = formatSafetyPlanText('malformed string');
+  assert.match(stringText, /HARBORPATH PERSONAL SAFETY & RECOVERY ACTION PLAN/);
 });
 
 test('TRIGGER_SUGGESTIONS and COPING_SUGGESTIONS provide evidence-based quick-select options', () => {
@@ -217,7 +254,44 @@ test('TRIGGER_SUGGESTIONS and COPING_SUGGESTIONS provide evidence-based quick-se
   assert.ok(COPING_SUGGESTIONS.length >= 6);
 });
 
-test('planView renders zero-knowledge builder, urge-surfing toolkit, intake script builder, and 42 CFR Part 2 section', () => {
+test('getTimerCoaching returns accurate coaching prompts across all 5 temporal phases and reduced-motion states', () => {
+  const total = 180;
+
+  // Phase 1: elapsed < 30 seconds (remaining 180..151)
+  const p1 = getTimerCoaching(170, total);
+  assert.match(p1, /Settle your feet on the floor/i);
+  assert.match(p1, /Breathe in gently for 4 seconds/i);
+
+  // Phase 2: 30 <= elapsed < 90 seconds (remaining 150..91) - standard motion
+  const p2Standard = getTimerCoaching(120, total, { reducedMotion: false });
+  assert.match(p2Standard, /Inhale slowly \(1-2-3-4\)/i);
+  assert.match(p2Standard, /wave crests/i);
+
+  // Phase 2: reduced motion branch
+  const p2Reduced = getTimerCoaching(120, total, { reducedMotion: true });
+  assert.match(p2Reduced, /Keep a steady, slow exhale/i);
+  assert.match(p2Reduced, /wave passing beneath you/i);
+
+  // Phase 3: elapsed >= 90 seconds and remaining > 45 seconds (remaining 90..46)
+  const p3 = getTimerCoaching(70, total);
+  assert.match(p3, /over the halfway mark/i);
+  assert.match(p3, /Name 3 things you can see/i);
+
+  // Phase 4: remaining <= 45 seconds and remaining > 0
+  const p4 = getTimerCoaching(30, total);
+  assert.match(p4, /Final stretch/i);
+  assert.match(p4, /Unclench your jaw and hands/i);
+
+  // Done: remaining <= 0 seconds
+  const done = getTimerCoaching(0, total);
+  assert.match(done, /Wave surfed/i);
+  assert.match(done, /drink some water/i);
+
+  const doneNegative = getTimerCoaching(-5, total);
+  assert.match(doneNegative, /Wave surfed/i);
+});
+
+test('urgeSurfingTimer DOM component handles 3-min, 5-min, and reset actions cleanly', () => {
   class MockNode {
     constructor(tag) {
       this.tagName = tag.toUpperCase();
@@ -228,7 +302,10 @@ test('planView renders zero-knowledge builder, urge-surfing toolkit, intake scri
       this.children = [];
       this.value = '';
       this._textContent = '';
-      this.isConnected = false;
+      this.isConnected = true;
+    }
+    get firstChild() {
+      return this.children[0] ?? null;
     }
     get firstChild() {
       return this.children[0] ?? null;
@@ -262,6 +339,221 @@ test('planView renders zero-knowledge builder, urge-surfing toolkit, intake scri
           this.children.push(item);
         }
       }
+    }
+    remove() {
+      if (!this.parent) return;
+      const idx = this.parent.children.indexOf(this);
+      if (idx >= 0) this.parent.children.splice(idx, 1);
+    }
+    findAll(pred, acc = []) {
+      if (pred(this)) acc.push(this);
+      for (const ch of this.children) {
+        if (ch instanceof MockNode) ch.findAll(pred, acc);
+      }
+      return acc;
+    }
+  }
+
+  const prevDoc = globalThis.document;
+  globalThis.Node = MockNode;
+  globalThis.document = {
+    createElement: (tag) => new MockNode(tag),
+    createElementNS: (_ns, tag) => new MockNode(tag),
+    getElementById: () => null,
+  };
+
+  try {
+    const timerRoot = urgeSurfingTimer();
+    assert.equal(timerRoot.className, 'timer');
+    assert.equal(timerRoot.attributes.role, 'group');
+
+    const display = timerRoot.findAll((n) => n.className === 'timer-display')[0];
+    assert.ok(display);
+    assert.equal(display.textContent, '3:00');
+
+    const live = timerRoot.findAll((n) => n.className === 'timer-live')[0];
+    assert.ok(live);
+    assert.match(live.textContent, /Most cravings crest and soften/);
+
+    const start3Btn = timerRoot.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('Start 3-minute'))[0];
+    assert.ok(start3Btn);
+
+    const start5Btn = timerRoot.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('Start 5-minute'))[0];
+    assert.ok(start5Btn);
+
+    const resetBtn = timerRoot.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('Pause / reset'))[0];
+    assert.ok(resetBtn);
+
+    // Click 5-minute timer
+    start5Btn.listeners.click();
+    assert.equal(display.textContent, '5:00');
+    assert.match(live.textContent, /Settle your feet on the floor/);
+
+    // Click pause / reset
+    resetBtn.listeners.click();
+    assert.equal(display.textContent, '5:00');
+    assert.match(live.textContent, /Timer paused and reset/);
+
+    // Click 3-minute timer
+    start3Btn.listeners.click();
+    assert.equal(display.textContent, '3:00');
+    assert.match(live.textContent, /Settle your feet on the floor/);
+
+    // Reset again to clean up interval
+    resetBtn.listeners.click();
+  } finally {
+    globalThis.document = prevDoc;
+  }
+});
+
+test('resetPlanState() wipes active plan from RAM, resets form controls, and integrates with runQuickExitResets()', () => {
+  class MockNode {
+    constructor(tag) {
+      this.tagName = tag.toUpperCase();
+      this.className = '';
+      this.dataset = {};
+      this.attributes = {};
+      this.listeners = {};
+      this.children = [];
+      this.value = '';
+      this._textContent = '';
+      this.isConnected = true;
+    }
+    get firstChild() {
+      return this.children[0] ?? null;
+    }
+    get textContent() {
+      if (this.children.length === 0) return this._textContent;
+      return this._textContent + this.children.map((c) => (typeof c === 'string' ? c : c.textContent)).join('');
+    }
+    set textContent(v) {
+      this._textContent = String(v ?? '');
+      this.children = [];
+    }
+    setAttribute(k, v) {
+      this.attributes[k] = String(v);
+    }
+    removeAttribute(k) {
+      delete this.attributes[k];
+    }
+    addEventListener(evt, fn) {
+      this.listeners[evt] = fn;
+    }
+    append(...items) {
+      for (const item of items) {
+        if (typeof item === 'string') {
+          const textNode = new MockNode('#text');
+          textNode._textContent = item;
+          textNode.parent = this;
+          this.children.push(textNode);
+        } else if (item) {
+          item.parent = this;
+          this.children.push(item);
+        }
+      }
+    }
+    remove() {
+      if (!this.parent) return;
+      const idx = this.parent.children.indexOf(this);
+      if (idx >= 0) this.parent.children.splice(idx, 1);
+    }
+    findAll(pred, acc = []) {
+      if (pred(this)) acc.push(this);
+      for (const ch of this.children) {
+        if (ch instanceof MockNode) ch.findAll(pred, acc);
+      }
+      return acc;
+    }
+  }
+
+  const prevDoc = globalThis.document;
+  globalThis.Node = MockNode;
+  globalThis.document = {
+    createElement: (tag) => new MockNode(tag),
+    createElementNS: (_ns, tag) => new MockNode(tag),
+    getElementById: () => null,
+  };
+
+  try {
+    // Calling resetPlanState when unmounted does not throw
+    assert.doesNotThrow(() => resetPlanState());
+    assert.ok(getPlanState() === null || getPlanState()?.goal === '');
+
+    // Mount plan view with preloaded query
+    const root = planView({ query: new URLSearchParams('goal=Stay+grounded+today') });
+    const initialPlan = getPlanState();
+    assert.ok(initialPlan);
+    assert.equal(initialPlan.goal, 'Stay grounded today');
+
+    const preview = root.findAll((n) => n.className === 'card safety-plan-preview')[0];
+    assert.ok(preview);
+    assert.match(preview.textContent, /Stay grounded today/);
+
+    // Reset plan state
+    resetPlanState();
+    assert.ok(getPlanState() === null || getPlanState()?.goal === '');
+    assert.doesNotMatch(preview.textContent, /Stay grounded today/);
+
+    // Verify runQuickExitResets does not throw and executes plan reset
+    assert.doesNotThrow(() => runQuickExitResets());
+  } finally {
+    globalThis.document = prevDoc;
+  }
+});
+
+test('planView renders zero-knowledge builder, urge-surfing toolkit, intake script builder, and 42 CFR Part 2 section', () => {
+  class MockNode {
+    constructor(tag) {
+      this.tagName = tag.toUpperCase();
+      this.className = '';
+      this.dataset = {};
+      this.attributes = {};
+      this.listeners = {};
+      this.children = [];
+      this.value = '';
+      this._textContent = '';
+      this.isConnected = false;
+    }
+    get firstChild() {
+      return this.children[0] ?? null;
+    }
+    get firstChild() {
+      return this.children[0] ?? null;
+    }
+    get textContent() {
+      if (this.children.length === 0) return this._textContent;
+      return this._textContent + this.children.map((c) => (typeof c === 'string' ? c : c.textContent)).join('');
+    }
+    set textContent(v) {
+      this._textContent = String(v ?? '');
+      this.children = [];
+    }
+    setAttribute(k, v) {
+      this.attributes[k] = String(v);
+    }
+    removeAttribute(k) {
+      delete this.attributes[k];
+    }
+    addEventListener(evt, fn) {
+      this.listeners[evt] = fn;
+    }
+    append(...items) {
+      for (const item of items) {
+        if (typeof item === 'string') {
+          const textNode = new MockNode('#text');
+          textNode._textContent = item;
+          textNode.parent = this;
+          this.children.push(textNode);
+        } else if (item) {
+          item.parent = this;
+          this.children.push(item);
+        }
+      }
+    }
+    remove() {
+      if (!this.parent) return;
+      const idx = this.parent.children.indexOf(this);
+      if (idx >= 0) this.parent.children.splice(idx, 1);
     }
     remove() {
       if (!this.parent) return;
@@ -338,5 +630,187 @@ test('planView renders zero-knowledge builder, urge-surfing toolkit, intake scri
     assert.ok(links.length >= COUNSELING_MODALITIES.length);
   } finally {
     globalThis.document = prevDoc;
+  }
+});
+
+
+test('getPlanState, setPlanState, and resetPlanState manage ephemeral RAM safety plan with alias synchronization', () => {
+  resetPlanState();
+  const initial = getPlanState();
+  assert.equal(typeof initial, 'object');
+  assert.equal(initial.goal, '');
+  assert.equal(initial.warningSigns, '');
+  assert.equal(initial.copingStrategies, '');
+  assert.equal(initial.socialDistractions, '');
+  assert.equal(initial.supportNetwork, '');
+  assert.equal(initial.professionals, '');
+  assert.equal(initial.environmentalSafety, '');
+  assert.equal(initial.naloxoneLocation, '');
+  assert.equal(initial.notes, '');
+
+  // Update Stanley-Brown fields and verify synchronization to legacy aliases
+  setPlanState({
+    goal: 'Keep myself safe tonight and attend recovery meeting tomorrow',
+    warningSigns: 'Restlessness, hollow feeling in chest, skipping meals',
+    copingStrategies: 'Urge surfing for 10 minutes, 4-7-8 breathing, drinking cold water',
+    socialDistractions: 'Downtown library, coffee shop, gym, walk in the park',
+    supportNetwork: 'Maria (peer coach): 555-0144; Jordan (sponsor): 555-0177',
+    professionals: 'Dr. Rivera (MOUD clinic): 555-0120; Mobile Crisis: 988',
+    environmentalSafety: 'Medication locked in safe box; never using alone',
+    naloxoneLocation: 'Top drawer by front door and front backpack pouch',
+    notes: 'I have survived tough days before. A slip does not erase my worth.',
+  });
+
+  const updated = getPlanState();
+  assert.equal(updated.goal, 'Keep myself safe tonight and attend recovery meeting tomorrow');
+  assert.equal(updated.warningSigns, 'Restlessness, hollow feeling in chest, skipping meals');
+  assert.equal(updated.triggers, updated.warningSigns);
+  assert.equal(updated.copingStrategies, 'Urge surfing for 10 minutes, 4-7-8 breathing, drinking cold water');
+  assert.equal(updated.copingSteps, updated.copingStrategies);
+  assert.equal(updated.socialDistractions, 'Downtown library, coffee shop, gym, walk in the park');
+  assert.equal(updated.supportNetwork, 'Maria (peer coach): 555-0144; Jordan (sponsor): 555-0177');
+  assert.equal(updated.trustedContacts, updated.supportNetwork);
+  assert.equal(updated.professionals, 'Dr. Rivera (MOUD clinic): 555-0120; Mobile Crisis: 988');
+  assert.equal(updated.professionalContacts, updated.professionals);
+  assert.equal(updated.environmentalSafety, 'Medication locked in safe box; never using alone');
+  assert.equal(updated.saferEnvironment, updated.environmentalSafety);
+  assert.equal(updated.naloxoneLocation, 'Top drawer by front door and front backpack pouch');
+  assert.equal(updated.notes, 'I have survived tough days before. A slip does not erase my worth.');
+
+  // Formatted plain text includes all Stanley-Brown sections and required crisis numbers
+  const formatted = formatSafetyPlanText(updated);
+  assert.match(formatted, /1\. MY GOAL RIGHT NOW/);
+  assert.match(formatted, /2\. MY TRIGGERS & HIGH-RISK SITUATIONS/);
+  assert.match(formatted, /3\. EARLY WARNING SIGNS I AM STRUGGLING/);
+  assert.match(formatted, /4\. COPING STEPS THAT WORK FOR ME/);
+  assert.match(formatted, /5\. SOCIAL DISTRACTIONS & SAFE PLACES/);
+  assert.match(formatted, /6\. TRUSTED PEOPLE & SUPPORTS/);
+  assert.match(formatted, /7\. PROFESSIONALS & CRISIS ESCALATION CONTACTS/);
+  assert.match(formatted, /8\. WAYS TO MAKE MY ENVIRONMENT SAFER/);
+  assert.match(formatted, /9\. WHERE MY NALOXONE/);
+  assert.match(formatted, /Never Use Alone \(overdose prevention\): 1-800-484-3731 \(or 1-877-696-1996/);
+  assert.match(formatted, /800-972-0590/);
+  assert.match(formatted, /988/);
+  assert.match(formatted, /911/);
+
+  // resetPlanState wipes back to clean state
+  resetPlanState();
+  const reset = getPlanState();
+  assert.equal(reset.goal, '');
+  assert.equal(reset.warningSigns, '');
+  assert.equal(reset.copingStrategies, '');
+  assert.equal(reset.socialDistractions, '');
+  assert.equal(reset.supportNetwork, '');
+  assert.equal(reset.professionals, '');
+  assert.equal(reset.environmentalSafety, '');
+  assert.equal(reset.naloxoneLocation, '');
+  assert.equal(reset.notes, '');
+});
+
+test('Urge Surfing Timer provides 3-min, 5-min, and 10-min pacing options with accessible visual breathing guide', () => {
+  resetPlanState();
+  const prevDoc = globalThis.document;
+  try {
+    class MockNode {
+      constructor(tag) {
+        this.tagName = tag.toUpperCase();
+        this.className = '';
+        this.dataset = {};
+        this.attributes = {};
+        this.listeners = {};
+        this.children = [];
+        this.value = '';
+        this._textContent = '';
+        this.isConnected = true;
+      }
+      get firstChild() {
+        return this.children[0] ?? null;
+      }
+      get textContent() {
+        if (this.children.length === 0) return this._textContent;
+        return this._textContent + this.children.map((c) => (typeof c === 'string' ? c : c.textContent)).join('');
+      }
+      set textContent(v) {
+        this._textContent = String(v ?? '');
+        this.children = [];
+      }
+      setAttribute(k, v) {
+        this.attributes[k] = String(v);
+      }
+      removeAttribute(k) {
+        delete this.attributes[k];
+      }
+      addEventListener(evt, fn) {
+        this.listeners[evt] = fn;
+      }
+      append(...items) {
+        for (const item of items) {
+          if (typeof item === 'string') {
+            const textNode = new MockNode('#text');
+            textNode._textContent = item;
+            textNode.parent = this;
+            this.children.push(textNode);
+          } else if (item) {
+            item.parent = this;
+            this.children.push(item);
+          }
+        }
+      }
+      remove() {
+        if (!this.parent) return;
+        const idx = this.parent.children.indexOf(this);
+        if (idx >= 0) this.parent.children.splice(idx, 1);
+      }
+      findAll(pred, acc = []) {
+        if (pred(this)) acc.push(this);
+        for (const ch of this.children) {
+          if (ch instanceof MockNode) ch.findAll(pred, acc);
+        }
+        return acc;
+      }
+    }
+
+    globalThis.Node = MockNode;
+    globalThis.document = {
+      createElement: (tag) => new MockNode(tag),
+      createElementNS: (_ns, tag) => new MockNode(tag),
+      getElementById: () => null,
+    };
+
+    const root = planView();
+
+    // Verify 3-min, 5-min, and 10-min buttons exist in the timer
+    const start3 = root.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('3-minute'));
+    const start5 = root.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('5-minute'));
+    const start10 = root.findAll((n) => n.tagName === 'BUTTON' && n.textContent.includes('10-minute'));
+    assert.equal(start3.length, 1);
+    assert.equal(start5.length, 1);
+    assert.equal(start10.length, 1);
+
+    // Verify visual breathing pacer guide exists with circle and label
+    const pacerGuides = root.findAll((n) => n.className.includes('pacer-guide'));
+    assert.ok(pacerGuides.length >= 1);
+    const pacerCircles = root.findAll((n) => n.className.includes('pacer-circle'));
+    assert.ok(pacerCircles.length >= 1);
+    const pacerLabels = root.findAll((n) => n.className.includes('pacer-label'));
+    assert.ok(pacerLabels.length >= 1);
+
+    // Verify 42 CFR Part 2 printable handout card and actions exist
+    const cfrHandouts = root.findAll((n) => n.className.includes('print-handout'));
+    assert.ok(cfrHandouts.length >= 1);
+    assert.match(cfrHandouts[0].textContent, /42 CFR Part 2/);
+    assert.match(cfrHandouts[0].textContent, /89 FR 12472/);
+    assert.match(cfrHandouts[0].textContent, /Shield against police/i);
+    assert.match(cfrHandouts[0].textContent, /Special protection for counseling notes/i);
+    assert.match(cfrHandouts[0].textContent, /Patient control of consent/i);
+    assert.match(cfrHandouts[0].textContent, /EKRA/);
+
+    const printHandoutBtns = cfrHandouts[0].findAll(
+      (n) => n.tagName === 'BUTTON' && n.textContent.includes('Print confidentiality handout'),
+    );
+    assert.equal(printHandoutBtns.length, 1);
+  } finally {
+    globalThis.document = prevDoc;
+    resetPlanState();
   }
 });
