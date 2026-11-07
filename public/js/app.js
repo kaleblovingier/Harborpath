@@ -1,6 +1,6 @@
 import { api } from './api.js';
-import { state, subscribe, wipeAll, runQuickExitHandlers } from './state.js';
-import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
+import { state, subscribe, wipeAll, runQuickExitHandlers, onQuickExit } from './state.js';
+import { initI18n, onLanguageChange, isPlainLanguage, setPlainLanguage, t, formatDate } from './i18n.js';
 import { announce, h, tel, icon } from './dom.js';
 import {
   homeView,
@@ -646,7 +646,12 @@ export function viewLoadFailed(title, retry, { overdoseSteps = false } = {}) {
   );
 }
 
-async function render({ hashChange = false } = {}) {
+/**
+ * Render the current route. `moveFocus: false` keeps focus and scroll where
+ * they are, for re-renders the visitor did not navigate to (language or
+ * plain-language changes).
+ */
+async function render({ hashChange = false, moveFocus = true } = {}) {
   if (!main) return;
   const routeHash = isRouteHash(location.hash);
   // An in-page anchor (e.g. "#main") changed the hash: the current view stays.
@@ -691,7 +696,7 @@ async function render({ hashChange = false } = {}) {
     if (isInitial) focusInPageTarget(location.hash.slice(1));
     return;
   }
-  if (!isInitial) {
+  if (!isInitial && moveFocus) {
     window.scrollTo(0, 0);
     routeFocusTarget(main)?.focus({ preventScroll: true });
     announce(resolved.title);
@@ -699,6 +704,9 @@ async function render({ hashChange = false } = {}) {
 }
 
 // ---------------------------------------------------------------- Quick exit
+// Plain-language mode lives in memory only; Quick exit turns it off with the rest.
+onQuickExit(() => setPlainLanguage(false, { notify: false }));
+
 export function runQuickExitResets() {
   wipeAll();
   carried = null;
@@ -800,6 +808,14 @@ if (hasDom) {
       lastEscape = 0;
       return;
     }
+    // Escape closes the open mobile menu and returns focus to its button. Like
+    // the More menu above, closing it does not count toward the Esc-Esc exit.
+    if (toggle?.getAttribute('aria-expanded') === 'true') {
+      closeMenu();
+      toggle.focus();
+      lastEscape = 0;
+      return;
+    }
     const now = Date.now();
     if (now - lastEscape < 1000) quickExit();
     lastEscape = now;
@@ -876,10 +892,18 @@ if (hasDom) {
     }
   }).catch(() => { /* footer note is optional */ });
 
+  let lastPlain = isPlainLanguage();
   onLanguageChange(() => {
     updateSavedCount();
     renderFooterMeta();
-    render();
+    // Keep focus on the language or plain-language control the visitor used.
+    render({ moveFocus: false });
+    if (isPlainLanguage() !== lastPlain) {
+      lastPlain = isPlainLanguage();
+      announce(lastPlain
+        ? t('app.plainToggle.on', 'Plain language is on.')
+        : t('app.plainToggle.off', 'Plain language is off.'));
+    }
   });
 
   initI18n().finally(() => {

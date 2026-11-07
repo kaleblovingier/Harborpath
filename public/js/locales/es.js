@@ -1851,6 +1851,57 @@ export default {
   'meds.regimen.title': 'Verificador de Seguridad de Polifarmacia y Combinación de Múltiples Sustancias',
   'meds.regimen.groupLabel': 'Seleccione sustancias o medicamentos en combinación',
   'meds.specialPopulations.title': 'Poblaciones Especiales y Situaciones Clínicas (Embarazo, Salud Hepática/Renal y Cirugía)',
+
+  // ================================================================
+  // Accessibility & plain language (swarm/accessibility-plain-language)
+  // Keys ending in ".plain" are the plain-language (6.º–8.º grado) versions
+  // that t() prefers when the "Lenguaje sencillo" toggle is on. Instrucciones
+  // clínicas y de emergencia: mismo significado; teléfonos sin cambios.
+  // ================================================================
+
+  // Header toggle and announcements
+  'app.plainToggle': 'Lenguaje sencillo',
+  'app.plainToggle.hint': 'Usa palabras más simples en las explicaciones principales. Este ajuste no se guarda en su dispositivo.',
+  'app.plainToggle.on': 'Lenguaje sencillo activado.',
+  'app.plainToggle.off': 'Lenguaje sencillo desactivado.',
+
+  // Home: first-screen help
+  'home.quick.title': 'Reciba ayuda ahora',
+  'home.quick.988': 'Línea de crisis 988',
+  'home.quick.find.title': 'Tratamiento cerca de mí',
+  'home.quick.find.body': 'Programas con licencia del directorio nacional de SAMHSA, incluidos medicamentos para el consumo de opioides y alcohol.',
+  'home.quick.find.body.plain': 'Vea lugares con licencia cerca de usted que ayudan con las drogas o el alcohol, incluidos lugares que dan medicamentos.',
+  'home.quick.find.cta': 'Buscar cerca de mí',
+  'home.quick.talk.title': 'Hable con alguien',
+  'home.quick.talk.body': 'Línea Nacional de Ayuda de SAMHSA: gratis, confidencial, las 24 horas, en inglés y español. Le pueden ayudar a encontrar atención local.',
+  'home.quick.talk.body.plain': 'Llame gratis a la Línea de Ayuda de SAMHSA a cualquier hora, de día o de noche. Es privado. Puede hablar en español o en inglés.',
+  'home.quick.talk.all': 'Todas las líneas de apoyo',
+  'home.search.title': 'Buscar por ubicación',
+
+  // Home: plain versions of existing text
+  'home.hero.lede.plain': 'Encuentre ayuda para el consumo de drogas o alcohol, formas de estar más seguro/a y atención médica de bajo costo cerca de usted. Es gratis y privado. Sin registro, sin anuncios, sin rastreo.',
+  'common.emergency.body.plain': 'Llame al 911. Dé naloxona si la tiene. Luego siga los pasos.',
+  'home.path.treatment.desc.plain': 'Lugares para dejar o reducir el consumo de forma segura, programas donde vive un tiempo y medicamentos como buprenorfina y metadona.',
+  'home.path.navigator.desc.plain': 'Conteste preguntas privadas sobre su salud, la abstinencia y su hogar. Vea qué tipo de atención le puede convenir más.',
+  'home.path.medications.desc.plain': 'Aprenda sobre los medicamentos que tratan el consumo de opioides y alcohol, y qué drogas es peligroso mezclar.',
+  'home.path.harm.desc.plain': 'Naloxona, tiras reactivas, líneas para llamar y no consumir a solas, y cuidado de heridas. Sin juzgar. No tiene que dejar de consumir.',
+  'home.path.health.desc.plain': 'Clínicas de bajo costo, salud mental, atención para veteranos y pueblos indígenas, y salas de emergencia.',
+  'home.path.plan.desc.plain': 'Haga un plan privado para los momentos difíciles y vea qué pasa en su primera cita.',
+  'home.path.support.desc.plain': 'Grupos de apoyo, vivienda sin drogas ni alcohol, y ayuda para la familia y amistades de alguien que consume.',
+  'home.path.choosing.desc.plain': 'Cómo reconocer una buena atención, qué preguntar y señales de alerta de estafas.',
+
+  // Find treatment: plain versions
+  'treatment.lede.plain': 'Encuentre lugares con licencia cerca de usted que tratan el consumo de drogas y alcohol. Muchos ofrecen medicamentos para el consumo de opioides o alcohol.',
+  'treatment.helper.lead.plain': '¿No sabe qué tipo de atención necesita? ',
+  'treatment.warn.lead.plain': 'Dejar el alcohol, las benzos (como Xanax o Klonopin) u otros sedantes de golpe puede ser mortal. ',
+  'treatment.warn.body.plain': 'La abstinencia puede causar convulsiones. Hable con un médico o use el filtro “Desintoxicación” para encontrar un lugar donde los médicos le ayuden a dejarlo de forma segura.',
+  'treatment.opt.moud.dd.plain': 'La buprenorfina, la metadona y la naltrexona funcionan mejor que cualquier otro tratamiento para la adicción a los opioides. Bajan su riesgo de morir por una sobredosis. Puede tomarlos durante todo el tiempo que le ayuden. ',
+  'treatment.opt.otp.dd.plain': 'Una clínica aprobada por el gobierno. Es el único tipo de clínica (donde no se queda a dormir) que puede darle metadona cada día o para llevar a casa. La mayoría también ofrece buprenorfina y consejería.',
+  'treatment.opt.detox.dd.plain': 'Ayuda médica para pasar la abstinencia de forma segura. Funciona mejor como primer paso. Empiece medicamentos o consejería justo después.',
+  'treatment.opt.op.dd.plain': 'Consejería y atención médica mientras vive en casa. El tratamiento ambulatorio intensivo (IOP) suele ser de 9 horas o más por semana.',
+  'treatment.opt.res.dd.plain': 'Usted vive allí por un tiempo. Siempre pregunte si dan y permiten medicamentos aprobados como la buprenorfina y la metadona.',
+  'treatment.opt.tele.dd.plain': 'Citas por video o teléfono. A menudo puede empezar la buprenorfina así, sin ir en persona primero.',
+
   // ---------------------------------------------------------------- Relaxed Near-Match & Accessibility (UX Upgrade)
   'finder.activeFiltersRegion': 'Filtros de búsqueda activos',
   'finder.removeFilterLabel': 'Eliminar filtro {label}',
