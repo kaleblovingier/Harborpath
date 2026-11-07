@@ -1150,7 +1150,6 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII SBAR Clinical Handoff Note Generator**:
   - 1-click clipboard export in English and Spanish for Endocrinology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
 
-
 ### 44. Wave 46: Life After Treatment (`#/recovery-support`) & After an Overdose Death (`#/overdose-loss`)
 Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gaps families and people in recovery ask about. Both open with crisis lines from `content/hotlines.js`, use a single `h1`, support printing, link to existing guides instead of duplicating them, and keep nothing in device storage.
 - **Life after treatment (`#/recovery-support`)**:
@@ -1166,4 +1165,38 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Talking with children* (adapted from The Dougy Center), *grief support* (GRASP; The Compassionate Friends, phone verified on its own site; SAMHSA Helpline), *stigma and self-care* (CDC grief tips), and *helping a friend*.
   - *988 message*: stated plainly at the top: if grief brings thoughts of ending your life, call or text 988; call 911 in immediate danger.
 - Tests: `test/recovery-support.test.js` and `test/overdose-loss.test.js` (EN and ES render, single `h1`, official sources, hotline reuse, no inline styles or storage, route / catalog / service worker / Spanish key registration).
+
+### 45. Wave 47: Gastrointestinal & Mesenteric Emergencies, Acute Pancreatitis, Cocaine Ischemic Colitis, Opioid-Induced Bowel Dysfunction & Boerhaave Navigator (`#/gi-care`)
+- **Alcohol- & Hypertriglyceridemia-Induced Acute Pancreatitis (Atlanta Criteria & WATERFALL Protocol)**:
+  - *Pathophysiology*: Ethanol increases acinar zymogen synthesis, sensitizes acinar cells to cholecystokinin (CCK), increases ductal permeability, and induces Sphincter of Oddi spasm, triggering premature intrapancreatic activation of trypsinogen to trypsin and autodigestion. Severe hypertriglyceridemia (> 1,000 mg/dL) releases toxic free fatty acids via pancreatic lipase.
+  - *Revised Atlanta Classification*: Requires >= 2 of 3 criteria: 1) Persistent severe epigastric pain radiating to the back; 2) Serum Lipase >= 3x upper limit of normal (Lipase is strictly preferred over amylase due to higher sensitivity/specificity and 8–14 day window); 3) Characteristic CT/MRI findings.
+  - *NEJM WATERFALL Trial (2022) Resuscitation Paradigm Shift*: Moderate goal-directed Lactated Ringer's resuscitation (1.5 mL/kg/h after 10 mL/kg bolus if hypovolemic) is strictly superior to aggressive fluid overload (20 mL/kg bolus + 3 mL/kg/h), which triples fluid overload and pulmonary edema without reducing pancreatic necrosis. Lactated Ringer's is preferred over Normal Saline (avoids hyperchloremic acidosis).
+  - *Early Enteral Nutrition*: Start oral/enteral feeding within 24–48 hours as tolerated rather than prolonged NPO ("pancreatic rest") to preserve gut mucosal barrier and prevent bacterial translocation.
+- **Cocaine & Methamphetamine Mesenteric Ischemia (NOMI) & Ischemic Colitis**:
+  - *Mechanism*: Splanchnic alpha-1 adrenergic vasoconstriction of superior and inferior mesenteric arteries + microvascular platelet thrombosis targeting colonic watershed territories: Splenic Flexure (Griffiths' point) and Rectosigmoid Junction (Sudeck's point).
+  - *Clinical Presentation*: Classic agonizing abdominal "pain out of proportion to physical examination" followed by urgent hematochezia, fever, and lactic acidosis.
+  - *Diagnostic & Surgical Mandate*: Emergent CT Mesenteric Angiography (CTA Abdomen/Pelvis) is the gold-standard first-line study. Peritoneal signs or pneumoperitoneum mandate emergent exploratory laparotomy and bowel resection.
+- **Opioid-Induced Constipation (OIC), PAMORAs & Stercoral Perforation**:
+  - *Cardinal Physiologic Rule*: Unlike central respiratory or analgesic tolerance, the enteric nervous system NEVER develops tolerance to opioid-induced constipation.
+  - *The Docusate (Colace) Inefficacy Trap*: Stool softeners alone are clinically ineffective ("all mush and no push") because opioids abolish propulsive peristalsis. Prophylaxis from Day 1 requires a stimulant laxative (Senna or Bisacodyl) PLUS an osmotic laxative (Polyethylene Glycol / PEG 3350).
+  - *Targeted PAMORAs*: Methylnaltrexone, Naloxegol, and Naldemedine block gut mu-receptors without crossing the blood-brain barrier. **Strict Contraindication**: PAMORAs are strictly contraindicated in suspected mechanical bowel obstruction or severe fecal impaction due to catastrophic risk of stercoral colonic perforation.
+- **Narcotic Bowel Syndrome (NBS) / Opioid-Induced Visceral Hyperalgesia**:
+  - *Mechanism*: Paradoxical amplification of visceral pain with escalating opioid doses mediated by spinal dorsal horn glial TLR4 activation, dynorphin release, and bimodal excitatory Gs-coupled mu-receptor signaling.
+  - *Management*: Cease opioid escalation; implement structured taper or buprenorphine rotation paired with central visceral neuromodulators (Amitriptyline, Nortriptyline, Duloxetine, or Clonidine).
+- **Boerhaave Syndrome (Transmural Esophageal Rupture) vs. Mallory-Weiss Tear**:
+  - *Mackler Triad & Hamman Sign*: Violent vomiting/retching, sudden excruciating retrosternal chest pain, and subcutaneous neck crepitus, plus Hamman mediastinal crunch.
+  - *Cardinal Contrast Rule*: Perform emergent CT Esophagram with **water-soluble contrast (Gastrografin)** first; **NEVER administer Barium sulfate** initially in suspected esophageal perforation (causes lethal granulomatous mediastinitis).
+- **Body Packing & Body Stuffing (Internal Concealment of Drug Packets)**:
+  - *Management*: Asymptomatic packers receive Whole Bowel Irrigation (WBI) with Polyethylene Glycol (PEG) electrolyte solution at 1–2 L/h; avoid oil/paraffin laxatives (which dissolve latex). **Strict Endoscopic Prohibition**: Never attempt endoscopic snare/forceps removal.
+  - *Cardinal Surgical Rule*: Any sign of cocaine or amphetamine packet leakage ("Body Packer Syndrome") or mechanical bowel obstruction is an absolute surgical emergency requiring immediate exploratory laparotomy.
+- **Harm Reduction Directives & Field GI Preservation**:
+  - *Rule 1*: Opioid Bowel Regimen: Skip Docusate Alone ("All Mush, No Push") — Pair Senna + PEG 3350.
+  - *Rule 2*: PAMORA Obstruction Alert: Never Use Methylnaltrexone if Bowel Obstruction is Suspected.
+  - *Rule 3*: Agonizing Abdominal Pain After Cocaine/Meth: Seek Immediate CTA for Mesenteric Ischemia.
+  - *Rule 4*: Violent Vomiting & Neck Crepitus (Boerhaave Alert): Demand Water-Soluble Contrast, NEVER Barium.
+  - *Rule 5*: Acute Pancreatitis Fluid Rule (WATERFALL): Moderate Lactated Ringer's & Early Feeding Beat Overload.
+  - *Rule 6*: Swallowed Drug Packets: Whole Bowel Irrigation YES, Endoscopic Snaring NO — Surgery for Cocaine Leak.
+- **Zero-PII SBAR Clinical Handoff Note Generator**:
+  - 1-click clipboard export in English and Spanish for General Surgery, Gastroenterology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

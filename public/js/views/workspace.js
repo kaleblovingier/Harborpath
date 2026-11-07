@@ -40,6 +40,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/pulmonary-care', key: 'workspace.link.pulmonaryCare', label: 'Pulmonary health, crack lung & inhalation safety' },
       { href: '#/neurology-care', key: 'workspace.link.neurologyCare', label: 'Neurological health, post-overdose brain injury & neuroprotection' },
       { href: '#/metabolic-care', key: 'workspace.link.metabolicCare', label: 'Metabolic emergencies, ketoacidosis & adrenal crisis' },
+      { href: '#/gi-care', key: 'workspace.link.giCare', label: 'GI emergencies, pancreatitis & opioid constipation' },
     ],
   },
   {

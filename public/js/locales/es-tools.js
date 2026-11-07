@@ -178,6 +178,8 @@ export default {
   'tools.item.neurology-care.description': 'Consenso de AAN y Neurointensivismo para encefalopatía hipóxico-isquémica (EHI), leucoencefalopatía tardía (LPHT), SEPR, desmielinización osmótica (SDO) y tiamina en Wernicke.',
   'tools.item.metabolic-care.title': 'Navegador de emergencias metabólicas, cetoacidosis y crisis suprarrenal',
   'tools.item.metabolic-care.description': 'Consenso ADA, Endocrine Society y ASAM para cetoacidosis alcohólica (CAA), CAD por estimulantes, CAD euglucémica por SGLT2, hipoglucemia enmascarada y crisis suprarrenal por opioides.',
+  'tools.item.gi-care.title': 'Navegador de emergencias gastrointestinales, pancreatitis aguda y estreñimiento por opioides',
+  'tools.item.gi-care.description': 'Consenso ACG, AGA, NEJM WATERFALL y WSES para pancreatitis aguda, isquemia mesentérica por cocaína, estreñimiento por opioides (PAMORA), intestino narcótico, síndrome de Boerhaave y body packing.',
   'tools.item.renal-care.title': 'Navegador de salud renal, rabdomiólisis, FRA y MOUD en diálisis',
   'tools.item.renal-care.description': 'Consenso KDIGO y ASN para rabdomiólisis tras sobredosis, estabilización de hiperpotasemia en ECG, 6 P del síndrome compartimental, MOUD en hemodiálisis y contraindicación de morfina/AINEs.',
   'tools.item.endocarditis-care.title': 'Navegador de endocarditis infecciosa, daño valvular y protocolo POET',

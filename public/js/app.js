@@ -57,6 +57,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'gi-care': () => import('./views/giCare.js').then((m) => {
+    viewCache.set('gi-care', m.giCareView);
+    routeResets.set('gi-care', m.resetGiState);
+    return m.giCareView;
+  }),
   'metabolic-care': () => import('./views/metabolicCare.js').then((m) => {
     viewCache.set('metabolic-care', m.metabolicCareView);
     routeResets.set('metabolic-care', m.resetMetabolicState);
@@ -336,6 +341,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'gi-care': () => t('route.giCare', 'GI & mesenteric emergencies, acute pancreatitis & opioid constipation'),
   'metabolic-care': () => t('route.metabolicCare', 'Metabolic emergencies, alcoholic ketoacidosis & adrenal crisis'),
   'neurology-care': () => t('route.neurologyCare', 'Neurological health, post-overdose brain injury & neuroprotection'),
   'pulmonary-care': () => t('route.pulmonaryCare', 'Pulmonary health, post-overdose lung injury & inhalation safety'),
@@ -425,6 +431,7 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('gi-care'),
     preloadRoute('metabolic-care'),
     preloadRoute('neurology-care'),
     preloadRoute('pulmonary-care'),

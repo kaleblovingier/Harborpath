@@ -9598,3 +9598,427 @@ body.sensory-mode-active [tabindex]:focus-visible {
     font-size: 1.4rem;
   }
 }
+
+/* ==========================================================================
+   Wave 46: Gastrointestinal & Mesenteric Care Navigator (.gi-care-view)
+   ========================================================================== */
+
+.gi-care-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  color: var(--text-main, #334155);
+}
+
+.gi-header {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(6, 78, 59, 0.2);
+}
+
+.gi-title-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.35rem 0.85rem;
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gi-badge-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.gi-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+  line-height: 1.25;
+}
+
+.gi-subtitle {
+  font-size: 1.05rem;
+  color: #d1fae5;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 900px;
+}
+
+.gi-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  padding-bottom: 0.5rem;
+}
+
+.gi-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.15rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gi-tab-btn:hover {
+  background: var(--bg-hover, #f1f5f9);
+  color: var(--text-heading, #0f172a);
+}
+
+.gi-tab-btn.active {
+  background: #047857;
+  color: #ffffff;
+}
+
+.gi-tab-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.gi-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gi-panel-intro h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.5rem;
+}
+
+.gi-panel-intro p {
+  font-size: 1rem;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.gi-syndromes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.gi-syndrome-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.gi-syndrome-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0 0 1rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  padding-bottom: 0.5rem;
+}
+
+.gi-section {
+  margin-bottom: 0.85rem;
+}
+
+.gi-section:last-child {
+  margin-bottom: 0;
+}
+
+.gi-section strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-heading, #0f172a);
+  margin-bottom: 0.25rem;
+}
+
+.gi-section p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-main, #334155);
+}
+
+.gi-evaluator-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 0.75rem;
+}
+
+.gi-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #cbd5e1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gi-check-item:hover {
+  background: var(--bg-hover, #f8fafc);
+  border-color: #94a3b8;
+}
+
+.gi-check-item.selected {
+  background: #ecfdf5;
+  border-color: #059669;
+}
+
+.gi-checkbox {
+  margin-top: 0.2rem;
+  accent-color: #059669;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.gi-check-label {
+  font-size: 0.925rem;
+  line-height: 1.45;
+  color: var(--text-heading, #0f172a);
+}
+
+.gi-evaluator-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gi-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gi-reset-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.gi-eval-results {
+  background: var(--card-bg, #ffffff);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border-left: 6px solid #64748b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.gi-eval-results.acuity-emergency_911 {
+  border-left-color: #dc2626;
+  background: #fef2f2;
+}
+
+.gi-eval-results.acuity-urgent_eval {
+  border-left-color: #d97706;
+  background: #fffbeb;
+}
+
+.gi-eval-results.acuity-specialty_consult {
+  border-left-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.gi-eval-results.acuity-precautionary {
+  border-left-color: #059669;
+  background: #f0fdf4;
+}
+
+.gi-eval-urgency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+}
+
+.acuity-emergency_911 .gi-eval-urgency-badge {
+  color: #b91c1c;
+}
+
+.acuity-urgent_eval .gi-eval-urgency-badge {
+  color: #b45309;
+}
+
+.acuity-specialty_consult .gi-eval-urgency-badge {
+  color: #3730a3;
+}
+
+.acuity-precautionary .gi-eval-urgency-badge {
+  color: #047857;
+}
+
+.gi-urgency-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.gi-eval-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gi-flag-item {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.gi-flag-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.35rem;
+}
+
+.gi-flag-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-main, #334155);
+}
+
+.gi-directives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.gi-directive-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.gi-directive-num {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #a7f3d0;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.gi-directive-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.5rem;
+}
+
+.gi-directive-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-main, #334155);
+  margin: 0;
+}
+
+.gi-sbar-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gi-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gi-copy-btn:hover {
+  background: #065f46;
+}
+
+.gi-sbar-output {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #334155;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.gi-footer-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 1rem;
+}
+
+.gi-footer-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.gi-footer-notice p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .gi-care-view {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .gi-header {
+    padding: 1.25rem;
+  }
+  .gi-title {
+    font-size: 1.4rem;
+  }
+}

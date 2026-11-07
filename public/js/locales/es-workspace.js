@@ -72,4 +72,5 @@ export default {
   'workspace.link.pulmonaryCare': 'Salud pulmonar, pulmón de crack y seguridad inhalatoria',
   'workspace.link.neurologyCare': 'Salud neurológica, lesión cerebral post-sobredosis y neuroprotección',
   'workspace.link.metabolicCare': 'Emergencias metabólicas, cetoacidosis y crisis suprarrenal',
+  'workspace.link.giCare': 'Emergencias digestivas, pancreatitis y estreñimiento por opioides',
 };

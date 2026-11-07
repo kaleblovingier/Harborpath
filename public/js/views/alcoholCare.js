@@ -582,6 +582,12 @@ export function alcoholCareView() {
     h('a', { href: '#/metabolic-care' }, 'Open Alcoholic Ketoacidosis & Metabolic Care Navigator →')
   ]);
   panelWernicke.append(akaLinkCard);
+  const giLinkCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', null, 'Alcohol-Induced Acute Pancreatitis & Boerhaave Esophageal Rupture: '),
+    h('span', null, 'Severe epigastric pain radiating to the back requires Lipase testing and WATERFALL moderate Lactated Ringer’s resuscitation. Violent retching with neck crepitus requires water-soluble contrast (never barium): '),
+    h('a', { href: '#/gi-care' }, 'Open GI Emergencies, Pancreatitis & Boerhaave Navigator →')
+  ]);
+  panelWernicke.append(giLinkCard);
 
   panelsContainer.append(panelPawss, panelMaud, panelWernicke);
   container.append(panelsContainer);

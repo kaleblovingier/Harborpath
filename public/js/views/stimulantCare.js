@@ -657,5 +657,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open Metabolic Emergencies & Endocrine Care Navigator →')
   ]);
   container.appendChild(metabolicTip);
+  const giTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Isquemia Mesentérica por Cocaína/Metanfetamina y Colitis Isquémica: ' : 'Cocaine/Methamphetamine Mesenteric Ischemia & Ischemic Colitis: '),
+    h('span', {}, isEs
+      ? 'La vasoconstricción esplácnica alfa-1 causa dolor abdominal agonizante "desproporcionado" y diarrea con sangre (hematoquecia). Requiere Angio-TC urgente: '
+      : 'Splanchnic alpha-1 vasoconstriction causes agonizing abdominal "pain out of proportion" and bloody stool (hematochezia). Mandates urgent CTA: '),
+    h('a', { href: '#/gi-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Gastrointestinales e Isquemia Mesentérica →'
+      : 'Open GI Emergencies & Mesenteric Ischemia Navigator →')
+  ]);
+  container.appendChild(giTip);
 
 }

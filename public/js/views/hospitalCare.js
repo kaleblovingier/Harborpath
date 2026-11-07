@@ -781,6 +781,16 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open Metabolic Emergencies & Adrenal Crisis Navigator →')
   ]);
   container.appendChild(metabolicCareCard);
+  const giCareCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Emergencias Digestivas Hospitalarias: Pancreatitis WATERFALL, PAMORA e Intestino Narcótico: ' : 'Inpatient GI Emergencies: WATERFALL Pancreatitis, PAMORAs & Narcotic Bowel: '),
+    h('span', {}, isEs
+      ? 'Profilaxis de EIO desde el Día 1 (Senósidos + PEG 3350, evitar docusato), fármacos PAMORA, síndrome del intestino narcótico y body packing: '
+      : 'Day-1 OIC prophylaxis (Senna + PEG 3350, skip docusate), PAMORA initiation, narcotic bowel syndrome, and body packing irrigation: '),
+    h('a', { href: '#/gi-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Gastrointestinales y EIO →'
+      : 'Open GI Emergencies, Pancreatitis & OIC Navigator →')
+  ]);
+  container.appendChild(giCareCard);
 
   return container;
 }

@@ -620,4 +620,14 @@ function renderResponderSupportTab(container, isEs) {
       : 'Open Metabolic Emergencies & Adrenal Crisis Navigator →')
   ]);
   container.appendChild(metabolicCard);
+  const giCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Estreñimiento por Opioides (PAMORA), Body Packing e Isquemia Mesentérica: ' : 'Opioid Constipation (PAMORAs), Body Packing & Mesenteric Ischemia: '),
+    h('span', {}, isEs
+      ? 'El intestino nunca desarrolla tolerancia a los opioides (usar Senósidos + PEG 3350, evitar docusato solo). Evalúe filtración de paquetes ingeridos e isquemia mesentérica: '
+      : 'The gut never develops opioid tolerance (use Senna + PEG 3350, skip docusate alone). Evaluate internal drug packet concealment and mesenteric ischemia: '),
+    h('a', { href: '#/gi-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Gastrointestinales y EIO →'
+      : 'Open GI Emergencies, Pancreatitis & OIC Navigator →')
+  ]);
+  container.appendChild(giCard);
 }
