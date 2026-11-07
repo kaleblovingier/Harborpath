@@ -38,6 +38,7 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // ============================================================================
 // 1. Section 1115 Reentry Demonstration Waivers Directory
@@ -363,14 +364,14 @@ export const REENTRY_POST_RELEASE_TIMELINE = [
         'Ensure you have your 30-day medication supply or written bridge prescriptions with exact pharmacy addresses',
         'Receive official discharge paperwork and Medicaid reactivation verification',
         'Connect with pre-arranged transportation; avoid accepting rides from active substance use settings',
-        'Call the Never Use Alone hotline (877-696-1996) if consuming any substance alone after release',
+        'Call the Never Use Alone hotline (' + NEVER_USE_ALONE.label + ') if consuming any substance alone after release',
       ],
       es: [
         'Confirme al menos 2 dosis de naloxona nasal (Narcan) en sus pertenencias al momento del alta',
         'Asegúrese de tener su suministro de medicamentos de 30 días o recetas puente por escrito con farmacia exacta',
         'Reciba documentos oficiales de liberación y verificación de reactivación de Medicaid',
         'Conéctese con transporte coordinado previamente; evite viajes con entornos de consumo activo',
-        'Llame a la línea Never Use Alone (877-696-1996) si consume cualquier sustancia a solas tras la liberación',
+        'Llame a la línea Never Use Alone (' + NEVER_USE_ALONE.label + ') si consume cualquier sustancia a solas tras la liberación',
       ],
     },
   },
@@ -649,8 +650,8 @@ export function evaluateReentryPlan(inputs = {}) {
       es: 'Obtener Kits de Naloxona (Narcan) para Llevar y Tiras de Fentanilo',
     },
     detail: {
-      en: 'Request at least 2 doses of nasal naloxone directly upon discharge. Locate your nearest Syringe Services Program (SSP) or mutual aid distributor for additional free naloxone and test strips. Save the Never Use Alone number (877-696-1996) in your phone.',
-      es: 'Solicite al menos 2 dosis de naloxona nasal directamente al salir. Localice el Programa de Jeringas (SSP) o distribuidor de ayuda mutua más cercano para naloxona adicional y tiras reactivas gratuitas. Guarde el número de Never Use Alone (877-696-1996) en su teléfono.',
+      en: 'Request at least 2 doses of nasal naloxone directly upon discharge. Locate your nearest Syringe Services Program (SSP) or mutual aid distributor for additional free naloxone and test strips. Save the Never Use Alone number (' + NEVER_USE_ALONE.label + ') in your phone.',
+      es: 'Solicite al menos 2 dosis de naloxona nasal directamente al salir. Localice el Programa de Jeringas (SSP) o distribuidor de ayuda mutua más cercano para naloxona adicional y tiras reactivas gratuitas. Guarde el número de Never Use Alone (' + NEVER_USE_ALONE.label + ') en su teléfono.',
     },
   });
 
@@ -838,8 +839,8 @@ export function formatReentrySummaryText(plan, lang = 'en') {
   );
   lines.push(
     isEs
-      ? '3. Línea Never Use Alone si consume a solas: 877-696-1996 | En emergencia por sobredosis llame al 911.'
-      : '3. Never Use Alone line if consuming alone: 877-696-1996 | In overdose emergency call 911.'
+      ? '3. Línea Never Use Alone si consume a solas: ' + NEVER_USE_ALONE.label + ' | En emergencia por sobredosis llame al 911.'
+      : '3. Never Use Alone line if consuming alone: ' + NEVER_USE_ALONE.label + ' | In overdose emergency call 911.'
   );
   lines.push('');
   lines.push(divider);
@@ -1327,17 +1328,17 @@ In compliance with 42 C.F.R. Part 2, this document confirms active attendance an
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Never Use Alone (Si consume a solas):' : 'Never Use Alone Hotline:'),
       h('span', {}, ' '),
-      tel('877-696-1996', { class: 'hotline-link' })
+      tel(NEVER_USE_ALONE.number, NEVER_USE_ALONE.label, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Crisis y Suicidio:' : 'Suicide & Crisis Lifeline:'),
       h('span', {}, ' '),
-      tel('988', { class: 'hotline-link' })
+      tel('988', null, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Emergencia por Sobredosis:' : 'Overdose Emergency:'),
       h('span', {}, ' '),
-      tel('911', { class: 'hotline-link text-danger' })
+      tel('911', null, { class: 'hotline-link text-danger' })
     )
   );
   root.append(hotlineBar);

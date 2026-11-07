@@ -5,6 +5,7 @@
 
 import { h, clear, icon } from '../dom.js';
 import { t } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 /**
  * Clinical profiles of major adulterants and novel synthetic substances.
@@ -318,13 +319,13 @@ export function evaluateAdulterantRisk(observations = {}) {
     summaryEs: 'No se identifica emergencia aguda. Continúe con pruebas de sustancias, insumos estériles y cuidado de la piel.',
     actionStepsEn: [
       'Test all street supplies with xylazine and fentanyl test strips prior to use.',
-      'Never use alone: use with a trusted peer, stagger use, or call Never Use Alone at 877-696-1996.',
+      'Never use alone: use with a trusted peer, stagger use, or call Never Use Alone at ' + NEVER_USE_ALONE.label + '.',
       'Always carry at least 2 doses of naloxone (Narcan).',
       'Practice gentle wound care with saline and petroleum jelly on any developing skin breaks.'
     ],
     actionStepsEs: [
       'Pruebe sus sustancias con tiras para xilacina y fentanilo antes de consumir.',
-      'Nunca consuma a solas: alterne el consumo o llame a Never Use Alone al 877-696-1996.',
+      'Nunca consuma a solas: alterne el consumo o llame a Never Use Alone al ' + NEVER_USE_ALONE.label + '.',
       'Lleve siempre consigo al menos 2 dosis de naloxona.',
       'Cuide cualquier herida suavemente con solución salina y vaselina.'
     ]

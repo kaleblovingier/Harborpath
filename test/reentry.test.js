@@ -230,13 +230,13 @@ describe('Incarceration Reentry & Criminal Legal Health Module (public/js/views/
     const enText = formatReentrySummaryText(plan, 'en');
     assert.ok(enText.includes('INCARCERATION REENTRY CLINICAL & LEGAL CARE PLAN'));
     assert.ok(enText.includes('Massachusetts'));
-    assert.ok(enText.includes('877-696-1996'));
+    assert.ok(enText.includes('1-800-484-3731'));
     assert.ok(enText.includes('DOJ ADA Title II'));
 
     const esText = formatReentrySummaryText(plan, 'es');
     assert.ok(esText.includes('GUÍA CLÍNICA Y LEGAL DE REINGRESO PENITENCIARIO'));
     assert.ok(esText.includes('Massachusetts'));
-    assert.ok(esText.includes('877-696-1996'));
+    assert.ok(esText.includes('1-800-484-3731'));
     assert.ok(esText.includes('42 CFR Parte 2'));
   });
 

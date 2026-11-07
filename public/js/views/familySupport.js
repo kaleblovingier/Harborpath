@@ -9,6 +9,7 @@
 
 import { h, append, icon } from '../dom.js';
 import { t } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 /**
  * 7 Rules of CRAFT Positive Communication (Meyers & Smith).
@@ -209,7 +210,7 @@ export function formatCraftSummaryText(state = {}, lang = 'en') {
   lines.push('   - Al-Anon Family Groups (al-anon.org)');
   lines.push('   - Nar-Anon Family Groups (nar-anon.org)');
   lines.push('   - Partnership to End Addiction (drugfree.org) / Helpline: 1-855-378-4373');
-  lines.push('   - Never Use Alone (neverusealone.com) / 1-877-696-1996');
+  lines.push('   - Never Use Alone (neverusealone.com) / ' + NEVER_USE_ALONE.label);
 
   lines.push('');
   lines.push('----------------------------------------------------------------');

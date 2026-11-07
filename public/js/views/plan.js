@@ -1,6 +1,7 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 let activePlanState = null;
 let activePlanReset = null;
@@ -580,7 +581,7 @@ export function formatSafetyPlanText(plan = inMemoryPlanState) {
     '24/7 FREE & CONFIDENTIAL CRISIS & OVERDOSE ESCALATION LINES',
     '• 988 Suicide & Crisis Lifeline: Call or text 988 (free, 24/7, English & Spanish)',
     '• SAMHSA National Helpline: 1-800-662-4357 (free, 24/7 treatment & support)',
-    '• Never Use Alone (overdose prevention): 877-696-1996 (or 1-800-484-3731, 24/7)',
+    `• Never Use Alone (overdose prevention): ${NEVER_USE_ALONE.label} (or ${NEVER_USE_ALONE.alt.label}, 24/7)`,
     '• SafeSpot (overdose prevention & peer safety line): 800-972-0590 (free, 24/7)',
     '• Medical Emergency (if someone won’t wake up or breathe): Call 911 & give naloxone',
     '------------------------------------------------------------',
@@ -966,7 +967,7 @@ export function planView({ query } = {}) {
         ul([
           [strong('988 Suicide & Crisis Lifeline: '), 'Call or text ', tel('988', '988'), ' (free, 24/7, English & Spanish).'],
           [strong('SAMHSA National Helpline: '), tel('18006624357', '1-800-662-4357'), ' (free, 24/7 treatment referral & support).'],
-          [strong('Never Use Alone: '), tel('8776961996', '877-696-1996'), ' or ', tel('18004843731', '1-800-484-3731'), ' (free, 24/7 confidential overdose prevention).'],
+          [strong('Never Use Alone: '), tel(NEVER_USE_ALONE.number, NEVER_USE_ALONE.label), ' or ', tel(NEVER_USE_ALONE.alt.number, NEVER_USE_ALONE.alt.label), ' (free, 24/7 confidential overdose prevention).'],
           [strong('SafeSpot: '), tel('8009720590', '800-972-0590'), ' (free, 24/7 overdose prevention & peer safety line).'],
           [strong('Medical Emergency: '), 'Call ', tel('911', '911'), ' immediately if someone won’t wake up or breathe, and administer naloxone.'],
         ]),

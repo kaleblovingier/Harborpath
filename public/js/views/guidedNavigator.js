@@ -1,7 +1,7 @@
 import { h, clear, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, hotlineGrid } from './common.js';
 import { getLang } from '../i18n.js';
-import { hotlinesById } from '../content/hotlines.js';
+import { hotlinesById, NEVER_USE_ALONE } from '../content/hotlines.js';
 import {
   scoreOpioidWithdrawal,
   scoreAlcoholSedativeRisk,
@@ -198,7 +198,7 @@ export function detectCrisisOrOverdose(input = '') {
       actions: [
         { label: 'Call 911 Immediately', href: 'tel:911', kind: 'emergency' },
         { label: 'Open Step-by-Step Overdose & 2-Minute Naloxone Timer', href: '#/overdose', kind: 'primary' },
-        { label: 'Never Use Alone (877-696-1996)', href: 'tel:8776961996', kind: 'hotline' },
+        { label: `Never Use Alone (${NEVER_USE_ALONE.label})`, href: `tel:${NEVER_USE_ALONE.number}`, kind: 'hotline' },
         { label: 'SafeSpot Overdose Prevention Line (800-972-0590)', href: 'tel:8009720590', kind: 'hotline' },
       ],
       codes: ['NOE'],
@@ -252,11 +252,11 @@ export function detectCrisisOrOverdose(input = '') {
         '¿Va a consumir a solas? Llame antes a una línea de acompañamiento para prevención de sobredosis',
       ),
       guidance: gt(
-        'Using alone carries a high risk of fatal overdose because no one is present to administer naloxone. Call Never Use Alone (877-696-1996) or SafeSpot (800-972-0590) before you use—an operator stays on the line and only dispatches help if you become unresponsive.',
-        'Consumir a solas conlleva un alto riesgo de sobredosis mortal porque no hay nadie presente para administrar naloxona. Llame a Never Use Alone (877-696-1996) o SafeSpot (800-972-0590) antes de consumir; un operador permanece en la línea y solo envía ayuda si usted deja de responder.',
+        'Using alone carries a high risk of fatal overdose because no one is present to administer naloxone. Call Never Use Alone (' + NEVER_USE_ALONE.label + ') or SafeSpot (800-972-0590) before you use—an operator stays on the line and only dispatches help if you become unresponsive.',
+        'Consumir a solas conlleva un alto riesgo de sobredosis mortal porque no hay nadie presente para administrar naloxona. Llame a Never Use Alone (' + NEVER_USE_ALONE.label + ') o SafeSpot (800-972-0590) antes de consumir; un operador permanece en la línea y solo envía ayuda si usted deja de responder.',
       ),
       actions: [
-        { label: 'Never Use Alone (877-696-1996)', href: 'tel:8776961996', kind: 'emergency' },
+        { label: `Never Use Alone (${NEVER_USE_ALONE.label})`, href: `tel:${NEVER_USE_ALONE.number}`, kind: 'emergency' },
         { label: 'SafeSpot Overdose Prevention Line (800-972-0590)', href: 'tel:8009720590', kind: 'hotline' },
         { label: 'Open Harm Reduction & Safer Use Guide', href: '#/harm-reduction', kind: 'primary' },
         { label: 'Open Step-by-Step Overdose & Naloxone Guide', href: '#/overdose', kind: 'secondary' },
@@ -1884,9 +1884,9 @@ export function guidedNavigatorView() {
           class: 'btn btn-secondary btn-small',
           'aria-label': gt('Call or Text 988 Suicide and Crisis Lifeline', 'Llamar o enviar texto al 988 Línea de Crisis'),
         }),
-        tel('8776961996', [icon('phone'), 'Never Use Alone (877-696-1996)'], {
+        tel(NEVER_USE_ALONE.number, [icon('phone'), `Never Use Alone (${NEVER_USE_ALONE.label})`], {
           class: 'btn btn-secondary btn-small',
-          'aria-label': 'Call Never Use Alone at 877-696-1996',
+          'aria-label': `Call Never Use Alone at ${NEVER_USE_ALONE.label}`,
         }),
         tel('8009720590', [icon('phone'), 'SafeSpot (800-972-0590)'], {
           class: 'btn btn-secondary btn-small',

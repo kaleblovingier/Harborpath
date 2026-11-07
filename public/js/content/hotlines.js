@@ -13,6 +13,17 @@ import { t } from '../i18n.js';
 //   Trans Lifeline: press 2 for Spanish (translifeline.org/es/linea-de-ayuda)
 //   Domestic Violence Hotline: Spanish site and service (espanol.thehotline.org)
 //   Maternal Mental Health Hotline: English and Spanish (mchb.hrsa.gov/es/...)
+// Never Use Alone: the single source of truth for its number across the app.
+// neverusealone.com lists two lines, "800-484-3731 or 877-696-1996" (checked
+// November 2026). 800-484-3731 is the primary everywhere; `alt` is the backup
+// line, shown only where a view offers a second number. Import this constant
+// instead of typing either number (test/hotlines-single-source.test.js).
+export const NEVER_USE_ALONE = Object.freeze({
+  number: '18004843731',
+  label: '1-800-484-3731',
+  alt: Object.freeze({ number: '18776961996', label: '1-877-696-1996' }),
+});
+
 export const HOTLINES = {
   crisis: [
     {
@@ -55,7 +66,7 @@ export const HOTLINES = {
       id: 'never-use-alone',
       name: 'Never Use Alone',
       get desc() { return t('hotline.nua.desc', 'Using alone? Call first. An operator stays on the line and sends emergency help to the address you give if you stop responding.'); },
-      call: { number: '18004843731', label: '1-800-484-3731' },
+      call: { number: NEVER_USE_ALONE.number, label: NEVER_USE_ALONE.label },
       web: 'https://neverusealone.com/',
     },
     {
