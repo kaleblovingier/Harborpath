@@ -842,7 +842,7 @@ export function evaluateAsamCare(answers = {}) {
     redFlags.push(
       t(
         'nav.redflag.acute_infection',
-        'Urgent Biomedical Warning (Fever, Severe Wound, or Systemic Infection Risk): Fever, chills, spreading redness, black/necrotic tissue, chest pain, or shortness of breath can signal life-threatening endocarditis, osteomyelitis, sepsis, or deep tissue infection. Seek immediate hospital evaluation (HI) or urgent medical/wound care (#/health). Under EMTALA, hospital emergency rooms must evaluate and stabilize you regardless of insurance or ability to pay.',
+        'Urgent Biomedical Warning (Fever, Severe Wound, or Systemic Infection Risk): Fever, chills, spreading redness, black/necrotic tissue, chest pain, or shortness of breath can signal life-threatening endocarditis, osteomyelitis, sepsis, or deep tissue infection. Seek immediate hospital evaluation, including hospital inpatient care (HI), or urgent medical/wound care (#/health). Under EMTALA, hospital emergency rooms must evaluate and stabilize you regardless of insurance or ability to pay.',
       ),
     );
     clinicalNotes.push(

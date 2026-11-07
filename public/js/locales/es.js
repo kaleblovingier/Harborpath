@@ -7,6 +7,7 @@ import esPrivacy from './es-privacy.js';
 import esTools from './es-tools.js';
 import esWorkspace from './es-workspace.js';
 import esEvidence from './es-evidence.js';
+import esSafety from './es-safety.js';
 
 export default {
   // ---------------------------------------------------------------- Sensory mode & Emergency drawer
@@ -41,7 +42,7 @@ export default {
   'emergency.step2Title': 'Aplique 4 mg de naloxona en 1 fosa nasal',
   'emergency.step2Desc': 'Abra el envase. Incline la cabeza hacia atrás. Inserte la boquilla en una fosa nasal hasta que sus dedos toquen la nariz. Presione el émbolo con firmeza hasta que haga clic.',
   'emergency.step3Title': 'Apoye la respiración: siga las indicaciones del 911',
-  'emergency.step3Desc': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un DEA si está disponible. Dé respiraciones de rescate según su capacitación o las indicaciones del operador; nunca retrase la RCP para usar un temporizador.',
+  'emergency.step3Desc': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un desfibrilador externo automático (DEA) si hay uno disponible. Dé respiraciones de rescate según su capacitación o las indicaciones del operador; nunca retrase la RCP para usar un temporizador.',
   'emergency.step4Title': 'Repita cada 2 a 3 minutos si la respiración es anormal',
   'emergency.step4Desc': 'Si la respiración sigue lenta, superficial o ausente, o vuelve a ser anormal, use un aerosol nasal de naloxona nuevo en la otra fosa nasal. Repita cada 2 a 3 minutos según la etiqueta hasta que vuelva la respiración normal o la ayuda de emergencia se haga cargo. No dé dosis adicionales solo para despertar a alguien que respira normalmente.',
   'emergency.pacerGuide': 'Siga las indicaciones del operador del 911 para apoyar la respiración o hacer RCP. Esta referencia no es un temporizador de RCP.',
@@ -611,7 +612,7 @@ export default {
   'nav.redflag.severe_withdrawal': 'Riesgo de abstinencia de alta complejidad: Los síntomas agudos graves de abstinencia o antecedentes de abstinencia complicada requieren estabilización médica las 24 horas (Nivel ASAM 3.7-WM / 4.0) o evaluación inmediata en un hospital o clínica puente.',
   'nav.redflag.xylazine_acuity': 'Alerta de abstinencia y heridas por xilacina / medetomidina: El rebote adrenérgico alfa-2 puede causar alzas graves de presión arterial e inestabilidad autonómica junto con la abstinencia de opioides. Busque atención con monitoreo médico que trate tanto la abstinencia de opioides como la alfa-2 y evalúe cualquier úlcera cutánea.',
   'nav.redflag.pregnant': 'Prioridad de Embarazo y Atención Perinatal (Guías ACOG / ASAM): Si está embarazada y consume opioides, las guías clínicas recomiendan ampliamente iniciar o continuar el mantenimiento con buprenorfina (BU) o metadona (MU/OTP) en lugar de una desintoxicación abrupta. La abstinencia de opioides sin supervisión durante el embarazo puede causar sufrimiento fetal, parto prematuro y retorno al consumo.',
-  'nav.redflag.acute_infection': 'Advertencia Biomédica Urgente (Fiebre, Herida Grave o Riesgo de Infección Sistémica): Fiebre, escalofríos, enrojecimiento que se extiende, tejido negro/necrótico, dolor en el pecho o falta de aire pueden indicar endocarditis, osteomielitis, sepsis o infección profunda. Busque evaluación hospitalaria inmediata (HI) o atención médica de urgencia (#/health). Bajo la ley EMTALA, las salas de emergencia deben evaluarle y estabilizarle sin importar su seguro o capacidad de pago.',
+  'nav.redflag.acute_infection': 'Advertencia Biomédica Urgente (Fiebre, Herida Grave o Riesgo de Infección Sistémica): Fiebre, escalofríos, enrojecimiento que se extiende, tejido negro/necrótico, dolor en el pecho o falta de aire pueden indicar endocarditis, osteomielitis, sepsis o infección profunda potencialmente mortales. Busque evaluación hospitalaria inmediata, incluida la hospitalización (HI), o atención médica o de heridas urgente (#/health). Bajo la ley EMTALA, las salas de emergencia deben evaluarle y estabilizarle sin importar su seguro o capacidad de pago.',
   'nav.redflag.mental_crisis': 'Apoyo en Crisis Aguda de Salud Mental: Si tiene pensamientos de autolesión, pánico abrumador o psicosis, no tiene que enfrentar esto solo/a. Llame o envíe un texto al 988 (gratis, confidencial, 24/7) o utilice atención de crisis sin cita (WI) y equipos móviles de crisis (PEOFF). La atención integrada de diagnóstico dual (MHSU) trata la salud mental y el consumo de sustancias al mismo tiempo.',
   'nav.note.opioid_moud': 'Trastorno por Consumo de Opioides y Regla de las 72 Horas de la DEA (21 CFR § 1306.07(b)): Los medicamentos aprobados por la FDA —buprenorfina (BU), metadona (MU/OTP) y naltrexona de liberación prolongada (NU)— tratan el trastorno por consumo de opioides; continuar con buprenorfina o metadona se asocia con una gran reducción de las muertes por sobredosis (Larochelle et al., Ann Intern Med 2018). Bajo la norma federal 21 CFR § 1306.07(b), cualquier médico de sala de emergencias u hospital puede administrar o dispensar hasta 72 horas (3 días) de buprenorfina o metadona para aliviar la abstinencia aguda de opioides mientras le conecta con atención continua.',
   'nav.note.xylazine': 'Adulteración con Xilacina / Medetomidina (“Tranq”): La xilacina y la medetomidina son sedantes adrenérgicos alfa-2 no opioides. Su abstinencia causa hipertensión de rebote, taquicardia, sudoración y ansiedad intensa que los medicamentos opioides por sí solos no alivian por completo; los médicos suelen añadir agonistas alfa-2 (como clonidina, tizanidina o dexmedetomidina) junto con buprenorfina o metadona.',
@@ -1880,4 +1881,5 @@ export default {
   ...esTools,
   ...esWorkspace,
   ...esEvidence,
+  ...esSafety,
 };
