@@ -61,7 +61,12 @@
 /* Classes that set display must never override the hidden attribute. */
 [hidden] { display: none !important; }
 
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  /* Keep focused fields and anchor targets clear of the sticky safety bar,
+     which wraps to two lines on narrow screens. */
+  scroll-padding-top: 88px;
+}
 
 body {
   margin: 0;
@@ -1118,6 +1123,28 @@ tbody th { font-weight: 700; min-width: 200px; }
 .workspace-progress { font-weight: 600; }
 .workspace-summary { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
 @media (max-width: 760px) { .tools-filters { grid-template-columns: 1fr; } }
+
+/* Topic search (home and not-found pages) and the "Help for your situation" links */
+.topic-search { margin-top: 24px; }
+.topic-search h2 { margin-top: 0; }
+.topic-search input { width: 100%; min-height: 44px; }
+.topic-search-status { font-weight: 600; margin: 12px 0 6px; }
+.topic-search-status:empty { margin: 0; }
+.topic-search-results { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 6px 16px; }
+.topic-search-results a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+.topic-search-more { margin: 10px 0 0; }
+.topic-search-browse { margin: 12px 0 0; }
+.path-stack { display: flex; flex-direction: column; gap: 6px; }
+.path-stack > .path-card { flex: 1; }
+.path-sublink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; font-weight: 600; }
+.help-for-group h3 { margin: 18px 0 8px; font-size: 1rem; }
+.help-for-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.help-for-list a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 6px 14px;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+  text-decoration: none; font-weight: 600;
+}
+.help-for-list a:hover { border-color: var(--brand); }
 .input-short { max-width: 10rem; }
 .match-results { display: grid; gap: 16px; }
 .match-results > .callout { margin: 0; }
@@ -3564,7 +3591,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 
 @media print {
   .safety-bar, .site-header, .site-footer, .filters, .finder-search, .presets, .actions .btn-ghost,
-  .saved-tools, .persist, .results-more, .tabs, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,
+  .saved-tools, .persist, .results-more, .tabs, .tab-nav, .toc, .skip-link, .callout-emergency, .timer button, .pacer-guide, .print-handout .actions,
   #self-check, #safety-plan > form, #safety-plan > .callout, .safety-plan-preview .actions,
   .safety-plan-preview .field-status, #asam-recommendation-card .actions, .state-panel .actions,
   .wizard-nav, .match-filters, .compare-check, .match-summary .actions, .assessment-actions, .emergency-drawer-wrapper, .emergency-drawer-backdrop, .emergency-drawer-close, .emergency-drawer-footer, .sensory-mode-toggle, .btn-emergency-drawer, .btn-sensory-mode, .legal-details-toggle { display: none !important; }

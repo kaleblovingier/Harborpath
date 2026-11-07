@@ -1,6 +1,7 @@
 import { api } from './api.js';
 import { state, subscribe, wipeAll } from './state.js';
 import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
+import { announce } from './dom.js';
 import {
   homeView,
   treatmentView,
@@ -518,9 +519,53 @@ export function resolveRoute(path, query) {
   };
 }
 
+// Route links start with "#/" (or are a bare "#" for home). Any other hash,
+// such as "#main" from the skip link, points at an element on the current
+// page and must never be treated as a route.
+export function isRouteHash(hash) {
+  const value = String(hash ?? '');
+  return value === '' || value === '#' || value.startsWith('#/');
+}
+
+const NATIVELY_FOCUSABLE = /^(A|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/;
+
+/** Make an element programmatically focusable without adding it to the tab order. */
+export function makeFocusable(el) {
+  if (el && !NATIVELY_FOCUSABLE.test(el.tagName ?? '') && !el.hasAttribute?.('tabindex')) {
+    el.setAttribute('tabindex', '-1');
+  }
+  return el;
+}
+
+/**
+ * Where focus lands after a route change: the page title, then the first h1,
+ * then the first h2, then the main region itself. Views that do not use
+ * pageHeader() still get a sensible starting point for keyboard and
+ * screen-reader users.
+ */
+export function routeFocusTarget(root) {
+  if (!root) return null;
+  return makeFocusable(root.querySelector('#page-title') ?? root.querySelector('h1') ?? root.querySelector('h2') ?? root);
+}
+
+/** Move focus to an in-page anchor target (for example the skip link's #main). */
+export function focusInPageTarget(id, doc = typeof document !== 'undefined' ? document : null) {
+  if (!doc || !id) return false;
+  let target = null;
+  try {
+    target = doc.getElementById(decodeURIComponent(id));
+  } catch {
+    target = doc.getElementById(id);
+  }
+  if (!target) return false;
+  makeFocusable(target).focus?.();
+  return true;
+}
+
 let firstRender = true;
 let lastMeta = null;
 let renderSeq = 0;
+let lastPath = '';
 
 const hasDom = typeof document !== 'undefined';
 const main = hasDom ? document.getElementById('main') : null;
@@ -534,13 +579,24 @@ function closeMenu() {
   for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
 }
 
-async function render() {
+async function render({ hashChange = false } = {}) {
   if (!main) return;
+  const routeHash = isRouteHash(location.hash);
+  // An in-page anchor (e.g. "#main") changed the hash: the current view stays.
+  if (!routeHash && hashChange && !firstRender) {
+    focusInPageTarget(location.hash.slice(1));
+    return;
+  }
   const token = ++renderSeq;
   const isInitial = firstRender;
   firstRender = false;
 
-  const { path, query } = parseHash();
+  // With a non-route hash (a page opened at "#main", or a language change after
+  // one), keep showing the last route instead of the not-found page.
+  const { path, query } = routeHash
+    ? parseHash()
+    : { path: lastPath, query: carried?.path === lastPath ? carried.query : new URLSearchParams() };
+  lastPath = path;
   const resolved = resolveRoute(path, query);
   document.title = path ? `${resolved.title} · ${SITE}` : `${SITE}: ${resolved.title}`;
 
@@ -558,9 +614,14 @@ async function render() {
   }
 
   main.replaceChildren(buildView());
+  if (!routeHash) {
+    if (isInitial) focusInPageTarget(location.hash.slice(1));
+    return;
+  }
   if (!isInitial) {
     window.scrollTo(0, 0);
-    document.getElementById('page-title')?.focus({ preventScroll: true });
+    routeFocusTarget(main)?.focus({ preventScroll: true });
+    announce(resolved.title);
   }
 }
 
@@ -653,6 +714,14 @@ if (hasDom) {
       for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
     }
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    // Same-page anchors (the skip link) move focus without touching the hash,
+    // so they neither add a history entry nor trigger a route render.
+    const anchor = e.target.closest?.('a[href^="#"]:not([href^="#/"]):not([href="#"])');
+    if (anchor) {
+      e.preventDefault();
+      focusInPageTarget(anchor.getAttribute('href').slice(1));
+      return;
+    }
     const a = e.target.closest('a[href^="#/"], a[href="#"]');
     if (!a) return;
     e.preventDefault();
@@ -673,7 +742,7 @@ if (hasDom) {
   document.addEventListener('pointerenter', handleLinkPreload, { capture: true, passive: true });
   document.addEventListener('focusin', handleLinkPreload, { passive: true });
 
-  window.addEventListener('hashchange', render);
+  window.addEventListener('hashchange', () => render({ hashChange: true }));
 
   document.getElementById('quick-exit')?.addEventListener('click', quickExit);
 
@@ -682,8 +751,11 @@ if (hasDom) {
     if (e.key !== 'Escape') return;
     const more = nav?.querySelector('.nav-more-menu[open]');
     if (more) {
+      // Closing the menu must not count toward the Esc-Esc quick exit.
       more.open = false;
       more.querySelector('summary')?.focus();
+      lastEscape = 0;
+      return;
     }
     const now = Date.now();
     if (now - lastEscape < 1000) quickExit();

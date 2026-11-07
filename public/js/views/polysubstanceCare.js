@@ -514,7 +514,7 @@ export function polysubstanceCareView() {
         icon('alert-triangle'),
         h('span', {}, isEs ? 'Toxicología y Reducción de Daños' : 'Toxicology & Harm Reduction')
       ]),
-      h('h2', {}, isEs ? 'Navegador de Sinergia de Polisustancias e Interacciones' : 'Polysubstance Overdose Synergy & Drug Interaction Navigator'),
+      h('h1', {}, isEs ? 'Navegador de Sinergia de Polisustancias e Interacciones' : 'Polysubstance Overdose Synergy & Drug Interaction Navigator'),
       h('p', { class: 'view-intro' }, isEs
         ? 'Más del 80% de las muertes por sobredosis involucran combinaciones de sustancias. Conozca las interacciones letales entre depresores, el enmascaramiento de estimulantes, el protocolo de vía aérea cuando la naloxona no basta y cómo protegerse sin juzgar.'
         : 'Over 80% of overdose fatalities involve multi-substance combinations. Understand fatal depressant synergies, stimulant masking, airway rescue protocols when naloxone does not reverse sedation, and non-judgmental harm reduction strategies.')

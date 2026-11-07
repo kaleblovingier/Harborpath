@@ -415,7 +415,7 @@ export function nightlifeCareView() {
         icon('shield'),
         h('span', {}, isEs ? 'Reducción de Daños en Ocio Nocturno' : 'Nightlife & Festival Harm Reduction')
       ]),
-      h('h2', {}, isEs ? 'Guía Clínica de Reducción de Daños en Ocio Nocturno y Clubes' : 'Nightlife, Club Drugs, Dissociatives & Festival Harm Reduction'),
+      h('h1', {}, isEs ? 'Guía Clínica de Reducción de Daños en Ocio Nocturno y Clubes' : 'Nightlife, Club Drugs, Dissociatives & Festival Harm Reduction'),
       h('p', { class: 'view-intro' }, isEs
         ? 'Pautas basadas en evidencia para MDMA, ketamina, GHB/GBL, óxido nitroso y 2C-B. Conozca el protocolo de balance de líquidos contra hiponatremia, salud vesical ("vejiga K"), pruebas de reactivos químicos y prevención de intoxicaciones.'
         : 'Evidence-based protocols for MDMA, ketamine, GHB/GBL, nitrous oxide, and 2C-B. Learn the fluid balance protocol to prevent fatal hyponatremia, ketamine bladder health, chemical reagent testing, and non-judgmental nightlife safety.')
