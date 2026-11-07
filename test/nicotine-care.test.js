@@ -233,7 +233,8 @@ describe('Tobacco, Nicotine, Vaping & Smoking Cessation Module (Wave 25)', () =>
 
     assert.match(esText, /HARBORPATH: RESUMEN DE CESACIÓN TABÁQUICA/);
     assert.match(esText, /100% en memoria RAM/);
-    assert.match(esText, /1-855-DÉJALO-YA/);
+    assert.match(esText, /1-855-DÉJELO-YA \(855-335-3569\)/);
+    assert.doesNotMatch(esText, /DÉJALO|335-2569/);
   });
 
   test('nicotineCareView mounts accessible DOM structure with tab navigation', () => {

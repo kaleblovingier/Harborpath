@@ -234,6 +234,12 @@ test('Lactation guidance: breastfeeding encouraged with MOUD and precise clinica
 
   // Contraindications
   assert.match(enText, /HIV/i);
+  // HHS Perinatal HIV Guidelines: not a blanket contraindication; shared decision-making when
+  // virally suppressed on ART, replacement feeding when not suppressed.
+  assert.match(enText, /not virally suppressed/);
+  assert.match(enText, /shared decision-making/);
+  assert.doesNotMatch(enText, /contraindicated ONLY in: 1\) Maternal HIV infection/);
+  assert.match(JSON.stringify(lact.keyPoints), /decisión compartida/);
   assert.match(enText, /tuberculosis/i);
   assert.match(enText, /hepatitis C.*cracked or bleeding/i);
 });

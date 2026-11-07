@@ -142,7 +142,7 @@ test('FEDERAL_TAKE_HOME_TIERS_2024 exports all 3 federal schedule tiers with bil
   assert.equal(tier3.maxTakeHomes, 28);
 });
 
-test('CRITERIA_8_POINT_ASSESSMENT exports all 8 statutory safety criteria under 42 CFR § 8.12(i)(2)', () => {
+test('CRITERIA_8_POINT_ASSESSMENT exports the 8-item plain-language take-home checklist (based on the six § 8.12(i)(2) factors)', () => {
   assert.equal(CRITERIA_8_POINT_ASSESSMENT.length, 8);
   for (const crit of CRITERIA_8_POINT_ASSESSMENT) {
     assert.ok(crit.id);
@@ -155,6 +155,14 @@ test('CRITERIA_8_POINT_ASSESSMENT exports all 8 statutory safety criteria under 
 
 test('METHADONE_PHARMACOKINETICS_SAFETY outlines dose stacking and long-acting naloxone rebound directives', () => {
   assert.match(METHADONE_PHARMACOKINETICS_SAFETY.inductionEn.startDose, /20 mg to 30 mg/i);
+  // 2024 rule: federal first-day cap is 50 mg (higher if documented as clinically indicated),
+  // not the pre-2024 30 mg / 40 mg limits.
+  assert.match(METHADONE_PHARMACOKINETICS_SAFETY.inductionEn.startDose, /should not exceed 50 mg/);
+  assert.match(METHADONE_PHARMACOKINETICS_SAFETY.inductionEn.startDose, /8\.12\(h\)\(3\)\(ii\)/);
+  assert.match(METHADONE_PHARMACOKINETICS_SAFETY.inductionEs.startDose, /no debe superar 50 mg/);
+  for (const lang of ['inductionEn', 'inductionEs']) {
+    assert.doesNotMatch(METHADONE_PHARMACOKINETICS_SAFETY[lang].startDose, /30 mg (to|a) 40 mg/);
+  }
   assert.match(METHADONE_PHARMACOKINETICS_SAFETY.inductionEn.doseStackingWarning, /dose stacking/i);
   assert.match(METHADONE_PHARMACOKINETICS_SAFETY.inductionEn.naloxoneReboundWarning, /12 to 24 hours/i);
   assert.ok(METHADONE_PHARMACOKINETICS_SAFETY.cardiacEn.riskFactors.length >= 4);
@@ -169,7 +177,13 @@ test('PATIENT_RIGHTS_2024 enforces federal anti-punitive protections', () => {
 
   const toxRight = PATIENT_RIGHTS_2024.find((r) => /Toxicology/i.test(r.topicEn));
   assert.ok(toxRight);
-  assert.match(toxRight.ruleEn, /CANNOT be the sole basis/i);
+  // The "sole basis" bar is not in the § 8.12 regulation text; the rule's preamble says testing
+  // should never be used punitively. Lock in the accurate, non-overstated wording.
+  assert.match(toxRight.ruleEn, /should never be used punitively/);
+  assert.match(toxRight.ruleEn, /preamble/);
+  assert.doesNotMatch(toxRight.ruleEn, /explicitly directs|CANNOT be the sole basis/i);
+  assert.match(toxRight.ruleEs, /nunca deben usarse de forma punitiva/);
+  assert.doesNotMatch(toxRight.ruleEs, /prohíbe que las pruebas/);
 
   const taperRight = PATIENT_RIGHTS_2024.find((r) => /Tapers/i.test(r.topicEn));
   assert.ok(taperRight);
@@ -218,7 +232,9 @@ test('buildAdvocacyScript generates legally grounded patient communication scrip
   assert.match(takehomeScript, /lockbox/);
 
   const toxScript = buildAdvocacyScript({ scriptType: 'toxicology_advocacy' });
-  assert.match(toxScript, /cannot be used as the sole reason/);
+  assert.match(toxScript, /never be used punitively/);
+  assert.match(toxScript, /grievance process/);
+  assert.doesNotMatch(toxScript, /cannot be used as the sole reason/);
 
   const guestScript = buildAdvocacyScript({ scriptType: 'guest_dosing', destinationCity: 'Seattle, WA' });
   assert.match(guestScript, /Seattle, WA/);

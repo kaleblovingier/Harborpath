@@ -17,9 +17,10 @@ describe('REVERSAL_FORMULATIONS Clinical Pharmacology & Schema', () => {
     'naloxone_nasal_8mg',
     'nalmefene_nasal_3mg',
     'naloxone_injectable_0_4mg',
+    'nalmefene_autoinjector_1_5mg',
   ];
 
-  it('contains all 4 core evidence-based reversal formulations', () => {
+  it('contains all 5 core evidence-based reversal formulations', () => {
     assert.ok(REVERSAL_FORMULATIONS && typeof REVERSAL_FORMULATIONS === 'object');
     for (const id of REQUIRED_IDS) {
       assert.ok(REVERSAL_FORMULATIONS[id], `Missing formulation with id "${id}"`);
@@ -29,7 +30,7 @@ describe('REVERSAL_FORMULATIONS Clinical Pharmacology & Schema', () => {
 
   it('is iterable via for..of and spread syntax', () => {
     const list = [...REVERSAL_FORMULATIONS];
-    assert.equal(list.length, 4);
+    assert.equal(list.length, 5);
     const ids = list.map((f) => f.id);
     for (const req of REQUIRED_IDS) {
       assert.ok(ids.includes(req), `Iterated list missing "${req}"`);
@@ -176,10 +177,13 @@ describe('REVERSAL_FORMULATIONS Clinical Pharmacology & Schema', () => {
       assert.ok(nalm.receptorPharmacology.affinityKiNm < REVERSAL_FORMULATIONS.naloxone_nasal_4mg.receptorPharmacology.affinityKiNm);
     });
 
-    it('highlights severe clinical caveat: prolonged precipitated withdrawal lasting 12–24+ hours', () => {
+    it('highlights severe clinical caveat: prolonged precipitated withdrawal tied to the ~11 h label half-life', () => {
       assert.equal(nalm.precipitatedWithdrawal.riskLevel, 'severe_prolonged');
-      assert.equal(nalm.precipitatedWithdrawal.durationHours, '12–24+ hours');
-      assert.match(nalm.precipitatedWithdrawal.mitigationStrategy, /12–24 hour hospital observation/i);
+      assert.match(nalm.precipitatedWithdrawal.durationHours, /many hours/i);
+      assert.match(nalm.precipitatedWithdrawal.durationHours, /~11 h/);
+      assert.match(nalm.precipitatedWithdrawal.mitigationStrategy, /extended emergency department observation/i);
+      // The FDA Opvee label gives a half-life (11.4 h), not a 12–24+ hour withdrawal duration.
+      assert.doesNotMatch(JSON.stringify(nalm), /12–24\+? ?hours?/);
       assert.match(nalm.clinicalPearls.join(' '), /cannot be quickly reversed/i);
     });
   });
@@ -320,7 +324,8 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
 
       // Clinical recommendation synthesis
       assert.match(cmp.clinicalRecommendation, /Standard naloxone.*strongly preferred for community bystander/i);
-      assert.match(cmp.clinicalRecommendation, /12–24\+ hours/i);
+      assert.match(cmp.clinicalRecommendation, /persist for many hours/i);
+      assert.doesNotMatch(cmp.clinicalRecommendation, /12–24/);
     });
 
     it('accurately compares naloxone 4mg vs naloxone 8mg', () => {
@@ -353,10 +358,36 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
     });
   });
 
+  describe('Formulation 5: nalmefene_autoinjector_1_5mg (Zurnai)', () => {
+    const z = REVERSAL_FORMULATIONS.nalmefene_autoinjector_1_5mg;
+
+    it('matches the FDA Zurnai label: 1.5 mg nalmefene IM/SC auto-injector, Rx-only, approved Aug 2024', () => {
+      assert.ok(z);
+      assert.equal(z.brandName, 'Zurnai');
+      assert.equal(z.genericName, 'Nalmefene Hydrochloride');
+      assert.equal(z.doseValueMg, 1.5);
+      assert.equal(z.routeCategory, 'injectable');
+      assert.match(z.deliveryRoute, /Intramuscular.*Subcutaneous.*auto-injector/);
+      assert.equal(z.accessStatus, 'rx_only');
+      assert.match(z.accessLabel, /Aug 2024/);
+      assert.equal(z.eliminationHalfLifeMinutes.terminalHours, 9.07);
+      assert.match(z.standardRedosingIntervalMinutes.text, /2–5 minutes/);
+      assert.equal(z.precipitatedWithdrawal.riskLevel, 'severe_prolonged');
+    });
+
+    it('compares against naloxone with nalmefene-specific guidance', () => {
+      const cmp = compareFormulations('naloxone_nasal_4mg', 'nalmefene_autoinjector_1_5mg');
+      assert.match(cmp.clinicalRecommendation, /Standard naloxone.*strongly preferred/);
+      assert.match(cmp.clinicalRecommendation, /Zurnai/);
+      const both = compareFormulations('nalmefene_nasal_3mg', 'nalmefene_autoinjector_1_5mg');
+      assert.match(both.clinicalRecommendation, /both long-acting nalmefene/);
+    });
+  });
+
   describe('getReversalProtocols(filter)', () => {
-    it('returns all 4 formulations when called with no filter', () => {
+    it('returns all 5 formulations when called with no filter', () => {
       const all = getReversalProtocols();
-      assert.equal(all.length, 4);
+      assert.equal(all.length, 5);
     });
 
     it('filters by routeCategory', () => {
@@ -365,8 +396,9 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       assert.ok(nasal.every((f) => f.routeCategory === 'intranasal'));
 
       const inj = getReversalProtocols({ routeCategory: 'injectable' });
-      assert.equal(inj.length, 1);
+      assert.equal(inj.length, 2);
       assert.equal(inj[0].id, 'naloxone_injectable_0_4mg');
+      assert.equal(inj[1].id, 'nalmefene_autoinjector_1_5mg');
     });
 
     it('filters by accessStatus and otcOnly', () => {
@@ -379,10 +411,11 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       assert.equal(otcFlag[0].id, 'naloxone_nasal_4mg');
 
       const rx = getReversalProtocols({ accessStatus: 'rx_only' });
-      assert.equal(rx.length, 2);
+      assert.equal(rx.length, 3);
       const rxIds = rx.map((f) => f.id);
       assert.ok(rxIds.includes('naloxone_nasal_8mg'));
       assert.ok(rxIds.includes('nalmefene_nasal_3mg'));
+      assert.ok(rxIds.includes('nalmefene_autoinjector_1_5mg'));
     });
 
     it('performs case-insensitive text search across brand, generic, and id', () => {
@@ -391,8 +424,11 @@ describe('Helper Functions & Clinical Comparison Engine', () => {
       assert.equal(kloxxado[0].id, 'naloxone_nasal_8mg');
 
       const nalmefene = getReversalProtocols({ search: 'NALMEFENE' });
-      assert.equal(nalmefene.length, 1);
-      assert.equal(nalmefene[0].id, 'nalmefene_nasal_3mg');
+      assert.equal(nalmefene.length, 2);
+      assert.deepEqual(nalmefene.map((f) => f.id), ['nalmefene_nasal_3mg', 'nalmefene_autoinjector_1_5mg']);
+
+      const zurnai = getReversalProtocols({ search: 'zurnai' });
+      assert.equal(zurnai.length, 1);
 
       const syringe = getReversalProtocols({ search: 'vial' });
       assert.equal(syringe.length, 1);

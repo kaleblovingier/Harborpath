@@ -38,7 +38,10 @@ export const FEDERAL_TAKE_HOME_TIERS_2024 = Object.freeze([
 ]);
 
 /**
- * The 8-Point Safety Assessment Criteria under 42 CFR § 8.12(i)(2).
+ * Take-home safety checklist. 42 CFR § 8.12(i)(2) (2024) lists six factors the
+ * practitioner considers (active SUD/conditions raising overdose risk, attendance,
+ * serious behavioral problems, recent diversion, safe transport and storage, and
+ * any other relevant criteria); this checklist breaks them into 8 plain-language items.
  */
 export const CRITERIA_8_POINT_ASSESSMENT = Object.freeze([
   {
@@ -105,14 +108,14 @@ export const CRITERIA_8_POINT_ASSESSMENT = Object.freeze([
 export const METHADONE_PHARMACOKINETICS_SAFETY = Object.freeze({
   inductionEn: {
     title: 'Induction & Initial Dosing Safety',
-    startDose: 'Initial dose: 20 mg to 30 mg PO (never exceeding 30 mg to 40 mg on Day 1).',
+    startDose: 'Initial dose: many clinicians start conservatively at 20 mg to 30 mg PO and observe before any extra Day 1 dose, especially without recent fentanyl or high-dose opioid use. Federal rule (42 CFR § 8.12(h)(3)(ii), as revised in 2024): the total first-day dose should not exceed 50 mg unless the OTP practitioner finds sufficient medical rationale and documents in the patient record that a higher dose was clinically indicated.',
     titration: 'Dose increases should not exceed 5 mg to 10 mg every 3 to 7 days, allowing tissue equilibrium.',
     doseStackingWarning: 'CRITICAL: Methadone has a long elimination half-life (24 to 36+ hours) but a shorter analgesic/sedating duration (4 to 8 hours). Patients may feel withdrawal returning on Day 2 or 3 and assume the dose is too low. Increasing the dose too quickly leads to fatal cumulative tissue accumulation ("dose stacking") around Days 3 to 7.',
     naloxoneReboundWarning: 'LONG-ACTING REBOUND DIRECTIVE: Naloxone half-life is 30 to 90 minutes. Methadone half-life is 24 to 36+ hours. Following naloxone reversal of methadone overdose, the patient WILL experience recurrent respiratory depression once naloxone wears off. Continuous hospital ED monitoring for at least 12 to 24 hours is non-negotiable.'
   },
   inductionEs: {
     title: 'Seguridad en la Inducción y Dosificación Inicial',
-    startDose: 'Dosis inicial: 20 mg a 30 mg vía oral (nunca exceder de 30 mg a 40 mg en el Día 1).',
+    startDose: 'Dosis inicial: muchos clínicos empiezan de forma conservadora con 20 mg a 30 mg vía oral y observan antes de dar cualquier dosis adicional el Día 1, sobre todo sin consumo reciente de fentanilo u opioides en dosis altas. Norma federal (42 CFR § 8.12(h)(3)(ii), revisada en 2024): la dosis total del primer día no debe superar 50 mg, salvo que el profesional del OTP tenga una justificación médica suficiente y documente en el expediente del paciente que una dosis mayor estaba clínicamente indicada.',
     titration: 'Los incrementos no deben superar 5 mg a 10 mg cada 3 a 7 días para permitir equilibrio tisular.',
     doseStackingWarning: 'CRÍTICO: La metadona tiene una vida media prolongada (24 a 36+ horas) pero una duración analgésica más corta (4 a 8 horas). Los pacientes pueden sentir molestias en el Día 2 o 3 y pensar que la dosis es insuficiente. Aumentar la dosis con demasiada rapidez provoca una acumulación tisular acumulativa mortal ("apilamiento de dosis") entre los Días 3 y 7.',
     naloxoneReboundWarning: 'DIRECTIVA DE REBOTE POR EFECTO PROLONGADO: La naloxona dura 30 a 90 minutos. La metadona dura 24 a 36+ horas. Tras revertir una sobredosis de metadona con naloxona, la persona volverá a dejar de respirar cuando la naloxona se disipe. La observación hospitalaria durante al menos 12 a 24 horas es indispensable.'
@@ -154,8 +157,8 @@ export const PATIENT_RIGHTS_2024 = Object.freeze([
   {
     topicEn: 'Protection Against Punitive Toxicology Actions',
     topicEs: 'Protección Frente a Sanciones Punitivas por Toxicología',
-    ruleEn: 'Federal 42 CFR § 8.12 explicitly directs that positive toxicology screens CANNOT be the sole basis for punitive take-home revocations or administrative discharge. Substance recurrence requires clinical support, harm reduction, and dose evaluation—NOT punitive loss of stability.',
-    ruleEs: 'La norma federal 42 CFR § 8.12 prohíbe que las pruebas de orina positivas sean la única base para revocar botellas de forma punitiva o dar de alta administrativa forzosa. La recurrencia requiere apoyo clínico y evaluación de dosis, no castigos.'
+    ruleEn: 'The 2024 Part 8 rule removed the old requirement that take-home eligibility rest on toxicology results showing sustained abstinence; take-home decisions now rest on the practitioner\'s clinical judgment of the factors in 42 CFR § 8.12(i)(2). In the rule\'s preamble, SAMHSA states that toxicology testing is a clinical tool to inform treatment and should never be used punitively, and discharge decisions must be patient-centered and documented. The regulation text does not expressly bar a program from considering a positive test, so ask for any change to be explained in clinical terms, and use the program\'s required grievance process if you disagree.',
+    ruleEs: 'La regla de la Parte 8 de 2024 eliminó el antiguo requisito de que la elegibilidad para dosis para llevar dependiera de pruebas toxicológicas que demostraran abstinencia sostenida; ahora depende del criterio clínico del profesional según los factores de 42 CFR § 8.12(i)(2). En el preámbulo de la regla, SAMHSA afirma que las pruebas toxicológicas son una herramienta clínica para orientar el tratamiento y nunca deben usarse de forma punitiva, y que las decisiones de alta deben centrarse en el paciente y documentarse. El texto del reglamento no prohíbe expresamente que el programa tome en cuenta una prueba positiva; pida que cualquier cambio se le explique en términos clínicos y use el proceso de quejas obligatorio del programa si no está de acuerdo.'
   },
   {
     topicEn: 'Right to Safe, Patient-Paced Voluntary Tapers',
@@ -248,7 +251,7 @@ export function buildAdvocacyScript({ scriptType = 'takehome_request', patientNa
   }
 
   if (scriptType === 'toxicology_advocacy') {
-    return '“I understand that my recent drug screen showed a positive result. However, under the updated federal 42 CFR § 8.12 regulations, federal policy directs that drug screening results cannot be used as the sole reason to punitively revoke take-home bottles or initiate administrative discharge. I am committed to my recovery, and I would like to discuss what clinical supports or dose adjustments we can put in place rather than destabilizing my progress.”';
+    return '“I understand that my recent drug screen showed a positive result. The 2024 federal Part 8 rule (42 CFR § 8.12) bases take-home decisions on my clinician\'s overall clinical judgment rather than on toxicology results alone, and SAMHSA has stated that drug testing is a clinical tool that should never be used punitively. I am committed to my recovery, and I would like to discuss what clinical supports or dose adjustments we can put in place rather than destabilizing my progress. If my take-homes or enrollment change, please explain the clinical reasons and how I can use the grievance process.”';
   }
 
   if (scriptType === 'guest_dosing') {
@@ -347,8 +350,8 @@ export function formatMethadoneSummaryText(state = methadoneState, lang = 'en') 
       ? '- Se eliminó el requisito de 1 año de historial de adicción para el ingreso a la clínica.'
       : '- The 1-year opioid addiction history requirement is permanently eliminated for clinic admission.',
     isEs
-      ? '- Las pruebas de orina positivas NO pueden ser motivo exclusivo de sanciones ni altas administrativas.'
-      : '- Positive drug toxicology screens cannot be the sole basis for punitive take-home loss or discharge.',
+      ? '- SAMHSA indica que las pruebas toxicológicas son una herramienta clínica y nunca deben usarse de forma punitiva; las decisiones sobre dosis para llevar se basan en el criterio clínico.'
+      : '- SAMHSA states toxicology testing is a clinical tool that should never be used punitively; take-home decisions rest on clinical judgment.',
     isEs
       ? '- Las reducciones forzadas rápidas están prohibidas; los tapers deben ser voluntarios y acordados.'
       : '- Forced rapid administrative tapers violate clinical standards; reductions must be patient-paced.',
@@ -480,7 +483,7 @@ export function methadoneAccessView() {
   // TAB 1: Take-Home Calculator & 8-Point Assessment
   function renderTakeHomeCalculator(panel) {
     panel.appendChild(h('h2', null, t('methadone.calc.title', 'Take-Home Bottle Eligibility Calculator')));
-    panel.appendChild(h('p', null, t('methadone.calc.intro', 'The 2024 SAMHSA Part 8 Final Rule eliminated the outdated multi-year waiting ladder. Calculate the federal maximum take-home bottles you are eligible for based on your timeframe and 8-point clinical criteria.')));
+    panel.appendChild(h('p', null, t('methadone.calc.intro', 'The 2024 SAMHSA Part 8 Final Rule eliminated the outdated multi-year waiting ladder. Calculate the federal maximum take-home bottles you are eligible for based on your timeframe and the clinical safety checklist below.')));
 
     const form = h('div', { class: 'form-card' });
 
@@ -521,7 +524,7 @@ export function methadoneAccessView() {
     form.appendChild(lockboxLabel);
 
     // 8-Point Criteria Checkboxes
-    form.appendChild(h('h3', null, t('methadone.criteriaTitle', '42 CFR § 8.12(i) 8-Point Clinical Safety Criteria:')));
+    form.appendChild(h('h3', null, t('methadone.criteriaTitle', 'Take-home safety checklist (based on the factors in 42 CFR § 8.12(i)(2)):')));
 
     for (const crit of CRITERIA_8_POINT_ASSESSMENT) {
       const isChecked = methadoneState.selectedCriteria.includes(crit.id);
