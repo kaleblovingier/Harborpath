@@ -1,6 +1,6 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { state, subscribe, setPersist, toggleSaved } from '../state.js';
-import { TREATMENT_FILTERS, MENTAL_HEALTH_FILTERS } from '../codes.js';
+import { MENTAL_HEALTH_FILTERS } from '../codes.js';
 import { treatmentFinder, healthCenterFinder } from '../components/finder.js';
 import { providerFinder } from '../components/providers.js';
 import { locationPicker } from '../components/locationPicker.js';
@@ -10,8 +10,11 @@ import { stateHref, stateSections } from '../components/stateResources.js';
 import { regionsApi } from '../regionsApi.js';
 import { offlineSupported, isOfflineSaved, saveOffline, wipeOfflineCopy } from '../offline.js';
 import { HOTLINES } from '../content/hotlines.js';
-import { t } from '../i18n.js';
+import { t, tp } from '../i18n.js';
 import { pageHeader, section, p, ul, strong, resourceList, hotlineGrid, pathCard, emergencyCallout } from './common.js';
+import { treatmentView, PRESETS } from './treatment.js';
+
+export { treatmentView, PRESETS };
 
 // ---------------------------------------------------------------- Offline opt-in card
 export function offlineControlCard() {
@@ -50,26 +53,162 @@ export function offlineControlCard() {
   );
 }
 
+// ---------------------------------------------------------------- Topic search
+// A small search over the care-tools catalog (views/tools.js), loaded on first
+// use so the home page stays light. What is typed stays in the input and in
+// memory: it is never sent, stored, or added to the address bar.
+let topicsModule = null;
+const loadTopics = () => {
+  topicsModule ??= import('./tools.js').catch((err) => { topicsModule = null; throw err; });
+  return topicsModule;
+};
+
+export const TOPIC_SEARCH_LIMIT = 8;
+
+export function topicSearch({ idPrefix, title }) {
+  const ids = { input: `${idPrefix}-input`, hint: `${idPrefix}-hint`, results: `${idPrefix}-results`, title: `${idPrefix}-title` };
+  const input = h('input', {
+    id: ids.input, type: 'search', autocomplete: 'off', spellcheck: 'false', maxlength: '200',
+    'aria-describedby': ids.hint, 'aria-controls': ids.results,
+  });
+  const status = h('p', { class: 'topic-search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' });
+  const list = h('ul', { class: 'topic-search-results', id: ids.results, hidden: true });
+  const more = h('p', { class: 'topic-search-more', hidden: true });
+  let seq = 0;
+
+  async function update() {
+    const query = input.value.slice(0, 200).trim();
+    const mine = ++seq;
+    if (query.length < 2) {
+      clear(list); clear(more);
+      list.hidden = true; more.hidden = true;
+      status.textContent = '';
+      return;
+    }
+    let topics;
+    try {
+      topics = await loadTopics();
+    } catch {
+      if (mine === seq) status.textContent = t('topicSearch.unavailable', 'Topic search is not available right now. You can browse all care tools instead.');
+      return;
+    }
+    if (mine !== seq) return;
+    const matches = topics.filterCareTools({ query });
+    clear(list); clear(more);
+    for (const tool of matches.slice(0, TOPIC_SEARCH_LIMIT)) {
+      list.append(h('li', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))));
+    }
+    list.hidden = matches.length === 0;
+    if (matches.length > TOPIC_SEARCH_LIMIT) {
+      more.append(h('button', {
+        type: 'button', class: 'btn btn-secondary',
+        onclick: () => { topics.setCareToolsQuery(query); location.replace('#/tools'); },
+      }, t('topicSearch.seeAll', 'See all {n} matching topics', { n: matches.length })));
+    }
+    more.hidden = matches.length <= TOPIC_SEARCH_LIMIT;
+    status.textContent = matches.length
+      ? tp('topicSearch.count', matches.length, { one: '{n} matching topic', other: '{n} matching topics' })
+      : t('topicSearch.none', 'No topics match that search. Try another word, or browse all care tools.');
+  }
+
+  input.addEventListener('input', update);
+  // Start loading the catalog as soon as someone shows interest.
+  input.addEventListener('focus', () => { loadTopics().catch(() => {}); });
+
+  return h('section', { class: 'card topic-search no-print', 'aria-labelledby': ids.title },
+    h('h2', { id: ids.title }, title),
+    h('div', { class: 'field' },
+      h('label', { for: ids.input }, t('topicSearch.label', 'Search topics and guides')),
+      input),
+    h('p', { id: ids.hint, class: 'small muted' },
+      t('topicSearch.hint', 'Try words like pregnant, Narcan, Xanax, or jail. Your search stays on this device and is not saved.')),
+    status, list, more,
+    h('p', { class: 'topic-search-browse' }, h('a', { href: '#/tools' }, t('home.start.browse', 'Browse all care tools and guides'))));
+}
+
+// Short links to guides for specific people and situations, so every guide
+// can be reached from the home page. Add new audience or situation routes here.
+export const HELP_FOR_PEOPLE = Object.freeze([
+  ['perinatal', 'home.helpFor.perinatal', 'Pregnancy and new parents'],
+  ['adolescent', 'home.helpFor.adolescent', 'Teens and young people'],
+  ['older-adults', 'home.helpFor.olderAdults', 'Older adults'],
+  ['veterans', 'home.helpFor.veterans', 'Veterans and military families'],
+  ['lgbtq-care', 'home.helpFor.lgbtq', 'LGBTQ+ people'],
+  ['tribal-health', 'home.helpFor.tribal', 'Native and tribal communities'],
+  ['immigrant-health', 'home.helpFor.immigrant', 'Immigrants and language help'],
+  ['disability-care', 'home.helpFor.disability', 'People with disabilities'],
+  ['rural-health', 'home.helpFor.rural', 'Rural areas'],
+  ['street-medicine', 'home.helpFor.street', 'No stable housing'],
+  ['reentry', 'home.helpFor.reentry', 'After jail or prison'],
+  ['workplace-rights', 'home.helpFor.workplace', 'Rights at work'],
+]);
+
+export const HELP_FOR_CONCERNS = Object.freeze([
+  ['alcohol-care', 'home.helpFor.alcohol', 'Alcohol'],
+  ['stimulant-care', 'home.helpFor.stimulants', 'Meth, cocaine, and other stimulants'],
+  ['post-overdose', 'home.helpFor.postOverdose', 'After an overdose'],
+  ['wound-care', 'home.helpFor.wounds', 'Wounds and infections'],
+  ['family-support', 'home.helpFor.family', 'Helping a loved one (CRAFT)'],
+  ['recovery-support', 'home.helpFor.recovery', 'Life after treatment'],
+  ['overdose-loss', 'home.helpFor.overdoseLoss', 'After an overdose death'],
+]);
+
+function helpForList(id, title, links) {
+  return h('div', { class: 'help-for-group' },
+    h('h3', { id }, title),
+    h('ul', { class: 'help-for-list', 'aria-labelledby': id },
+      links.map(([route, key, label]) => h('li', null, h('a', { href: `#/${route}` }, t(key, label))))));
+}
+
+function helpForSection() {
+  return section('help-for', t('home.helpFor.title', 'Help for your situation'),
+    helpForList('help-for-people', t('home.helpFor.people', 'For people and circumstances'), HELP_FOR_PEOPLE),
+    helpForList('help-for-concerns', t('home.helpFor.concerns', 'For specific concerns'), HELP_FOR_CONCERNS));
+}
+
 // ---------------------------------------------------------------- Home
 export function homeView() {
   const go = (href) => () => location.replace(href);
   return h('div', { class: 'view view-home' },
     h('section', { class: 'hero' },
       h('h1', { id: 'page-title', tabindex: '-1' },
-        t('home.hero.title', 'Find care and stay safer, on your terms.')),
+        t('home.hero.fit', 'Find treatment that fits your needs, your insurance, and your life.')),
       h('p', { class: 'lede' },
         t('home.hero.lede', 'Search licensed addiction treatment, clinical care navigation, medication guides, harm reduction tools, and low-cost health care near you. Free and private, with no sign-up, ads, or tracking.')),
       h('div', { class: 'card hero-search' },
         locationPicker(),
         h('div', { class: 'hero-actions' },
-          h('button', { type: 'button', class: 'btn btn-primary', onclick: go('#/treatment') }, icon('search'), t('home.cta.treatment', 'Treatment near me')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/navigator') }, icon('compass'), t('home.cta.navigator', 'Care navigator (ASAM)')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/treatment?codes=NOE') }, icon('shield'), t('home.cta.naloxone', 'Naloxone near me')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/health') }, icon('heart'), t('home.cta.clinics', 'Low-cost clinics & VA/IHS')),
+          h('button', { type: 'button', class: 'btn btn-primary', onclick: go('#/match') }, icon('search'), t('home.cta.find', 'Find treatment')),
+          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=virtual') }, icon('globe'), t('home.cta.online', 'Explore online treatment')),
+          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=affordable') }, icon('heart'), t('home.cta.affordable', 'Find affordable care')),
+          h('button', { type: 'button', class: 'btn btn-emergency', onclick: go('#/crisis') }, icon('phone'), t('home.cta.helpNow', 'Get help now')),
+        ),
+        h('p', { class: 'hero-more' },
+          h('a', { href: '#/treatment' }, t('home.cta.directory', 'Search the full treatment directory')), ' · ',
+          h('a', { href: '#/treatment?codes=NOE' }, t('home.cta.naloxone', 'Naloxone near me')), ' · ',
+          h('a', { href: '#/health' }, t('home.cta.clinics', 'Low-cost clinics & VA/IHS')),
         ),
       ),
     ),
     emergencyCallout(),
+    topicSearch({ idPrefix: 'home-topic', title: t('topicSearch.homeTitle', 'Looking for something specific?') }),
+    section('start-here', t('home.start.title', 'Start with what you need today'),
+      h('div', { class: 'path-grid' },
+        pathCard({ href: '#/guided', iconName: 'compass',
+          title: t('home.start.individual.title', 'I’m looking for help for myself'),
+          desc: t('home.start.individual.description', 'Answer short, optional questions to find a starting point. You do not need to know which type of care to ask for.') }),
+        h('div', { class: 'path-stack' },
+          pathCard({ href: '#/support', iconName: 'users',
+            title: t('home.start.supporter.title', 'I’m supporting someone'),
+            desc: t('home.start.supporter.description', 'Find family and peer support, crisis help, and ways to prepare the next step together.') }),
+          h('a', { class: 'path-sublink', href: '#/family-support' },
+            t('home.start.supporter.craft', 'Family guide: how to help a loved one with CRAFT'))),
+        pathCard({ href: '#/workspace', iconName: 'clipboard',
+          title: t('home.start.team.title', 'I work with patients or in the community'),
+          desc: t('home.start.team.description', 'Organize a visit, verify a referral, and prepare an anonymous follow-up checklist.') })),
+      h('p', { class: 'actions' }, h('a', { href: '#/tools', class: 'btn btn-secondary' },
+        t('home.start.browse', 'Browse all care tools and guides')))),
+    helpForSection(),
     h('nav', { class: 'path-grid', 'aria-label': t('home.paths.label', 'What do you need?') },
       pathCard({
         href: '#/treatment', iconName: 'compass',
@@ -125,96 +264,10 @@ export function homeView() {
         h('li', null, icon('ban'), h('h3', null, t('home.promise.nopaid.title', 'No paid placement')),
           p(t('home.promise.nopaid.body', 'No ads, sponsored listings, or referral fees. We never sell leads or route calls to a private call center.'))),
         h('li', null, icon('lock'), h('h3', null, t('home.promise.privacy.title', 'Private by design')),
-          p(t('home.promise.privacy.body', 'No accounts, cookies, analytics, or third-party scripts. Your location is rounded and never stored; clinical tools run 100% in your browser’s memory.'))),
+          p(t('home.promise.privacy.body', 'No accounts, cookies, analytics, or third-party scripts. Your location is rounded to about 1 km before it leaves your device, HarborPath’s code does not store your searches, and answers to the clinical tools stay in your browser’s memory.'))),
         h('li', null, icon('hand'), h('h3', null, t('home.promise.meet.title', 'Meets you where you are')),
           p(t('home.promise.meet.body', 'Whether you want to stop, cut back, start medication, or just stay safer tonight, there is something here for you.'))),
       ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------- Treatment
-const PRESETS = [
-  { codes: [], get label() { return t('treatment.preset.any', 'Any treatment'); } },
-  { codes: ['BU'], get label() { return t('treatment.preset.bu', 'Buprenorphine'); } },
-  { codes: ['OTP'], get label() { return t('treatment.preset.otp', 'Methadone clinic (OTP)'); } },
-  { codes: ['DT'], get label() { return t('treatment.preset.dt', 'Detox'); } },
-  { codes: ['TELE'], get label() { return t('treatment.preset.tele', 'Telehealth'); } },
-  { codes: ['PW'], get label() { return t('treatment.preset.pw', 'Pregnant or postpartum'); } },
-  { codes: ['ADOL'], get label() { return t('treatment.preset.adol', 'Teens'); } },
-  { codes: ['SS'], get label() { return t('treatment.preset.ss', 'Sliding fee scale'); } },
-];
-
-export function treatmentView({ query }) {
-  const initialCodes = (query.get('codes') ?? '').split(',').filter(Boolean);
-  const current = initialCodes.slice().sort().join(',');
-  return h('div', { class: 'view' },
-    pageHeader(
-      t('treatment.title', 'Find treatment'),
-      t('treatment.lede', 'Search state-licensed substance use treatment near you, including medications for opioid and alcohol use disorder.'),
-    ),
-    h('div', { class: 'callout callout-info' },
-      p(
-        strong(t('treatment.helper.lead', 'Not sure which filters or level of care you need? ')),
-        h('a', { href: '#/navigator' }, t('treatment.helper.navigator', 'Use the ASAM Clinical Care Navigator')),
-        ' · ',
-        h('a', { href: '#/medications' }, t('treatment.helper.medications', 'Compare medications & fentanyl micro-induction')),
-        ' · ',
-        h('a', { href: '#/plan' }, t('treatment.helper.plan', 'See what happens at your first intake visit')),
-      ),
-    ),
-    h('nav', { class: 'presets', 'aria-label': t('treatment.presets.label', 'Quick searches') },
-      PRESETS.map((pr) => h('a', {
-        href: pr.codes.length ? `#/treatment?codes=${pr.codes.join(',')}` : '#/treatment',
-        class: 'preset',
-        'aria-current': pr.codes.join(',') === current ? 'true' : null,
-      }, pr.label))),
-    treatmentFinder({
-      kind: 'sa',
-      filters: TREATMENT_FILTERS,
-      initialCodes,
-      noun: t('treatment.noun', 'treatment locations'),
-    }),
-    h('div', { class: 'callout callout-warn' },
-      h('p', null,
-        strong(t('treatment.warn.lead', 'Stopping alcohol, benzodiazepines (like Xanax or Klonopin), or other sedatives suddenly can be life-threatening. ')),
-        t('treatment.warn.body', 'Withdrawal can cause seizures. Talk with a doctor or use the “Detox” filter to find medically supervised withdrawal care.'))),
-    section('options', t('treatment.options.title', 'Understanding your options'),
-      h('dl', { class: 'glossary' },
-        h('dt', null, t('treatment.opt.moud.dt', 'Medications for opioid use disorder')),
-        h('dd', null,
-          t('treatment.opt.moud.dd', 'Buprenorphine, methadone, and naltrexone are the most effective treatment for opioid use disorder and lower the risk of overdose death. You can take them for as long as they help. '),
-          h('a', { href: '#/medications' }, t('treatment.opt.moud.guideLink', 'Read the full Pharmacist Medication & Micro-Induction Guide')),
-          t('treatment.opt.moud.or', ' or learn more from SAMHSA about '),
-          ext('https://www.samhsa.gov/substance-use/treatment/options/buprenorphine', 'buprenorphine'), ', ',
-          ext('https://www.samhsa.gov/substance-use/treatment/options', 'methadone'), ', and ',
-          ext('https://www.samhsa.gov/substance-use/treatment/options/naltrexone', 'naltrexone'), '.'),
-        h('dt', null, t('treatment.opt.maud.dt', 'Medications for alcohol use disorder')),
-        h('dd', null,
-          t('treatment.opt.maud.dd', 'Naltrexone, acamprosate, and disulfiram are FDA-approved and can be prescribed by many primary care providers. The '),
-          ext('https://alcoholtreatment.niaaa.nih.gov/', 'NIAAA Alcohol Treatment Navigator'),
-          t('treatment.opt.maud.dd2', ' and our '),
-          h('a', { href: '#/medications' }, t('treatment.opt.maud.guideLink', 'Medications Guide')),
-          t('treatment.opt.maud.dd3', ' explain the options.')),
-        h('dt', null, t('treatment.opt.otp.dt', 'Opioid treatment program (OTP)')),
-        h('dd', null, t('treatment.opt.otp.dd', 'A federally certified clinic, and the only outpatient clinic setting that dispenses daily or take-home methadone for opioid use disorder. Most also offer buprenorphine and counseling.')),
-        h('dt', null, t('treatment.opt.detox.dt', 'Detox / withdrawal management')),
-        h('dd', null, t('treatment.opt.detox.dd', 'Medical support to get through withdrawal safely. It works best as a first step, followed immediately by ongoing medication or counseling treatment.')),
-        h('dt', null, t('treatment.opt.op.dt', 'Outpatient and intensive outpatient')),
-        h('dd', null, t('treatment.opt.op.dd', 'Counseling and medical care while you live at home. Intensive outpatient (IOP) usually means 9 or more hours a week.')),
-        h('dt', null, t('treatment.opt.res.dt', 'Residential')),
-        h('dd', null, t('treatment.opt.res.dd', 'You live on site for a period of time. Always ask whether they offer and allow FDA-approved medications like buprenorphine and methadone.')),
-        h('dt', null, t('treatment.opt.tele.dt', 'Telehealth')),
-        h('dd', null, t('treatment.opt.tele.dd', 'Visits by video or phone. Buprenorphine can often be started and prescribed through telehealth without an in-person visit first.')),
-        h('dt', null, t('treatment.opt.hh.dt', 'Recovery housing')),
-        h('dd', null, t('treatment.opt.hh.dd', 'Substance-free shared housing that supports recovery. Look for homes certified to '),
-          ext('https://narronline.org/', 'NARR'), t('treatment.opt.hh.dd2', ' standards.')),
-      ),
-      p(t('treatment.notSure', 'Not sure where to start? '),
-        h('a', { href: '#/navigator' }, t('treatment.useNavigator', 'Take the 2-minute ASAM Care Navigator')), ', ',
-        h('a', { href: '#/choosing-care' }, t('treatment.seeChoosing', 'see how to choose quality care')),
-        t('treatment.orCall', ', or call the free SAMHSA National Helpline at '),
-        tel('18006624357', '1-800-662-4357'), '.'),
     ),
   );
 }
@@ -448,6 +501,7 @@ export function savedView() {
           announce(t('saved.cleared', 'Saved list cleared'));
         },
       }, icon('x'), t('saved.clear', 'Clear list')),
+      h('small', { class: 'help' }, t('privacy.clipboardNote', 'Copied text stays on your clipboard after Quick exit.')),
     );
     listEl.append(...items.map(renderSavedCard));
   }
@@ -495,6 +549,11 @@ export function crisisView() {
 }
 
 // ---------------------------------------------------------------- Privacy
+// Every statement here must stay exactly true. HarborPath's own code does not
+// log searches, but requests travel as URL query strings, so the hosting
+// platform's access logs can hold them with the visitor's IP address.
+const ISSUES_URL = 'https://github.com/kaleblovingier/Harborpath/issues';
+
 export function privacyView() {
   return h('div', { class: 'view view-prose' },
     pageHeader(
@@ -506,23 +565,55 @@ export function privacyView() {
         [strong(t('privacy.collect.1.lead', 'No accounts, cookies, analytics, ads, or tracking pixels. ')),
           t('privacy.collect.1.body', 'The site loads no third-party scripts, fonts, or maps.')],
         [strong(t('privacy.collect.2.lead', 'Location is rounded. ')),
-          t('privacy.collect.2.body', 'When you search, your area is rounded to about 1 km (0.01°) before it is sent anywhere. HarborPath forwards treatment searches to SAMHSA’s FindTreatment.gov with that rounded location. Health center, VA, IHS, rural clinic, hospital, and ZIP lookups are answered on our own server.')],
-        [strong(t('privacy.collect.3.lead', 'Nothing is logged with your location. ')),
-          t('privacy.collect.3.body', 'Our server does not record search terms, ZIP codes, or coordinates. Rounded searches may be cached in memory for up to an hour so repeat searches are fast.')],
+          t('privacy.collect.2.body', 'If you use your device’s location, it is rounded to about 1 km (0.01°) on your device before it is sent. A ZIP code or place name you type is sent to our server to look it up. HarborPath forwards treatment searches to SAMHSA’s FindTreatment.gov with a rounded location. Health center, VA, IHS, rural clinic, hospital, and ZIP lookups are answered on our own server.')],
+        [strong(t('privacy.collect.3.lead', 'Our code does not log your searches. ')),
+          t('privacy.collect.3.body', 'HarborPath’s own server code does not log or store search terms, ZIP codes, coordinates, or service filters. Searches are sent as part of the web address (URL query parameters), so our hosting provider (for example, Vercel) may keep standard access logs that include those addresses and your IP address. Rounded searches may be cached in server memory for up to an hour so repeat searches are fast.')],
         [strong(t('privacy.collect.4.lead', 'Clinical tools & saved places stay on your device. ')),
-          t('privacy.collect.4.body', 'The ASAM Care Navigator and Personal Safety Plan run 100% in your browser’s memory and are never sent to us. Saved places stay in memory unless you choose to keep them on this device.')],
+          t('privacy.collect.4.body', 'Your answers in the ASAM Care Navigator and Personal Safety Plan are kept in your browser’s memory and are not sent to our server. If you then search for treatment, only that search (a rounded location and service filters) is sent. Saved places stay in memory unless you choose to keep them on this device.')],
       ])),
     section('outbound', t('privacy.outbound.title', 'When you leave HarborPath'),
       p(t('privacy.outbound.body', 'Links to other sites open in a new tab without telling that site you came from HarborPath. Those sites, including map links for directions, have their own privacy practices.'))),
     section('safety', t('privacy.safety.title', 'Staying safe on a shared device'),
       ul([
         [strong(t('privacy.safety.1.lead', 'Quick exit: ')),
-          t('privacy.safety.1.body', 'press the Quick exit button or the Escape key twice. HarborPath erases what it stored (including saved places, language preference, and any offline copy) and replaces this page with a weather site.')],
+          t('privacy.safety.1.body', 'press the Quick exit button or the Escape key twice. HarborPath erases what it stored in this browser (its memory, local storage, saved places, language preference, and any offline copy) and replaces this page with a weather site. It cannot erase your browser history, anything you copied to the clipboard, or files you downloaded or printed.')],
         t('privacy.safety.2', 'HarborPath keeps a single entry in your browser’s back history, so pressing Back after a quick exit does not return here.'),
+        t('privacy.safety.filters', 'Search filters, such as a type of service, are kept out of the address bar. The name of the page you are on, such as “Find treatment,” can still appear in your history.'),
         t('privacy.safety.3', 'Your browser may still show HarborPath in its history list. For more privacy, use a private or incognito window, or clear your history afterward.'),
         t('privacy.safety.4', 'If someone may be monitoring your device, consider using a different phone or computer, such as one at a library.'),
       ]),
       offlineControlCard()),
+    section('health-data', t('privacy.chd.title', 'Consumer health data privacy notice'),
+      p(t('privacy.chd.intro', 'Searching for addiction treatment or other health services can reveal health information. This notice describes what actually happens to that information. It is written with Washington’s My Health My Data Act and similar state consumer health data laws in mind. It is not a claim that HarborPath complies with any particular law.')),
+      h('h3', null, t('privacy.chd.collect.title', 'What is collected and where it goes')),
+      ul([
+        [strong(t('privacy.chd.stored.lead', 'Stored by HarborPath: nothing about you. ')),
+          t('privacy.chd.stored.body', 'There are no accounts, profiles, or stored records about individuals. Our server code does not write searches to logs, files, or a database.')],
+        [strong(t('privacy.chd.server.lead', 'Sent to our server with each search: ')),
+          t('privacy.chd.server.body', 'the ZIP code or place name you type, or your location rounded to about 1 km on your device, plus the search distance and any service filters you choose (for example, buprenorphine or pregnancy services). Like every website, our server also receives your IP address and browser type with each request. Searches are held only in server memory: rounded searches in a cache for up to an hour, and IP addresses in a rate limiter, usually for about a minute, to prevent abuse.')],
+        [strong(t('privacy.chd.samhsa.lead', 'Shared with SAMHSA’s FindTreatment.gov: ')),
+          t('privacy.chd.samhsa.body', 'for treatment searches, our server sends the rounded location and service filters to FindTreatment.gov, the federal directory run by SAMHSA. Your IP address and browser details are not forwarded.')],
+        [strong(t('privacy.chd.host.lead', 'Kept by our hosting provider: ')),
+          t('privacy.chd.host.body', 'HarborPath runs on a hosting platform (for example, Vercel). Because searches are sent as part of the web address, the host’s standard access logs may record them together with your IP address. HarborPath does not control those logs. They are kept under the host’s own retention policy.')],
+        [strong(t('privacy.chd.device.lead', 'Kept on your device: ')),
+          t('privacy.chd.device.body', 'your language choice and, only if you turn them on, your saved list and an offline copy of the site. Quick exit erases these.')],
+      ]),
+      h('h3', null, t('privacy.chd.purpose.title', 'Why it is used')),
+      p(t('privacy.chd.purpose.body', 'Only to answer the search you asked for, keep the service running, and protect it from abuse.')),
+      h('h3', null, t('privacy.chd.share.title', 'Selling and sharing')),
+      ul([
+        t('privacy.chd.share.sell', 'HarborPath does not sell consumer health data or any other data.'),
+        t('privacy.chd.share.ads', 'HarborPath does not share data with advertisers or data brokers. There are no ads, analytics, tracking pixels, or third-party scripts.'),
+        t('privacy.chd.share.only', 'Data goes only to the places listed above, and only to provide the search you asked for.'),
+      ]),
+      h('h3', null, t('privacy.chd.rights.title', 'Access and deletion requests')),
+      p(t('privacy.chd.rights.body', 'You can ask what data HarborPath has about you, or ask for it to be deleted. Because HarborPath keeps no accounts and no stored records about individuals, there is normally nothing linked to you to look up or delete. Searches held in server memory expire within an hour. Hosting provider access logs are kept under the host’s retention policy. To erase what HarborPath stored in this browser, use Quick exit.')),
+      h('h3', null, t('privacy.chd.contact.title', 'Contact')),
+      p(t('privacy.chd.contact.body', 'To ask a question or make a privacy request, open an issue on the HarborPath project page on GitHub: '),
+        ext(ISSUES_URL, 'github.com/kaleblovingier/Harborpath/issues'), '.'),
+      h('div', { class: 'callout callout-warn' },
+        p(strong(t('privacy.chd.contact.warnLead', 'GitHub issues are public. ')),
+          t('privacy.chd.contact.warn', 'Do not post personal or health information there, such as your name, address, contact details, diagnosis, or substance use.')))),
     section('not-medical', t('privacy.medical.title', 'Not medical advice'),
       p(t('privacy.medical.body', 'HarborPath shares general information from public health and clinical sources (SAMHSA, ASAM, HRSA, CMS, VA, IHS, CDC, FDA, NIDA, and NIAAA). It is not a substitute for care from a medical professional. In an emergency, call 911.'))),
   );
@@ -535,5 +626,6 @@ export function notFoundView() {
       t('notfound.lede', 'That page does not exist, but help is still here.'),
     ),
     p(h('a', { class: 'btn btn-primary', href: '#/' }, t('notfound.home', 'Go to the home page'))),
+    topicSearch({ idPrefix: 'notfound-topic', title: t('topicSearch.notFoundTitle', 'Search for what you need') }),
   );
 }

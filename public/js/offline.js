@@ -5,13 +5,15 @@
 //
 // The worker stores only the app's own files, never /api/ responses, so no
 // location or search is ever kept.
-
-// When the visitor is offline and tries a live search, the worker answers
-// /api/ requests with a short "you're offline, call these numbers" message in
+//
+// When the visitor is offline and tries a live search, the worker answers the
+// /api/ request with a short "you're offline, call these numbers" message in
 // the interface language (it never stores the requests or the answers).
 //
-// Updates: the browser re-checks /sw.js on each page load. A new deploy that
-// bumps VERSION in /sw.js saves a complete new copy and deletes the old one.
+// Updates: the cache name in /sw.js carries a hash of every saved file, so a
+// deploy that changes any of them changes /sw.js too. The browser re-checks it
+// on each page load (updateViaCache: 'none', plus registration.update() below),
+// saves a complete new copy, and deletes the old one.
 
 import { getLang, onLanguageChange } from './i18n.js';
 
@@ -23,8 +25,18 @@ let registration = null;
 
 export const offlineSupported = () => Boolean(sw && globalThis.caches && globalThis.isSecureContext);
 
+/** Tell the controlling worker the interface language (held in its memory only). */
 function tellLanguage() {
   try { sw?.controller?.postMessage({ type: 'lang', lang: getLang() }); } catch { /* ignore */ }
+}
+
+let listening = false;
+function followLanguage() {
+  tellLanguage();
+  if (listening) return;
+  listening = true;
+  onLanguageChange(tellLanguage);
+  sw.addEventListener('controllerchange', tellLanguage);
 }
 
 // Remember an existing registration, so quick exit can reach its worker
@@ -34,10 +46,8 @@ const known = offlineSupported()
     registration = r ?? null;
     if (registration) {
       // Look for a new version now as well, so a long-open tab still updates.
-      registration.update?.().catch(() => {});
-      tellLanguage();
-      onLanguageChange(tellLanguage);
-      sw.addEventListener('controllerchange', tellLanguage);
+      try { registration.update?.()?.catch?.(() => {}); } catch { /* ignore */ }
+      followLanguage();
     }
     return registration;
   }).catch(() => null)
@@ -45,26 +55,51 @@ const known = offlineSupported()
 
 /** True when an offline copy is saved on this device. */
 export async function isOfflineSaved() {
-  const reg = await known;
+  await known;
+  const reg = registration;
   if (!reg?.active) return false;
   return (await caches.keys()).some((k) => k.startsWith(CACHE_PREFIX));
 }
 
 /** Register the worker and wait until it has saved the app. */
 export async function saveOffline() {
+  await known;
   registration = await sw.register('/sw.js', { scope: '/', updateViaCache: 'none' });
   const worker = registration.installing || registration.waiting || registration.active;
   if (!worker) throw new Error('Service worker did not start');
-  onLanguageChange(tellLanguage);
-  sw.addEventListener('controllerchange', tellLanguage, { once: true });
-  if (worker.state === 'activated') return;
-  await new Promise((resolve, reject) => {
-    worker.addEventListener('statechange', () => {
-      if (worker.state === 'activated') resolve();
-      // A failed install (for example, the connection dropped) is discarded.
-      if (worker.state === 'redundant') reject(new Error('Saving for offline use failed'));
+  if (worker.state !== 'activated') {
+    await new Promise((resolve, reject) => {
+      const changed = () => {
+        if (worker.state === 'activated' || worker.state === 'redundant') {
+          worker.removeEventListener('statechange', changed);
+          if (worker.state === 'activated') resolve();
+          else reject(new Error('Saving for offline use failed'));
+        }
+      };
+      worker.addEventListener('statechange', changed);
+      changed();
     });
-  });
+  }
+  // Activation precedes clients.claim(). Do not announce "saved" while this
+  // page could still lose an immediate offline navigation to the network.
+  if (!sw.controller) {
+    await new Promise((resolve, reject) => {
+      let timer;
+      const controlled = () => {
+        if (!sw.controller) return;
+        clearTimeout(timer);
+        sw.removeEventListener('controllerchange', controlled);
+        resolve();
+      };
+      timer = setTimeout(() => {
+        sw.removeEventListener('controllerchange', controlled);
+        reject(new Error('Offline control did not become ready'));
+      }, 10000);
+      sw.addEventListener('controllerchange', controlled);
+      controlled();
+    });
+  }
+  followLanguage();
 }
 
 /**

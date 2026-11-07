@@ -1,6 +1,19 @@
 // All network calls go to HarborPath's own origin. The server forwards
 // treatment searches to SAMHSA with coordinates rounded to about 1 km.
 
+import { getLang } from './i18n.js';
+
+/**
+ * Headers for HarborPath's own JSON endpoints. Accept-Language carries the
+ * interface language (only "en" or "es"), so the opt-in offline worker can
+ * answer a live search made with no signal in the language on screen, even
+ * after the browser has restarted the worker and it has lost the language
+ * the page last told it.
+ */
+export function jsonHeaders() {
+  return { Accept: 'application/json', 'Accept-Language': getLang() };
+}
+
 export class ApiError extends Error {
   constructor(message, { status, fallbackUrl } = {}) {
     super(message);
@@ -18,7 +31,7 @@ async function getJson(path, params, signal) {
   const url = query ? `${path}?${query}` : path;
   let res;
   try {
-    res = await fetch(url, { signal, headers: { Accept: 'application/json' } });
+    res = await fetch(url, { signal, headers: jsonHeaders() });
   } catch (err) {
     if (err.name === 'AbortError') throw err;
     throw new ApiError('You appear to be offline. Check your connection and try again.');
@@ -65,6 +78,7 @@ export const api = {
   states: (signal) => getJson('/api/states', null, signal),
   state: (code, signal) =>
     getJson('/api/state', { code: typeof code === 'object' && code !== null ? code.code : code }, signal),
+  virtualProviders: ({ state } = {}, signal) => getJson('/api/virtual-providers', { state }, signal),
   telehealth: ({ state, lat, lng, kind, codes = [], page = 1 } = {}, signal) =>
     getJson('/api/telehealth', {
       state,

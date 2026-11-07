@@ -287,14 +287,14 @@ describe('formatAsamHandoffText() — Clinician Handoff & Referral Summary Forma
     const evaluation = evaluateAsamCare(answers);
     const text = formatAsamHandoffText(answers, evaluation);
 
-    assert.match(text, /HARBORPATH — ASAM 4TH EDITION CLINICAL CARE SUMMARY/i);
+    assert.match(text, /HARBORPATH — MY SELF-REPORTED ANSWERS TO SHARE WITH A CLINICIAN/);
     assert.ok(text.includes(evaluation.asamLevel), 'Handoff note must include recommended ASAM level');
     assert.match(text, /Dimension 1/i);
     assert.match(text, /Dimension 2/i);
     assert.match(text, /Dimension 3/i);
     assert.match(text, /Dimension 4 & 5/i);
     assert.match(text, /Dimension 6/i);
-    assert.match(text, /RED-FLAG MEDICAL SAFETY ALERTS/i);
+    assert.match(text, /SAFETY ALERTS BASED ON MY ANSWERS/);
     assert.match(text, /PW \(Pregnant \/ Postpartum Specialty\)/);
     assert.match(text, /BU \(Buprenorphine/);
     assert.match(text, /988/);

@@ -174,7 +174,7 @@ export function locationPicker({ onChange, compact = false } = {}) {
     ),
     h('div', { class: 'location-meta' },
       geoButton,
-      h('p', { id: `${id}-help`, class: 'help' }, t('loc.help', 'Your exact location is never stored. Searches use an area rounded to about 1 km.')),
+      h('p', { id: `${id}-help`, class: 'help' }, t('loc.help', 'Location from your device is rounded to about 1 km before it is sent, and HarborPath’s code does not store it.')),
     ),
     status,
     current,
