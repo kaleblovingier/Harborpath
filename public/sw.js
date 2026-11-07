@@ -3,19 +3,25 @@
 // Never caches /api/ responses (which describe a location), and immediately
 // deletes all caches and unregisters itself when Quick Exit sends { type: 'wipe' }.
 // After a wipe it never answers from or writes to an offline copy again.
+// A live search made with no signal gets a short answer that lists the SAMHSA
+// helpline, 988 and 911 instead of a failed request.
 
 const CACHE_PREFIX = 'harborpath-offline';
 // Content hash of every APP_SHELL and ELECTIVE_SHELL file. A deploy that changes
 // any of them changes this name, so the new copy is saved as a whole beside the
 // old one and swapped in at activation. Kept current by `npm run stamp:sw`
 // (scripts/build-check.mjs fails while it is stale).
-const BUILD = '667fc96f5bef';
+const BUILD = '602137a079ba';
 const CACHE_NAME = `${CACHE_PREFIX}-${BUILD}`;
 // Shell requests wait this long for the network before a saved copy is used,
 // so overdose steps open promptly on a weak or captive connection.
 const NETWORK_TIMEOUT_MS = 3000;
 
-// Critical tier: precached at install; install fails if any is missing.
+// Critical tier: precached at install as one complete set; install fails, and
+// nothing is kept, if any file is missing.
+// Every module app.js loads up front is listed here, and every module it can
+// reach at all (lazy views included) is in this list or ELECTIVE_SHELL
+// (test/offline.test.js walks the import graph to check).
 // Holds the app shell plus everything needed in an emergency while offline:
 // overdose response (static guide + optional rescue timer), crisis lines,
 // harm reduction guides, emergency drawer, state resources, and Spanish UI.
@@ -149,6 +155,19 @@ const ELECTIVE_SHELL = [
 
 const SHELL_PATHS = new Set(APP_SHELL);
 
+// Answer to a live search (/api/) made with no signal. Built here; no /api/
+// response is ever stored.
+const OFFLINE_API_MESSAGE = {
+  en: 'You’re offline, so live search can’t run right now. For help finding treatment, call the free SAMHSA National Helpline at 1-800-662-4357 (24/7). In a crisis, call or text 988. In an emergency, call 911.',
+  es: 'Está sin conexión, así que la búsqueda en vivo no puede funcionar ahora. Para encontrar tratamiento, llame gratis a la Línea Nacional de Ayuda de SAMHSA al 1-800-662-4357 (24/7). En una crisis, llame o envíe un mensaje de texto al 988. En una emergencia, llame al 911.',
+};
+const OFFLINE_API_FALLBACK = { en: 'https://findtreatment.gov/', es: 'https://findtreatment.gov/es' };
+
+// The interface language, sent by the page (public/js/offline.js). Held in
+// memory only, so it is lost when the browser stops an idle worker; the
+// Accept-Language header the page sets on its own requests comes first.
+let lang = null;
+
 // Set by Quick Exit. A worker that keeps running after the wipe (other open
 // tabs, a request already in flight) must not save anything again.
 let wiped = false;
@@ -169,10 +188,20 @@ async function store(request, response) {
   if (wiped) await deleteOwnCaches();
 }
 
+// Fetch a file for the saved copy, skipping the HTTP cache so a new version
+// never saves a stale file under its new cache name.
+async function fetchFresh(path) {
+  const response = await fetch(path, { cache: 'reload' });
+  if (!response || !response.ok) throw new Error(`${path}: ${response?.status}`);
+  return response;
+}
+
 async function warmElective() {
   if (wiped) return;
-  const cache = await caches.open(CACHE_NAME);
-  await Promise.allSettled(ELECTIVE_SHELL.map((url) => (wiped ? null : cache.add(url))));
+  await Promise.allSettled(ELECTIVE_SHELL.map(async (path) => {
+    if (wiped) return;
+    await store(path, await fetchFresh(path));
+  }));
   if (wiped) await deleteOwnCaches();
 }
 
@@ -215,11 +244,26 @@ async function networkFirst(request, network) {
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting()),
-  );
+  event.waitUntil((async () => {
+    // Download the whole critical tier first, so a dropped connection leaves
+    // no partial copy behind: the failed install is simply discarded.
+    const entries = await Promise.all(APP_SHELL.map(async (path) => [path, await fetchFresh(path)]));
+    // Quick Exit during the download: fail the install so no worker is left.
+    if (wiped) throw new Error('Wiped');
+    const cache = await caches.open(CACHE_NAME);
+    try {
+      await Promise.all(entries.map(([path, response]) => cache.put(path, response)));
+    } catch (err) {
+      // For example, storage is full: keep nothing rather than half a copy.
+      await caches.delete(CACHE_NAME);
+      throw err;
+    }
+    if (wiped) {
+      await deleteOwnCaches();
+      throw new Error('Wiped');
+    }
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
@@ -244,18 +288,48 @@ self.addEventListener('message', (event) => {
       deleteOwnCaches()
         .then(() => self.registration.unregister()),
     );
+  } else if (event.data?.type === 'lang' && Object.hasOwn(OFFLINE_API_MESSAGE, event.data.lang)) {
+    lang = event.data.lang;
   }
 });
+
+function requestLanguage(request) {
+  const tag = /^\s*([a-z]{2})\b/i.exec(request.headers?.get?.('Accept-Language') ?? '')?.[1]?.toLowerCase();
+  if (tag && Object.hasOwn(OFFLINE_API_MESSAGE, tag)) return tag;
+  return lang ?? 'en';
+}
+
+// Live searches pass through untouched and are never stored. With no signal,
+// explain and list the phone lines instead of failing.
+async function apiPassThrough(request) {
+  try {
+    return await fetch(request);
+  } catch (err) {
+    if (err?.name === 'AbortError') throw err;
+    const useLang = requestLanguage(request);
+    return new Response(JSON.stringify({
+      error: OFFLINE_API_MESSAGE[useLang],
+      offline: true,
+      fallbackUrl: OFFLINE_API_FALLBACK[useLang],
+    }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
+  }
+}
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
-  // Never store API responses: they describe a location.
-  if (url.pathname.startsWith('/api/')) return;
   // After Quick Exit, requests go straight to the network and nothing is kept.
   if (wiped) return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin || url.pathname === '/sw.js') return;
+  // Never store API responses: they describe a location.
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(apiPassThrough(request));
+    return;
+  }
 
   const network = fetch(request);
   // Clone before the page reads the body; the copy is saved in the background,

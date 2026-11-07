@@ -1,7 +1,7 @@
 // Client for HarborPath's state and territory endpoints. Like api.js, every
 // request goes to HarborPath's own origin with coordinates rounded to about
 // 1 km. Answers are cached in memory for this page view only.
-import { ApiError, round2 } from './api.js';
+import { ApiError, round2, jsonHeaders } from './api.js';
 
 async function getJson(path, params, signal) {
   const qs = new URLSearchParams();
@@ -10,7 +10,7 @@ async function getJson(path, params, signal) {
   }
   let res;
   try {
-    res = await fetch(`${path}?${qs}`, { signal, headers: { Accept: 'application/json' } });
+    res = await fetch(`${path}?${qs}`, { signal, headers: jsonHeaders() });
   } catch (err) {
     if (err.name === 'AbortError') throw err;
     throw new ApiError('You appear to be offline. Check your connection and try again.');

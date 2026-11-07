@@ -1,7 +1,7 @@
 import { api } from './api.js';
 import { state, subscribe, wipeAll, runQuickExitHandlers, onQuickExit } from './state.js';
 import { initI18n, onLanguageChange, isPlainLanguage, setPlainLanguage, t, formatDate } from './i18n.js';
-import { announce } from './dom.js';
+import { announce, h, tel, icon } from './dom.js';
 import {
   homeView,
   treatmentView,
@@ -13,6 +13,15 @@ import {
   privacyView,
   notFoundView,
 } from './views/core.js';
+// The overdose steps load with the app, never on demand: a phone that loses
+// signal after the first page must still show them (see viewLoadFailed), with
+// or without the opt-in offline copy.
+import { overdoseGuide } from './components/overdose.js';
+import { pageHeader, emergencyCallout, hotlineGrid } from './views/common.js';
+import { HOTLINES } from './content/hotlines.js';
+// The header's Emergency button (naloxone and rescue breathing steps) must open
+// with no signal too, so its drawer is not downloaded on first press.
+import * as emergencyDrawer from './components/emergencyDrawer.js';
 
 const SITE = 'HarborPath';
 const EXIT_URL = 'https://www.weather.gov/';
@@ -618,6 +627,26 @@ export function shouldPreloadOnIntent(connection = globalThis.navigator?.connect
 }
 
 /**
+ * Shown when a page's module could not download (no signal, or a deploy
+ * replaced it). Everything here is already in memory: the overdose steps,
+ * 911, 988, and the SAMHSA helpline work with no network and no offline copy.
+ * On the overdose route the full step-by-step guide is shown, so the
+ * emergency callout's "Overdose response steps" link always leads to them.
+ * "Try again" retries the download in place rather than reloading, which with
+ * no signal would replace this help with the browser's offline page.
+ */
+export function viewLoadFailed(title, retry, { overdoseSteps = false } = {}) {
+  return h('div', { class: 'view view-load-failed' },
+    pageHeader(title, t('app.viewLoadFailed', 'This page didn’t load. Check your connection and try again. The help below works without signal.'),
+      overdoseSteps && h('p', { class: 'actions' }, tel('911', [icon('phone'), t('common.call911', 'Call 911')], { class: 'btn btn-emergency btn-large' }))),
+    overdoseSteps ? overdoseGuide() : emergencyCallout(),
+    hotlineGrid([...HOTLINES.crisis.filter((line) => line.id === '988'), ...HOTLINES.substanceUse.filter((line) => line.id === 'samhsa')]),
+    h('p', { class: 'actions' },
+      h('button', { type: 'button', class: 'btn btn-primary', onclick: retry }, t('reach.retry', 'Try again'))),
+  );
+}
+
+/**
  * Render the current route. `moveFocus: false` keeps focus and scroll where
  * they are, for re-renders the visitor did not navigate to (language or
  * plain-language changes).
@@ -652,11 +681,14 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
   main.removeAttribute('aria-busy');
   let buildView = resolved.view;
   if (!buildView && resolved.lazyPath) {
+    let failed = false;
     showViewLoading(main);
-    const loadedView = await preloadRoute(resolved.lazyPath).catch(() => null);
+    const loadedView = await preloadRoute(resolved.lazyPath).catch(() => { failed = true; return null; });
     if (token !== renderSeq) return;
     main.removeAttribute('aria-busy');
-    buildView = loadedView ? () => loadedView({ query, meta: lastMeta }) : () => notFoundView({ query });
+    if (loadedView) buildView = () => loadedView({ query, meta: lastMeta });
+    else if (failed) buildView = () => viewLoadFailed(resolved.title, () => render(), { overdoseSteps: resolved.lazyPath === 'overdose' });
+    else buildView = () => notFoundView({ query });
   }
 
   main.replaceChildren(buildView());
@@ -813,15 +845,13 @@ if (hasDom) {
   const emergencyBtn = document.getElementById('btn-emergency-drawer');
   if (emergencyBtn) {
     emergencyBtn.addEventListener('click', () => {
-      import('./components/emergencyDrawer.js').then((m) => {
-        if (m.isEmergencyDrawerOpen()) {
-          m.closeEmergencyDrawer();
-          emergencyBtn.setAttribute('aria-expanded', 'false');
-        } else {
-          m.openEmergencyDrawer(emergencyBtn);
-          emergencyBtn.setAttribute('aria-expanded', 'true');
-        }
-      }).catch(() => {});
+      if (emergencyDrawer.isEmergencyDrawerOpen()) {
+        emergencyDrawer.closeEmergencyDrawer();
+        emergencyBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        emergencyDrawer.openEmergencyDrawer(emergencyBtn);
+        emergencyBtn.setAttribute('aria-expanded', 'true');
+      }
     });
 
     if (typeof MutationObserver !== 'undefined') {

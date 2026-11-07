@@ -5,6 +5,17 @@
 //
 // The worker stores only the app's own files, never /api/ responses, so no
 // location or search is ever kept.
+//
+// When the visitor is offline and tries a live search, the worker answers the
+// /api/ request with a short "you're offline, call these numbers" message in
+// the interface language (it never stores the requests or the answers).
+//
+// Updates: the cache name in /sw.js carries a hash of every saved file, so a
+// deploy that changes any of them changes /sw.js too. The browser re-checks it
+// on each page load (updateViaCache: 'none', plus registration.update() below),
+// saves a complete new copy, and deletes the old one.
+
+import { getLang, onLanguageChange } from './i18n.js';
 
 // Must match CACHE_PREFIX in /sw.js.
 export const CACHE_PREFIX = 'harborpath-offline';
@@ -14,10 +25,32 @@ let registration = null;
 
 export const offlineSupported = () => Boolean(sw && globalThis.caches && globalThis.isSecureContext);
 
+/** Tell the controlling worker the interface language (held in its memory only). */
+function tellLanguage() {
+  try { sw?.controller?.postMessage({ type: 'lang', lang: getLang() }); } catch { /* ignore */ }
+}
+
+let listening = false;
+function followLanguage() {
+  tellLanguage();
+  if (listening) return;
+  listening = true;
+  onLanguageChange(tellLanguage);
+  sw.addEventListener('controllerchange', tellLanguage);
+}
+
 // Remember an existing registration, so quick exit can reach its worker
 // synchronously even when this page is not controlled by it.
 const known = offlineSupported()
-  ? sw.getRegistration('/').then((r) => { registration = r ?? null; return registration; }).catch(() => null)
+  ? sw.getRegistration('/').then((r) => {
+    registration = r ?? null;
+    if (registration) {
+      // Look for a new version now as well, so a long-open tab still updates.
+      try { registration.update?.()?.catch?.(() => {}); } catch { /* ignore */ }
+      followLanguage();
+    }
+    return registration;
+  }).catch(() => null)
   : Promise.resolve(null);
 
 /** True when an offline copy is saved on this device. */
@@ -66,6 +99,7 @@ export async function saveOffline() {
       controlled();
     });
   }
+  followLanguage();
 }
 
 /**

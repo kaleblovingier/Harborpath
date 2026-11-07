@@ -172,7 +172,7 @@ test('render() focuses the fallback target and announces the page title', () => 
   const body = src.slice(src.indexOf('async function render('), src.indexOf('// ---------------------------------------------------------------- Quick exit'));
   assert.match(body, /routeFocusTarget\(main\)\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(body, /announce\(resolved\.title\)/);
-  assert.match(src, /import \{ announce \} from '\.\/dom\.js';/);
+  assert.match(src, /import \{[^}]*\bannounce\b[^}]*\} from '\.\/dom\.js';/);
   assert.match(read('public/index.html'), /<div id="announcer" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
 });
 

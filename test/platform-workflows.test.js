@@ -166,6 +166,7 @@ function offlineWorker({ timers = { setTimeout, clearTimeout } } = {}) {
 
   vm.runInNewContext(readPublic('/sw.js'), {
     URL,
+    Response,
     caches,
     fetch: fetchAsset,
     setTimeout: timers.setTimeout,
@@ -232,11 +233,16 @@ test('offline activation makes the new workflows and Spanish content available w
     assert.equal(await response.text(), readPublic(url), `${url} serves the exact cached module`);
   }
 
-  const callsBeforeApi = worker.networkCalls();
+  // API calls pass through to the network and are never stored; with no
+  // signal the worker answers with the phone lines instead of failing.
   const apiUrl = '/api/nearby-summary?lat=47.61&lng=-122.33&radius=25';
-  assert.equal(await worker.dispatchFetch(apiUrl), undefined, 'API calls bypass the worker entirely');
+  const offlineAnswer = await worker.dispatchFetch(apiUrl);
+  assert.equal(offlineAnswer.status, 503);
+  const offlineBody = await offlineAnswer.json();
+  assert.equal(offlineBody.offline, true);
+  assert.match(offlineBody.error, /1-800-662-4357/);
+  await worker.settle();
   assert.equal(await worker.cached(apiUrl), undefined, 'location-based API results never enter the cache');
-  assert.equal(worker.networkCalls(), callsBeforeApi);
   assert.equal(await worker.dispatchFetch('/js/views/tools.js', { method: 'POST' }), undefined);
   assert.equal(await worker.dispatchFetch('https://outside.test/asset.js'), undefined);
 });
