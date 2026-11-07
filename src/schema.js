@@ -549,10 +549,10 @@ export function createTreatmentSearchSchema(taxonomy) {
     }
     for (const c of codes) {
       if (!activeTaxonomy.hasService(c) && !PAYMENT_CODE_SET.has(c) && !ACCREDITATION_CODE_SET.has(c)) {
-        throw new InputError(`Unknown service code: ${c}`);
+        throw new InputError('Unknown service code in filters');
       }
       if (taxonomy && !taxonomy.hasService(c)) {
-        throw new InputError(`Unknown service code: ${c}`);
+        throw new InputError('Unknown service code in filters');
       }
     }
 
@@ -568,7 +568,7 @@ export function createTreatmentSearchSchema(taxonomy) {
       const accList = parseCodeList(obj.accreditation).map((c) => c.toUpperCase());
       for (const acc of accList) {
         if (!ACCREDITATION_CODE_SET.has(acc)) {
-          throw new InputError(`Unknown accreditation code: ${acc}`);
+          throw new InputError('Unknown accreditation code in filters');
         }
       }
       out.accreditation = accList.sort();
@@ -578,7 +578,7 @@ export function createTreatmentSearchSchema(taxonomy) {
       const locList = parseCodeList(obj.levelOfCare).map((c) => c.toUpperCase());
       for (const l of locList) {
         if (!LEVEL_OF_CARE_SET.has(l) && !activeTaxonomy.hasService(l)) {
-          throw new InputError(`Unknown level of care code: ${l}`);
+          throw new InputError('Unknown level of care code in filters');
         }
       }
       out.levelOfCare = locList.sort();

@@ -3,7 +3,7 @@
 // emergency services, and Rural Health Clinics. Each dataset is a compact JSON
 // array; rows are expanded once at startup into the shape the UI renders.
 import { haversineMiles } from './geo.js';
-import { InputError, RADII_MILES } from './findtreatment.js';
+import { InputError, RADII_MILES, parseRadius } from './findtreatment.js';
 
 const MAX_RESULTS = 30;
 
@@ -139,8 +139,7 @@ export function createProviderSearch(data) {
       const type = params.get('type');
       if (!Object.hasOwn(PROVIDER_DATASETS, type ?? '')) throw new InputError(`type must be one of ${PROVIDER_TYPES.join(', ')}`);
       const def = PROVIDER_DATASETS[type];
-      const radiusMiles = Number(params.get('radius') ?? 25);
-      if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
+      const radiusMiles = parseRadius(params);
       const filterName = params.get('filter') || null;
       if (filterName && !Object.hasOwn(def.filters, filterName)) {
         const allowed = Object.keys(def.filters);
