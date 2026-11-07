@@ -12,6 +12,10 @@ import {
   recommendForStimulants,
   recommendForCoOccurring,
 } from './populationHelpers.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetNavigatorState);
 
 // Valid SAMHSA filter codes for Dimension 6 validation and chip display
 const PAYMENT_OPTIONS = [

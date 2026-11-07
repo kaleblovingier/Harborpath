@@ -18,6 +18,10 @@ import {
   recommendForCoOccurring,
 } from './populationHelpers.js';
 import { MEDICATIONS } from './medications.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetGuidedNavigatorState);
 
 /**
  * Bilingual English/Spanish helper that reads the active language from i18n.js

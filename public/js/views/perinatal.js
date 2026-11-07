@@ -39,6 +39,10 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPerinatalState);
 
 // ============================================================================
 // 1. Evidence-Based Clinical Guidelines (ACOG & SMFM)

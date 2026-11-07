@@ -1585,6 +1585,7 @@ export default {
   'hotline.stronghearts.text': 'Envíe un mensaje de texto al 1-844-762-8483',
   'app.savedCount': '{n} guardados',
   'app.footer.dataUpdated': 'Datos de centros de salud actualizados el {date}. Los listados de tratamiento se consultan en vivo.',
+  'app.loadingView': 'Cargando…',
 
   'home.hero.title': 'Encuentre atención y manténgase más seguro/a, en sus propios términos.',
   'home.hero.lede': 'Busque tratamiento con licencia para adicciones, navegación clínica de atención, guías de medicamentos, herramientas de reducción de daños y atención médica de bajo costo cerca de usted. Gratis y privado, sin registro, anuncios ni rastreo.',

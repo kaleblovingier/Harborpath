@@ -25,6 +25,10 @@ import {
   REVERSAL_FORMULATIONS,
 } from '../content/reversalFormulations.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetOverdosePacer);
 
 /**
  * Five-Step Rescue Protocol Schema and Clinical Content

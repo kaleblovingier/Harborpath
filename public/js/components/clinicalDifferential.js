@@ -21,6 +21,10 @@
 
 import { h, clear, icon, tel, announce } from '../dom.js';
 import { getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetDifferentialState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 

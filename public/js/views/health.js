@@ -1,5 +1,5 @@
 import { h, clear, ext, icon, announce } from '../dom.js';
-import { state } from '../state.js';
+import { state, onQuickExit } from '../state.js';
 import { MENTAL_HEALTH_FILTERS } from '../codes.js';
 import { treatmentFinder, healthCenterFinder } from '../components/finder.js';
 import { providerFinder } from '../components/providers.js';
@@ -12,6 +12,9 @@ import {
   getTerritoryEquityGuide,
   buildRuralTerritoryReachCard,
 } from './states.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetHealthState);
 
 export {
   TERRITORY_EQUITY_GUIDES,

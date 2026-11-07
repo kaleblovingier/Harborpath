@@ -2,9 +2,12 @@
 // Zero-knowledge in-RAM resource manager with 0 npm dependencies and 0 PII leakage.
 // WCAG 2.2 AA accessible DOM construction using text nodes, attributes, and CSS classes (no direct markup injection or inline styles).
 
-import { state, toggleSaved, isSaved, subscribe } from '../state.js';
+import { state, toggleSaved, isSaved, subscribe, onQuickExit } from '../state.js';
 import { t, getLang } from '../i18n.js';
 import { h, icon, clear, ext, tel, sms, announce, safeHref, digits } from '../dom.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetBookmarksViewState);
 
 /**
  * Standard clinical & patient advocacy educational disclaimer.

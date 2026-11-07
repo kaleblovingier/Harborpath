@@ -512,8 +512,10 @@ function parseCodeList(raw) {
 
 /**
  * Validates treatment search queries including location coarsening, radiusMiles,
- * kind, page, SAMHSA service codes (max 8), and optional payer / accreditation /
- * levelOfCare filters.
+ * kind, page, SAMHSA service codes (max 8), and optional accreditation /
+ * levelOfCare filters. Insurance is not part of a search: the browser matches
+ * coverage against each listing's payment codes (public/js/match/engine.js),
+ * so what coverage a visitor has is never sent to the server or upstream.
  */
 export function createTreatmentSearchSchema(taxonomy) {
   return new BaseSchema((input) => {
@@ -561,13 +563,6 @@ export function createTreatmentSearchSchema(taxonomy) {
       page,
       codes: codes.sort(),
     };
-
-    if (obj.payer !== undefined && obj.payer !== null && String(obj.payer).trim() !== '') {
-      if (typeof obj.payer !== 'string') throw new InputError('payer must be a string');
-      const payerText = obj.payer.trim();
-      out.payer = payerText;
-      out.payerCodes = resolvePayerCodes(payerText);
-    }
 
     if (obj.accreditation !== undefined && obj.accreditation !== null && String(obj.accreditation).trim() !== '') {
       const accList = parseCodeList(obj.accreditation).map((c) => c.toUpperCase());

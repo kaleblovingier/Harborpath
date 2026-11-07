@@ -2,6 +2,18 @@
 // never be interpreted as markup.
 import { t, isLocalizedUrl } from './i18n.js';
 
+// Attributes that navigate or load. Their values go through safeHref (plus
+// same-site paths such as /icons.svg), so a javascript:, data: or
+// protocol-relative URL from data can never reach the page; it is dropped.
+const URL_ATTRIBUTES = new Set(['href', 'src', 'action', 'formaction']);
+
+function safeUrlAttribute(value) {
+  const s = String(value).trim();
+  // "/path" stays on this site; "//host" and "/\host" would leave it.
+  if (/^\/(?![/\\])/.test(s)) return s;
+  return safeHref(s);
+}
+
 export function h(tag, props, ...children) {
   const el = document.createElement(tag);
   if (props) {
@@ -11,7 +23,10 @@ export function h(tag, props, ...children) {
       else if (key === 'dataset') Object.assign(el.dataset, value);
       else if (key === 'style') throw new Error('Inline styles are blocked by CSP; use a class');
       else if (key.startsWith('on') && typeof value === 'function') el.addEventListener(key.slice(2).toLowerCase(), value);
-      else if (value === true) el.setAttribute(key, '');
+      else if (URL_ATTRIBUTES.has(key.toLowerCase())) {
+        const url = safeUrlAttribute(value);
+        if (url !== null) el.setAttribute(key, url);
+      } else if (value === true) el.setAttribute(key, '');
       else el.setAttribute(key, String(value));
     }
   }

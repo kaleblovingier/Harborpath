@@ -361,7 +361,9 @@ export function createApp({
         }
         case '/api/telehealth': {
           const query = parseTelehealthQuery(params, { taxonomy, anchorFor: regions().anchor });
-          const result = await searchTelehealth(query, { taxonomy, fetchImpl, cache: treatmentCache });
+          const result = await searchTelehealth(query, { taxonomy, fetchImpl, cache: treatmentCache, inflight, ...upstream });
+          // Route only: never the query string, which holds a location.
+          if (result.stale) safeLogger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
           return json(req, res, 200, { ...result, source: 'SAMHSA FindTreatment.gov' });
         }
         case '/api/treatment': {

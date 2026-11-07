@@ -9,6 +9,10 @@
 
 import { h, append, icon } from '../dom.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPostOverdoseState);
 
 /**
  * Clinical post-overdose response and survivorship framework.
