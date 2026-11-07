@@ -59,6 +59,7 @@ const APP_SHELL = [
   '/js/locales/es-tools.js',
   '/js/locales/es-workspace.js',
   '/js/locales/es-evidence.js',
+  '/js/locales/es-safety.js',
 ];
 
 // Elective tier: heavier, non-emergency clinical tools. Warmed in the

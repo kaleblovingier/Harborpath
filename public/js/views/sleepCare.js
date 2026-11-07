@@ -4,7 +4,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & WITHDRAWAL SLEEP ARCHITECTURES
@@ -424,7 +424,7 @@ export function sleepCareView() {
 
   function render() {
     clear(container);
-    const isEs = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const localState = getSleepState();
     const evalResult = evaluateSleepProfile(localState);
 

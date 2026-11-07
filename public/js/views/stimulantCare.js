@@ -8,7 +8,7 @@
 // - CDC Stimulant Harm Reduction & Safe Inhalation Protocols
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 /**
  * Clinical and harm reduction standards for stimulant use disorders and overamping.
@@ -270,7 +270,7 @@ export function formatStimulantSummaryText(state, lang = 'en') {
  * Mounts the Stimulant Care view.
  */
 export function stimulantCareView(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';

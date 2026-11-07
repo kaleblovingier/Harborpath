@@ -4,7 +4,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & DIAGNOSTIC FRAMEWORKS
@@ -400,8 +400,7 @@ export function cannabisCareView() {
 }
 
 function renderCannabisCareViewContent() {
-  const lang = (typeof t === 'function' && t('lang')) || 'en';
-  const isEs = lang === 'es';
+  const isEs = getLang() === 'es';
   const localState = getCannabisState();
 
   const wrapper = h('div', { class: 'cannabis-care-container' });

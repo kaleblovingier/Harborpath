@@ -462,7 +462,7 @@ export default {
   'pacer.step2.advance': 'Administrar 1.ª dosis y comprobar la respiración (Pasar al Paso 3)',
 
   // Step 3: Rescue Breathing Metronome
-  'pacer.step3.dispatcher': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un DEA si está disponible. Este temporizador opcional de respiración no guía las compresiones torácicas; nunca retrase la RCP ni la ayuda de emergencia para usarlo.',
+  'pacer.step3.dispatcher': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un desfibrilador externo automático (DEA) si hay uno disponible. Este temporizador opcional de respiración no guía las compresiones torácicas; nunca retrase la RCP ni la ayuda de emergencia para usarlo.',
   'pacer.step3.badge': 'Paso 3 de 5',
   'pacer.step3.title': 'Metrónomo de respiración de rescate',
   'pacer.step3.subtitle': 'Apoye la respiración según su capacitación o las indicaciones del 911',

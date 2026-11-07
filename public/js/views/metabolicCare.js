@@ -7,7 +7,7 @@
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY: SUBSTANCE-INDUCED METABOLIC & ENDOCRINE PATHOLOGY
@@ -377,8 +377,7 @@ export function metabolicCareView() {
   function render() {
     clear(container);
     const state = getMetabolicState();
-    const currentLang = (typeof t === 'function' && t('lang')) || 'en';
-    const isEs = currentLang === 'es' || document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
 
     // Header Section
     const header = h('header', { class: 'metabolic-header' }, [
