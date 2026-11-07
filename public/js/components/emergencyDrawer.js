@@ -1,6 +1,9 @@
 import { h, icon, tel } from '../dom.js';
-import { state } from '../state.js';
+import { state, onQuickExit } from '../state.js';
 import { t, onLanguageChange } from '../i18n.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(closeEmergencyDrawer);
 
 let isDrawerOpen = false;
 let drawerWrapperEl = null;

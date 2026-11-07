@@ -3,9 +3,12 @@ import { stateHref, stateSections } from '../components/stateResources.js';
 import { telehealthList } from '../components/reach.js';
 import { stateLegalCard, resetStateLegalCardState } from '../components/stateLegalCard.js';
 import { regionsApi } from '../regionsApi.js';
-import { state } from '../state.js';
+import { state, onQuickExit } from '../state.js';
 import { t, getLang } from '../i18n.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetStatesState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 

@@ -6,6 +6,10 @@
 // cleared immediately by resetInsuranceState() on Quick exit (Esc x2).
 
 import { t } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetInsuranceState);
 
 export const INSURANCE_TIERS = {
   EMTALA_PROTECTED: {

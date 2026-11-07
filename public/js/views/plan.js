@@ -1,6 +1,10 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPlanState);
 
 let activePlanState = null;
 let activePlanReset = null;

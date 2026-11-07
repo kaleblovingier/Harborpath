@@ -9,6 +9,10 @@
 
 import { h, append, icon } from '../dom.js';
 import { t } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetStimulantCareState);
 
 /**
  * Clinical and harm reduction standards for stimulant use disorders and overamping.

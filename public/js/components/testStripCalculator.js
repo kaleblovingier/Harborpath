@@ -17,6 +17,10 @@
 
 import { h, clear, icon, announce } from '../dom.js';
 import { getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetTestStripState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 const p = (...children) => h('p', null, ...children);

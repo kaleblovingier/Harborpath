@@ -45,6 +45,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetTribalHealthState);
 
 // ============================================================================
 // 1. Statutory Frameworks & Benefit Rules
