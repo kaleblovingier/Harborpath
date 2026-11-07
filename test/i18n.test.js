@@ -14,6 +14,8 @@ import {
   isPlainLanguage,
   setPlainLanguage,
   onLanguageChange,
+  initI18n,
+  setLanguage,
 } from '../public/js/i18n.js';
 import es from '../public/js/locales/es.js';
 import esServices from '../public/js/locales/es-services.js';
@@ -120,6 +122,48 @@ test('isLocalizedUrl() marks all links localized in English and only url.* links
   assert.equal(isLocalizedUrl('https://www.cdc.gov/overdose-prevention/'), false);
 
   useDictionary('en', {});
+});
+
+test('language switching translates static tooltips and accessible text, then restores English', async () => {
+  const element = (text, attrs, key) => ({
+    textContent: text,
+    dataset: key ? { i18n: key } : {},
+    getAttribute(name) { return attrs[name] ?? null; },
+    setAttribute(name, value) { attrs[name] = value; },
+  });
+  const sensory = element('', { title: 'Low-stimulation sensory mode (Alt+S)', 'data-i18n-title': 'app.sensoryMode' });
+  const emergency = element('', { title: 'Emergency survival cards', 'data-i18n-title': 'app.emergencyCards' });
+  const label = element('Sensory Mode', {}, 'app.sensoryModeLabel');
+  const documentMock = {
+    documentElement: { lang: 'en' },
+    querySelectorAll: (selector) => (selector.includes('[data-lang-switch]') || selector.includes('[data-plain-toggle]') ? [] : [sensory, emergency, label]),
+  };
+  const globals = { document: documentMock, location: { search: '' }, navigator: { languages: ['en-US'] } };
+  const prior = new Map(Object.keys(globals).map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
+  for (const [name, value] of Object.entries(globals)) {
+    Object.defineProperty(globalThis, name, { configurable: true, writable: true, value });
+  }
+  try {
+    useDictionary('en', {});
+    await initI18n();
+    await setLanguage('es');
+    assert.equal(documentMock.documentElement.lang, 'es');
+    assert.equal(sensory.getAttribute('title'), 'Modo sensorial bajo en estímulos (Alt+S)');
+    assert.equal(emergency.getAttribute('title'), 'Tarjetas de supervivencia de emergencia');
+    assert.equal(label.textContent, 'Modo sensorial');
+
+    await setLanguage('en');
+    assert.equal(documentMock.documentElement.lang, 'en');
+    assert.equal(sensory.getAttribute('title'), 'Low-stimulation sensory mode (Alt+S)');
+    assert.equal(emergency.getAttribute('title'), 'Emergency survival cards');
+    assert.equal(label.textContent, 'Sensory Mode');
+  } finally {
+    useDictionary('en', {});
+    for (const [name, descriptor] of prior) {
+      if (descriptor) Object.defineProperty(globalThis, name, descriptor);
+      else delete globalThis[name];
+    }
+  }
 });
 
 test('public/js/locales/es.js and es-services.js have valid keys, non-empty strings, and cover all UI keys in public/', () => {
@@ -252,7 +296,7 @@ test('plain-language mode prefers the plain variant in English and in the dictio
 
     // Real Spanish dictionary.
     useDictionary('es', es);
-    assert.equal(t('home.hero.title', { text: 'x', plain: 'y' }), es['home.hero.title.plain']);
+    assert.equal(t('home.hero.lede', { text: 'x', plain: 'y' }), es['home.hero.lede.plain']);
   } finally {
     setPlainLanguage(false, { notify: false });
     useDictionary('en', {});
@@ -260,7 +304,7 @@ test('plain-language mode prefers the plain variant in English and in the dictio
   // Turning it off restores standard text.
   assert.equal(t('demo.key', { text: 'Standard words.', plain: 'Simple words.' }), 'Standard words.');
   useDictionary('es', es);
-  assert.equal(t('home.hero.title', { text: 'x', plain: 'y' }), es['home.hero.title']);
+  assert.equal(t('home.hero.lede', { text: 'x', plain: 'y' }), es['home.hero.lede']);
   useDictionary('en', {});
 });
 

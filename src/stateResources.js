@@ -4,6 +4,7 @@
 // scripts/verify-links.mjs; links are only offered where the target exists.
 import { decodeColumn, isTable } from './columns.js';
 import { REGIONS, describeRegion, isRegionCode } from './regions.js';
+import { getLegalProtections } from './legalRegistry.js';
 
 export const LINKS = {
   // NEXT Distro (nonprofit): per-state naloxone, test strip, and syringe access pages.
@@ -75,6 +76,7 @@ export function createStateDirectory({ agencies = {}, medicaid = {}, healthCente
           sourceUrl: `${LINKS.medicaidHelp}#${md.anchor}`,
         }
         : null,
+      legal: getLegalProtections(code),
       links: {
         nextDistro: region.nextDistro ? LINKS.nextDistro(region.nextDistro) : null,
         endOverdose: lawCovered ? LINKS.endOverdose : null,

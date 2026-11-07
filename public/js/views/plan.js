@@ -1,6 +1,28 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPlanState);
+
+let activePlanState = null;
+let activePlanReset = null;
+let activeTimerReset = null;
+
+/**
+ * The 6 core evidence-based pillars of the Stanley-Brown Safety Planning Intervention (SPI),
+ * adapted for substance use, overdose prevention, and harm reduction.
+ */
+export const STANLEY_BROWN_STEPS = [
+  { step: 1, id: 'warning_signs', label: 'Warning Signs', field: 'warningSigns' },
+  { step: 2, id: 'internal_coping', label: 'Internal Coping Strategies', field: 'copingSteps' },
+  { step: 3, id: 'social_distraction', label: 'Social Distractions & People', field: 'trustedContacts' },
+  { step: 4, id: 'trusted_supports', label: 'Trusted Family / Friends', field: 'trustedContacts' },
+  { step: 5, id: 'crisis_professionals', label: 'Professionals & 24/7 Crisis Support', field: 'crisisLines' },
+  { step: 6, id: 'environmental_safety', label: 'Making the Environment Safe', field: 'saferEnvironment' },
+];
 
 /**
  * Evidence-based behavioral health & SUD counseling modalities with SAMHSA directory codes.
@@ -77,7 +99,7 @@ export const GROUNDING_EXERCISES = [
       'Pause for 60 seconds and remind yourself: an urge is a physical wave in the nervous system, not a command.',
       'Notice where the craving sits in your body right now (tight jaw, hollow stomach, restless hands, racing thoughts) without fighting or judging it.',
       'Picture yourself riding on top of an ocean wave. Most acute cravings crest within 15 to 20 minutes and always fall if you do not feed them.',
-      'Use the 3-minute or 5-minute Urge Surfing timer below to breathe steadily while the wave peaks and softens.',
+      'Use the 3-minute, 5-minute, or 10-minute Urge Surfing timer below to breathe steadily while the wave peaks and softens.',
     ],
   },
   {
@@ -386,6 +408,105 @@ export function buildIntakeCallScript({ caller = 'self', need = 'moud_bup', insu
   };
 }
 
+// ------------------------------------------------------------
+// Stanley-Brown Safety Plan State (Strictly ephemeral browser RAM)
+// ------------------------------------------------------------
+
+const createDefaultPlanState = () => ({
+  goal: '',
+  warningSigns: '',          // Step 1: Warning signs (intrapersonal & environmental)
+  triggers: '',              // alias for warning signs & triggers
+  copingStrategies: '',      // Step 2: Internal coping strategies
+  copingSteps: '',           // alias for coping strategies
+  socialDistractions: '',    // Step 3: Social distraction contacts & safe environments
+  supportNetwork: '',        // Step 4: Family & friend support network
+  trustedContacts: '',       // alias for support network
+  professionals: '',         // Step 5: Professional & crisis escalation contacts
+  professionalContacts: '',  // alias for professionals
+  environmentalSafety: '',   // Step 6: Environmental safety & substance locking
+  saferEnvironment: '',      // alias for environmental safety
+  naloxoneLocation: '',      // Naloxone placement mapping & test strips
+  notes: '',                 // Notes, reminders to myself & reasons for living
+});
+
+let inMemoryPlanState = createDefaultPlanState();
+const planListeners = new Set();
+
+function notifyPlanListeners() {
+  for (const fn of planListeners) {
+    try {
+      fn(inMemoryPlanState);
+    } catch {
+      // guard subscriber
+    }
+  }
+}
+
+/**
+ * Returns a shallow copy of the current in-memory safety plan state.
+ * Backed strictly by ephemeral browser RAM (zero storage/queries).
+ */
+export function getPlanState() {
+  return { ...inMemoryPlanState };
+}
+
+/**
+ * Updates the in-memory safety plan state with the provided patch.
+ * Synchronizes Stanley-Brown model fields and legacy aliases in browser RAM.
+ */
+export function setPlanState(patch = {}) {
+  if (patch && typeof patch === 'object') {
+    for (const [key, val] of Object.entries(patch)) {
+      if (val !== undefined && Object.hasOwn(inMemoryPlanState, key)) {
+        inMemoryPlanState[key] = Array.isArray(val) ? val.join('\n• ') : String(val ?? '');
+      }
+    }
+
+    // Two-way synchronization of Stanley-Brown fields and legacy aliases
+    if (patch.warningSigns !== undefined && patch.triggers === undefined) {
+      inMemoryPlanState.triggers = inMemoryPlanState.warningSigns;
+    } else if (patch.triggers !== undefined && patch.warningSigns === undefined) {
+      inMemoryPlanState.warningSigns = inMemoryPlanState.triggers;
+    }
+
+    if (patch.copingStrategies !== undefined && patch.copingSteps === undefined) {
+      inMemoryPlanState.copingSteps = inMemoryPlanState.copingStrategies;
+    } else if (patch.copingSteps !== undefined && patch.copingStrategies === undefined) {
+      inMemoryPlanState.copingStrategies = inMemoryPlanState.copingSteps;
+    }
+
+    if (patch.supportNetwork !== undefined && patch.trustedContacts === undefined) {
+      inMemoryPlanState.trustedContacts = inMemoryPlanState.supportNetwork;
+    } else if (patch.trustedContacts !== undefined && patch.supportNetwork === undefined) {
+      inMemoryPlanState.supportNetwork = inMemoryPlanState.trustedContacts;
+    }
+
+    if (patch.professionals !== undefined && patch.professionalContacts === undefined) {
+      inMemoryPlanState.professionalContacts = inMemoryPlanState.professionals;
+    } else if (patch.professionalContacts !== undefined && patch.professionals === undefined) {
+      inMemoryPlanState.professionals = inMemoryPlanState.professionalContacts;
+    }
+
+    if (patch.environmentalSafety !== undefined && patch.saferEnvironment === undefined) {
+      inMemoryPlanState.saferEnvironment = inMemoryPlanState.environmentalSafety;
+    } else if (patch.saferEnvironment !== undefined && patch.environmentalSafety === undefined) {
+      inMemoryPlanState.environmentalSafety = inMemoryPlanState.saferEnvironment;
+    }
+
+    notifyPlanListeners();
+  }
+  return getPlanState();
+}
+
+/**
+ * Resets the in-memory safety plan state back to empty fields.
+ */
+export function resetPlanState() {
+  inMemoryPlanState = createDefaultPlanState();
+  notifyPlanListeners();
+  return getPlanState();
+}
+
 function normalizeField(value) {
   if (Array.isArray(value)) {
     return value.map((v) => String(v ?? '').trim()).filter(Boolean).join('\n• ');
@@ -394,45 +515,79 @@ function normalizeField(value) {
 }
 
 function formatBlock(title, rawValue) {
+  if (rawValue === undefined || rawValue === null) {
+    return `${title}\n(None listed yet)`;
+  }
   const val = normalizeField(rawValue);
   const body = val ? (Array.isArray(rawValue) ? `• ${val}` : val) : '(None listed yet)';
   return `${title}\n${body}`;
 }
 
 /**
- * Pure function that formats a user's safety & recovery action plan into a clean,
- * readable plain-text document for copying to clipboard or printing.
+ * Pure function that formats a user's Stanley-Brown safety & recovery action plan
+ * into a clean, readable plain-text document for copying to clipboard or printing.
  */
-export function formatSafetyPlanText(plan = {}) {
+export function formatSafetyPlanText(plan = inMemoryPlanState) {
   const safePlan = plan && typeof plan === 'object' ? plan : {};
+
+  const goal = safePlan.goal;
+  const warningSigns = safePlan.warningSigns || safePlan.triggers;
+  const coping = safePlan.copingStrategies || safePlan.copingSteps;
+  const social = safePlan.socialDistractions;
+  const support = safePlan.supportNetwork || safePlan.trustedContacts;
+  const prof = safePlan.professionals || safePlan.professionalContacts;
+  const env = safePlan.environmentalSafety || safePlan.saferEnvironment;
+  const naloxone = safePlan.naloxoneLocation;
+  const notes = safePlan.notes;
+
   const sections = [
     '============================================================',
     'HARBORPATH PERSONAL SAFETY & RECOVERY ACTION PLAN',
-    'Private, zero-knowledge plan — kept in your control.',
+    'Stanley-Brown Evidence-Based Suicide & Overdose Safety Model',
+    'Private plan, written in your browser and kept in your control.',
     '============================================================',
     '',
-    formatBlock('1. MY GOAL RIGHT NOW', safePlan.goal),
+    formatBlock('1. MY GOAL RIGHT NOW', goal),
     '',
-    formatBlock('2. MY TRIGGERS & HIGH-RISK SITUATIONS', safePlan.triggers),
+    // Step 1: Warning signs & triggers (intrapersonal & environmental)
+    formatBlock(
+      '2. MY TRIGGERS & HIGH-RISK SITUATIONS',
+      safePlan.triggers || warningSigns,
+    ),
     '',
-    formatBlock('3. EARLY WARNING SIGNS I AM STRUGGLING', safePlan.warningSigns),
+    formatBlock(
+      '3. EARLY WARNING SIGNS I AM STRUGGLING',
+      safePlan.warningSigns || warningSigns,
+    ),
     '',
-    formatBlock('4. COPING STEPS THAT WORK FOR ME', safePlan.copingSteps),
+    // Step 2: Internal coping strategies
+    formatBlock('4. COPING STEPS THAT WORK FOR ME', coping),
     '',
-    formatBlock('5. TRUSTED PEOPLE & SUPPORTS I CAN REACH OUT TO', safePlan.trustedContacts),
+    // Step 3: Social distraction contacts & safe environments
+    formatBlock('5. SOCIAL DISTRACTIONS & SAFE PLACES (PEOPLE & SETTINGS THAT DISTRACT ME)', social),
     '',
-    formatBlock('6. WAYS TO MAKE MY ENVIRONMENT SAFER', safePlan.saferEnvironment),
+    // Step 4: Family & friend support network
+    formatBlock('6. TRUSTED PEOPLE & SUPPORTS I CAN REACH OUT TO', support),
     '',
-    formatBlock('7. WHERE MY NALOXONE (NARCAN) & TEST STRIPS ARE KEPT', safePlan.naloxoneLocation),
+    // Step 5: Professional & crisis escalation contacts
+    formatBlock('7. PROFESSIONALS & CRISIS ESCALATION CONTACTS', prof),
     '',
-    formatBlock('8. NOTES & REMINDERS TO MYSELF', safePlan.notes),
+    // Step 6: Environmental safety & substance locking
+    formatBlock('8. WAYS TO MAKE MY ENVIRONMENT SAFER', env),
+    '',
+    // Naloxone placement mapping
+    formatBlock('9. WHERE MY NALOXONE (NARCAN) & TEST STRIPS ARE KEPT', naloxone),
+    '',
+    // Notes & reminders
+    formatBlock('10. NOTES & REMINDERS TO MYSELF', notes),
     '',
     '------------------------------------------------------------',
-    '24/7 FREE & CONFIDENTIAL CRISIS & OVERDOSE PREVENTION LINES',
-    '• 988 Suicide & Crisis Lifeline: Call or text 988 (24/7)',
-    '• SAMHSA National Helpline: 1-800-662-4357 (24/7 treatment & support)',
-    '• Never Use Alone (overdose prevention line): 1-800-484-3731 (24/7)',
-    '• Medical Emergency (if someone won’t wake up): Call 911 & give naloxone',
+    '24/7 FREE & CONFIDENTIAL CRISIS & OVERDOSE ESCALATION LINES',
+    '• 988 Suicide & Crisis Lifeline: Call or text 988 (free, 24/7, English & Spanish)',
+    '• SAMHSA National Helpline: 1-800-662-4357 (free, 24/7 treatment & support)',
+    `• Never Use Alone (overdose prevention): ${NEVER_USE_ALONE.label} (or ${NEVER_USE_ALONE.alt.label}, 24/7)`,
+    '• SafeSpot (overdose prevention & peer safety line): 800-972-0590 (free, 24/7)',
+    '• Medical Emergency (if someone won’t wake up or breathe): Call 911 & give naloxone',
     '------------------------------------------------------------',
   ];
   return sections.join('\n');
@@ -461,10 +616,45 @@ function hasSuggestionInText(currentText, item) {
 }
 
 /**
- * Interactive guided Urge Surfing & Paced Breathing timer component.
- * Cleans up its interval automatically when disconnected from the DOM and respects prefers-reduced-motion.
+ * Interactive guided Urge Surfing & Visual Breathing Pacing Timer component.
+ * Features 3-minute, 5-minute, and 10-minute visual breathing pacing guides.
+ * Cleans up intervals automatically on unmount and respects prefers-reduced-motion.
  */
-function urgeSurfingTimer() {
+export function getTimerCoaching(remainingSeconds, totalSeconds, { reducedMotion = null } = {}) {
+  const elapsed = totalSeconds - remainingSeconds;
+  const isReduced = reducedMotion !== null
+    ? Boolean(reducedMotion)
+    : (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (remainingSeconds <= 0) {
+    return t(
+      'plan.timer.done',
+      'Wave surfed. Notice how your body feels now compared to when you started. You made it through these minutes—drink some water or take one safe next step.',
+    );
+  }
+  if (elapsed < 30) {
+    return t(
+      'plan.timer.phase1',
+      'Settle your feet on the floor. Notice where the urge sits in your body without fighting it. Breathe in gently for 4 seconds, out slowly for 6 to 8 seconds.',
+    );
+  }
+  if (elapsed < 90) {
+    return isReduced
+      ? t('plan.timer.phase2.calm', 'Keep a steady, slow exhale. Picture the craving as a wave passing beneath you—you do not have to act on a thought.')
+      : t('plan.timer.phase2', 'Inhale slowly (1-2-3-4)… exhale softly (1-2-3-4-5-6). Let your shoulders drop as the wave crests.');
+  }
+  if (remainingSeconds > 45) {
+    return t(
+      'plan.timer.phase3',
+      'You are over the halfway mark. Name 3 things you can see in the room right now and keep lengthening your out-breath.',
+    );
+  }
+  return t(
+    'plan.timer.phase4',
+    'Final stretch—the peak is passing. Unclench your jaw and hands, and take two more slow, deep breaths.',
+  );
+}
+
+export function urgeSurfingTimer() {
   let totalSeconds = 180;
   let remaining = 180;
   let interval = null;
@@ -474,46 +664,42 @@ function urgeSurfingTimer() {
   const livePrompt = h(
     'p',
     { class: 'timer-live', role: 'status', 'aria-live': 'polite' },
-    t('plan.timer.ready', 'Choose 3 or 5 minutes when an urge hits. Most cravings crest and soften like a wave if you ride out the peak.'),
+    t('plan.timer.ready', 'Choose 3, 5, or 10 minutes when an urge hits. Most cravings crest and soften like a wave if you ride out the peak.'),
   );
+
+  const pacerCircle = h('span', { class: 'pacer-circle', 'aria-hidden': 'true' });
+  const pacerLabel = h('span', { class: 'pacer-label' }, t('plan.timer.pacer.ready', 'Visual breathing pacer (Inhale 4s • Hold 2s • Exhale 8s • Pause 2s)'));
+  const pacerGuide = h('div', { class: 'pacer-guide pacer-idle', 'aria-hidden': 'true' }, pacerCircle, pacerLabel);
 
   function stopTimer() {
     if (interval !== null) {
       clearInterval(interval);
       interval = null;
     }
+    pacerGuide.className = 'pacer-guide pacer-idle';
+    pacerLabel.textContent = t('plan.timer.pacer.ready', 'Visual breathing pacer (Inhale 4s • Hold 2s • Exhale 8s • Pause 2s)');
+  }
+
+  function updatePacer(elapsed) {
+    // 16-second vagal brake cycle: 4s inhale, 2s hold, 8s exhale, 2s pause
+    const secInCycle = elapsed % 16;
+    if (secInCycle < 4) {
+      pacerGuide.className = 'pacer-guide pacer-inhale';
+      pacerLabel.textContent = t('plan.timer.pacer.inhale', 'Inhale gently (4s)…');
+    } else if (secInCycle < 6) {
+      pacerGuide.className = 'pacer-guide pacer-hold';
+      pacerLabel.textContent = t('plan.timer.pacer.hold', 'Hold gently (2s)…');
+    } else if (secInCycle < 14) {
+      pacerGuide.className = 'pacer-guide pacer-exhale';
+      pacerLabel.textContent = t('plan.timer.pacer.exhale', 'Exhale slowly (8s)…');
+    } else {
+      pacerGuide.className = 'pacer-guide pacer-pause';
+      pacerLabel.textContent = t('plan.timer.pacer.pause', 'Pause & settle (2s)…');
+    }
   }
 
   function coachingForRemaining(rem, total) {
-    const elapsed = total - rem;
-    const reducedMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (rem <= 0) {
-      return t(
-        'plan.timer.done',
-        'Wave surfed. Notice how your body feels now compared to when you started. You made it through these minutes—drink some water or take one safe next step.',
-      );
-    }
-    if (elapsed < 30) {
-      return t(
-        'plan.timer.phase1',
-        'Settle your feet on the floor. Notice where the urge sits in your body without fighting it. Breathe in gently for 4 seconds, out slowly for 6 to 8 seconds.',
-      );
-    }
-    if (elapsed < 90) {
-      return reducedMotion
-        ? t('plan.timer.phase2.calm', 'Keep a steady, slow exhale. Picture the craving as a wave passing beneath you—you do not have to act on a thought.')
-        : t('plan.timer.phase2', 'Inhale slowly (1-2-3-4)… exhale softly (1-2-3-4-5-6). Let your shoulders drop as the wave crests.');
-    }
-    if (rem > 45) {
-      return t(
-        'plan.timer.phase3',
-        'You are over the halfway mark. Name 3 things you can see in the room right now and keep lengthening your out-breath.',
-      );
-    }
-    return t(
-      'plan.timer.phase4',
-      'Final stretch—the peak is passing. Unclench your jaw and hands, and take two more slow, deep breaths.',
-    );
+    return getTimerCoaching(rem, total);
   }
 
   function start(seconds) {
@@ -522,6 +708,7 @@ function urgeSurfingTimer() {
     remaining = seconds;
     display.textContent = fmt(remaining);
     livePrompt.textContent = coachingForRemaining(remaining, totalSeconds);
+    updatePacer(0);
 
     interval = setInterval(() => {
       if (root.isConnected === false) {
@@ -530,11 +717,15 @@ function urgeSurfingTimer() {
       }
       remaining -= 1;
       display.textContent = fmt(Math.max(remaining, 0));
-      // Update aria-live coaching prompt at gentle 15-second boundaries or completion so screen readers aren't spammed every second
+      const elapsed = totalSeconds - remaining;
+      updatePacer(elapsed);
+
+      // Update aria-live coaching prompt at gentle 15-second boundaries or completion
       if (remaining <= 0) {
         stopTimer();
+        display.textContent = '0:00';
         livePrompt.textContent = coachingForRemaining(0, totalSeconds);
-      } else if ((totalSeconds - remaining) % 15 === 0) {
+      } else if (elapsed % 15 === 0) {
         livePrompt.textContent = coachingForRemaining(remaining, totalSeconds);
       }
     }, 1000);
@@ -552,6 +743,12 @@ function urgeSurfingTimer() {
     onclick: () => start(300),
   }, icon('clock'), t('plan.timer.start5', 'Start 5-minute urge surf'));
 
+  const start10Btn = h('button', {
+    type: 'button',
+    class: 'btn btn-secondary btn-small',
+    onclick: () => start(600),
+  }, icon('clock'), t('plan.timer.start10', 'Start 10-minute urge surf'));
+
   const resetBtn = h('button', {
     type: 'button',
     class: 'btn btn-ghost btn-small',
@@ -563,11 +760,18 @@ function urgeSurfingTimer() {
     },
   }, icon('x'), t('plan.timer.resetBtn', 'Pause / reset'));
 
-  const root = h('div', { class: 'timer', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
+  const root = h('div', { class: 'timer', role: 'group', 'aria-label': t('plan.timer.aria', 'Guided urge surfing and breathing timer') },
     display,
-    h('div', { class: 'actions' }, start3Btn, start5Btn, resetBtn),
+    h('div', { class: 'actions' }, start3Btn, start5Btn, start10Btn, resetBtn),
+    pacerGuide,
     livePrompt,
   );
+  activeTimerReset = () => {
+    stopTimer();
+    remaining = totalSeconds;
+    display.textContent = fmt(remaining);
+    livePrompt.textContent = t('plan.timer.reset', 'Timer paused and reset. Start again whenever you are ready.');
+  };
   return root;
 }
 
@@ -696,39 +900,37 @@ function intakeScriptBuilderCard() {
 }
 
 /**
- * Interactive SUDP Counseling, Craving/Distress Grounding Toolkit, Intake Demystification,
- * 42 CFR Part 2 Rights, and Zero-Knowledge Personal Safety & Recovery Action Plan view.
+ * Interactive Stanley-Brown Evidence-Based Suicide & Overdose Safety Planning model view.
+ * Zero-knowledge: Backed strictly by ephemeral browser RAM (zero storage/queries).
  */
 export function planView({ query } = {}) {
-  // Zero-knowledge state lives purely inside this closure in browser RAM.
-  const plan = {
-    goal: query?.get('goal') ?? '',
-    triggers: '',
-    warningSigns: '',
-    copingSteps: '',
-    trustedContacts: '',
-    saferEnvironment: '',
-    naloxoneLocation: '',
-    notes: '',
-  };
+  // If query provides a goal, initialize ephemeral state if currently empty
+  const initialGoal = query?.get('goal');
+  if (initialGoal && !inMemoryPlanState.goal) {
+    setPlanState({ goal: initialGoal });
+  }
 
   const previewBody = h('div', { class: 'safety-plan-preview-body' });
   const copyStatus = h('p', { class: 'field-status', role: 'status', 'aria-live': 'polite' });
+  const cfrStatus = h('p', { class: 'field-status', role: 'status', 'aria-live': 'polite' });
 
   const inputRefs = {};
   const triggerChipButtons = [];
   const copingChipButtons = [];
 
   function syncChipStates() {
+    const currentTriggers = inMemoryPlanState.warningSigns || inMemoryPlanState.triggers;
     for (const { btn, label } of triggerChipButtons) {
-      const active = hasSuggestionInText(plan.triggers, label);
+      const active = hasSuggestionInText(currentTriggers, label);
       btn.setAttribute('aria-pressed', String(active));
       btn.className = active ? 'preset' : 'btn btn-small btn-ghost';
       if (active) btn.setAttribute('aria-current', 'true');
       else btn.removeAttribute('aria-current');
     }
+
+    const currentCoping = inMemoryPlanState.copingStrategies || inMemoryPlanState.copingSteps;
     for (const { btn, label } of copingChipButtons) {
-      const active = hasSuggestionInText(plan.copingSteps, label);
+      const active = hasSuggestionInText(currentCoping, label);
       btn.setAttribute('aria-pressed', String(active));
       btn.className = active ? 'preset' : 'btn btn-small btn-ghost';
       if (active) btn.setAttribute('aria-current', 'true');
@@ -738,14 +940,22 @@ export function planView({ query } = {}) {
 
   function renderPreview() {
     clear(previewBody);
+    const plan = inMemoryPlanState;
+
     const rows = [
-      [t('plan.preview.goal', 'My goal right now'), plan.goal],
-      [t('plan.preview.triggers', 'Triggers & high-risk situations'), plan.triggers],
-      [t('plan.preview.warningSigns', 'Early warning signs'), plan.warningSigns],
-      [t('plan.preview.copingSteps', 'Coping steps that work for me'), plan.copingSteps],
-      [t('plan.preview.trustedContacts', 'Trusted people & supports'), plan.trustedContacts],
-      [t('plan.preview.saferEnvironment', 'Ways to make my space safer'), plan.saferEnvironment],
-      [t('plan.preview.naloxoneLocation', 'Where my naloxone & test strips are kept'), plan.naloxoneLocation],
+      [t('plan.preview.goal', 'My recovery goal & reasons for living'), plan.goal],
+      [
+        t('plan.preview.warningSigns', 'Step 1: Warning signs & triggers'),
+        plan.warningSigns && plan.triggers && plan.warningSigns !== plan.triggers
+          ? `${plan.warningSigns}\n• ${plan.triggers}`
+          : (plan.warningSigns || plan.triggers),
+      ],
+      [t('plan.preview.copingStrategies', 'Step 2: Internal coping strategies'), plan.copingStrategies || plan.copingSteps],
+      [t('plan.preview.socialDistractions', 'Step 3: Social distraction & safe settings'), plan.socialDistractions],
+      [t('plan.preview.supportNetwork', 'Step 4: Family & friend support network'), plan.supportNetwork || plan.trustedContacts],
+      [t('plan.preview.professionals', 'Step 5: Professional & crisis escalation contacts'), plan.professionals || plan.professionalContacts],
+      [t('plan.preview.environmentalSafety', 'Step 6: Environmental safety & substance locking'), plan.environmentalSafety || plan.saferEnvironment],
+      [t('plan.preview.naloxoneLocation', 'Where naloxone & test strips are kept'), plan.naloxoneLocation],
       [t('plan.preview.notes', 'Notes & reminders to myself'), plan.notes],
     ];
 
@@ -757,17 +967,32 @@ export function planView({ query } = {}) {
         ]),
       ),
       h('div', { class: 'callout callout-info' },
-        h('p', { class: 'callout-title' }, icon('phone'), t('plan.preview.crisisTitle', '24/7 free & confidential support lines')),
+        h('p', { class: 'callout-title' }, icon('phone'), t('plan.preview.crisisTitle', '24/7 free & confidential crisis & overdose prevention lines')),
         ul([
-          [strong('988 Suicide & Crisis Lifeline: '), 'Call or text ', tel('988', '988'), ' (free, 24/7).'],
-          [strong('SAMHSA National Helpline: '), tel('18006624357', '1-800-662-4357'), ' (free 24/7 treatment referral & support).'],
-          [strong('Never Use Alone: '), tel('18004843731', '1-800-484-3731'), ' (24/7 overdose prevention operator if using alone).'],
+          [strong('988 Suicide & Crisis Lifeline: '), 'Call or text ', tel('988', '988'), ' (free, 24/7, English & Spanish).'],
+          [strong('SAMHSA National Helpline: '), tel('18006624357', '1-800-662-4357'), ' (free, 24/7 treatment referral & support).'],
+          [strong('Never Use Alone: '), tel(NEVER_USE_ALONE.number, NEVER_USE_ALONE.label), ' or ', tel(NEVER_USE_ALONE.alt.number, NEVER_USE_ALONE.alt.label), ' (free, 24/7 confidential overdose prevention).'],
+          [strong('SafeSpot: '), tel('8009720590', '800-972-0590'), ' (free, 24/7 overdose prevention & peer safety line).'],
+          [strong('Medical Emergency: '), 'Call ', tel('911', '911'), ' immediately if someone won’t wake up or breathe, and administer naloxone.'],
         ]),
       ),
     );
   }
 
+  function handleStateUpdate(newState) {
+    for (const [key, ref] of Object.entries(inputRefs)) {
+      if (ref && ref.value !== newState[key]) {
+        ref.value = newState[key] ?? '';
+      }
+    }
+    syncChipStates();
+    renderPreview();
+  }
+
+  planListeners.add(handleStateUpdate);
+
   function createField({ key, id, label, helpText, placeholder, rows = 2, chips = null }) {
+    const val = inMemoryPlanState[key] ?? '';
     const control = rows > 1
       ? h('textarea', {
           id,
@@ -775,20 +1000,17 @@ export function planView({ query } = {}) {
           rows: String(rows),
           placeholder,
           oninput: (e) => {
-            plan[key] = e.target.value;
-            syncChipStates();
-            renderPreview();
+            setPlanState({ [key]: e.target.value });
           },
-        }, plan[key])
+        }, val)
       : h('input', {
           id,
           type: 'text',
           class: 'input',
           placeholder,
-          value: plan[key],
+          value: val,
           oninput: (e) => {
-            plan[key] = e.target.value;
-            renderPreview();
+            setPlanState({ [key]: e.target.value });
           },
         });
 
@@ -809,11 +1031,10 @@ export function planView({ query } = {}) {
         class: 'btn btn-small btn-ghost',
         'aria-pressed': 'false',
         onclick: () => {
-          plan.triggers = toggleSuggestionInText(plan.triggers, label);
-          if (inputRefs.triggers) inputRefs.triggers.value = plan.triggers;
-          syncChipStates();
-          renderPreview();
-          announce(`${hasSuggestionInText(plan.triggers, label) ? 'Added' : 'Removed'} trigger: ${label}`);
+          const current = inMemoryPlanState.warningSigns || inMemoryPlanState.triggers;
+          const next = toggleSuggestionInText(current, label);
+          setPlanState({ warningSigns: next, triggers: next });
+          announce(`${hasSuggestionInText(next, label) ? 'Added' : 'Removed'} trigger: ${label}`);
         },
       }, '+ ', label);
       triggerChipButtons.push({ btn, label });
@@ -828,11 +1049,10 @@ export function planView({ query } = {}) {
         class: 'btn btn-small btn-ghost',
         'aria-pressed': 'false',
         onclick: () => {
-          plan.copingSteps = toggleSuggestionInText(plan.copingSteps, label);
-          if (inputRefs.copingSteps) inputRefs.copingSteps.value = plan.copingSteps;
-          syncChipStates();
-          renderPreview();
-          announce(`${hasSuggestionInText(plan.copingSteps, label) ? 'Added' : 'Removed'} coping step: ${label}`);
+          const current = inMemoryPlanState.copingStrategies || inMemoryPlanState.copingSteps;
+          const next = toggleSuggestionInText(current, label);
+          setPlanState({ copingStrategies: next, copingSteps: next });
+          announce(`${hasSuggestionInText(next, label) ? 'Added' : 'Removed'} coping step: ${label}`);
         },
       }, '+ ', label);
       copingChipButtons.push({ btn, label });
@@ -841,7 +1061,7 @@ export function planView({ query } = {}) {
   );
 
   async function handleCopyPlan() {
-    const text = formatSafetyPlanText(plan);
+    const text = formatSafetyPlanText(inMemoryPlanState);
     try {
       if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
@@ -856,15 +1076,54 @@ export function planView({ query } = {}) {
   }
 
   function handleClearPlan() {
-    for (const k of Object.keys(plan)) {
-      plan[k] = '';
-      if (inputRefs[k]) inputRefs[k].value = '';
-    }
+    resetPlanState();
     copyStatus.textContent = t('plan.cleared', 'Cleared your safety plan from browser memory.');
-    syncChipStates();
-    renderPreview();
     announce(t('plan.cleared', 'Cleared your safety plan from browser memory.'));
   }
+
+
+  async function handleCopyCfrHandout() {
+    const text = [
+      '============================================================',
+      '42 CFR PART 2 PATIENT PRIVACY RIGHTS HANDOUT',
+      'HHS & SAMHSA Final Rule (89 FR 12472 — Full Compliance 2026)',
+      '============================================================',
+      '',
+      '1. SHIELD AGAINST LAW ENFORCEMENT & COURTS:',
+      'Substance use disorder (SUD) treatment records cannot be used to investigate or prosecute you without your written consent or a special high-threshold court order requiring notice and a hearing. A general subpoena or police request is not enough.',
+      '',
+      '2. SPECIAL PROTECTION FOR COUNSELING NOTES:',
+      'SUDP and therapist personal clinical counseling notes are protected separately from general medical records and cannot be shared without separate, specific written consent.',
+      '',
+      '3. PATIENT CONTROL OVER CONSENT & RIGHT TO REVOKE:',
+      'You decide whether to sign a single consent for Treatment, Payment, and Healthcare Operations (TPO) for care coordination, and you have the right to revoke your consent in writing at any time.',
+      '',
+      '4. PROTECTION AGAINST PATIENT BROKERING (EKRA, 18 U.S.C. § 220):',
+      'Federal law makes it a crime for anyone to pay or receive kickbacks, cash, or free airfare for patient referrals.',
+      '',
+      '5. RIGHT TO BREACH NOTIFICATION & COMPLAINTS:',
+      'Programs must notify you of privacy breaches. You have the right to file formal complaints with HHS Office for Civil Rights (OCR) or SAMHSA without retaliation.',
+      '============================================================',
+    ].join('\n');
+
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        cfrStatus.textContent = t('plan.rights.handoutCopied', 'Copied 42 CFR Part 2 privacy rights handout to clipboard.');
+        announce(cfrStatus.textContent);
+      }
+    } catch {
+      // ignore clipboard error
+    }
+  }
+  activePlanState = inMemoryPlanState;
+  activePlanReset = () => {
+    handleClearPlan();
+    if (typeof activeTimerReset === 'function') {
+      activeTimerReset();
+    }
+  };
+
 
   syncChipStates();
   renderPreview();
@@ -874,7 +1133,7 @@ export function planView({ query } = {}) {
       t('plan.title', 'Safety planning, counseling & what to expect'),
       t(
         'plan.lede',
-        'Build a private, zero-knowledge personal safety and recovery action plan, ride out a craving with an urge-surfing timer, get a word-for-word clinic call script, and see what really happens at intake.',
+        'Build a private personal safety and recovery action plan in your browser, ride out a craving with an urge-surfing timer, get a word-for-word clinic call script, and see what really happens at intake.',
       ),
     ),
     emergencyCallout(),
@@ -886,13 +1145,13 @@ export function planView({ query } = {}) {
       ['confidentiality-rights', t('plan.toc.rights', 'Your confidentiality rights (42 CFR Part 2)')],
     ]),
 
-    // 1. Zero-Knowledge Interactive Personal Safety & Recovery Action Plan Builder
+    // 1. Stanley-Brown Evidence-Based Suicide & Overdose Safety Plan Builder
     section('safety-plan', t('plan.section.safetyPlan', 'Personal safety & recovery action plan'),
       h('div', { class: 'callout callout-info' },
-        h('p', { class: 'callout-title' }, icon('lock'), t('plan.zeroKnowledge.title', '100% in browser memory — never saved or transmitted')),
+        h('p', { class: 'callout-title' }, icon('lock'), t('plan.zeroKnowledge.title', 'Stays in this browser tab: HarborPath does not save or send it')),
         p(t(
           'plan.zeroKnowledge.desc',
-          'Everything you type or select below stays strictly in temporary browser RAM. Nothing is sent to a server, stored in cookies, or written to disk unless you choose to copy or print it. Clicking Quick Exit (or pressing Escape twice) wipes it immediately.',
+          'What you type or select below stays in this browser tab’s memory. HarborPath does not send it to a server or save it in cookies or site storage. Copying or printing it is up to you. Quick exit (or pressing Escape twice) clears it from this page, but cannot clear your clipboard or anything you printed.',
         )),
       ),
 
@@ -907,74 +1166,83 @@ export function planView({ query } = {}) {
         createField({
           key: 'goal',
           id: 'plan-goal',
-          label: t('plan.field.goal', '1. My goal right now'),
+          label: t('plan.field.goal', '1. My recovery goal & reasons for living'),
           helpText: t('plan.help.goal', 'Examples: “Not use alone tonight”, “Start buprenorphine this week”, “Make it through the weekend without drinking”.'),
           placeholder: t('plan.placeholder.goal', 'What does staying safer or feeling better look like for you right now?'),
           rows: 1,
         }),
 
         createField({
-          key: 'triggers',
-          id: 'plan-triggers',
-          label: t('plan.field.triggers', '2. My triggers & high-risk situations'),
-          helpText: t('plan.help.triggers', 'Click any common trigger below to add or remove it, or type your own.'),
-          placeholder: t('plan.placeholder.triggers', 'People, places, feelings, times of day, or situations that spark cravings...'),
+          key: 'warningSigns',
+          id: 'plan-warning-signs',
+          label: t('plan.field.warningSigns', '2. Step 1: Warning signs & triggers (intrapersonal & environmental)'),
+          helpText: t('plan.help.warningSigns', 'Notice thoughts, mood changes, physical cravings (intrapersonal) and places, payday, or situations (environmental) that signal an urge is building.'),
+          placeholder: t('plan.placeholder.warningSigns', 'Intrapersonal: racing thoughts, feeling numb, restless, cravings. Environmental: payday, certain streets, conflict...'),
           rows: 3,
           chips: triggerChipsBar,
         }),
 
         createField({
-          key: 'warningSigns',
-          id: 'plan-warning-signs',
-          label: t('plan.field.warningSigns', '3. Early warning signs I am struggling'),
-          helpText: t('plan.help.warningSigns', 'How do you notice a craving or return to use building before it happens?'),
-          placeholder: t('plan.placeholder.warningSigns', 'Skipping sleep or meals, isolating, missing medication doses, feeling restless...'),
-          rows: 2,
-        }),
-
-        createField({
-          key: 'copingSteps',
+          key: 'copingStrategies',
           id: 'plan-coping-steps',
-          label: t('plan.field.copingSteps', '4. Coping steps I can try for 15 minutes'),
-          helpText: t('plan.help.copingSteps', 'Cravings crest and fade like waves. Click any strategy below to add it, or write your own.'),
-          placeholder: t('plan.placeholder.copingSteps', 'Steps to ride out a craving or get through the next hour safely...'),
+          label: t('plan.field.copingStrategies', '3. Step 2: Internal coping strategies (things I can do on my own)'),
+          helpText: t('plan.help.copingStrategies', 'Things you can do without contacting anyone to ride out an urge or calm your nervous system for 15 minutes.'),
+          placeholder: t('plan.placeholder.copingStrategies', 'Urge surfing for 15 minutes, 4-7-8 breathing, taking a cold shower, listening to music, taking prescribed MOUD...'),
           rows: 3,
           chips: copingChipsBar,
         }),
 
         createField({
-          key: 'trustedContacts',
-          id: 'plan-trusted-contacts',
-          label: t('plan.field.trustedContacts', '5. Trusted people & supports I can call or text'),
-          helpText: t('plan.help.trustedContacts', 'Who is safe, non-judgmental, and supportive when you need to talk?'),
-          placeholder: t('plan.placeholder.trustedContacts', 'Names, phone numbers, peer coach, counselor, or favorite meeting...'),
+          key: 'socialDistractions',
+          id: 'plan-social-distractions',
+          label: t('plan.field.socialDistractions', '4. Step 3: People and safe social settings that provide distraction'),
+          helpText: t('plan.help.socialDistractions', 'People or places that take your mind off things without having to discuss a crisis (coffee shop, library, gym, park, safe friends).'),
+          placeholder: t('plan.placeholder.socialDistractions', 'Friends to chat about movies/sports with, public library, coffee shop, gym, walk in the park...'),
           rows: 2,
         }),
 
         createField({
-          key: 'saferEnvironment',
+          key: 'supportNetwork',
+          id: 'plan-trusted-contacts',
+          label: t('plan.field.supportNetwork', '5. Step 4: Family members or trusted friends I can ask for help'),
+          helpText: t('plan.help.supportNetwork', 'People you trust to tell: "I am struggling / having strong cravings / need support staying safe right now."'),
+          placeholder: t('plan.placeholder.supportNetwork', 'Trusted family member, peer recovery coach, sponsor, close friend with phone numbers...'),
+          rows: 2,
+        }),
+
+        createField({
+          key: 'professionals',
+          id: 'plan-professionals',
+          label: t('plan.field.professionals', '6. Step 5: Personal clinician, counselor & crisis escalation contacts'),
+          helpText: t('plan.help.professionals', 'Your prescribing doctor, therapist, counselor, clinic intake number, or local mobile crisis team. (Free 24/7 hotlines 988, 911, Never Use Alone, and SafeSpot are pre-populated below).'),
+          placeholder: t('plan.placeholder.professionals', 'My therapist, prescriber, clinic number, local crisis team...'),
+          rows: 2,
+        }),
+
+        createField({
+          key: 'environmentalSafety',
           id: 'plan-safer-environment',
-          label: t('plan.field.saferEnvironment', '6. Ways to make my environment safer'),
-          helpText: t('plan.help.saferEnvironment', 'Practical harm reduction and environmental steps if a slip or return to use happens.'),
-          placeholder: t('plan.placeholder.saferEnvironment', 'Start low & go slow after a break, never mix opioids with benzos/alcohol, unlock the door, call Never Use Alone...'),
+          label: t('plan.field.environmentalSafety', '7. Step 6: Making the environment safe & substance locking'),
+          helpText: t('plan.help.environmentalSafety', 'Ways to make your space safer: locked medication box, safe storage, separating substances, discarding old pills, removing lethal means.'),
+          placeholder: t('plan.placeholder.environmentalSafety', 'Locking my medications in a lockbox, giving extra doses to a trusted person, not using alone, unlocking my door...'),
           rows: 2,
         }),
 
         createField({
           key: 'naloxoneLocation',
           id: 'plan-naloxone-location',
-          label: t('plan.field.naloxoneLocation', '7. Where my naloxone (Narcan) & test strips are kept'),
-          helpText: t('plan.help.naloxoneLocation', 'Make sure people around you know where to find your naloxone without searching.'),
-          placeholder: t('plan.placeholder.naloxoneLocation', 'Example: Top drawer by the front door and front pocket of my backpack...'),
+          label: t('plan.field.naloxoneLocation', '8. Where my naloxone (Narcan) & test strips are kept'),
+          helpText: t('plan.help.naloxoneLocation', 'Make sure roommates, family, or visitors know the exact spots where naloxone is kept without having to search.'),
+          placeholder: t('plan.placeholder.naloxoneLocation', 'Example: Top drawer by front door and front zippered pocket of my backpack...'),
           rows: 1,
         }),
 
         createField({
           key: 'notes',
           id: 'plan-notes',
-          label: t('plan.field.notes', '8. Notes & reminders to myself'),
-          helpText: t('plan.help.notes', 'What helps you remember your worth when things feel heavy?'),
-          placeholder: t('plan.placeholder.notes', 'A return to use does not erase my progress. I deserve safe, respectful care...'),
+          label: t('plan.field.notes', '9. Notes, reminders to myself & reasons for living'),
+          helpText: t('plan.help.notes', 'What helps you remember your resilience and worth when things feel heavy?'),
+          placeholder: t('plan.placeholder.notes', 'A slip does not erase my progress. I have survived hard moments before. I deserve safe, respectful care...'),
           rows: 2,
         }),
       ),
@@ -1000,11 +1268,12 @@ export function planView({ query } = {}) {
             onclick: handleClearPlan,
           }, icon('x'), t('plan.btn.clear', 'Clear plan')),
         ),
+        fine(t('privacy.clipboardNote', 'Copied text stays on your clipboard after Quick exit.')),
         copyStatus,
       ),
     ),
 
-    // 1b. Interactive Craving & Distress Toolkit (Urge Surfing & Grounding Pacer)
+    // 1b. Interactive Craving & Distress Toolkit (Urge Surfing & Visual Breathing Pacer)
     section('craving-toolkit', t('plan.section.cravingToolkit', 'Craving & distress toolkit (urge surfing & grounding timer)'),
       p(t(
         'plan.cravingToolkit.intro',
@@ -1070,34 +1339,50 @@ export function planView({ query } = {}) {
       ),
     ),
 
-    // 4. Your Confidentiality Rights (42 CFR Part 2 — 2024/2026 Final Rule)
+    // 4. Your Confidentiality Rights (42 CFR Part 2 — 2024/2026 Final Rule) & Printable Handout
     section('confidentiality-rights', t('plan.section.rights', 'Your confidentiality rights (42 CFR Part 2 — 2024/2026 Final Rule)'),
       p(t(
         'plan.rights.intro',
         'Fear that an employer, landlord, police officer, or court will find out you asked for help is one of the biggest barriers to care. Federal law gives substance use disorder (SUD) treatment records special, heightened legal protection beyond regular medical records.',
       )),
-      ul([
-        [
-          strong('42 CFR Part 2 Final Rule (89 FR 12472): '),
-          'Issued by HHS and SAMHSA (effective April 2024 with full enforcement compliance in February 2026), federal Part 2 rules strictly prohibit federally assisted SUD programs from disclosing your identity, attendance, diagnosis, or treatment records without your explicit written consent.',
-        ],
-        [
-          strong('Stronger shield against police, prosecutors, and courts: '),
-          'Unlike ordinary medical records under HIPAA, your Part 2 SUD records cannot be used to investigate or prosecute you for a crime without your written consent or a special, high-threshold Part 2 court order where you and the program must first be given notice and an opportunity to be heard. A routine subpoena or police request is not enough.',
-        ],
-        [
-          strong('Special protection for SUD counseling notes: '),
-          'Under the 2024/2026 Final Rule, an SUDP or therapist’s personal SUD counseling notes receive dedicated protection (parallel to HIPAA psychotherapy notes). Even if you sign a general consent for care coordination, your detailed counseling session notes cannot be shared without a separate, specific written consent from you.',
-        ],
-        [
-          strong('Your control over consent & revocation: '),
-          'You may sign a single consent for treatment, payment, and healthcare operations (TPO) so your doctors can coordinate safely—or you can refuse or narrow who sees your records. You can revoke your consent in writing at any time, and you have the right to receive an accounting of who has accessed your records.',
-        ],
-        [
-          strong('Protection against patient brokering (EKRA, 18 U.S.C. § 220): '),
-          'The federal Eliminating Kickbacks in Recovery Act makes it a felony for anyone to pay or receive kickbacks for referring you to a treatment program, sober home, or lab. Never trust a marketer offering free airfare, cash, or rent in exchange for your insurance policy details.',
-        ],
-      ]),
+      h('article', { class: 'card print-handout', id: 'cfr-part2-handout' },
+        h('h3', null, t('plan.rights.handoutTitle', '42 CFR Part 2 Patient Privacy Rights Handout (2024/2026 Final Rule)')),
+        fine(t('plan.rights.handoutSub', 'Federal privacy protections for substance use disorder (SUD) treatment records under 42 CFR Part 2 and 89 FR 12472.')),
+        h('div', { class: 'callout callout-info' },
+          p(strong(t('plan.rights.ruleCitation', 'HHS / SAMHSA Final Rule (89 FR 12472 — Full Compliance 2026): ')),
+            t('plan.rights.ruleDesc', 'Heightened federal confidentiality shield protecting your health information, identity, and clinical records.')),
+        ),
+        h('ul', { class: 'checklist' },
+          h('li', null,
+            strong(t('plan.rights.shieldTitle', 'Shield against police, courts & criminal prosecution: ')),
+            t('plan.rights.shieldDesc', 'Your treatment records cannot be used to investigate or prosecute you without your explicit written consent or a special high-threshold court order requiring notice and a hearing. A police request or general subpoena is not enough.')),
+          h('li', null,
+            strong(t('plan.rights.notesTitle', 'Special protection for counseling notes: ')),
+            t('plan.rights.notesDesc', 'Clinical session notes from your SUDP or therapist are protected separately from general medical records and cannot be shared without a separate, specific written consent from you.')),
+          h('li', null,
+            strong(t('plan.rights.consentTitle', 'Patient control of consent & right to revoke: ')),
+            t('plan.rights.consentDesc', 'You decide whether to sign a single consent for Treatment, Payment, and Healthcare Operations (TPO) for care coordination, and you have the right to revoke your consent in writing at any time.')),
+          h('li', null,
+            strong(t('plan.rights.brokeringTitle', 'Protection from patient brokering (EKRA, 18 U.S.C. § 220): ')),
+            t('plan.rights.brokeringDesc', 'Federal law makes it a crime to pay or accept kickbacks, cash, or free airfare to steer patients into treatment programs.')),
+          h('li', null,
+            strong(t('plan.rights.complaintTitle', 'Right to breach notification & filing complaints: ')),
+            t('plan.rights.complaintDesc', 'Programs must notify you of privacy breaches. You have the right to file formal complaints with HHS Office for Civil Rights (OCR) or SAMHSA without penalty.')),
+        ),
+        h('div', { class: 'actions' },
+          h('button', {
+            type: 'button',
+            class: 'btn btn-primary btn-small',
+            onclick: () => window.print(),
+          }, icon('printer'), t('plan.rights.printBtn', 'Print confidentiality handout')),
+          h('button', {
+            type: 'button',
+            class: 'btn btn-secondary btn-small',
+            onclick: handleCopyCfrHandout,
+          }, icon('copy'), t('plan.rights.copyBtn', 'Copy handout text')),
+        ),
+        cfrStatus,
+      ),
       fine(
         'Learn more from ',
         ext('https://www.hhs.gov/hipaa/for-professionals/regulatory-initiatives/fact-sheet-42-cfr-part-2-final-rule/index.html', 'HHS: 42 CFR Part 2 Final Rule Fact Sheet'),

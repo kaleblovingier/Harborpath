@@ -1,5 +1,5 @@
 -- ============================================================================
--- HARBORPATH TWO-ZONE POSTGRESQL SCHEMA (42 CFR PART 2 & HIPAA COMPLIANT)
+-- HARBORPATH TWO-ZONE POSTGRESQL SCHEMA (DESIGNED WITH 42 CFR PART 2 & HIPAA CONCEPTS IN MIND; NEVER ASSESSED FOR COMPLIANCE)
 -- ============================================================================
 
 -- ZONE 1: PUBLIC PROVIDER DIRECTORY & VERIFICATION SCHEMA (NO PHI / NO PII)

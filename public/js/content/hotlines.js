@@ -13,6 +13,17 @@ import { t } from '../i18n.js';
 //   Trans Lifeline: press 2 for Spanish (translifeline.org/es/linea-de-ayuda)
 //   Domestic Violence Hotline: Spanish site and service (espanol.thehotline.org)
 //   Maternal Mental Health Hotline: English and Spanish (mchb.hrsa.gov/es/...)
+// Never Use Alone: the single source of truth for its number across the app.
+// neverusealone.com lists two lines, "800-484-3731 or 877-696-1996" (checked
+// November 2026). 800-484-3731 is the primary everywhere; `alt` is the backup
+// line, shown only where a view offers a second number. Import this constant
+// instead of typing either number (test/hotlines-single-source.test.js).
+export const NEVER_USE_ALONE = Object.freeze({
+  number: '18004843731',
+  label: '1-800-484-3731',
+  alt: Object.freeze({ number: '18776961996', label: '1-877-696-1996' }),
+});
+
 export const HOTLINES = {
   crisis: [
     {
@@ -55,7 +66,7 @@ export const HOTLINES = {
       id: 'never-use-alone',
       name: 'Never Use Alone',
       get desc() { return t('hotline.nua.desc', 'Using alone? Call first. An operator stays on the line and sends emergency help to the address you give if you stop responding.'); },
-      call: { number: '18004843731', label: '1-800-484-3731' },
+      call: { number: NEVER_USE_ALONE.number, label: NEVER_USE_ALONE.label },
       web: 'https://neverusealone.com/',
     },
     {
@@ -116,6 +127,15 @@ export const HOTLINES = {
       call: { number: '18338526262', label: '1-833-852-6262' },
       get text() { return { number: '18338526262', label: t('hotline.maternal.text', 'Text 1-833-852-6262') }; },
       get web() { return t('url.hotline.maternal', 'https://mchb.hrsa.gov/national-maternal-mental-health-hotline'); },
+    },
+    {
+      id: 'stronghearts',
+      spanish: false,
+      name: 'StrongHearts Native Helpline',
+      get desc() { return t('hotline.stronghearts.desc', 'Confidential, culturally centered 24/7 domestic and sexual violence helpline for Native Americans and Alaska Natives.'); },
+      call: { number: '18447628483', label: '1-844-762-8483' },
+      get text() { return { number: '18447628483', label: t('hotline.stronghearts.text', 'Text 1-844-762-8483') }; },
+      web: 'https://strongheartshelpline.org/',
     },
   ],
 };

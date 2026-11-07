@@ -8,6 +8,7 @@
 import { readLatLng } from './geo.js';
 import { InputError, KINDS, PAGE_SIZE, UPSTREAM_URL, normalizeFacility } from './findtreatment.js';
 import { describeRegion } from './regions.js';
+import { cachedUpstream, fetchWithRetry, wait } from './upstream.js';
 import { toFiniteNumber } from './util.js';
 
 export const TELEHEALTH_CODE = 'TELE';
@@ -75,37 +76,161 @@ export function buildTelehealthUrl({ state, lat, lng, byDistance, kind, page, co
   return `${UPSTREAM_URL}?${qs}`;
 }
 
-export async function searchTelehealth(query, { taxonomy, fetchImpl = fetch, cache, timeoutMs = 15000 }) {
+/**
+ * Statewide telehealth search, with the same resilience as searchTreatment():
+ * retries within timeoutMs, a stale copy (`stale: true`) from `cache` when the
+ * upstream fails, and one upstream call for identical concurrent searches
+ * sharing an `inflight` Map.
+ */
+export async function searchTelehealth(query, {
+  taxonomy, fetchImpl = fetch, cache, inflight, timeoutMs = 15000, retries = 2, backoffMs = 250, sleep = wait,
+}) {
   const url = buildTelehealthUrl(query);
-  const cached = cache?.get(url);
-  if (cached) return cached;
-
-  const res = await fetchImpl(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
-    signal: AbortSignal.timeout(timeoutMs),
+  return cachedUpstream(url, {
+    cache,
+    inflight,
+    load: async () => {
+      const body = await fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep });
+      const rows = Array.isArray(body.rows) ? body.rows : [];
+      const results = rows
+        .map((r) => normalizeFacility(r, taxonomy))
+        // Distances from a point the visitor did not choose would mislead.
+        .map((f) => (query.byDistance ? f : { ...f, miles: null }));
+      return {
+        page: toFiniteNumber(body.page) ?? query.page,
+        totalPages: toFiniteNumber(body.totalPages) ?? 0,
+        total: toFiniteNumber(body.recordCount) ?? rows.length,
+        pageSize: PAGE_SIZE,
+        state: describeRegion(query.state),
+        byDistance: query.byDistance,
+        results,
+      };
+    },
   });
-  if (!res.ok) throw new Error(`FindTreatment.gov responded with HTTP ${res.status}`);
-  const text = await res.text();
-  let body;
-  try {
-    body = JSON.parse(text);
-  } catch {
-    throw new Error(`FindTreatment.gov returned a non-JSON response: ${text.slice(0, 80)}`);
+}
+
+/**
+ * Federal tele-prescribing flexibilities and regulatory authorities under DEA telemedicine flexibilities
+ * and the 2024 SAMHSA 42 CFR Part 8 Final Rule (89 FR 12472).
+ */
+export const TELEHEALTH_FLEXIBILITIES = {
+  buprenorphine: {
+    medication: 'Buprenorphine',
+    inPersonExamRequired: false,
+    audioOnlyPermitted: true,
+    audioVisualPermitted: true,
+    xWaiverRequired: false,
+    otpRequired: false,
+    authority: 'DEA / SAMHSA Telemedicine Flexibilities & 2024 42 CFR Part 8 (89 FR 12472)',
+    summary: 'Clinicians can initiate and maintain buprenorphine via two-way audio-video or audio-only telephone visits without a prior in-person examination. The DEA X-waiver was permanently eliminated.',
+  },
+  methadone: {
+    medication: 'Methadone',
+    inPersonExamRequired: false,
+    audioOnlyPermitted: false,
+    audioVisualPermitted: true,
+    xWaiverRequired: false,
+    otpRequired: true,
+    takeHomeFlexibilities: {
+      days1To14: 7,
+      days15To30: 14,
+      days31Plus: 28,
+    },
+    authority: '2024 SAMHSA 42 CFR Part 8 Final Rule (89 FR 12472)',
+    summary: 'OTPs can initiate methadone following an audio-visual telehealth evaluation by an authorized healthcare professional. Audio-only initiation is NOT permitted for methadone. Take-home flexibilities allow stable patients to avoid daily in-person clinic visits.',
+  },
+  counseling: {
+    medication: null,
+    inPersonExamRequired: false,
+    audioOnlyPermitted: true,
+    audioVisualPermitted: true,
+    authority: 'SAMHSA / CMS Outpatient Telehealth Standards',
+    summary: 'Individual and group SUD counseling can be delivered via audio-video or telephone when video is unavailable.',
+  },
+};
+
+/**
+ * Evaluates telehealth appointment eligibility, required video vs audio-only fallback logic,
+ * and cross-state licensure boundaries.
+ */
+export function evaluateTelehealthEligibility({
+  patientState = '',
+  medication = 'buprenorphine',
+  hasBroadbandVideo = true,
+  providerState = null,
+} = {}) {
+  const normState = String(patientState || '').trim().toUpperCase();
+  const flex = TELEHEALTH_FLEXIBILITIES[medication] ?? null;
+
+  if (!flex) {
+    return {
+      eligible: false,
+      reason: `Unknown medication or service: ${medication}`,
+      modality: 'none',
+      audioOnlyFallbackAllowed: false,
+    };
   }
-  const rows = Array.isArray(body.rows) ? body.rows : [];
-  const results = rows
-    .map((r) => normalizeFacility(r, taxonomy))
-    // Distances from a point the visitor did not choose would mislead.
-    .map((f) => (query.byDistance ? f : { ...f, miles: null }));
-  const result = {
-    page: toFiniteNumber(body.page) ?? query.page,
-    totalPages: toFiniteNumber(body.totalPages) ?? 0,
-    total: toFiniteNumber(body.recordCount) ?? rows.length,
-    pageSize: PAGE_SIZE,
-    state: describeRegion(query.state),
-    byDistance: query.byDistance,
-    results,
+
+  const isCrossState = Boolean(providerState && normState && providerState.toUpperCase() !== normState);
+
+  let modality = 'audio-visual';
+  const audioOnlyFallbackAllowed = flex.audioOnlyPermitted;
+
+  if (!hasBroadbandVideo) {
+    if (flex.audioOnlyPermitted) {
+      modality = 'audio-only';
+    } else {
+      return {
+        eligible: false,
+        medication: flex.medication,
+        modality: 'none',
+        audioOnlyFallbackAllowed: false,
+        reason: `${flex.medication} requires audio-visual telehealth under federal law; audio-only phone appointments are not permitted for initiation.`,
+        authority: flex.authority,
+        isCrossState,
+      };
+    }
+  }
+
+  return {
+    eligible: true,
+    medication: flex.medication,
+    modality,
+    audioOnlyFallbackAllowed,
+    inPersonExamRequired: flex.inPersonExamRequired,
+    isCrossState,
+    authority: flex.authority,
+    summary: flex.summary,
   };
-  cache?.set(url, result);
-  return result;
+}
+
+/**
+ * Validates whether a provider's licensed service states match a patient's state jurisdiction.
+ */
+export function matchesCrossStateLicensure(providerServiceStates, patientState) {
+  if (!patientState) return { matched: false, status: 'invalid', note: 'Patient state is required.' };
+  const pState = String(patientState).trim().toUpperCase();
+
+  // If provider has not specified states (null/undefined), state coverage is unknown and must be confirmed
+  if (providerServiceStates === null || providerServiceStates === undefined) {
+    return {
+      matched: true,
+      status: 'unknown-verify',
+      note: 'Program has not published a specific state license list; verify directly with the clinic.',
+    };
+  }
+
+  if (!Array.isArray(providerServiceStates)) {
+    return { matched: false, status: 'invalid', note: 'Invalid provider states configuration.' };
+  }
+
+  const upperStates = providerServiceStates.map((s) => String(s).trim().toUpperCase());
+  const matched = upperStates.includes(pState);
+  return {
+    matched,
+    status: matched ? 'licensed' : 'out-of-state',
+    note: matched
+      ? `Program is licensed to provide telehealth care in ${pState}.`
+      : `Program is only licensed in [${upperStates.join(', ')}], not in ${pState}.`,
+  };
 }

@@ -1,0 +1,652 @@
+{
+  "generatedAt": "2026-10-27",
+  "methodNote": "WebFetch could not resolve any domain in this session (DNS failure for all hosts, including samhsa.gov), so official pages were NOT opened directly. All facts below come from search-engine excerpts restricted to each provider's own domain (allowed_domains filter). Source titles are suffixed '[search excerpt]' to mark this. Every field should be re-verified by directly loading the cited official page before display.",
+  "providers": [
+    {
+      "id": "affect-therapeutics",
+      "name": "Affect Therapeutics",
+      "officialUrl": "https://www.affect.com/",
+      "enrollUrl": null,
+      "phone": null,
+      "conditions": [
+        "stimulant",
+        "alcohol",
+        "cannabis",
+        "opioid",
+        "mental-health"
+      ],
+      "services": [
+        "counseling",
+        "group-therapy",
+        "contingency-management",
+        "moud-buprenorphine",
+        "drug-testing",
+        "app-support"
+      ],
+      "ageMin": 18,
+      "serviceStates": null,
+      "statesSource": null,
+      "nationwideAppOnly": null,
+      "insurance": {
+        "claims": [
+          {
+            "payer": "medicaid",
+            "detail": "Says it accepts Medicaid; program 'covered by many Medicaid and commercial insurance plans'",
+            "states": null,
+            "sourceIndex": 1
+          },
+          {
+            "payer": "medicare",
+            "detail": "Says it accepts Medicare Advantage",
+            "states": null,
+            "sourceIndex": 1
+          },
+          {
+            "payer": "private",
+            "detail": "Says it accepts 'many commercial insurance plans'; '90% of our members' pay nothing (provider claim)",
+            "states": null,
+            "sourceIndex": 1
+          }
+        ],
+        "selfPay": {
+          "available": null,
+          "price": null,
+          "sourceIndex": null
+        }
+      },
+      "languages": null,
+      "enrollmentProcess": "Download the Affect app; Affect says it will check insurance coverage in minutes. Members are assigned a care team (licensed counselor, medical provider, care advocate) with weekly 1:1 counseling and twice-weekly group sessions, plus cash rewards tied to completed tasks and negative drug/alcohol screens.",
+      "sources": [
+        {
+          "url": "https://www.affect.com/states/",
+          "title": "Where is Affect's program available? - Affect Therapeutics [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.affect.com/insurance/",
+          "title": "Does health insurance cover addiction treatment - Affect [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.affect.com/faq/",
+          "title": "Frequently Asked Questions - Affect Therapeutics [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.affect.com/about/",
+          "title": "About Us - Affect [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.affect.com/wp-content/uploads/2024/03/Affect_Provider_Color_2pg_Brochure.pdf",
+          "title": "Affect provider brochure (2024) [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.affect.com/where-is-affects-mental-health-program-available/",
+          "title": "Where is Affect's mental health program available? - Affect [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.affect.com/news/affect-series-b-fundraise/",
+          "title": "Affect Series B Funding to Expand Virtual Clinic - Affect [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        }
+      ],
+      "verificationStatus": "provider-reported",
+      "unknowns": [
+        "serviceStates (official pages conflict; not directly read)",
+        "enrollUrl",
+        "phone",
+        "self-pay availability and price",
+        "languages",
+        "which states offer which program (SUD vs mental health)",
+        "nationwide app-only availability",
+        "specific Medicaid plans/states"
+      ],
+      "notes": "State conflict across official sources: /states/ excerpt lists AZ, CA, CO, FL, ID, IL, KY, MD, NE, NV, NM, OH, OR, TX, VA (excerpt may be truncated); 2024 brochure lists AZ, CA, FL, ID, IL, IN, KY, MO, NV, NM, NC, OH, OR, TN, TX, VA, WA; Sept 2025 Series B release says '20 U.S. states' without naming them; separate mental-health page names other states (e.g., IN, IA, MA, MO, MT, NE). Left serviceStates null. Opioid program per About page (rolled out 2024). Age 18+ from brochure/eligibility excerpt. Rewards up to $599 cited on some state pages. Domain affect.com (affecttherapeutics.com appears to redirect).",
+      "reviewStatus": "pending-review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    {
+      "id": "bicycle-health",
+      "name": "Bicycle Health",
+      "officialUrl": "https://www.bicyclehealth.com/",
+      "enrollUrl": null,
+      "phone": null,
+      "conditions": [
+        "opioid"
+      ],
+      "services": [
+        "moud-buprenorphine",
+        "peer-support",
+        "recovery-coaching",
+        "drug-testing",
+        "app-support"
+      ],
+      "ageMin": null,
+      "serviceStates": null,
+      "statesSource": null,
+      "nationwideAppOnly": null,
+      "insurance": {
+        "claims": [
+          {
+            "payer": "private",
+            "detail": "Says it accepts most major commercial insurance plans; most insured patients pay under $35/month (provider claim)",
+            "states": null,
+            "sourceIndex": 0
+          },
+          {
+            "payer": "medicare",
+            "detail": "Says it accepts Medicare (incl. Medicare Advantage in some states)",
+            "states": null,
+            "sourceIndex": 2
+          },
+          {
+            "payer": "medicaid",
+            "detail": "Medicaid accepted only in some states; Medicaid/Medicare page lists plans for AZ, CO, MI, NE, OR. State pages say Medicaid not accepted in FL and no Medicaid partnerships in CA.",
+            "states": [
+              "AZ",
+              "CO",
+              "MI",
+              "NE",
+              "OR"
+            ],
+            "sourceIndex": 2
+          }
+        ],
+        "selfPay": {
+          "available": true,
+          "price": "$249/month, lab tests included (as published)",
+          "sourceIndex": 1
+        }
+      },
+      "languages": null,
+      "enrollmentProcess": "A licensed provider meets the patient by video and can send a buprenorphine/Suboxone prescription to a local pharmacy the same day. Ongoing care runs through a secure app (video, voice, chat, scheduling, drug screens).",
+      "sources": [
+        {
+          "url": "https://www.bicyclehealth.com/insurance-and-pricing",
+          "title": "Insurance & Pricing - Bicycle Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.bicyclehealth.com/treatment/suboxone-clinic",
+          "title": "Suboxone Online: Same-Day Online Suboxone Doctors [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://bicyclehealth.com/patient-resources/medicaid-and-medicare-coverage",
+          "title": "Medicaid and Medicare Coverage - Bicycle Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.bicyclehealth.com/locations",
+          "title": "Bicycle Health's OUD Treatment Locations [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.bicyclehealth.com/state-coverage",
+          "title": "Bicycle Health: State Coverage [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.bicyclehealth.com/support-groups",
+          "title": "Support Groups - Bicycle Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.bicyclehealth.com/insurance-by-state/medicaid-fl",
+          "title": "Does Medicaid Cover Online Suboxone in Florida at Bicycle? [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.bicyclehealth.com/insurance-by-state/medicaid-ca",
+          "title": "Does Medicaid Cover Online Suboxone in California at Bicycle? [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        }
+      ],
+      "verificationStatus": "provider-reported",
+      "unknowns": [
+        "serviceStates (official pages conflict)",
+        "enrollUrl",
+        "phone",
+        "ageMin",
+        "languages",
+        "nationwide app-only availability",
+        "current Medicaid plan list per state"
+      ],
+      "notes": "Official pages conflict on states: locations page says 'currently available in 28 states' but its list reportedly names 46; insurance page gives a different 28-state list; How-it-Works lists 26; other pages say 27. Not accepting new patients in VT since 2023-07-28. Medicaid: generic FAQ says Medicaid accepted 'in the states where it operates' but FL/CA/ID state pages contradict; recorded only the states named on the Medicaid/Medicare page. Peer groups are described as led by recovery coaches.",
+      "reviewStatus": "pending-review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    {
+      "id": "boulder-care",
+      "name": "Boulder Care",
+      "officialUrl": "https://www.boulder.care/",
+      "enrollUrl": "https://www.boulder.care/get-started",
+      "phone": "888-608-0836",
+      "conditions": [
+        "opioid",
+        "kratom"
+      ],
+      "services": [
+        "moud-buprenorphine",
+        "peer-support",
+        "app-support"
+      ],
+      "ageMin": 18,
+      "serviceStates": [
+        "CO",
+        "MI",
+        "NM",
+        "NC",
+        "OH",
+        "OR",
+        "WA"
+      ],
+      "statesSource": "https://www.boulder.care/ai-instructions",
+      "nationwideAppOnly": null,
+      "insurance": {
+        "claims": [
+          {
+            "payer": "medicaid",
+            "detail": "Plans-accepted-by-state table names e.g. Apple Health (WA), Oregon Health Plan (OR), Health First Colorado (CO), OH Medicaid + managed-care plans (OH)",
+            "states": [
+              "WA",
+              "OR",
+              "CO",
+              "OH"
+            ],
+            "sourceIndex": 1
+          },
+          {
+            "payer": "medicare",
+            "detail": "Coverage requirements list Medicare",
+            "states": null,
+            "sourceIndex": 0
+          },
+          {
+            "payer": "private",
+            "detail": "Requires 'an accepted commercial plan' (plans listed per state on eligibility page)",
+            "states": null,
+            "sourceIndex": 0
+          },
+          {
+            "payer": "self-pay",
+            "detail": "Says 'affordable self-pay options are available'",
+            "states": null,
+            "sourceIndex": 0
+          }
+        ],
+        "selfPay": {
+          "available": true,
+          "price": null,
+          "sourceIndex": 0
+        }
+      },
+      "languages": null,
+      "enrollmentProcess": "Download the free app (no commitment) or call 888-608-0836 to enroll by phone. Patients get a care team of clinicians and peer support with 24/7 care management.",
+      "sources": [
+        {
+          "url": "https://www.boulder.care/ai-instructions",
+          "title": "Official information about Boulder Care [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.boulder.care/eligibility-and-insurance",
+          "title": "Eligibility and Insurance - Boulder Care [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.boulder.care/get-started",
+          "title": "Get Started - Boulder Care [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.boulder.care/legal/terms",
+          "title": "Website Terms of Use - Boulder Care [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.boulder.care/get-started/colorado-support",
+          "title": "Virtual Opioid, Kratom & 7-OH Treatment in Colorado [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        }
+      ],
+      "verificationStatus": "provider-reported",
+      "unknowns": [
+        "self-pay price",
+        "languages (a language-assistance line exists; languages not named)",
+        "whether counseling/therapy is offered",
+        "naltrexone availability",
+        "full Medicaid/commercial plan list per state (MI, NM, NC not captured)",
+        "nationwide app-only availability"
+      ],
+      "notes": "Phone conflicts: 888-608-0836 (patients/language assistance, ai-instructions page) vs 503-563-2550 (get-started page excerpt) vs 866-901-4860 (NC announcement) vs 866-584-7662 (Priority Health members). Age: terms say users must be over 18, but an /adolescents page references WA rules allowing minors to consent, so minors may be served in some cases. Medications named: Suboxone, buprenorphine-naloxone, Zubsolv, Sublocade, Brixadi.",
+      "reviewStatus": "pending-review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    {
+      "id": "ophelia",
+      "name": "Ophelia",
+      "officialUrl": "https://ophelia.com/",
+      "enrollUrl": null,
+      "phone": null,
+      "conditions": [
+        "opioid"
+      ],
+      "services": [
+        "moud-buprenorphine"
+      ],
+      "ageMin": null,
+      "serviceStates": [
+        "AZ",
+        "CA",
+        "CT",
+        "DE",
+        "FL",
+        "ME",
+        "MD",
+        "MT",
+        "NJ",
+        "NY",
+        "PA",
+        "TX",
+        "VT",
+        "VA",
+        "WA"
+      ],
+      "statesSource": "https://ophelia.com/local-help",
+      "nationwideAppOnly": null,
+      "insurance": {
+        "claims": [
+          {
+            "payer": "medicaid",
+            "detail": "'Ophelia works with most major insurance plans, including Medicaid and Medicare'",
+            "states": null,
+            "sourceIndex": 1
+          },
+          {
+            "payer": "medicare",
+            "detail": "Same statement: works with Medicare",
+            "states": null,
+            "sourceIndex": 1
+          },
+          {
+            "payer": "private",
+            "detail": "Works with 'most major insurance plans'; most insured patients pay under $10/month for visits (provider claim)",
+            "states": null,
+            "sourceIndex": 1
+          }
+        ],
+        "selfPay": {
+          "available": true,
+          "price": "$245/month (as published)",
+          "sourceIndex": 1
+        }
+      },
+      "languages": null,
+      "enrollmentProcess": "Fully virtual: meet the care team, receive a Suboxone (buprenorphine/naloxone) prescription if eligible, and get ongoing support 7 days a week.",
+      "sources": [
+        {
+          "url": "https://ophelia.com/local-help",
+          "title": "Online opioid addiction treatment by state - Ophelia [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://ophelia.com/insurance-and-pricing",
+          "title": "Online Suboxone Doctors that Accept Insurance - Ophelia [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://ophelia.com/faq",
+          "title": "Frequently Asked Questions - Ophelia [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://ophelia.com/how-it-works",
+          "title": "How Ophelia Works: Online OUD Treatment With Suboxone [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        }
+      ],
+      "verificationStatus": "provider-reported",
+      "unknowns": [
+        "enrollUrl",
+        "phone",
+        "ageMin",
+        "languages",
+        "counseling/therapy offered",
+        "naltrexone prescribing (FAQ says clinicians 'primarily' prescribe Suboxone)",
+        "which Medicaid plans are in-network per state"
+      ],
+      "notes": "Official state counts vary: current local-help page lists 15 states (used); a May 2025 partnership post said 14 active states; a 2025 release said 'licensed in 49 states and D.C.' (licensure, not active service). State pages (PA, AZ, FL, VA, MD, WA) say the state's Medicaid program covers Suboxone - this is a general coverage statement, not proof Ophelia is in-network with every plan. Prior authorization sometimes required.",
+      "reviewStatus": "pending-review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    {
+      "id": "workit-health",
+      "name": "Workit Health",
+      "officialUrl": "https://www.workithealth.com/",
+      "enrollUrl": null,
+      "phone": "855-659-7734",
+      "conditions": [
+        "opioid",
+        "alcohol",
+        "kratom"
+      ],
+      "services": [
+        "moud-buprenorphine",
+        "moud-naltrexone",
+        "aud-medication",
+        "group-therapy",
+        "peer-support",
+        "app-support"
+      ],
+      "ageMin": null,
+      "serviceStates": [
+        "AZ",
+        "CA",
+        "FL",
+        "IL",
+        "MI",
+        "MT",
+        "NJ",
+        "NM",
+        "NY",
+        "NC",
+        "OH",
+        "OK",
+        "TX",
+        "WA"
+      ],
+      "statesSource": "https://www.workithealth.com/locations/",
+      "nationwideAppOnly": null,
+      "insurance": {
+        "claims": [
+          {
+            "payer": "medicaid",
+            "detail": "One page lists Medicaid plans in MI, NJ, FL, OH, and TX; the same page says FL and TX do not currently accept Medicaid",
+            "states": null,
+            "sourceIndex": 1
+          },
+          {
+            "payer": "medicare",
+            "detail": "'many Medicare and Medicaid plans across the states we serve'",
+            "states": null,
+            "sourceIndex": 2
+          },
+          {
+            "payer": "private",
+            "detail": "Most insured members pay $25-$35/month (provider claim)",
+            "states": null,
+            "sourceIndex": 0
+          },
+          {
+            "payer": "self-pay",
+            "detail": "Self-pay available in all served states; includes visits, groups and care-team messaging",
+            "states": null,
+            "sourceIndex": 0
+          }
+        ],
+        "selfPay": {
+          "available": true,
+          "price": null,
+          "sourceIndex": 0
+        }
+      },
+      "languages": null,
+      "enrollmentProcess": "Download the Workit Health app and answer a few questions; Workit verifies insurance (or gives pricing) and the member books a video visit with a licensed addiction provider, usually within about 2 days.",
+      "sources": [
+        {
+          "url": "https://www.workithealth.com/",
+          "title": "Workit Health - Virtual Suboxone and Naltrexone Treatment for Addiction [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.workithealth.com/guides/medicaid-suboxone-doctors/",
+          "title": "Medicaid Suboxone Doctors - Workit Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.workithealth.com/start/addiction-treatment-medicare/",
+          "title": "Addiction Treatment Covered By Medicare - Workit Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.workithealth.com/locations/",
+          "title": "Online Clinics for Medication-Assisted Treatment - Workit Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.workithealth.com/community/",
+          "title": "Community - Workit Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://www.workithealth.com/locations/michigan/",
+          "title": "Drug and Alcohol Rehab in Michigan - Workit Health [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        }
+      ],
+      "verificationStatus": "provider-reported",
+      "unknowns": [
+        "enrollUrl",
+        "ageMin",
+        "languages",
+        "Medicaid states (internally contradictory)",
+        "single self-pay price (varies by page/state)",
+        "1:1 counseling availability",
+        "nationwide app-only availability"
+      ],
+      "notes": "States: homepage and locations page list the same 14; a Suboxone page lists CA, NY, NC as 'Coming Soon' (conflict; newer pages used). Self-pay price varies, e.g. Michigan page: alcohol $150/month, $250 first month - not set as a single price. Phone hours differ between pages (M-F 8am-9pm ET vs 9am-7pm ET). Groups run by a counselor, coach, or peer in recovery. Ohio page mentions grant-funded no-cost care in some rural counties.",
+      "reviewStatus": "pending-review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    {
+      "id": "monument",
+      "name": "Monument",
+      "officialUrl": "https://joinmonument.com/",
+      "enrollUrl": null,
+      "phone": null,
+      "conditions": [
+        "alcohol"
+      ],
+      "services": [
+        "aud-medication",
+        "counseling"
+      ],
+      "ageMin": null,
+      "serviceStates": null,
+      "statesSource": null,
+      "nationwideAppOnly": null,
+      "insurance": {
+        "claims": [
+          {
+            "payer": "private",
+            "detail": "Says it accepts many major plans; $25 video appointments for therapy and medical visits when insurance is accepted (provider claim, page may be dated)",
+            "states": null,
+            "sourceIndex": 0
+          }
+        ],
+        "selfPay": {
+          "available": null,
+          "price": null,
+          "sourceIndex": null
+        }
+      },
+      "languages": null,
+      "enrollmentProcess": "Users check insurance eligibility online with name and date of birth; after an initial call a Monument physician may prescribe naltrexone or disulfiram. Plans include Physician Care and Total Care (adds weekly or bi-weekly therapy).",
+      "sources": [
+        {
+          "url": "https://joinmonument.com/insurance/",
+          "title": "Insurance Coverage for Alcohol Treatment Online - Monument [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://support.joinmonument.com/hc/en-us/articles/360044734393-What-are-Monument-s-medication-options",
+          "title": "What are Monument's medication options? - Monument Help Center [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        },
+        {
+          "url": "https://joinmonument.com/resources/what-to-expect-from-your-monument-plan/",
+          "title": "Treatment Plan Roadmap - Monument [search excerpt]",
+          "accessedAt": "2026-10-27",
+          "type": "official"
+        }
+      ],
+      "verificationStatus": "provider-reported",
+      "unknowns": [
+        "serviceStates",
+        "Medicaid/Medicare acceptance",
+        "self-pay plan prices",
+        "ageMin",
+        "phone",
+        "enrollUrl",
+        "languages",
+        "peer/community support details"
+      ],
+      "notes": "Weakest record: indexed pages are roughly 500-1,000 days old, so pricing/coverage may be stale. Medication cost billed separately from plan fee; naltrexone/disulfiram estimated under $40/month without insurance (provider estimate). Consider deferring publication until pages can be fetched directly.",
+      "reviewStatus": "pending-review",
+      "reviewedBy": null,
+      "reviewedAt": null
+    }
+  ],
+  "reviewPolicy": "Records are served only when reviewStatus is \"approved\": a person has opened every cited official page, confirmed each field, and set reviewedBy/reviewedAt. Search excerpts alone are not enough."
+}
