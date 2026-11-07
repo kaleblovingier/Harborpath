@@ -1,0 +1,1978 @@
+[
+  {
+    "stateCode": "AL",
+    "stateName": "Alabama",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Ala. Code § 13A-3-31"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Ala. Code § 22-2-19"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips decriminalized under HB 438 (2022); Ala. Code § 13A-12-260 excludes testing equipment. Syringe services programs lack explicit statutory protection under state law."
+    }
+  },
+  {
+    "stateCode": "AK",
+    "stateName": "Alaska",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Alaska Stat. § 11.71.311"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Alaska Stat. § 17.20.085"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment excluded from paraphernalia under Alaska Stat. § 11.71.900. Syringe exchange programs authorized under Alaska Stat. § 18.09.200."
+    }
+  },
+  {
+    "stateCode": "AZ",
+    "stateName": "Arizona",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Ariz. Rev. Stat. § 13-3423"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Ariz. Rev. Stat. § 36-2266"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl and xylazine testing equipment exempted from paraphernalia under A.R.S. § 13-3415 (HB 2454 in 2021, HB 2070 in 2024). Syringe services programs authorized under A.R.S. § 36-2541."
+    }
+  },
+  {
+    "stateCode": "AR",
+    "stateName": "Arkansas",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Ark. Code Ann. § 20-13-1704"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Ark. Code Ann. § 20-13-1804"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips exempted under Ark. Code Ann. § 5-64-101 (SB 289 in 2021). Xylazine test strips and syringe service programs lack explicit statutory authorization."
+    }
+  },
+  {
+    "stateCode": "CA",
+    "stateName": "California",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Cal. Health & Safety Code § 11376.5"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Cal. Civ. Code § 1714.22"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing supplies decriminalized under Cal. Health & Safety Code § 11364. Syringe services programs explicitly authorized under § 121349."
+    }
+  },
+  {
+    "stateCode": "CO",
+    "stateName": "Colorado",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Colo. Rev. Stat. § 18-1-711"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Colo. Rev. Stat. § 12-30-110"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempt from paraphernalia under Colo. Rev. Stat. § 18-18-428. Syringe Service Program Act authorized under § 25-1-520."
+    }
+  },
+  {
+    "stateCode": "CT",
+    "stateName": "Connecticut",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Conn. Gen. Stat. § 21a-279a"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Conn. Gen. Stat. § 17a-714a"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug checking equipment exempted under Conn. Gen. Stat. § 21a-240. Syringe services authorized under Conn. Gen. Stat. § 19a-124."
+    }
+  },
+  {
+    "stateCode": "DE",
+    "stateName": "Delaware",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "16 Del. C. § 4769"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "16 Del. C. § 3001G"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl and xylazine testing equipment exempted under 16 Del. C. § 4701 (SB 247). Sterile needle exchange authorized under 16 Del. C. § 9901A."
+    }
+  },
+  {
+    "stateCode": "DC",
+    "stateName": "District of Columbia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "D.C. Code § 7-403"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "D.C. Code § 7-404"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing materials excluded from paraphernalia under D.C. Code § 48-1101. Syringe services programs authorized under D.C. Code § 48-1121."
+    }
+  },
+  {
+    "stateCode": "FL",
+    "stateName": "Florida",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Fla. Stat. § 893.21"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Fla. Stat. § 381.887"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl test strips exempted under Fla. Stat. § 893.145 (SB 164 in 2023); xylazine strips not explicitly covered. Infectious Disease Elimination Act (§ 381.0038) authorizes county syringe exchange programs."
+    }
+  },
+  {
+    "stateCode": "GA",
+    "stateName": "Georgia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "O.C.G.A. § 16-13-5"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "O.C.G.A. § 26-4-116.2"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment exempted under O.C.G.A. § 16-13-32.2 (SB 511 / HB 1175). Syringe services programs authorized under O.C.G.A. § 16-13-32."
+    }
+  },
+  {
+    "stateCode": "HI",
+    "stateName": "Hawaii",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Haw. Rev. Stat. § 329-43.6"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Haw. Rev. Stat. § 329E-2"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under Haw. Rev. Stat. § 329-1. Statewide sterile needle and syringe exchange program authorized under Haw. Rev. Stat. § 325-21."
+    }
+  },
+  {
+    "stateCode": "ID",
+    "stateName": "Idaho",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Idaho Code § 37-2739C"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Idaho Code § 54-1733B"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips exempted under HB 441 (effective July 1, 2024; Idaho Code § 37-2701). Syringe and Needle Exchange Act repealed by HB 617 (effective July 1, 2024)."
+    }
+  },
+  {
+    "stateCode": "IL",
+    "stateName": "Illinois",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "720 ILCS 570/414"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "20 ILCS 301/5-23"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug checking equipment exempted under Overdose Prevention Supplies Act (720 ILCS 600/4). Syringe services authorized under 720 ILCS 600/4.5."
+    }
+  },
+  {
+    "stateCode": "IN",
+    "stateName": "Indiana",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Ind. Code § 16-42-27-2"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Ind. Code § 16-42-27-2"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Field test strips and detection supplies exempted under Ind. Code § 35-48-4-8.3 (SB 312). Local syringe services programs authorized under Ind. Code § 16-41-7.5."
+    }
+  },
+  {
+    "stateCode": "IA",
+    "stateName": "Iowa",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Iowa Code § 124.418"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Iowa Code § 135.190"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": false,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Drug testing equipment remains classified as illegal paraphernalia under Iowa Code § 124.414. Syringe services programs lack explicit statewide statutory authorization."
+    }
+  },
+  {
+    "stateCode": "KS",
+    "stateName": "Kansas",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": false,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "K.S.A. § 21-5716"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "K.S.A. § 65-16,127"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips exempted under K.S.A. § 21-5701 (SB 174 in 2023). Syringe services programs lack explicit statutory protection under Kansas law."
+    }
+  },
+  {
+    "stateCode": "KY",
+    "stateName": "Kentucky",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "KRS § 218A.133"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "KRS § 217.186"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl test strips exempted under KRS § 218A.500 (HB 353 in 2023). Harm reduction syringe exchange programs authorized under KRS § 218A.500(4) with local health board approval."
+    }
+  },
+  {
+    "stateCode": "LA",
+    "stateName": "Louisiana",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "La. Stat. Ann. § 14:403.10"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "La. Stat. Ann. § 40:978.2"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under La. Stat. Ann. § 40:1021 (Act 664 in 2022). Syringe services programs authorized under La. Stat. Ann. § 40:1024."
+    }
+  },
+  {
+    "stateCode": "ME",
+    "stateName": "Maine",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "17-A M.R.S. § 1111-B"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "22 M.R.S. § 2353"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing supplies decriminalized under 17-A M.R.S. § 1111-A. Certified hypodermic apparatus exchange programs authorized under 22 M.R.S. § 1341."
+    }
+  },
+  {
+    "stateCode": "MD",
+    "stateName": "Maryland",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Md. Code, Crim. Proc. § 1-210"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Md. Code, Health-Gen. § 13-3101"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug checking equipment exempted under Md. Code, Crim. Law § 5-619. Syringe services authorized under Md. Code, Health-Gen. § 24-901."
+    }
+  },
+  {
+    "stateCode": "MA",
+    "stateName": "Massachusetts",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Mass. Gen. Laws ch. 94C, § 34A"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Mass. Gen. Laws ch. 94C, § 19B"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment exempted under Mass. Gen. Laws ch. 94C, § 32I. Syringe services programs authorized under Mass. Gen. Laws ch. 111, § 215."
+    }
+  },
+  {
+    "stateCode": "MI",
+    "stateName": "Michigan",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Mich. Comp. Laws § 333.7403"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Mich. Comp. Laws § 333.17744b"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing supplies exempted from paraphernalia under Mich. Comp. Laws § 333.7451 (PA 63 in 2023). Syringe services authorized under § 333.7457."
+    }
+  },
+  {
+    "stateCode": "MN",
+    "stateName": "Minnesota",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Minn. Stat. § 604A.05"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Minn. Stat. § 144.483"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing supplies decriminalized under Minn. Stat. § 152.01. Syringe services and harm reduction supplies authorized under § 152.093 and § 152.027."
+    }
+  },
+  {
+    "stateCode": "MS",
+    "stateName": "Mississippi",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Miss. Code Ann. § 41-127-5"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Miss. Code Ann. § 41-127-3"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips exempted under Miss. Code Ann. § 41-29-105 (HB 679 in 2022). Syringe services programs lack explicit statutory protection in Mississippi."
+    }
+  },
+  {
+    "stateCode": "MO",
+    "stateName": "Missouri",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Mo. Rev. Stat. § 195.205"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Mo. Rev. Stat. § 195.206"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips exempted under Mo. Rev. Stat. § 195.010 (SB 53 in 2022). Syringe services programs lack explicit statewide statutory authorization."
+    }
+  },
+  {
+    "stateCode": "MT",
+    "stateName": "Montana",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Mont. Code Ann. § 50-32-609"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Mont. Code Ann. § 50-32-604"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment exempted under Mont. Code Ann. § 45-10-103 (HB 437 in 2023). Syringe services programs authorized under Mont. Code Ann. § 50-32-611."
+    }
+  },
+  {
+    "stateCode": "NE",
+    "stateName": "Nebraska",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Neb. Rev. Stat. § 28-472"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Neb. Rev. Stat. § 28-470"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Drug testing strips exempted from paraphernalia under Neb. Rev. Stat. § 28-439 (LB 173 in 2023). Syringe services programs lack explicit statutory protection."
+    }
+  },
+  {
+    "stateCode": "NV",
+    "stateName": "Nevada",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Nev. Rev. Stat. § 453C.150"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Nev. Rev. Stat. § 453C.100"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under Nev. Rev. Stat. § 453.554 (SB 390 in 2021). Sterile hypodermic device programs authorized under Nev. Rev. Stat. § 439.985."
+    }
+  },
+  {
+    "stateCode": "NH",
+    "stateName": "New Hampshire",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "N.H. Rev. Stat. Ann. § 318-B:28-b"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "N.H. Rev. Stat. Ann. § 318-B:15-a"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl and xylazine test strips explicitly exempted under N.H. Rev. Stat. Ann. § 318-B:2 (HB 1286). Syringe services programs authorized under N.H. Rev. Stat. Ann. § 318-B:43."
+    }
+  },
+  {
+    "stateCode": "NJ",
+    "stateName": "New Jersey",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "N.J. Stat. Ann. § 2C:35-30"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "N.J. Stat. Ann. § 24:6J-4"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing supplies decriminalized under N.J. Stat. Ann. § 2C:36-1. Syringe Access Program Act authorized under N.J. Stat. Ann. § 26:5C-27."
+    }
+  },
+  {
+    "stateCode": "NM",
+    "stateName": "New Mexico",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "N.M. Stat. Ann. § 30-31-27.1"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "N.M. Stat. Ann. § 24-23-1"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under N.M. Stat. Ann. § 30-31-25.1. Syringe exchange programs authorized under Harm Reduction Act (N.M. Stat. Ann. § 24-2C-1)."
+    }
+  },
+  {
+    "stateCode": "NY",
+    "stateName": "New York",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "N.Y. Penal Law § 220.78"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "N.Y. Pub. Health Law § 3309"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing technology exempted under N.Y. Penal Law § 220.50. Syringe exchange programs authorized under 10 NYCRR § 80.135."
+    }
+  },
+  {
+    "stateCode": "NC",
+    "stateName": "North Carolina",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "N.C. Gen. Stat. § 90-96.2"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "N.C. Gen. Stat. § 90-12.7"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing strips exempted under N.C. Gen. Stat. § 90-113.22 (SB 415 in 2023). Syringe exchange programs authorized under N.C. Gen. Stat. § 90-113.27."
+    }
+  },
+  {
+    "stateCode": "ND",
+    "stateName": "North Dakota",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "N.D. Cent. Code § 19-03.1-23.4"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "N.D. Cent. Code § 23-01-42"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": false,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment remains classified as paraphernalia under N.D. Cent. Code § 19-03.1-62. Syringe exchange programs authorized under N.D. Cent. Code § 23-01-44."
+    }
+  },
+  {
+    "stateCode": "OH",
+    "stateName": "Ohio",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Ohio Rev. Code § 2925.11(B)(2)"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Ohio Rev. Code § 4729.44"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing strips exempted under Ohio Rev. Code § 2925.14 (SB 288 in 2023). Blood-borne infectious disease prevention programs authorized under Ohio Rev. Code § 3707.57."
+    }
+  },
+  {
+    "stateCode": "OK",
+    "stateName": "Oklahoma",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "63 Okl. St. § 2-413.1"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "63 Okl. St. § 2-312.2"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl test strips exempted under 63 Okl. St. § 2-101 (SB 511 in 2021). Harm Reduction Act (63 Okl. St. § 1-544) authorizes syringe services programs."
+    }
+  },
+  {
+    "stateCode": "OR",
+    "stateName": "Oregon",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Or. Rev. Stat. § 475.898"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Or. Rev. Stat. § 689.681"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment exempted under Or. Rev. Stat. § 475.525. Syringe exchange programs authorized under Or. Rev. Stat. § 475.525(4)."
+    }
+  },
+  {
+    "stateCode": "PA",
+    "stateName": "Pennsylvania",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "35 P.S. § 780-113.7"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "35 P.S. § 780-113.8"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl and xylazine test strips exempted under 35 P.S. § 780-102 (Act 111 in 2022, expanded in 2024). Syringe services programs lack explicit statewide statutory authorization."
+    }
+  },
+  {
+    "stateCode": "PR",
+    "stateName": "Puerto Rico",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "24 L.P.R.A. § 2644"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "24 L.P.R.A. § 2643"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": false,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment lacks explicit statutory exemption under Puerto Rico controlled substances laws. Syringe exchange programs authorized under Department of Health programs and Law 35-2021."
+    }
+  },
+  {
+    "stateCode": "RI",
+    "stateName": "Rhode Island",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "R.I. Gen. Laws § 21-28.9-4"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "R.I. Gen. Laws § 21-28.9-3"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under R.I. Gen. Laws § 21-28.5-1. Harm reduction centers and syringe services authorized under R.I. Gen. Laws § 23-11-19."
+    }
+  },
+  {
+    "stateCode": "SC",
+    "stateName": "South Carolina",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "S.C. Code Ann. § 44-130-50"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "S.C. Code Ann. § 44-130-30"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Testing supplies exempted under S.C. Code Ann. § 44-53-110 (HB 3870 in 2023). Syringe services programs lack explicit statutory protection in South Carolina."
+    }
+  },
+  {
+    "stateCode": "SD",
+    "stateName": "South Dakota",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "S.D. Codified Laws § 34-20A-109"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "S.D. Codified Laws § 34-20A-104"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Drug testing strips exempted from paraphernalia under S.D. Codified Laws § 22-42A-1 (HB 1041 in 2023). Syringe services programs lack explicit statutory protection."
+    }
+  },
+  {
+    "stateCode": "TN",
+    "stateName": "Tennessee",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Tenn. Code Ann. § 63-1-156"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Tenn. Code Ann. § 63-1-152"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl test strips exempted under Tenn. Code Ann. § 39-17-402 (SB 2427 in 2022). Syringe services programs authorized under Tenn. Code Ann. § 68-1-136."
+    }
+  },
+  {
+    "stateCode": "TX",
+    "stateName": "Texas",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": false,
+      "chargeImmunity": false,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": false,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Tex. Health & Safety Code § 483.102"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Tex. Health & Safety Code § 483.101"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": false,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Fentanyl test strips remain classified as illegal drug paraphernalia under Tex. Health & Safety Code § 481.002(17). Syringe services programs lack explicit statewide statutory authorization."
+    }
+  },
+  {
+    "stateCode": "UT",
+    "stateName": "Utah",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Utah Code Ann. § 58-37-8(16)"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Utah Code Ann. § 26B-4-501"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under Utah Code Ann. § 58-37a-3. Syringe Exchange Program Act authorized under Utah Code Ann. § 26B-7-117."
+    }
+  },
+  {
+    "stateCode": "VT",
+    "stateName": "Vermont",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "18 V.S.A. § 4254"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "18 V.S.A. § 4240"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Drug testing equipment exempted under 18 V.S.A. § 4475. Syringe Support Programs authorized under 18 V.S.A. § 4478."
+    }
+  },
+  {
+    "stateCode": "VA",
+    "stateName": "Virginia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Va. Code Ann. § 18.2-251.03"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Va. Code Ann. § 54.1-3408"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing supplies exempted from paraphernalia under Va. Code Ann. § 18.2-265.1. Comprehensive Harm Reduction programs authorized under Va. Code Ann. § 32.1-45.4."
+    }
+  },
+  {
+    "stateCode": "WA",
+    "stateName": "Washington",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Wash. Rev. Code § 69.50.315"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Wash. Rev. Code § 69.41.095"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Testing equipment exempted under Wash. Rev. Code § 69.50.102. Syringe services programs authorized under Wash. Rev. Code § 70.41.480 and § 70.48.490."
+    }
+  },
+  {
+    "stateCode": "WV",
+    "stateName": "West Virginia",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "W. Va. Code § 16-47-4"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "W. Va. Code § 16-46-3"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl test strips exempted under W. Va. Code § 47-19-3. Syringe Services Programs authorized and regulated under W. Va. Code § 16-64-1."
+    }
+  },
+  {
+    "stateCode": "WI",
+    "stateName": "Wisconsin",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": true,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": true,
+      "statuteCitation": "Wis. Stat. § 961.443"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Wis. Stat. § 441.18"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": true,
+      "sspStatutoryProtection": true,
+      "statuteNotes": "Fentanyl and xylazine test strips exempted under Wis. Stat. § 961.571 (2021 Act 180, 2023 Act 86). Syringe exchange authorized under Wis. Stat. § 252.12."
+    }
+  },
+  {
+    "stateCode": "WY",
+    "stateName": "Wyoming",
+    "reviewStatus": "unverified",
+    "lastReviewed": null,
+    "sources": [
+      {
+        "name": "LawAtlas Good Samaritan Overdose Prevention Laws",
+        "url": "https://lawatlas.org/datasets/good-samaritan-overdose-prevention-laws"
+      },
+      {
+        "name": "End Overdose State Law Toolkit",
+        "url": "https://endoverdose.net/toolkit/"
+      }
+    ],
+    "goodSamaritan": {
+      "hasProtection": true,
+      "arrestImmunity": true,
+      "chargeImmunity": true,
+      "prosecutionImmunity": true,
+      "protectsParoleProbation": false,
+      "protectsParaphernalia": true,
+      "protectsUnderageAlcohol": false,
+      "statuteCitation": "Wyo. Stat. Ann. § 35-7-1063"
+    },
+    "naloxoneAccess": {
+      "standingOrder": true,
+      "thirdPartyPrescribing": true,
+      "layResponderImmunity": true,
+      "statuteCitation": "Wyo. Stat. Ann. § 35-7-1064"
+    },
+    "harmReductionEquipment": {
+      "fentanylTestStripsLegal": true,
+      "xylazineTestStripsLegal": false,
+      "sspStatutoryProtection": false,
+      "statuteNotes": "Drug testing equipment exempted under Wyo. Stat. Ann. § 35-7-1056 (SF 0064). Syringe services programs lack explicit statutory protection in Wyoming."
+    }
+  }
+]

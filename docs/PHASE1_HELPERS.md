@@ -6,7 +6,7 @@
 
 `ALL_POPULATION_RECOMMENDERS` returns codes, a finder link, and a one-line note for:
 
-- Pregnancy/postpartum (ACOG-aligned; no detox `DT` code, per ACOG Committee Opinion 711)
+- Pregnancy/postpartum (ACOG-aligned)
 - Adolescents / young adults
 - Justice-involved / reentry
 - Older adults
@@ -16,21 +16,23 @@
 
 ## Care routes in the navigator
 
-After the ASAM assessment, the Clinical Care Navigator (`#/navigator`) shows a "Care routes for your situation" block when the answers point to one of these populations:
+After the ASAM assessment, the Clinical Care Navigator (`#/navigator`) shows the "Priority Population Care Pathways" cards from `evaluatePopulationPathways()`. Those cards are the one care-route UI. For four populations, `buildCareRoutes()` adds an answer-specific part inside the matching card ("For your answers:"): narrower finder searches of one or two codes, and a few notes that the card's clinical actions and the navigator's red flags do not already cover.
 
-| Route | Triggered by | Finder links (codes) |
-| --- | --- | --- |
-| Pregnancy & postpartum | Dimension 2 = pregnant or postpartum | `PW`; with opioids `PW,BU` and `OTP`; with severe withdrawal, or moderate alcohol/sedative withdrawal, `PW,HI` |
-| Teens & young adults | Dimension 6 program = `ADOL` or `YA` | `ADOL` or `YA`, plus `+BU` (opioids), `+MHSU` (mental health), `+TELE` (telehealth) |
-| Re-entry after incarceration | Dimension 6 program = `CJ` | Codes from `evaluateTransitionRisk({ event: 'post_release' })`: `CJ,BU`, `NOE`, `CJ,PEER`, plus `OTP` |
-| Xylazine / medetomidine | Substance = xylazine | `BU`, `OTP`, `NOE`; plus `HI` when withdrawal is moderate or severe or an infection is reported |
+| Route | Pathway card | Triggered by | Finder links (codes) | Notes added |
+| --- | --- | --- | --- | --- |
+| Pregnancy & postpartum | `pregnancy` | Dimension 2 = pregnant or postpartum | `PW`; with opioids `PW,BU` and `OTP`; with severe withdrawal, or moderate alcohol/sedative withdrawal, `PW,HI` | Postpartum overdose risk and naloxone; with alcohol or sedatives, do not stop suddenly |
+| Teens & young adults | `youth` | Dimension 6 program = `ADOL` or `YA` | `ADOL` or `YA`, plus `+BU` (opioids), `+MHSU` (mental health), `+TELE` (telehealth) | None (the card covers consent, 42 CFR Part 2, and MOUD) |
+| Re-entry after incarceration | `justice` | Dimension 6 program = `CJ` | Codes from `evaluateTransitionRisk({ event: 'post_release' })`: `CJ,BU`, `NOE`, `CJ,PEER`, plus `OTP` | Do not use alone, with the Never Use Alone line from `content/hotlines.js` |
+| Xylazine / medetomidine | `xylazine` | Substance = xylazine | `BU`, `OTP`, `NOE`; plus `HI` when withdrawal is moderate or severe or an infection is reported | Urgent emergency-department callout (same trigger as the xylazine red flag); tell clinicians about tranq exposure |
 
 Functions:
 
-- `detectCareRoutes(answers)` lists the route ids that apply.
-- `buildCareRoutes(answers, { transition })` builds each route: title, what kind of care fits, the reasons, finder links, related pages, and sources.
+- `detectCareRoutes(answers)` lists the route ids that apply, with the same triggers as `evaluatePopulationPathways()`.
+- `buildCareRoutes(answers, { transition })` builds each addition: `pathwayId`, notes, finder links, related pages, and sources.
 - `buildTreatmentHref(codes)` makes a code-only finder link (deduplicated, at most 8 codes, matching the finder and server limit).
-- `getPopulationCareRoutes(answers)` in `navigator.js` checks the population against the navigator's own options and passes in the re-entry transition result.
+- `getPopulationCareRoutes(answers)` in `navigator.js` normalizes the answers the same way as `evaluateAsamCare()` and passes in the re-entry transition result.
+
+The pathway block ends with the SAMHSA National Helpline and 988, read from `content/hotlines.js`.
 
 ### Privacy
 
@@ -50,6 +52,6 @@ Each statement has a source comment next to it in the code:
 - CDC, *What You Should Know About Xylazine*
 - CDC MMWR 2025;74(15), Notes from the Field on medetomidine withdrawal
 
-The routes include no medication doses or schedules. They point to the medication guide (`#/medications`) and to clinicians instead. Pregnancy routes never suggest stopping or tapering buprenorphine or methadone. The SAMHSA helpline (1-800-662-4357) and 988 appear in every route block, along with the existing red-flag escalations.
+The route additions include no medication doses or schedules. They point to the medication guide (`#/medications`) and to clinicians instead, and never suggest stopping or tapering buprenorphine or methadone in pregnancy. The navigator's 911 and 988 buttons and red-flag escalations are unchanged.
 
-Next: plain-language variants, and routes for older adults, stimulants, and co-occurring serious mental illness.
+Next: plain-language variants, and answer-specific additions for the older adults, stimulants, and co-occurring pathway cards.

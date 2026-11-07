@@ -2,8 +2,13 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - 'agent/**'
+      - 'feat/**'
+      - 'swarm/**'
   pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -11,14 +16,44 @@ permissions:
 
 jobs:
   test:
+    name: Validate & Test (Node.js ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node: [20, 22]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+      - name: Syntax & Static Security Guardrail Check
+        run: |
+          node --check server.js
+          node --check src/app.js
+          node --check src/privacy.js
+          node --check public/js/app.js
+          node --check public/js/match/engine.js
+          node --check public/js/views/match.js
+          node --check public/js/views/treatment.js
+          node --check public/js/views/navigator.js
+          node --check public/js/views/guidedNavigator.js
+          node --check public/js/views/medications.js
+          node --check public/js/views/harmReduction.js
+          node --check public/js/views/states.js
+          node --check public/js/views/health.js
+          node --check public/js/views/choosingCare.js
+          node --check public/js/views/insuranceHelpers.js
+          node --check public/js/views/insuranceWidget.js
+
+      - name: Data Integrity & Build Verification
+        run: npm run build --if-present
+
       # Zero runtime dependencies: nothing to install.
-      - run: npm test
+      # npm test includes the client module graph, file integrity, clinical,
+      # i18n, privacy, UX/accessibility, and E2E smoke tests.
+      - name: Full Unit, Clinical, i18n, and E2E Smoke Test Suite
+        run: npm test
