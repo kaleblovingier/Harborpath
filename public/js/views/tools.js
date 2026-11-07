@@ -18,6 +18,8 @@ const entries = [
   ['health', 'care', 'Low-cost and community health care', 'Search health centers, mental health care, VA, IHS, rural clinics, and emergency hospitals.', ['individual', 'supporter', 'care-team']],
   ['plan', 'planning', 'Safety plan and first appointment', 'Prepare questions, explore what an intake visit is like, and create a private printable plan.', ['individual', 'supporter', 'care-team']],
   ['support', 'planning', 'Recovery and family support', 'Explore peer groups, recovery housing, and ways to support someone without pressure or judgment.', ['individual', 'supporter', 'care-team']],
+  ['recovery-support', 'planning', 'Life after treatment', 'Recovery housing and NARR levels, staying on medication (MOUD), peer recovery coaches, a plan for a return to use, and recovery-ready workplaces.', ['individual', 'supporter', 'care-team']],
+  ['overdose-loss', 'planning', 'After an overdose death', 'First practical steps, toxicology and death certificates, keeping others safe, talking with children, and grief support for families and friends.', ['supporter', 'care-team']],
   ['choosing-care', 'planning', 'Questions to ask a treatment program', 'Check treatment quality, ask about costs and medications, and recognize referral red flags.', ['individual', 'supporter', 'care-team']],
   ['post-overdose', 'planning', 'Care after an overdose', 'Explore follow-up support, treatment connections, and planning after an overdose.', ['individual', 'supporter', 'care-team']],
   ['readiness', 'planning', 'Explore readiness for change', 'Think through your goals and next steps at your own pace.', ['individual', 'supporter', 'care-team']],
@@ -71,10 +73,135 @@ const entries = [
   ['endocarditis-care', 'emergency', 'Infective endocarditis, valve destruction & POET protocol navigator', 'AHA/IDSA consensus for right-sided tricuspid septic pulmonary emboli vs. left-sided aortic root abscess, 3-blood-culture rule, 2023 Duke criteria, POET oral step-down, dalbavancin, and ethical valve surgery.', ['individual', 'supporter', 'care-team']],
 ];
 
+// Plain-language search words for each topic, in English and Spanish:
+// everyday terms, common slang, and brand names people type instead of the
+// clinical title. They are only matched, never shown. A topic without an entry
+// here is still searchable by its title and summary.
+export const TOOL_KEYWORDS = Object.freeze({
+  match: ['treatment', 'rehab', 'detox', 'program', 'clinic', 'near me', 'insurance', 'medicaid', 'cost', 'outpatient', 'inpatient', 'residential',
+    'tratamiento', 'rehabilitación', 'desintoxicación', 'programa', 'clínica', 'cerca de mí', 'seguro', 'costo'],
+  guided: ['where to start', 'not sure', 'help me', 'questions', 'first step', 'empezar', 'no sé', 'ayúdeme', 'preguntas', 'primer paso'],
+  workspace: ['clinician', 'nurse', 'social worker', 'case manager', 'peer worker', 'referral', 'handoff', 'provider',
+    'profesional de salud', 'enfermería', 'trabajador social', 'derivación', 'personal'],
+  overdose: ['od', 'narcan', 'naloxone', 'fentanyl', 'not breathing', 'unresponsive', 'won\'t wake up', 'blue lips', 'rescue breathing', '911',
+    'sobredosis', 'naloxona', 'fentanilo', 'no respira', 'no despierta', 'inconsciente', 'labios azules'],
+  crisis: ['988', 'suicide', 'suicidal', 'hotline', 'helpline', 'talk to someone', 'panic', 'depressed', 'hopeless', 'text line',
+    'suicidio', 'línea de ayuda', 'hablar con alguien', 'pánico', 'deprimido', 'deprimida', 'sin esperanza'],
+  'harm-reduction': ['narcan', 'naloxone', 'fentanyl', 'fentanyl test strips', 'test strips', 'safer use', 'syringes', 'needle exchange', 'ssp', 'never use alone', 'xylazine',
+    'reducción de daños', 'naloxona', 'fentanilo', 'tiras reactivas', 'jeringas', 'agujas', 'uso más seguro'],
+  navigator: ['asam', 'level of care', 'what care do i need', 'detox', 'withdrawal', 'self-check',
+    'nivel de atención', 'qué atención necesito', 'desintoxicación', 'abstinencia', 'autoevaluación'],
+  assessment: ['cows', 'ciwa', 'withdrawal', 'detox', 'dope sick', 'the shakes', 'abstinencia', 'desintoxicación', 'síntomas', 'temblores'],
+  medications: ['suboxone', 'buprenorphine', 'subutex', 'sublocade', 'brixadi', 'methadone', 'naltrexone', 'vivitrol', 'narcan', 'mat', 'moud', 'pills', 'prescription', 'pharmacist',
+    'medicamentos', 'buprenorfina', 'metadona', 'naltrexona', 'naloxona', 'pastillas', 'receta', 'farmacéutico'],
+  health: ['doctor', 'clinic', 'free clinic', 'sliding fee', 'no insurance', 'uninsured', 'va', 'ihs', 'hospital', 'emergency room', 'mental health', 'therapist', 'counseling',
+    'médico', 'clínica', 'clínica gratuita', 'sin seguro', 'salud mental', 'terapia', 'consejería'],
+  plan: ['safety plan', 'first visit', 'intake', 'appointment', 'relapse', 'print', 'plan de seguridad', 'primera cita', 'cita', 'recaída', 'imprimir'],
+  support: ['family', 'friend', 'loved one', 'aa', 'na', 'smart recovery', 'meetings', 'peer support', 'sober living', 'recovery housing', 'al-anon', 'nar-anon',
+    'familia', 'amigo', 'ser querido', 'reuniones', 'apoyo entre pares', 'vivienda de recuperación'],
+  'choosing-care': ['quality', 'scam', 'patient brokering', 'red flags', 'good rehab', 'accreditation', 'calidad', 'estafa', 'señales de alerta', 'acreditación'],
+  'post-overdose': ['after an overdose', 'survived an overdose', 'nonfatal overdose', 'follow-up', 'naloxone', 'después de una sobredosis', 'sobrevivió', 'seguimiento'],
+  readiness: ['ready to quit', 'quit', 'cut back', 'cut down', 'motivation', 'stages of change', 'not sure i want to stop',
+    'dejar', 'reducir', 'motivación', 'listo para cambiar', 'lista para cambiar'],
+  states: ['my state', 'medicaid', 'local', 'county', 'territory', 'puerto rico', 'mi estado', 'condado', 'territorio'],
+  perinatal: ['pregnant', 'pregnancy', 'expecting', 'baby', 'newborn', 'postpartum', 'breastfeeding', 'prenatal', 'mom', 'mother',
+    'embarazada', 'embarazo', 'bebé', 'recién nacido', 'posparto', 'lactancia', 'mamá', 'madre'],
+  adolescent: ['teen', 'teenager', 'youth', 'kid', 'child', 'son', 'daughter', 'minor', 'school', 'young adult', 'under 18',
+    'adolescente', 'joven', 'niño', 'hijo', 'hija', 'menor de edad', 'escuela'],
+  veterans: ['veteran', 'vet', 'military', 'va', 'tricare', 'service member', 'ptsd', 'veterano', 'veterana', 'militar', 'tept'],
+  reentry: ['jail', 'prison', 'incarceration', 'released', 'getting out', 'parole', 'probation', 'court', 'drug court', 'criminal record',
+    'cárcel', 'prisión', 'salir de la cárcel', 'libertad condicional', 'tribunal', 'antecedentes penales'],
+  'older-adults': ['senior', 'elderly', 'older adult', 'medicare', 'retired', 'aging parent', 'grandparent',
+    'persona mayor', 'adulto mayor', 'anciano', 'jubilado', 'abuelo', 'abuela'],
+  'tribal-health': ['native', 'native american', 'american indian', 'alaska native', 'indigenous', 'ihs', 'tribe', 'tribal',
+    'nativo', 'nativa', 'indígena', 'tribu'],
+  'lgbtq-care': ['gay', 'lesbian', 'bisexual', 'trans', 'transgender', 'queer', 'nonbinary', 'gender affirming', 'chemsex',
+    'lesbiana', 'transgénero', 'no binario', 'afirmación de género'],
+  'wound-care': ['wound', 'abscess', 'infection', 'sore', 'skin infection', 'cellulitis', 'xylazine wound',
+    'herida', 'absceso', 'infección', 'llaga', 'infección de la piel'],
+  'rural-health': ['rural', 'farm', 'small town', 'far from a clinic', 'no ride', 'transportation', 'telehealth', 'frontier',
+    'zona rural', 'campo', 'pueblo', 'transporte', 'telesalud'],
+  'disability-care': ['disability', 'deaf', 'hard of hearing', 'blind', 'low vision', 'autism', 'autistic', 'wheelchair', 'asl', 'sign language', 'sensory',
+    'discapacidad', 'sordo', 'sorda', 'ciego', 'ciega', 'autismo', 'silla de ruedas', 'lengua de señas'],
+  'street-medicine': ['homeless', 'unhoused', 'houseless', 'shelter', 'living outside', 'sleeping outside', 'street', 'encampment', 'no home',
+    'sin hogar', 'sin techo', 'refugio', 'albergue', 'calle', 'vivir en la calle'],
+  'immigrant-health': ['immigrant', 'undocumented', 'interpreter', 'translator', 'language help', 'refugee', 'asylum', 'daca', 'spanish',
+    'inmigrante', 'indocumentado', 'intérprete', 'idioma', 'refugiado', 'asilo', 'español'],
+  'stimulant-care': ['meth', 'crystal', 'ice', 'speed', 'cocaine', 'coke', 'crack', 'adderall', 'uppers', 'tweaking', 'overamping', 'stimulants',
+    'metanfetamina', 'cristal', 'cocaína', 'perico', 'estimulantes'],
+  'workplace-rights': ['work', 'job', 'employer', 'boss', 'fmla', 'ada', 'medical leave', 'fired', 'nursing license', 'professional license',
+    'trabajo', 'empleo', 'empleador', 'jefe', 'licencia médica', 'despido'],
+  'chronic-pain': ['pain', 'pain pills', 'opioids', 'oxy', 'oxycodone', 'percocet', 'hydrocodone', 'vicodin', 'taper',
+    'dolor', 'analgésicos', 'opioides', 'oxicodona', 'pastillas para el dolor'],
+  'alcohol-care': ['alcohol', 'drinking', 'drink', 'drunk', 'beer', 'wine', 'liquor', 'alcoholism', 'shakes', 'dts', 'delirium tremens', 'detox', 'naltrexone', 'acamprosate', 'antabuse', 'disulfiram',
+    'beber', 'bebida', 'tomar', 'borracho', 'cerveza', 'vino', 'licor', 'alcoholismo', 'temblores', 'desintoxicación'],
+  'family-support': ['family', 'parent', 'spouse', 'partner', 'loved one', 'craft', 'al-anon', 'boundaries', 'enabling',
+    'familia', 'padres', 'pareja', 'esposo', 'esposa', 'ser querido', 'límites'],
+  'adulterant-care': ['xylazine', 'tranq', 'fentanyl', 'nitazenes', 'medetomidine', 'cut', 'contaminated', 'test strips', 'tranq wounds',
+    'xilacina', 'fentanilo', 'nitazenos', 'medetomidina', 'adulterado', 'tiras reactivas'],
+  'methadone-access': ['methadone', 'methadone clinic', 'otp', 'take-homes', 'dosing', 'metadona', 'clínica de metadona', 'dosis para llevar'],
+  'dual-diagnosis': ['mental health', 'depression', 'anxiety', 'bipolar', 'schizophrenia', 'ptsd', 'psychiatrist', 'co-occurring',
+    'salud mental', 'depresión', 'ansiedad', 'bipolar', 'esquizofrenia', 'psiquiatra'],
+  'polysubstance-care': ['mixing drugs', 'mixing', 'combining', 'alcohol and pills', 'benzos and opioids', 'speedball', 'goofball',
+    'mezclar drogas', 'mezclar', 'combinar'],
+  'nightlife-care': ['party', 'club', 'rave', 'festival', 'molly', 'ecstasy', 'mdma', 'ketamine', 'ghb', 'poppers',
+    'fiesta', 'discoteca', 'éxtasis', 'ketamina'],
+  'sleep-care': ['sleep', 'insomnia', "can't sleep", 'nightmares', 'sleeping pills', 'dormir', 'insomnio', 'no puedo dormir', 'pesadillas', 'sueño'],
+  'dental-care': ['teeth', 'tooth', 'dentist', 'dental', 'meth mouth', 'mouth', 'cavities', 'dientes', 'muela', 'dentista', 'boca', 'caries'],
+  'cannabis-care': ['weed', 'marijuana', 'pot', 'cannabis', 'thc', 'dabs', 'wax', 'edibles', 'vomiting', 'chs', 'hyperemesis',
+    'marihuana', 'mota', 'hierba', 'comestibles', 'vómitos'],
+  'viral-hepatitis': ['hep c', 'hcv', 'hepatitis', 'hiv', 'prep', 'pep', 'liver', 'testing', 'vih', 'hígado', 'prueba'],
+  'nicotine-care': ['smoking', 'cigarettes', 'vape', 'vaping', 'juul', 'zyn', 'nicotine pouches', 'chew', 'quit smoking', 'nicotine patch', 'chantix',
+    'fumar', 'cigarrillos', 'vapear', 'dejar de fumar', 'parche de nicotina'],
+  'benzodiazepine-care': ['xanax', 'valium', 'klonopin', 'ativan', 'benzos', 'bars', 'alprazolam', 'diazepam', 'clonazepam', 'lorazepam', 'taper',
+    'benzodiacepinas', 'pastillas para la ansiedad'],
+  'adhd-care': ['adhd', 'add', 'adderall', 'ritalin', 'vyvanse', 'focus', 'attention', 'tdah', 'déficit de atención', 'concentración'],
+  'toxicology-triage': ['agitation', 'psychosis', 'delirium', 'poisoning', 'intoxicated', 'de-escalation', 'agitación', 'psicosis', 'intoxicación', 'envenenamiento'],
+  'hospital-care': ['hospital', 'er', 'emergency room', 'surgery', 'ama', 'leaving against medical advice', 'discharge',
+    'urgencias', 'sala de emergencias', 'cirugía', 'alta voluntaria'],
+  'needle-exposure': ['needle stick', 'needlestick', 'poked', 'sharps', 'used needle', 'pep', 'hiv exposure', 'pinchazo', 'aguja usada', 'exposición al vih'],
+  'sexual-health': ['sex', 'std', 'sti', 'condoms', 'prep', 'pep', 'doxy', 'plan b', 'morning after pill', 'birth control', 'hiv',
+    'sexo', 'ets', 'its', 'condones', 'anticonceptivos', 'píldora del día después', 'vih'],
+  'novel-substances': ['kratom', 'tianeptine', 'zaza', 'gas station heroin', 'phenibut', '7-oh', 'dxm', 'loperamide', 'tianeptina', 'fenibut', 'loperamida'],
+  'gabapentinoid-care': ['gabapentin', 'neurontin', 'pregabalin', 'lyrica', 'gabapentina', 'pregabalina'],
+  'psychedelic-care': ['lsd', 'acid', 'mushrooms', 'shrooms', 'psilocybin', 'dmt', 'bad trip', 'hppd', 'hongos', 'ácido', 'psilocibina', 'mal viaje'],
+  'ghb-care': ['ghb', 'gbl', 'liquid ecstasy', 'bdo', 'chemsex', 'éxtasis líquido'],
+  'vein-care': ['veins', 'injecting', 'shooting', 'iv', 'missed shot', 'artery', 'filter', 'venas', 'inyectarse', 'inyección', 'arteria'],
+  'inhalant-care': ['huffing', 'whippets', 'nitrous', 'laughing gas', 'poppers', 'aerosol', 'solvents', 'inhalantes', 'gas de la risa', 'óxido nitroso', 'solventes'],
+  'ketamine-care': ['ketamine', 'special k', 'bladder', 'k-cramps', 'ketamina', 'vejiga'],
+  'weather-care': ['cold', 'freezing', 'hypothermia', 'frostbite', 'heat', 'heat stroke', 'sleeping outside', 'winter', 'summer',
+    'frío', 'hipotermia', 'congelación', 'calor', 'golpe de calor', 'invierno', 'verano'],
+  'liver-care': ['liver', 'tylenol', 'acetaminophen', 'cirrhosis', 'jaundice', 'yellow skin', 'hígado', 'paracetamol', 'acetaminofén', 'cirrosis', 'ictericia'],
+  'renal-care': ['kidney', 'kidneys', 'rhabdo', 'dialysis', 'dark urine', 'riñón', 'riñones', 'diálisis', 'rabdomiólisis', 'orina oscura'],
+  'pulmonary-care': ['lungs', 'breathing', 'crack lung', 'cough', 'smoking', 'pneumonia', 'pulmones', 'respirar', 'tos', 'neumonía'],
+  'neurology-care': ['brain', 'brain injury', 'brain damage', 'memory', 'seizure', 'hypoxia', 'cerebro', 'lesión cerebral', 'memoria', 'convulsión'],
+  'metabolic-care': ['diabetes', 'blood sugar', 'low blood sugar', 'ketoacidosis', 'dka', 'adrenal', 'azúcar en la sangre', 'cetoacidosis', 'suprarrenal'],
+  'endocarditis-care': ['heart infection', 'heart valve', 'endocarditis', 'fever', 'infección del corazón', 'válvula del corazón', 'fiebre'],
+  'recovery-support': ['sober living', 'sober house', 'recovery housing', 'recovery residence', 'halfway house', 'oxford house', 'peer coach', 'peer support', 'relapse', 'aftercare', 'after rehab',
+    'vivienda sobria', 'casa de recuperación', 'recaída', 'coach de recuperación', 'apoyo entre pares', 'después del tratamiento'],
+  'overdose-loss': ['grief', 'bereavement', 'died', 'death', 'loss', 'funeral', 'death certificate', 'toxicology', 'grasp', 'compassionate friends',
+    'duelo', 'murió', 'muerte', 'pérdida', 'acta de defunción', 'toxicología'],
+});
+
 export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, description, audiences]) => Object.freeze({
   id, path: `#/${id}`, category, titleKey: `tools.item.${id}.title`, title,
   descriptionKey: `tools.item.${id}.description`, description, audiences: Object.freeze(audiences),
+  keywords: Object.freeze([...(TOOL_KEYWORDS[id] ?? [])]),
 })));
+
+// The dropdown groups related catalog categories so every topic can be reached
+// from it. A new catalog category must be added to one of these groups
+// (test/navigation.test.js checks this).
+export const CATEGORY_GROUPS = Object.freeze([
+  { id: 'emergency', key: 'tools.category.emergency', label: 'Urgent support', categories: ['emergency'] },
+  { id: 'care', key: 'tools.category.care', label: 'Find and understand care', categories: ['care'] },
+  { id: 'harm-reduction', key: 'tools.category.harmReduction', label: 'Stay safer (harm reduction)', categories: ['harm', 'harm-reduction'] },
+  { id: 'health', key: 'tools.category.health', label: 'Physical health and medical guides', categories: ['health', 'clinical-support'] },
+  { id: 'planning', key: 'tools.category.planning', label: 'Planning and support', categories: ['planning'] },
+  { id: 'populations', key: 'tools.category.populations', label: 'Care for your circumstances', categories: ['populations'] },
+].map((group) => Object.freeze({ ...group, categories: Object.freeze(group.categories) })));
+
+export const categoryGroupFor = (category) => CATEGORY_GROUPS.find((group) => group.categories.includes(category)) ?? null;
 
 const initialState = () => ({ query: '', audience: 'all', category: 'all' });
 let filters = initialState();
@@ -84,16 +211,28 @@ export function resetCareToolsState() {
   filters = initialState();
   for (const reset of resetListeners) reset();
 }
+/** Start the directory with a search typed elsewhere (home or not-found page). Memory only. */
+export function setCareToolsQuery(query) {
+  filters = { ...initialState(), query: String(query ?? '').slice(0, 200) };
+}
 
-const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+export const normalizeSearchText = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const normalize = normalizeSearchText;
+
+// A word matches when it appears in the topic's text; a plural ("teens",
+// "wounds") also matches its singular.
+const wordMatches = (text, word) => text.includes(word)
+  || (word.length > 3 && word.endsWith('s') && text.includes(word.slice(0, -1)));
 
 export function filterCareTools({ query = '', audience = 'all', category = 'all' } = {}) {
-  const words = normalize(query).trim().split(/\s+/).filter(Boolean);
+  const words = normalize(query).trim().split(/[\s,]+/).filter(Boolean);
+  const group = CATEGORY_GROUPS.find((g) => g.id === category);
+  const allowed = group ? group.categories : [category];
   return TOOL_CATALOG.filter((tool) => {
     if (audience !== 'all' && !tool.audiences.includes(audience)) return false;
-    if (category !== 'all' && tool.category !== category) return false;
-    const searchable = normalize([tool.title, tool.description, t(tool.titleKey, tool.title), t(tool.descriptionKey, tool.description)].join(' '));
-    return words.every((word) => searchable.includes(word));
+    if (category !== 'all' && !allowed.includes(tool.category)) return false;
+    const searchable = normalize([tool.title, tool.description, t(tool.titleKey, tool.title), t(tool.descriptionKey, tool.description), ...tool.keywords].join(' '));
+    return words.every((word) => wordMatches(searchable, word));
   });
 }
 
@@ -109,10 +248,7 @@ export function careToolsView({ meta } = {}) {
     h('option', { value: 'care-team' }, t('tools.audience.team', 'Healthcare and community workers')));
   const category = h('select', { id: 'care-tools-category' },
     h('option', { value: 'all' }, t('tools.category.all', 'All topics')),
-    h('option', { value: 'emergency' }, t('tools.category.emergency', 'Urgent support')),
-    h('option', { value: 'care' }, t('tools.category.care', 'Find and understand care')),
-    h('option', { value: 'planning' }, t('tools.category.planning', 'Planning and support')),
-    h('option', { value: 'populations' }, t('tools.category.populations', 'Care for your circumstances')));
+    CATEGORY_GROUPS.map((group) => h('option', { value: group.id }, t(group.key, group.label))));
   audience.value = filters.audience;
   category.value = filters.category;
   const count = h('p', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', class: 'tools-count' });

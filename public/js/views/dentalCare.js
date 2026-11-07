@@ -4,7 +4,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & ORAL PROTOCOLS
@@ -318,7 +318,7 @@ export function dentalCareView() {
 
   function render() {
     clear(container);
-    const isEs = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const localState = getDentalState();
     const evalResult = evaluateOralHealthRisk(localState);
 
@@ -328,7 +328,7 @@ export function dentalCareView() {
         icon('heart'),
         h('span', {}, isEs ? 'Salud Oral y Prevención de Infecciones' : 'Oral Health & Infection Prevention')
       ]),
-      h('h2', {}, isEs ? 'Guía de Salud Dental, Buprenorfina y Prevención de Endocarditis' : 'Dental, Oral Health, Buprenorphine Safety & Endocarditis Prevention'),
+      h('h1', {}, isEs ? 'Guía de Salud Dental, Buprenorfina y Prevención de Endocarditis' : 'Dental, Oral Health, Buprenorphine Safety & Endocarditis Prevention'),
       h('p', { class: 'view-intro' }, isEs
         ? 'Pautas basadas en la advertencia de la FDA de 2022 para proteger el esmalte dental al tomar buprenorfina, reducción de daños en boca seca por estimulantes, prevención de infecciones en válvulas cardíacas (endocarditis) y acceso a clínicas dentales de bajo costo.'
         : 'FDA 2022 safety communication protocols for protecting tooth enamel on transmucosal buprenorphine, stimulant dry mouth mitigation, heart valve infection (endocarditis) prevention, and low-cost community dental access.')

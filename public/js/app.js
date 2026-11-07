@@ -1,6 +1,7 @@
 import { api } from './api.js';
-import { state, subscribe, wipeAll } from './state.js';
+import { state, subscribe, wipeAll, runQuickExitHandlers } from './state.js';
 import { initI18n, onLanguageChange, t, formatDate } from './i18n.js';
+import { announce } from './dom.js';
 import {
   homeView,
   treatmentView,
@@ -28,7 +29,8 @@ export const SYNC_VIEWS = {
 };
 
 // Heavy clinical, matching, guided triage, and educational views are dynamically
-// imported on demand, cached in memory, and preloaded during browser idle time or link hover/focus.
+// imported on demand, cached in memory, and preloaded on link hover/focus (never
+// on Save-Data or 2G connections, and never all at once on page load).
 export const viewCache = new Map();
 const pendingLoads = new Map();
 // Register a reset with each loaded new view so Quick Exit can clear its
@@ -309,6 +311,15 @@ export const LAZY_LOADERS = {
     viewCache.set('stimulant-care', m.stimulantCareView);
     return m.stimulantCareView;
   }),
+  'recovery-support': () => import('./views/recoverySupport.js').then((m) => {
+    viewCache.set('recovery-support', m.recoverySupportView);
+    routeResets.set('recovery-support', m.resetRecoverySupportState);
+    return m.recoverySupportView;
+  }),
+  'overdose-loss': () => import('./views/overdoseLoss.js').then((m) => {
+    viewCache.set('overdose-loss', m.overdoseLossView);
+    return m.overdoseLossView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -349,6 +360,8 @@ export const ROUTE_TITLES = {
   'family-support': () => t('route.familySupport', 'Family support & CRAFT guide'),
   'alcohol-care': () => t('route.alcoholCare', 'Alcohol care, withdrawal & MAUD'),
   'chronic-pain': () => t('route.chronicPain', 'Chronic pain & sedative deprescribing'),
+  'recovery-support': () => t('route.recoverySupport', 'Life after treatment: recovery housing & support'),
+  'overdose-loss': () => t('route.overdoseLoss', 'After an overdose death'),
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
   tools: () => t('route.tools', 'Care tools and guides'),
   workspace: () => t('route.workspace', 'Care team workspace'),
@@ -398,6 +411,9 @@ export function preloadRoute(path) {
   return pendingLoads.get(path);
 }
 
+// Loads every lazy view. Not called on page load (that downloaded every module
+// on every visit); kept for tests and tooling. The opt-in offline copy is
+// precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
     preloadRoute('metabolic-care'),
@@ -457,6 +473,8 @@ export function preloadAllLazyViews() {
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
     preloadRoute('dual-diagnosis'),
+    preloadRoute('recovery-support'),
+    preloadRoute('overdose-loss'),
     preloadRoute('harm-reduction'),
   ]);
 }
@@ -518,9 +536,53 @@ export function resolveRoute(path, query) {
   };
 }
 
+// Route links start with "#/" (or are a bare "#" for home). Any other hash,
+// such as "#main" from the skip link, points at an element on the current
+// page and must never be treated as a route.
+export function isRouteHash(hash) {
+  const value = String(hash ?? '');
+  return value === '' || value === '#' || value.startsWith('#/');
+}
+
+const NATIVELY_FOCUSABLE = /^(A|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/;
+
+/** Make an element programmatically focusable without adding it to the tab order. */
+export function makeFocusable(el) {
+  if (el && !NATIVELY_FOCUSABLE.test(el.tagName ?? '') && !el.hasAttribute?.('tabindex')) {
+    el.setAttribute('tabindex', '-1');
+  }
+  return el;
+}
+
+/**
+ * Where focus lands after a route change: the page title, then the first h1,
+ * then the first h2, then the main region itself. Views that do not use
+ * pageHeader() still get a sensible starting point for keyboard and
+ * screen-reader users.
+ */
+export function routeFocusTarget(root) {
+  if (!root) return null;
+  return makeFocusable(root.querySelector('#page-title') ?? root.querySelector('h1') ?? root.querySelector('h2') ?? root);
+}
+
+/** Move focus to an in-page anchor target (for example the skip link's #main). */
+export function focusInPageTarget(id, doc = typeof document !== 'undefined' ? document : null) {
+  if (!doc || !id) return false;
+  let target = null;
+  try {
+    target = doc.getElementById(decodeURIComponent(id));
+  } catch {
+    target = doc.getElementById(id);
+  }
+  if (!target) return false;
+  makeFocusable(target).focus?.();
+  return true;
+}
+
 let firstRender = true;
 let lastMeta = null;
 let renderSeq = 0;
+let lastPath = '';
 
 const hasDom = typeof document !== 'undefined';
 const main = hasDom ? document.getElementById('main') : null;
@@ -534,13 +596,45 @@ function closeMenu() {
   for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
 }
 
-async function render() {
+/** Mark `container` busy and show a short status while a view module loads. */
+export function showViewLoading(container) {
+  const status = document.createElement('p');
+  status.className = 'results-status view-loading';
+  status.setAttribute('role', 'status');
+  status.textContent = t('app.loadingView', 'Loading…');
+  container.setAttribute('aria-busy', 'true');
+  container.replaceChildren(status);
+  return status;
+}
+
+/**
+ * Whether hovering or focusing a link may download its view ahead of a click.
+ * Skipped when the visitor asked to save data or the connection is 2G.
+ */
+export function shouldPreloadOnIntent(connection = globalThis.navigator?.connection) {
+  if (!connection) return true;
+  if (connection.saveData) return false;
+  return !['slow-2g', '2g'].includes(connection.effectiveType);
+}
+
+async function render({ hashChange = false } = {}) {
   if (!main) return;
+  const routeHash = isRouteHash(location.hash);
+  // An in-page anchor (e.g. "#main") changed the hash: the current view stays.
+  if (!routeHash && hashChange && !firstRender) {
+    focusInPageTarget(location.hash.slice(1));
+    return;
+  }
   const token = ++renderSeq;
   const isInitial = firstRender;
   firstRender = false;
 
-  const { path, query } = parseHash();
+  // With a non-route hash (a page opened at "#main", or a language change after
+  // one), keep showing the last route instead of the not-found page.
+  const { path, query } = routeHash
+    ? parseHash()
+    : { path: lastPath, query: carried?.path === lastPath ? carried.query : new URLSearchParams() };
+  lastPath = path;
   const resolved = resolveRoute(path, query);
   document.title = path ? `${resolved.title} · ${SITE}` : `${SITE}: ${resolved.title}`;
 
@@ -550,17 +644,25 @@ async function render() {
   }
   closeMenu();
 
+  main.removeAttribute('aria-busy');
   let buildView = resolved.view;
   if (!buildView && resolved.lazyPath) {
-    const loadedView = await preloadRoute(resolved.lazyPath);
+    showViewLoading(main);
+    const loadedView = await preloadRoute(resolved.lazyPath).catch(() => null);
     if (token !== renderSeq) return;
+    main.removeAttribute('aria-busy');
     buildView = loadedView ? () => loadedView({ query, meta: lastMeta }) : () => notFoundView({ query });
   }
 
   main.replaceChildren(buildView());
+  if (!routeHash) {
+    if (isInitial) focusInPageTarget(location.hash.slice(1));
+    return;
+  }
   if (!isInitial) {
     window.scrollTo(0, 0);
-    document.getElementById('page-title')?.focus({ preventScroll: true });
+    routeFocusTarget(main)?.focus({ preventScroll: true });
+    announce(resolved.title);
   }
 }
 
@@ -568,44 +670,14 @@ async function render() {
 export function runQuickExitResets() {
   wipeAll();
   carried = null;
-  for (const reset of routeResets.values()) reset();
-  import('./views/navigator.js').then((m) => m.resetNavigatorState?.()).catch(() => {});
-  import('./views/insuranceHelpers.js').then((m) => m.resetInsuranceState?.()).catch(() => {});
-  import('./views/guidedNavigator.js').then((m) => m.resetGuidedNavigatorState?.()).catch(() => {});
-  import('./views/medications.js').then((m) => m.resetMedicationsState?.()).catch(() => {});
-  import('./views/harmReduction.js').then((m) => m.resetHarmReductionState?.()).catch(() => {});
-  import('./views/health.js').then((m) => m.resetHealthState?.()).catch(() => {});
-  import('./views/states.js').then((m) => m.resetStatesState?.()).catch(() => {});
-  import('./views/plan.js').then((m) => m.resetPlanState?.()).catch(() => {});
-  import('./views/assessment.js').then((m) => m.resetAssessmentState?.()).catch(() => {});
-  import('./views/readiness.js').then((m) => m.resetReadinessState?.()).catch(() => {});
-  import('./components/sensoryMode.js').then((m) => m.resetSensoryMode?.()).catch(() => {});
-  import('./components/emergencyDrawer.js').then((m) => m.closeEmergencyDrawer?.()).catch(() => {});
-  import('./components/stateLegalCard.js').then((m) => m.resetStateLegalCardState?.()).catch(() => {});
-  import('./components/overdosePacing.js').then((m) => m.resetOverdosePacer?.()).catch(() => {});
-  import('./views/perinatal.js').then((m) => m.resetPerinatalState?.()).catch(() => {});
-  import('./views/veterans.js').then((m) => m.resetVeteransState?.()).catch(() => {});
-  import('./views/adolescentCare.js').then((m) => m.resetAdolescentState?.()).catch(() => {});
-  import('./components/clinicalDifferential.js').then((m) => m.resetDifferentialState?.()).catch(() => {});
-  import('./components/testStripCalculator.js').then((m) => m.resetTestStripState?.()).catch(() => {});
-  import('./components/mutualAidFinder.js').then((m) => m.resetMutualAidState?.()).catch(() => {});
-  import('./components/sessionBookmarks.js').then((m) => m.resetBookmarksViewState?.()).catch(() => {});
-  import('./views/reentry.js').then((m) => m.resetReentryState?.()).catch(() => {});
-  import('./views/olderAdults.js').then((m) => m.resetOlderAdultsState?.()).catch(() => {});
-  import('./views/workplaceRights.js').then((m) => m.resetWorkplaceState?.()).catch(() => {});
-  import('./components/recoveryCapital.js').then((m) => m.resetRecoveryCapitalState?.()).catch(() => {});
-  import('./views/tribalHealth.js').then((m) => m.resetTribalHealthState?.()).catch(() => {});
-  import('./views/lgbtqCare.js').then((m) => m.resetLgbtqState?.()).catch(() => {});
-  import('./views/woundInfectious.js').then((m) => m.resetWoundState?.()).catch(() => {});
-  import('./components/safetyNetNavigator.js').then((m) => m.resetSafetyNetState?.()).catch(() => {});
-  import('./views/ruralHealth.js').then((m) => m.resetRuralHealthState?.()).catch(() => {});
-  import('./views/disabilityCare.js').then((m) => m.resetDisabilityState?.()).catch(() => {});
-  import('./views/streetMedicine.js').then((m) => m.resetStreetMedicineState?.()).catch(() => {});
-  import('./components/sspEquipmentTracker.js').then((m) => m.resetSspTrackerState?.()).catch(() => {});
-  import('./views/immigrantHealth.js').then((m) => m.resetImmigrantState?.()).catch(() => {});
-  import('./views/postOverdose.js').then((m) => m.resetPostOverdoseState?.()).catch(() => {});
-  import('./views/stimulantCare.js').then((m) => m.resetStimulantCareState?.()).catch(() => {});
-  import('./components/medicalRespiteFinder.js').then((m) => m.resetRespiteFinderState?.()).catch(() => {});
+  // Only modules already in memory hold state: lazy views registered a reset
+  // when they loaded, and other stateful modules register with onQuickExit().
+  // Nothing is imported here, so no module is fetched (or saved again by an
+  // offline worker) on the way out.
+  for (const reset of routeResets.values()) {
+    try { reset(); } catch { /* keep clearing the others */ }
+  }
+  runQuickExitHandlers();
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
@@ -653,6 +725,14 @@ if (hasDom) {
       for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
     }
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    // Same-page anchors (the skip link) move focus without touching the hash,
+    // so they neither add a history entry nor trigger a route render.
+    const anchor = e.target.closest?.('a[href^="#"]:not([href^="#/"]):not([href="#"])');
+    if (anchor) {
+      e.preventDefault();
+      focusInPageTarget(anchor.getAttribute('href').slice(1));
+      return;
+    }
     const a = e.target.closest('a[href^="#/"], a[href="#"]');
     if (!a) return;
     e.preventDefault();
@@ -668,12 +748,12 @@ if (hasDom) {
     const a = e.target?.closest?.('a[href^="#/"]');
     if (!a) return;
     const { path } = parseHash(a.getAttribute('href') || '');
-    if (LAZY_LOADERS[path]) preloadRoute(path).catch(() => {});
+    if (LAZY_LOADERS[path] && shouldPreloadOnIntent()) preloadRoute(path).catch(() => {});
   };
   document.addEventListener('pointerenter', handleLinkPreload, { capture: true, passive: true });
   document.addEventListener('focusin', handleLinkPreload, { passive: true });
 
-  window.addEventListener('hashchange', render);
+  window.addEventListener('hashchange', () => render({ hashChange: true }));
 
   document.getElementById('quick-exit')?.addEventListener('click', quickExit);
 
@@ -682,8 +762,11 @@ if (hasDom) {
     if (e.key !== 'Escape') return;
     const more = nav?.querySelector('.nav-more-menu[open]');
     if (more) {
+      // Closing the menu must not count toward the Esc-Esc quick exit.
       more.open = false;
       more.querySelector('summary')?.focus();
+      lastEscape = 0;
+      return;
     }
     const now = Date.now();
     if (now - lastEscape < 1000) quickExit();
@@ -769,16 +852,9 @@ if (hasDom) {
     render();
   });
 
-  const scheduleIdle = typeof requestIdleCallback === 'function'
-    ? (cb) => requestIdleCallback(cb, { timeout: 1000 })
-    : (cb) => setTimeout(cb, 150);
-
   initI18n().finally(() => {
     updateSavedCount();
     renderFooterMeta();
     render();
-    scheduleIdle(() => {
-      preloadAllLazyViews().catch(() => {});
-    });
   });
 }

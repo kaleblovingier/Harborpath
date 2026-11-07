@@ -10,7 +10,7 @@ import { stateHref, stateSections } from '../components/stateResources.js';
 import { regionsApi } from '../regionsApi.js';
 import { offlineSupported, isOfflineSaved, saveOffline, wipeOfflineCopy } from '../offline.js';
 import { HOTLINES } from '../content/hotlines.js';
-import { t } from '../i18n.js';
+import { t, tp } from '../i18n.js';
 import { pageHeader, section, p, ul, strong, resourceList, hotlineGrid, pathCard, emergencyCallout } from './common.js';
 import { treatmentView, PRESETS } from './treatment.js';
 
@@ -53,6 +53,119 @@ export function offlineControlCard() {
   );
 }
 
+// ---------------------------------------------------------------- Topic search
+// A small search over the care-tools catalog (views/tools.js), loaded on first
+// use so the home page stays light. What is typed stays in the input and in
+// memory: it is never sent, stored, or added to the address bar.
+let topicsModule = null;
+const loadTopics = () => {
+  topicsModule ??= import('./tools.js').catch((err) => { topicsModule = null; throw err; });
+  return topicsModule;
+};
+
+export const TOPIC_SEARCH_LIMIT = 8;
+
+export function topicSearch({ idPrefix, title }) {
+  const ids = { input: `${idPrefix}-input`, hint: `${idPrefix}-hint`, results: `${idPrefix}-results`, title: `${idPrefix}-title` };
+  const input = h('input', {
+    id: ids.input, type: 'search', autocomplete: 'off', spellcheck: 'false', maxlength: '200',
+    'aria-describedby': ids.hint, 'aria-controls': ids.results,
+  });
+  const status = h('p', { class: 'topic-search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' });
+  const list = h('ul', { class: 'topic-search-results', id: ids.results, hidden: true });
+  const more = h('p', { class: 'topic-search-more', hidden: true });
+  let seq = 0;
+
+  async function update() {
+    const query = input.value.slice(0, 200).trim();
+    const mine = ++seq;
+    if (query.length < 2) {
+      clear(list); clear(more);
+      list.hidden = true; more.hidden = true;
+      status.textContent = '';
+      return;
+    }
+    let topics;
+    try {
+      topics = await loadTopics();
+    } catch {
+      if (mine === seq) status.textContent = t('topicSearch.unavailable', 'Topic search is not available right now. You can browse all care tools instead.');
+      return;
+    }
+    if (mine !== seq) return;
+    const matches = topics.filterCareTools({ query });
+    clear(list); clear(more);
+    for (const tool of matches.slice(0, TOPIC_SEARCH_LIMIT)) {
+      list.append(h('li', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))));
+    }
+    list.hidden = matches.length === 0;
+    if (matches.length > TOPIC_SEARCH_LIMIT) {
+      more.append(h('button', {
+        type: 'button', class: 'btn btn-secondary',
+        onclick: () => { topics.setCareToolsQuery(query); location.replace('#/tools'); },
+      }, t('topicSearch.seeAll', 'See all {n} matching topics', { n: matches.length })));
+    }
+    more.hidden = matches.length <= TOPIC_SEARCH_LIMIT;
+    status.textContent = matches.length
+      ? tp('topicSearch.count', matches.length, { one: '{n} matching topic', other: '{n} matching topics' })
+      : t('topicSearch.none', 'No topics match that search. Try another word, or browse all care tools.');
+  }
+
+  input.addEventListener('input', update);
+  // Start loading the catalog as soon as someone shows interest.
+  input.addEventListener('focus', () => { loadTopics().catch(() => {}); });
+
+  return h('section', { class: 'card topic-search no-print', 'aria-labelledby': ids.title },
+    h('h2', { id: ids.title }, title),
+    h('div', { class: 'field' },
+      h('label', { for: ids.input }, t('topicSearch.label', 'Search topics and guides')),
+      input),
+    h('p', { id: ids.hint, class: 'small muted' },
+      t('topicSearch.hint', 'Try words like pregnant, Narcan, Xanax, or jail. Your search stays on this device and is not saved.')),
+    status, list, more,
+    h('p', { class: 'topic-search-browse' }, h('a', { href: '#/tools' }, t('home.start.browse', 'Browse all care tools and guides'))));
+}
+
+// Short links to guides for specific people and situations, so every guide
+// can be reached from the home page. Add new audience or situation routes here.
+export const HELP_FOR_PEOPLE = Object.freeze([
+  ['perinatal', 'home.helpFor.perinatal', 'Pregnancy and new parents'],
+  ['adolescent', 'home.helpFor.adolescent', 'Teens and young people'],
+  ['older-adults', 'home.helpFor.olderAdults', 'Older adults'],
+  ['veterans', 'home.helpFor.veterans', 'Veterans and military families'],
+  ['lgbtq-care', 'home.helpFor.lgbtq', 'LGBTQ+ people'],
+  ['tribal-health', 'home.helpFor.tribal', 'Native and tribal communities'],
+  ['immigrant-health', 'home.helpFor.immigrant', 'Immigrants and language help'],
+  ['disability-care', 'home.helpFor.disability', 'People with disabilities'],
+  ['rural-health', 'home.helpFor.rural', 'Rural areas'],
+  ['street-medicine', 'home.helpFor.street', 'No stable housing'],
+  ['reentry', 'home.helpFor.reentry', 'After jail or prison'],
+  ['workplace-rights', 'home.helpFor.workplace', 'Rights at work'],
+]);
+
+export const HELP_FOR_CONCERNS = Object.freeze([
+  ['alcohol-care', 'home.helpFor.alcohol', 'Alcohol'],
+  ['stimulant-care', 'home.helpFor.stimulants', 'Meth, cocaine, and other stimulants'],
+  ['post-overdose', 'home.helpFor.postOverdose', 'After an overdose'],
+  ['wound-care', 'home.helpFor.wounds', 'Wounds and infections'],
+  ['family-support', 'home.helpFor.family', 'Helping a loved one (CRAFT)'],
+  ['recovery-support', 'home.helpFor.recovery', 'Life after treatment'],
+  ['overdose-loss', 'home.helpFor.overdoseLoss', 'After an overdose death'],
+]);
+
+function helpForList(id, title, links) {
+  return h('div', { class: 'help-for-group' },
+    h('h3', { id }, title),
+    h('ul', { class: 'help-for-list', 'aria-labelledby': id },
+      links.map(([route, key, label]) => h('li', null, h('a', { href: `#/${route}` }, t(key, label))))));
+}
+
+function helpForSection() {
+  return section('help-for', t('home.helpFor.title', 'Help for your situation'),
+    helpForList('help-for-people', t('home.helpFor.people', 'For people and circumstances'), HELP_FOR_PEOPLE),
+    helpForList('help-for-concerns', t('home.helpFor.concerns', 'For specific concerns'), HELP_FOR_CONCERNS));
+}
+
 // ---------------------------------------------------------------- Home
 export function homeView() {
   const go = (href) => () => location.replace(href);
@@ -78,19 +191,24 @@ export function homeView() {
       ),
     ),
     emergencyCallout(),
+    topicSearch({ idPrefix: 'home-topic', title: t('topicSearch.homeTitle', 'Looking for something specific?') }),
     section('start-here', t('home.start.title', 'Start with what you need today'),
       h('div', { class: 'path-grid' },
         pathCard({ href: '#/guided', iconName: 'compass',
           title: t('home.start.individual.title', 'I’m looking for help for myself'),
           desc: t('home.start.individual.description', 'Answer short, optional questions to find a starting point. You do not need to know which type of care to ask for.') }),
-        pathCard({ href: '#/support', iconName: 'users',
-          title: t('home.start.supporter.title', 'I’m supporting someone'),
-          desc: t('home.start.supporter.description', 'Find family and peer support, crisis help, and ways to prepare the next step together.') }),
+        h('div', { class: 'path-stack' },
+          pathCard({ href: '#/support', iconName: 'users',
+            title: t('home.start.supporter.title', 'I’m supporting someone'),
+            desc: t('home.start.supporter.description', 'Find family and peer support, crisis help, and ways to prepare the next step together.') }),
+          h('a', { class: 'path-sublink', href: '#/family-support' },
+            t('home.start.supporter.craft', 'Family guide: how to help a loved one with CRAFT'))),
         pathCard({ href: '#/workspace', iconName: 'clipboard',
           title: t('home.start.team.title', 'I work with patients or in the community'),
           desc: t('home.start.team.description', 'Organize a visit, verify a referral, and prepare an anonymous follow-up checklist.') })),
       h('p', { class: 'actions' }, h('a', { href: '#/tools', class: 'btn btn-secondary' },
         t('home.start.browse', 'Browse all care tools and guides')))),
+    helpForSection(),
     h('nav', { class: 'path-grid', 'aria-label': t('home.paths.label', 'What do you need?') },
       pathCard({
         href: '#/treatment', iconName: 'compass',
@@ -508,5 +626,6 @@ export function notFoundView() {
       t('notfound.lede', 'That page does not exist, but help is still here.'),
     ),
     p(h('a', { class: 'btn btn-primary', href: '#/' }, t('notfound.home', 'Go to the home page'))),
+    topicSearch({ idPrefix: 'notfound-topic', title: t('topicSearch.notFoundTitle', 'Search for what you need') }),
   );
 }

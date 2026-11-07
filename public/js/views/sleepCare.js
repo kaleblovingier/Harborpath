@@ -4,7 +4,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & WITHDRAWAL SLEEP ARCHITECTURES
@@ -424,7 +424,7 @@ export function sleepCareView() {
 
   function render() {
     clear(container);
-    const isEs = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const localState = getSleepState();
     const evalResult = evaluateSleepProfile(localState);
 
@@ -434,7 +434,7 @@ export function sleepCareView() {
         icon('heart'),
         h('span', {}, isEs ? 'Salud y Restauración del Sueño' : 'Sleep Health & Recovery Architecture')
       ]),
-      h('h2', {}, isEs ? 'Navegador de Restauración del Sueño e Insomnio en Recuperación' : 'Sleep Restoration & Insomnia in Recovery Navigator'),
+      h('h1', {}, isEs ? 'Navegador de Restauración del Sueño e Insomnio en Recuperación' : 'Sleep Restoration & Insomnia in Recovery Navigator'),
       h('p', { class: 'view-intro' }, isEs
         ? 'El insomnio es el predictor número 1 de recaída en la recuperación temprana. Conozca las fases de abstinencia aguda y prolongada (PAWS), protocolos de TCC-I basados en evidencia y alternativas farmacológicas no controladas y seguras con MOUD.'
         : 'Insomnia is the #1 predictor of relapse in early recovery. Understand acute and post-acute withdrawal (PAWS) sleep disruption, evidence-based CBT-I behavioral protocols, and non-controlled sleep pharmacotherapies safe with MOUD.')

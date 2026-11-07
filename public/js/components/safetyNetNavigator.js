@@ -19,7 +19,8 @@
  *      for acute withdrawal, overdose, severe trauma, sepsis, or psychiatric emergencies regardless of payment ability.
  *
  * 4. Tele-MOUD & Telehealth Accessibility:
- *    - DEA/SAMHSA buprenorphine flexibilities permitting audio-video and audio-only clinical induction.
+ *    - DEA buprenorphine telemedicine rule (21 CFR § 1306.51; audio-only start, initial supply up to 6 months)
+ *      plus temporary DEA/HHS telemedicine flexibilities through Dec. 31, 2026.
  *    - Lifeline & federal subsidized phone connectivity pathways for low-income telehealth.
  *
  * Strict Invariants:
@@ -33,6 +34,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { p, fine, ul, strong } from '../views/common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetSafetyNetState);
 
 // ============================================================================
 // 1. Statutory Frameworks & Safety-Net Programs
@@ -69,10 +74,10 @@ export const FEDERAL_SAFETY_NET_PROGRAMS = [
   {
     id: 'telehealth_moud_flexibility',
     title: { en: 'Tele-MOUD & Low-Barrier Telehealth Flexibilities', es: 'Flexibilidad de Telemedicina para MOUD y Buprenorfina' },
-    citation: 'DEA / SAMHSA Telemedicine Regulations (21 CFR § 1300.04)',
+    citation: 'DEA telemedicine rules (21 CFR § 1306.51) and temporary DEA/HHS flexibilities (through Dec. 31, 2026)',
     summary: {
-      en: 'Federal rules allow authorized providers to prescribe buprenorphine for opioid use disorder via audio-video or audio-only telephone visits without a prior in-person visit, eliminating transportation hurdles for rural, disabled, or underinsured patients.',
-      es: 'Las normativas federales permiten a proveedores autorizados recetar buprenorfina para el trastorno por uso de opioides mediante videollamada o teléfono de audio exclusivo sin examen presencial previo, eliminando barreras de transporte.',
+      en: 'As of late 2026, buprenorphine for opioid use disorder can be started by telehealth without an in-person visit. Temporary DEA/HHS telemedicine flexibilities run through Dec. 31, 2026. Separately, a permanent DEA rule (21 CFR § 1306.51, in effect since the end of 2025) allows starting it by video or audio-only phone visit for an initial supply of up to 6 months after a state prescription-monitoring (PDMP) check; after that, continued prescribing needs an in-person exam or another permitted form of telemedicine, such as a video visit. State rules and individual prescribers may be stricter, and federal rules may change after 2026. This removes transportation hurdles for many rural, disabled, or underinsured patients.',
+      es: 'A finales de 2026, la buprenorfina para el trastorno por consumo de opioides puede iniciarse por telesalud sin una consulta presencial. Las flexibilidades temporales de telemedicina de la DEA y el HHS están vigentes hasta el 31 de diciembre de 2026. Además, una norma permanente de la DEA (21 CFR § 1306.51, vigente desde finales de 2025) permite iniciarla por video o por llamada solo de audio con un suministro inicial de hasta 6 meses, tras revisar el programa estatal de monitoreo de recetas (PDMP); después, para seguir recetándola se requiere un examen en persona u otra forma permitida de telemedicina, como una videoconsulta. Las normas estatales y cada profesional pueden ser más estrictos, y las normas federales pueden cambiar después de 2026. Esto elimina barreras de transporte para muchos pacientes rurales, con discapacidad o con poco seguro.',
     },
   },
 ];

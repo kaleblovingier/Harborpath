@@ -2,6 +2,7 @@ import { h, tel } from '../dom.js';
 import { pageHeader, section, p, fine, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
 import { sourceContext } from '../components/sourceContext.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // Only these task identifiers and boolean checkmarks can enter this workspace.
 // No personal details, search answers, or information from other views is read.
@@ -69,7 +70,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { id: 'documentation', key: 'workspace.task.documentation', label: 'Document checklist actions in your organization’s approved electronic health record without copying personal notes into HarborPath.' },
       { id: 'harmreduction', key: 'workspace.task.harmreduction', label: 'Confirm take-home naloxone, fentanyl/xylazine test strips, and safer-use instructions were provided or offered.' },
       { id: 'transportation', key: 'workspace.task.transportation', label: 'Verify transportation logistics, transit passes, or Medicaid Non-Emergency Medical Transportation (NEMT) arrangements.' },
-      { id: 'crisissupport', key: 'workspace.task.crisissupport', label: 'Provide 24/7 crisis numbers (988, Never Use Alone: 877-696-1996) and local peer support resources to the individual.' },
+      { id: 'crisissupport', key: 'workspace.task.crisissupport', label: 'Provide 24/7 crisis numbers (988, Never Use Alone: {nua}) and local peer support resources to the individual.' },
     ],
     links: [
       { href: '#/chronic-pain', key: 'workspace.link.chronicPain', label: 'Pain & sedative taper guide' },
@@ -149,7 +150,7 @@ export function formatCareWorkspaceSummary({ checked } = getCareWorkspaceState()
       const status = selected.has(task.id)
         ? t('workspace.summary.checked', 'Checked')
         : t('workspace.summary.unchecked', 'Not checked — needs review');
-      lines.push(`${selected.has(task.id) ? '[x]' : '[ ]'} ${status}: ${t(task.key, task.label)}`);
+      lines.push(`${selected.has(task.id) ? '[x]' : '[ ]'} ${status}: ${t(task.key, task.label, { nua: NEVER_USE_ALONE.label })}`);
     }
   }
   lines.push('', t('workspace.summary.crisis', 'For immediate danger or a suspected overdose, call 911. For a mental health or suicide crisis, call or text 988.'));
@@ -182,7 +183,7 @@ export function careWorkspaceView({ meta } = {}) {
         onchange: (event) => setCareWorkspaceTask(task.id, event.target.checked),
       });
       controls.set(task.id, control);
-      return h('li', null, h('label', { for: id, class: 'check workspace-task' }, control, h('span', null, t(task.key, task.label))));
+      return h('li', null, h('label', { for: id, class: 'check workspace-task' }, control, h('span', null, t(task.key, task.label, { nua: NEVER_USE_ALONE.label }))));
     })),
     h('div', { class: 'actions no-print' }, stage.links.map((link) => h('a', { class: 'btn btn-small btn-secondary', href: link.href }, t(link.key, link.label)))),
   ));

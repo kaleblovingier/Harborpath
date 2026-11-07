@@ -5,6 +5,10 @@
 
 import { h, ext, icon, announce, clear } from '../dom.js';
 import { getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetMutualAidState);
 
 /**
  * 4-Philosophy Recovery Taxonomy + Family Allies

@@ -1,5 +1,9 @@
 import { h, announce } from '../dom.js';
 import { t } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetSensoryMode);
 
 let sensoryModeEnabled = false;
 const listeners = new Set();

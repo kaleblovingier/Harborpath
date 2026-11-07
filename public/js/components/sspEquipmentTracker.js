@@ -35,6 +35,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { p, fine, ul, strong } from '../views/common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetSspTrackerState);
 
 // ============================================================================
 // 1. Evidence-Based Equipment Standards

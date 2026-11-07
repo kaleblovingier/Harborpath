@@ -43,6 +43,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetOlderAdultsState);
 
 // ============================================================================
 // 1. Medicare SUD Statutory Rules & Benefit Taxonomy
@@ -1034,12 +1038,12 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Ayuda SAMHSA:' : 'SAMHSA National Helpline:'),
       h('span', {}, ' '),
-      tel('800-662-4357', { class: 'hotline-link' })
+      tel('800-662-4357', null, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Crisis 988:' : '988 Suicide & Crisis Lifeline:'),
       h('span', {}, ' '),
-      tel('988', { class: 'hotline-link' })
+      tel('988', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);

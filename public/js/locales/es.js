@@ -7,6 +7,8 @@ import esPrivacy from './es-privacy.js';
 import esTools from './es-tools.js';
 import esWorkspace from './es-workspace.js';
 import esEvidence from './es-evidence.js';
+import esSafety from './es-safety.js';
+import esRecovery from './es-recovery.js';
 
 export default {
   // ---------------------------------------------------------------- Sensory mode & Emergency drawer
@@ -41,7 +43,7 @@ export default {
   'emergency.step2Title': 'Aplique 4 mg de naloxona en 1 fosa nasal',
   'emergency.step2Desc': 'Abra el envase. Incline la cabeza hacia atrás. Inserte la boquilla en una fosa nasal hasta que sus dedos toquen la nariz. Presione el émbolo con firmeza hasta que haga clic.',
   'emergency.step3Title': 'Apoye la respiración: siga las indicaciones del 911',
-  'emergency.step3Desc': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un DEA si está disponible. Dé respiraciones de rescate según su capacitación o las indicaciones del operador; nunca retrase la RCP para usar un temporizador.',
+  'emergency.step3Desc': 'Si la persona no responde y no respira normalmente, siga las indicaciones de RCP del operador del 911. Use un desfibrilador externo automático (DEA) si hay uno disponible. Dé respiraciones de rescate según su capacitación o las indicaciones del operador; nunca retrase la RCP para usar un temporizador.',
   'emergency.step4Title': 'Repita cada 2 a 3 minutos si la respiración es anormal',
   'emergency.step4Desc': 'Si la respiración sigue lenta, superficial o ausente, o vuelve a ser anormal, use un aerosol nasal de naloxona nuevo en la otra fosa nasal. Repita cada 2 a 3 minutos según la etiqueta hasta que vuelva la respiración normal o la ayuda de emergencia se haga cargo. No dé dosis adicionales solo para despertar a alguien que respira normalmente.',
   'emergency.pacerGuide': 'Siga las indicaciones del operador del 911 para apoyar la respiración o hacer RCP. Esta referencia no es un temporizador de RCP.',
@@ -333,7 +335,7 @@ export default {
   'reach.showTelehealth': 'Mostrar programas de telesalud en {state}',
   'reach.telehealthTitle': 'Telesalud: ',
   'reach.telehealthEduTitle': 'Telesalud con flexibilidades de la DEA/SAMHSA y de bajo umbral',
-  'reach.telehealthEduBody': 'Bajo las flexibilidades federales de telesalud de la DEA y SAMHSA, profesionales autorizados pueden evaluar y recetar buprenorfina para el trastorno por consumo de opioides por telesalud sin requerir una consulta presencial previa. Las consultas solo por teléfono brindan acceso vital en áreas rurales y tribales con conexión limitada. Según las normas de SAMHSA, la consejería no puede ser una barrera arbitraria para iniciar medicamentos que salvan vidas.',
+  'reach.telehealthEduBody': 'Según las normas federales de la DEA a finales de 2026, la buprenorfina para el trastorno por consumo de opioides puede iniciarse por telesalud sin una consulta presencial. Las flexibilidades temporales de telemedicina de la DEA y el HHS están vigentes hasta el 31 de diciembre de 2026. Además, una norma permanente de la DEA (21 CFR § 1306.51, vigente desde finales de 2025) permite iniciarla por video o por llamada solo de audio con un suministro inicial de hasta 6 meses, tras revisar el programa estatal de monitoreo de recetas (PDMP); después, para seguir recetándola se requiere un examen en persona u otra forma permitida de telemedicina, como una videoconsulta. Las normas estatales y cada profesional pueden ser más estrictos, y las normas federales pueden cambiar después de 2026. Las consultas solo por teléfono brindan acceso vital en áreas rurales y tribales con conexión limitada. Según las normas de SAMHSA, la consejería no puede ser una barrera arbitraria para iniciar medicamentos que salvan vidas.',
   'reach.filterAria': 'Filtrar programas de telesalud',
   'reach.filterBup': 'Receta por telesalud de buprenorfina (DEA/SAMHSA)',
   'reach.filterPhone': 'Consultas solo por teléfono (acceso rural y tribal)',
@@ -611,7 +613,7 @@ export default {
   'nav.redflag.severe_withdrawal': 'Riesgo de abstinencia de alta complejidad: Los síntomas agudos graves de abstinencia o antecedentes de abstinencia complicada requieren estabilización médica las 24 horas (Nivel ASAM 3.7-WM / 4.0) o evaluación inmediata en un hospital o clínica puente.',
   'nav.redflag.xylazine_acuity': 'Alerta de abstinencia y heridas por xilacina / medetomidina: El rebote adrenérgico alfa-2 puede causar alzas graves de presión arterial e inestabilidad autonómica junto con la abstinencia de opioides. Busque atención con monitoreo médico que trate tanto la abstinencia de opioides como la alfa-2 y evalúe cualquier úlcera cutánea.',
   'nav.redflag.pregnant': 'Prioridad de Embarazo y Atención Perinatal (Guías ACOG / ASAM): Si está embarazada y consume opioides, las guías clínicas recomiendan ampliamente iniciar o continuar el mantenimiento con buprenorfina (BU) o metadona (MU/OTP) en lugar de una desintoxicación abrupta. La abstinencia de opioides sin supervisión durante el embarazo puede causar sufrimiento fetal, parto prematuro y retorno al consumo.',
-  'nav.redflag.acute_infection': 'Advertencia Biomédica Urgente (Fiebre, Herida Grave o Riesgo de Infección Sistémica): Fiebre, escalofríos, enrojecimiento que se extiende, tejido negro/necrótico, dolor en el pecho o falta de aire pueden indicar endocarditis, osteomielitis, sepsis o infección profunda. Busque evaluación hospitalaria inmediata (HI) o atención médica de urgencia (#/health). Bajo la ley EMTALA, las salas de emergencia deben evaluarle y estabilizarle sin importar su seguro o capacidad de pago.',
+  'nav.redflag.acute_infection': 'Advertencia Biomédica Urgente (Fiebre, Herida Grave o Riesgo de Infección Sistémica): Fiebre, escalofríos, enrojecimiento que se extiende, tejido negro/necrótico, dolor en el pecho o falta de aire pueden indicar endocarditis, osteomielitis, sepsis o infección profunda potencialmente mortales. Busque evaluación hospitalaria inmediata, incluida la hospitalización (HI), o atención médica o de heridas urgente (#/health). Bajo la ley EMTALA, las salas de emergencia deben evaluarle y estabilizarle sin importar su seguro o capacidad de pago.',
   'nav.redflag.mental_crisis': 'Apoyo en Crisis Aguda de Salud Mental: Si tiene pensamientos de autolesión, pánico abrumador o psicosis, no tiene que enfrentar esto solo/a. Llame o envíe un texto al 988 (gratis, confidencial, 24/7) o utilice atención de crisis sin cita (WI) y equipos móviles de crisis (PEOFF). La atención integrada de diagnóstico dual (MHSU) trata la salud mental y el consumo de sustancias al mismo tiempo.',
   'nav.note.opioid_moud': 'Trastorno por Consumo de Opioides y Regla de las 72 Horas de la DEA (21 CFR § 1306.07(b)): Los medicamentos aprobados por la FDA —buprenorfina (BU), metadona (MU/OTP) y naltrexona de liberación prolongada (NU)— tratan el trastorno por consumo de opioides; continuar con buprenorfina o metadona se asocia con una gran reducción de las muertes por sobredosis (Larochelle et al., Ann Intern Med 2018). Bajo la norma federal 21 CFR § 1306.07(b), cualquier médico de sala de emergencias u hospital puede administrar o dispensar hasta 72 horas (3 días) de buprenorfina o metadona para aliviar la abstinencia aguda de opioides mientras le conecta con atención continua.',
   'nav.note.xylazine': 'Adulteración con Xilacina / Medetomidina (“Tranq”): La xilacina y la medetomidina son sedantes adrenérgicos alfa-2 no opioides. Su abstinencia causa hipertensión de rebote, taquicardia, sudoración y ansiedad intensa que los medicamentos opioides por sí solos no alivian por completo; los médicos suelen añadir agonistas alfa-2 (como clonidina, tizanidina o dexmedetomidina) junto con buprenorfina o metadona.',
@@ -623,7 +625,7 @@ export default {
   'nav.note.mhsu': 'Salud Mental y Consumo de Sustancias Concurrentes (MHSU): La evidencia demuestra que la depresión, ansiedad, trastorno bipolar, TEPT y el consumo de sustancias deben tratarse al mismo tiempo por un equipo integrado.',
   'nav.note.trauma': 'Atención Informada en el Trauma (TRMA): Los programas especializados en trauma priorizan la seguridad física y emocional, la elección, la colaboración y el empoderamiento, evitando tácticas de confrontación.',
   'nav.note.housing': 'Entorno Seguro de Recuperación y Vivienda (Dimensión 5 de ASAM): La falta de vivienda estable dificulta la recuperación. Considere residencias de recuperación certificadas por NARR (código HH) o llamar al 211 para apoyo de vivienda local.',
-  'nav.note.telehealth': 'Acceso por Telesalud (Flexibilidades de SAMHSA / DEA): Bajo las normas federales, los profesionales clínicos pueden iniciar buprenorfina (BU) y brindar consejería ambulatoria mediante consultas por video o teléfono (código TELE) sin exigir primero un examen en persona.',
+  'nav.note.telehealth': 'Acceso por Telesalud (normas de la DEA a finales de 2026; código TELE): La consejería ambulatoria puede ofrecerse por video o teléfono, y la buprenorfina para el trastorno por consumo de opioides puede iniciarse por telesalud sin una consulta presencial. Las flexibilidades temporales de telemedicina de la DEA y el HHS están vigentes hasta el 31 de diciembre de 2026. Además, una norma permanente de la DEA (21 CFR § 1306.51, vigente desde finales de 2025) permite iniciarla por video o por llamada solo de audio con un suministro inicial de hasta 6 meses, tras revisar el programa estatal de monitoreo de recetas (PDMP); después, para seguir recetándola se requiere un examen en persona u otra forma permitida de telemedicina, como una videoconsulta. Las normas estatales y cada profesional pueden ser más estrictos, y las normas federales pueden cambiar después de 2026.',
   'nav.dim1.short': 'Intoxicación Aguda y Potencial de Abstinencia',
   'nav.dim1.finding.gaba': 'Alto riesgo de abstinencia de alcohol/benzodiazepinas — requiere manejo médico de abstinencia (DT/HI).',
   'nav.dim1.finding.severe': 'Síntomas graves de abstinencia aguda — se recomienda estabilización médica las 24 horas.',
@@ -1507,10 +1509,10 @@ export default {
   'methadone.tab.travel': 'Dosis como invitado y viajes',
   'methadone.tab.scripts': 'Guiones de autodefensa',
   'methadone.calc.title': 'Calculadora de elegibilidad para dosis para llevar',
-  'methadone.calc.intro': 'La Regla Final de 2024 de SAMHSA eliminó la antigua escala de años de espera. Calcule el máximo federal de botellas que le corresponde según su tiempo y los 8 criterios clínicos.',
+  'methadone.calc.intro': 'La Regla Final de 2024 de SAMHSA eliminó la antigua escala de años de espera. Calcule el máximo federal de botellas que le corresponde según su tiempo y la lista de seguridad clínica a continuación.',
   'methadone.daysLabel': 'Días en tratamiento: ',
   'methadone.lockboxLabel': 'Tengo una caja con llave o candado (lockbox) en casa (Obligatorio según normas federales)',
-  'methadone.criteriaTitle': 'Criterios clínicos de seguridad según 42 CFR § 8.12(i)(2):',
+  'methadone.criteriaTitle': 'Lista de seguridad para dosis para llevar (basada en los factores de 42 CFR § 8.12(i)(2)):',
   'methadone.lockboxRequired': 'Acción requerida: Falta caja con llave',
   'methadone.eligibleTitle': 'Elegibilidad máxima federal',
   'methadone.recHeader': 'Orientación clínica: ',
@@ -1583,6 +1585,7 @@ export default {
   'hotline.stronghearts.text': 'Envíe un mensaje de texto al 1-844-762-8483',
   'app.savedCount': '{n} guardados',
   'app.footer.dataUpdated': 'Datos de centros de salud actualizados el {date}. Los listados de tratamiento se consultan en vivo.',
+  'app.loadingView': 'Cargando…',
 
   'home.hero.title': 'Encuentre atención y manténgase más seguro/a, en sus propios términos.',
   'home.hero.lede': 'Busque tratamiento con licencia para adicciones, navegación clínica de atención, guías de medicamentos, herramientas de reducción de daños y atención médica de bajo costo cerca de usted. Gratis y privado, sin registro, anuncios ni rastreo.',
@@ -1880,4 +1883,6 @@ export default {
   ...esTools,
   ...esWorkspace,
   ...esEvidence,
+  ...esSafety,
+  ...esRecovery,
 };

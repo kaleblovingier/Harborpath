@@ -36,6 +36,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetWoundState);
 
 // ============================================================================
 // 1. Evidence-Based Wound Care Protocols & Cytotoxic Warnings
@@ -786,12 +790,12 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Emergencias Quirúrgicas / Sepsis:' : 'Emergency Surgical / Sepsis:'),
       h('span', {}, ' '),
-      tel('911', { class: 'hotline-link text-danger' })
+      tel('911', null, { class: 'hotline-link text-danger' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea Poison Help (24/7):' : 'Poison Help Line (24/7):'),
       h('span', {}, ' '),
-      tel('1-800-222-1222', { class: 'hotline-link' })
+      tel('1-800-222-1222', null, { class: 'hotline-link' })
     )
   );
   const hospCard = h('div', { class: 'card mt-3 no-print' },

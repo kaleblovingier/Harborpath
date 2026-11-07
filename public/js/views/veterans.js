@@ -55,6 +55,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetVeteransState);
 
 // ============================================================================
 // 1. VA MISSION Act of 2018 (38 U.S.C. § 1703) Taxonomy & Standards
@@ -299,8 +303,8 @@ const TRICARE_CARE_LEVELS_DATA = [
       es: 'Programa ambulatorio estructurado de varios días a la semana. La autorización previa del contratista regional de TRICARE es OBLIGATORIA para todos los beneficiarios antes de iniciar.',
     },
     clinicalNotes: {
-      en: 'Humana Military (East Region: 1-800-444-5445) or Health Net Federal Services / TriWest (West Region: 1-844-866-9378) manages authorization.',
-      es: 'Humana Military (Región Este: 1-800-444-5445) o Health Net / TriWest (Región Oeste: 1-844-866-9378) gestionan la autorización.',
+      en: 'Humana Military (East Region: 1-800-444-5445) or TriWest Healthcare Alliance (West Region since Jan. 1, 2025: 1-888-874-9378) manages authorization.',
+      es: 'Humana Military (Región Este: 1-800-444-5445) o TriWest Healthcare Alliance (Región Oeste desde el 1 de enero de 2025: 1-888-874-9378) gestionan la autorización.',
     },
   },
   {
@@ -400,9 +404,11 @@ TRICARE_CARE_LEVELS.REGIONS = {
     url: 'https://www.humanamilitary.com/',
   },
   west: {
-    contractor: 'Health Net Federal Services / TriWest',
-    phone: '1-844-866-9378',
-    url: 'https://www.tricare-west.com/',
+    // TriWest Healthcare Alliance replaced Health Net Federal Services as the
+    // West Region contractor on Jan. 1, 2025 (tricare.mil/ContactUs/CallUs).
+    contractor: 'TriWest Healthcare Alliance',
+    phone: '1-888-874-9378',
+    url: 'https://tricare.mil/west',
   },
 };
 
@@ -722,7 +728,7 @@ export function evaluateVeteransEligibility(inputs = {}) {
     if (tricareRequiresPreAuth) {
       questions.push({
         topic: 'TRICARE Prior Authorization',
-        question: 'Has my provider submitted the clinical pre-authorization request to the regional TRICARE contractor (Humana Military or Health Net / TriWest) to prevent out-of-pocket costs?',
+        question: 'Has my provider submitted the clinical pre-authorization request to the regional TRICARE contractor (Humana Military or TriWest Healthcare Alliance) to prevent out-of-pocket costs?',
       });
     } else {
       questions.push({
@@ -1552,8 +1558,8 @@ export function veteransView({ query = new URLSearchParams() } = {}) {
           p(tr('Phone: 1-800-444-5445 | Web: HumanaMilitary.com', 'Teléfono: 1-800-444-5445 | Web: HumanaMilitary.com'))
         ),
         h('div', null,
-          strong('TRICARE West Region (Health Net Federal / TriWest):'),
-          p(tr('Phone: 1-844-866-9378 | Web: tricare-west.com', 'Teléfono: 1-844-866-9378 | Web: tricare-west.com'))
+          strong('TRICARE West Region (TriWest Healthcare Alliance):'),
+          p(tr('Phone: 1-888-TRIWEST (1-888-874-9378) | Web: tricare.mil/west', 'Teléfono: 1-888-TRIWEST (1-888-874-9378) | Web: tricare.mil/west'))
         )
       )
     );

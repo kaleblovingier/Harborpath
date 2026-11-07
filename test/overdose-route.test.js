@@ -345,32 +345,19 @@ test('overdoseView() mounts both the static guide and the interactive pacer, wit
   });
 });
 
-test('runQuickExitResets source includes resetOverdosePacer and targets ./components/overdosePacing.js', () => {
-  const appJsPath = path.join(rootDir, 'public', 'js', 'app.js');
-  assert.ok(fs.existsSync(appJsPath), 'public/js/app.js must exist');
+test('overdose pacer registers resetOverdosePacer for Quick Exit and app.js imports nothing on exit', () => {
+  const appSource = fs.readFileSync(path.join(rootDir, 'public', 'js', 'app.js'), 'utf8');
+  const pacerSource = fs.readFileSync(path.join(rootDir, 'public', 'js', 'components', 'overdosePacing.js'), 'utf8');
 
-  const appSource = fs.readFileSync(appJsPath, 'utf8');
-
-  // Verify runQuickExitResets function contains resetOverdosePacer
   const fnMatch = appSource.match(/export function runQuickExitResets\(\)\s*\{([\s\S]*?)\n\}/);
   assert.ok(fnMatch, 'runQuickExitResets() function must be exported from app.js');
+  assert.ok(fnMatch[1].includes('runQuickExitHandlers()'), 'runQuickExitResets runs the registered module resets');
+  // Importing a module on the way out would fetch it, and an offline worker
+  // would save it again right after the wipe.
+  assert.doesNotMatch(fnMatch[1], /import\(/, 'runQuickExitResets must not import modules');
 
-  const fnBody = fnMatch[1];
-  assert.ok(
-    fnBody.includes('resetOverdosePacer'),
-    'runQuickExitResets body must include resetOverdosePacer'
-  );
-  assert.ok(
-    fnBody.includes('./components/overdosePacing.js'),
-    'runQuickExitResets body must import from ./components/overdosePacing.js'
-  );
-
-  // Exact pattern check matching directive 2
-  const expectedLine = "import('./components/overdosePacing.js').then((m) => m.resetOverdosePacer?.()).catch(() => {});";
-  assert.ok(
-    fnBody.includes(expectedLine),
-    `runQuickExitResets must include the exact line:\n${expectedLine}`
-  );
+  assert.ok(pacerSource.includes("import { onQuickExit } from '../state.js';"));
+  assert.ok(pacerSource.includes('onQuickExit(resetOverdosePacer);'), 'overdosePacing.js registers its reset when it loads');
 });
 
 test('calling runQuickExitResets() halts active pacer timers and restores clean state', async () => {

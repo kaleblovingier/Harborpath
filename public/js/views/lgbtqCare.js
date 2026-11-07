@@ -37,6 +37,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetLgbtqState);
 
 // ============================================================================
 // 1. Clinical Standards & Hormone Therapy Compatibility
@@ -861,14 +865,14 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'The Trevor Project (LGBTQ+ 24/7):' : 'The Trevor Project:'),
       h('span', {}, ' '),
-      tel('1-866-488-7386', { class: 'hotline-link' }),
+      tel('1-866-488-7386', null, { class: 'hotline-link' }),
       h('span', {}, ' | '),
-      sms('678678', { class: 'hotline-link' }, isEs ? 'Texto START al 678678' : 'Text START to 678678')
+      sms('678678', 'START', isEs ? 'Envíe START al 678678' : 'Text START to 678678', { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Trans Lifeline (Pares trans 24/7):' : 'Trans Lifeline:'),
       h('span', {}, ' '),
-      tel('1-877-565-8860', { class: 'hotline-link' })
+      tel('1-877-565-8860', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);

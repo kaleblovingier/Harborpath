@@ -4,7 +4,8 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & NIGHTLIFE SUBSTANCE PROFILES
@@ -390,7 +391,7 @@ export function formatNightlifeSummaryText(state = nightlifeState, lang = 'en') 
     lines.push(`- ${isEs ? pt.tipEs : pt.tipEn}`);
   });
   lines.push('');
-  lines.push(isEs ? 'Línea de Acompañamiento Never Use Alone: 877-696-1997' : 'Never Use Alone Hotline: 877-696-1997');
+  lines.push(isEs ? 'Línea de Acompañamiento Never Use Alone: ' + NEVER_USE_ALONE.label : 'Never Use Alone Hotline: ' + NEVER_USE_ALONE.label);
   lines.push(isEs ? 'Emergencias Médicas: 911 | Centro de Toxicología: 800-222-1222' : 'Medical Emergencies: 911 | Poison Control: 800-222-1222');
 
   return lines.join('\n');
@@ -405,7 +406,7 @@ export function nightlifeCareView() {
 
   function render() {
     clear(container);
-    const isEs = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const localState = getNightlifeState();
     const evalResult = evaluateNightlifeScenario(localState);
 
@@ -415,7 +416,7 @@ export function nightlifeCareView() {
         icon('shield'),
         h('span', {}, isEs ? 'Reducción de Daños en Ocio Nocturno' : 'Nightlife & Festival Harm Reduction')
       ]),
-      h('h2', {}, isEs ? 'Guía Clínica de Reducción de Daños en Ocio Nocturno y Clubes' : 'Nightlife, Club Drugs, Dissociatives & Festival Harm Reduction'),
+      h('h1', {}, isEs ? 'Guía Clínica de Reducción de Daños en Ocio Nocturno y Clubes' : 'Nightlife, Club Drugs, Dissociatives & Festival Harm Reduction'),
       h('p', { class: 'view-intro' }, isEs
         ? 'Pautas basadas en evidencia para MDMA, ketamina, GHB/GBL, óxido nitroso y 2C-B. Conozca el protocolo de balance de líquidos contra hiponatremia, salud vesical ("vejiga K"), pruebas de reactivos químicos y prevención de intoxicaciones.'
         : 'Evidence-based protocols for MDMA, ketamine, GHB/GBL, nitrous oxide, and 2C-B. Learn the fluid balance protocol to prevent fatal hyponatremia, ketamine bladder health, chemical reagent testing, and non-judgmental nightlife safety.')

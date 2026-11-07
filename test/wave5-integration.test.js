@@ -639,12 +639,13 @@ describe('Wave 5 Deterministic Resets & Quick Exit Contracts', () => {
     }
   });
 
-  test('client app.js registers resetReadinessState() in runQuickExitResets', () => {
+  test('readiness registers resetReadinessState() for Quick Exit when it loads', () => {
     if (clientAppPath && fs.existsSync(clientAppPath)) {
-      const code = fs.readFileSync(clientAppPath, 'utf8');
+      const readinessPath = path.join(path.dirname(clientAppPath), 'views', 'readiness.js');
+      const code = fs.readFileSync(readinessPath, 'utf8');
       assert.ok(
-        code.includes('resetReadinessState'),
-        'public/js/app.js must invoke resetReadinessState() during Quick Exit'
+        code.includes('onQuickExit(resetReadinessState)'),
+        'public/js/views/readiness.js must register resetReadinessState() with onQuickExit()'
       );
     }
   });

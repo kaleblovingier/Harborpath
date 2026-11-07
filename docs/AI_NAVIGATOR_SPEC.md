@@ -38,13 +38,13 @@ flowchart TD
    - Deterministic red-flag interceptor that inspects a string or structured input object (`{ text, freeText, flags, overdose, crisis, usingAlone, mentalHealth }`).
    - **Overdose / Unresponsive Emergency** (`category: 'overdose'`, `severity: 'critical'`):
      - Triggered by keywords (`overdose`, `not breathing`, `slow breathing`, `blue lips`, `unresponsive`, `won't wake up`, `fentanyl poisoning`, `narcan now`, `naloxone now`, `sobredosis`, `no respira`) or `flags: ['overdose']`.
-     - Immediately surfaces actions for **Call 911 Immediately** (`tel:911`), **Open Step-by-Step Overdose & 2-Minute Naloxone Timer** (`#/overdose`), **Never Use Alone (`877-696-1996`)**, and **SafeSpot Overdose Prevention Line (`800-972-0590`)**, plus SAMHSA code `['NOE']`.
+     - Immediately surfaces actions for **Call 911 Immediately** (`tel:911`), **Open Step-by-Step Overdose & 2-Minute Naloxone Timer** (`#/overdose`), **Never Use Alone (`1-800-484-3731`)**, and **SafeSpot Overdose Prevention Line (`800-972-0590`)**, plus SAMHSA code `['NOE']`.
    - **Suicide / Self-Harm / Acute Mental Health Crisis** (`category: 'crisis'`, `severity: 'critical'`):
      - Triggered by keywords (`suicide`, `suicidal`, `kill myself`, `end my life`, `self-harm`, `hurt myself`, `want to die`, `unsafe with myself`, `suicidio`, `hacerme daño`) or `mentalHealth: 'severe_crisis'`.
      - Immediately surfaces **Call or Text 988 Suicide & Crisis Lifeline** (`tel:988`), **Call 911** (`tel:911`), **SAMHSA National Helpline (`1-800-662-4357`)**, and **View All 24/7 Crisis & Community Lines** (`#/crisis`), plus SAMHSA codes `['WI', 'PEOFF', 'MHSU']`.
    - **Solo Use / Overdose Prevention** (`category: 'solo_use'`, `severity: 'high'`):
      - Triggered by keywords (`using alone`, `about to use alone`, `spot me`, `solo`, `usar a solas`) or `usingAlone: true`.
-     - Routes to **Never Use Alone (`877-696-1996`)**, **SafeSpot (`800-972-0590`)**, `#/harm-reduction`, and `#/overdose`, plus SAMHSA codes `['NOE', 'BU']`.
+     - Routes to **Never Use Alone (`1-800-484-3731`)**, **SafeSpot (`800-972-0590`)**, `#/harm-reduction`, and `#/overdose`, plus SAMHSA codes `['NOE', 'BU']`.
    - **No Acute Red Flag**:
      - Returns `{ intercepted: false, category: 'none', severity: 'none', actions: [], codes: [] }`.
 

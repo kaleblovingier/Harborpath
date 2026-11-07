@@ -21,6 +21,10 @@ import {
   tocNav,
   emergencyCallout,
 } from './common.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetHarmReductionState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 

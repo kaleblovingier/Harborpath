@@ -8,7 +8,12 @@
 // - American College of Emergency Physicians (ACEP) Post-Arrest & Overdose Care Consensus
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPostOverdoseState);
 
 /**
  * Clinical post-overdose response and survivorship framework.
@@ -191,8 +196,8 @@ export function evaluatePostOverdoseCare({
       level: 'HIGH',
       titleEn: 'Never Be Alone Post-Overdose',
       titleEs: 'Nunca se quede a solas tras una sobredosis',
-      textEn: 'Surviving an overdose leaves individuals at extreme vulnerability. If no companion can stay with you, call the Never Use Alone hotline (877-696-1996) or SafeSpot (800-972-0590).',
-      textEs: 'Sobrevivir a una sobredosis deja a la persona en extrema vulnerabilidad. Si no hay un acompañante disponible, llame a la línea Never Use Alone (877-696-1996) o a SafeSpot (800-972-0590).'
+      textEn: 'Surviving an overdose leaves individuals at extreme vulnerability. If no companion can stay with you, call the Never Use Alone hotline (' + NEVER_USE_ALONE.label + ') or SafeSpot (800-972-0590).',
+      textEs: 'Sobrevivir a una sobredosis deja a la persona en extrema vulnerabilidad. Si no hay un acompañante disponible, llame a la línea Never Use Alone (' + NEVER_USE_ALONE.label + ') o a SafeSpot (800-972-0590).'
     });
   }
 
@@ -285,7 +290,7 @@ export function formatPostOverdoseSummaryText(state, lang = 'en') {
  * Mounts the Post-Overdose Response view.
  */
 export function postOverdoseView(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';

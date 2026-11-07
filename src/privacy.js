@@ -14,7 +14,9 @@ export const ROUTE_PARAM_ALLOWLIST = Object.freeze({
   '/api/states': Object.freeze([]),
   '/api/state': Object.freeze(['code']),
   '/api/telehealth': Object.freeze(['state', 'kind', 'codes', 'page', 'lat', 'lng']),
-  '/api/treatment': Object.freeze(['lat', 'lng', 'radius', 'kind', 'codes', 'page', 'payer']),
+  // No `payer`: the browser matches coverage against each listing's payment
+  // codes, so the server never receives what coverage a visitor has.
+  '/api/treatment': Object.freeze(['lat', 'lng', 'radius', 'kind', 'codes', 'page']),
   '/api/health-centers': Object.freeze(['lat', 'lng', 'radius']),
   '/api/virtual-providers': Object.freeze(['state']),
   '/api/providers': Object.freeze(['type', 'lat', 'lng', 'radius', 'filter']),

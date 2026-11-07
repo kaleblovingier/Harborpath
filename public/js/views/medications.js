@@ -1,6 +1,10 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetMedicationsState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 
@@ -247,19 +251,20 @@ export const MEDICATIONS = [
       'Narcan / RiVive / generic naloxone (3 mg or 4 mg intranasal spray — OTC)',
       'Kloxxado (8 mg intranasal naloxone spray)',
       'Injectable IM Naloxone (0.4 mg/mL single-dose vials + intramuscular syringes)',
-      'Zimhi (5 mg/0.5 mL high-dose IM naloxone auto-injector)',
+      'Zimhi (5 mg/0.5 mL high-dose naloxone single-dose prefilled syringe, IM/SC — prescription)',
       'Opvee (2.7 mg intranasal nalmefene spray — prescription)',
+      'Zurnai (1.5 mg nalmefene IM/SC auto-injector — prescription, FDA-approved Aug 2024)',
     ],
     forms: 'Ready-to-use single-step nasal spray or intramuscular (IM) vial/syringe injected into the outer thigh or upper arm.',
     samhsaCodes: ['NOE'],
     finderHref: '#/treatment?codes=NOE',
     finderLabel: 'Find free naloxone & overdose education',
     summary: 'Life-saving competitive mu-opioid receptor antagonists that rapidly displace fentanyl, heroin, and oxycodone from receptors to restore breathing within 2–3 minutes.',
-    mechanism: 'Competitive mu-opioid receptor antagonists with higher receptor affinity than full agonists. Standard naloxone acts in 2–3 minutes and lasts 30–90 minutes. Nalmefene (Opvee) is a structural analog with a much longer elimination half-life of 5–11 hours.',
+    mechanism: 'Competitive mu-opioid receptor antagonists with higher receptor affinity than full agonists. Standard naloxone acts in 2–3 minutes and lasts 30–90 minutes. Nalmefene (Opvee nasal spray, Zurnai auto-injector) is a structural analog with a much longer terminal half-life (about 11 hours for Opvee and about 9 hours for Zurnai per FDA labels).',
     howToStart: 'Administer immediately if someone is unresponsive with slow, shallow, snoring/gurgling, or stopped breathing. Give 1 spray (or 1 IM dose), support breathing with rescue breaths (1 breath every 5 seconds), and wait a full 2–3 minutes before giving a second dose.',
     access: '4 mg and 3 mg naloxone nasal sprays (Narcan, RiVive, generics) are available Over-The-Counter (OTC) without a prescription at pharmacies, grocery stores, and online, and are distributed for free by harm reduction programs, health departments, and mail-based programs like NEXT Distro.',
     clinicalPearls: [
-      'Why clinical toxicologists & harm reduction specialists prefer standard 4 mg naloxone + rescue breathing: The clinical goal of overdose reversal is restoring adequate spontaneous breathing—not waking someone up into agonizing withdrawal. High-dose 8 mg naloxone or ultra-long-acting nalmefene (5–11 hr half-life) carries a significantly higher risk of severe, prolonged precipitated withdrawal (vomiting/aspiration, catecholamine surge, flash pulmonary edema, extreme agitation, and dangerous attempts to use huge amounts of fentanyl to overcome the blockade).',
+      'Why clinical toxicologists & harm reduction specialists prefer standard 4 mg naloxone + rescue breathing: The clinical goal of overdose reversal is restoring adequate spontaneous breathing—not waking someone up into agonizing withdrawal. High-dose 8 mg naloxone or long-acting nalmefene (~9–11 hr half-life) carries a significantly higher risk of severe, prolonged precipitated withdrawal (vomiting/aspiration, catecholamine surge, flash pulmonary edema, extreme agitation, and dangerous attempts to use huge amounts of fentanyl to overcome the blockade).',
       'Injectable intramuscular (IM) naloxone (0.4 mg–0.8 mg) offered by syringe services programs allows gentler, titratable reversal that restores breathing with minimal withdrawal.',
       'Xylazine ("tranq") and medetomidine are alpha-2 adrenergic sedatives—NOT opioids. Naloxone reverses the fentanyl component so breathing restarts, but the person may remain deeply sedated from xylazine. Once they are breathing steadily on their own, stop giving extra naloxone, roll them into the recovery position, and continue monitoring airway and breathing.',
     ],
@@ -470,7 +475,7 @@ export const NALTREXONE_WASHOUT_GUIDANCE = [
     mechanism: 'High lipophilicity causes fentanyl and its analogs to accumulate heavily in peripheral body fat, slowly leaching into systemic circulation for up to 2 weeks even after acute withdrawal fades.',
     testingChecklist: [
       'Laboratory-confirmed urine drug screen negative for both fentanyl and norfentanyl via LC-MS.',
-      'Supervised Naloxone Challenge Test is mandatory before 380 mg extended-release intramuscular injection.',
+      'Supervised naloxone challenge test before the 380 mg extended-release injection when recent opioid use is uncertain (the FDA Vivitrol label says a challenge test may be helpful; a negative test does not fully rule out precipitated withdrawal).',
     ],
     plainAdvice: 'Street fentanyl hides in body fat for up to 2 weeks. You must wait 10 to 14+ full days without any fentanyl before starting naltrexone, or you will experience severe precipitated withdrawal.',
   },
@@ -607,7 +612,7 @@ export const BERNESE_EXAMPLE_SCHEDULE = [
 
 export const REVERSAL_COMPARISON = [
   {
-    product: 'Naloxone 4 mg Nasal Spray (Narcan, RiVive, generics — OTC)',
+    product: 'Naloxone 3 mg or 4 mg Nasal Spray (RiVive 3 mg; Narcan and generics 4 mg — OTC)',
     onset: '2–3 minutes',
     duration: '30–90 minutes',
     guidance: 'First-line choice recommended by toxicologists and harm reduction programs. Restores breathing reliably with the lowest risk of severe precipitated withdrawal when paired with rescue breaths and a 2–3 minute wait between doses.',
@@ -627,8 +632,14 @@ export const REVERSAL_COMPARISON = [
   {
     product: 'Nalmefene 2.7 mg Nasal Spray (Opvee — Rx)',
     onset: '2–5 minutes',
-    duration: '5–11 hours (very long half-life)',
-    guidance: 'Ultra-long receptor blockade. If precipitated withdrawal occurs, agonizing symptoms and cardiovascular stress can last 6–11 hours and cannot be easily treated—leading ACMT and AACT medical toxicology societies to recommend standard naloxone first.',
+    duration: 'Many hours (terminal half-life ~11 h per FDA Opvee label)',
+    guidance: 'Long receptor blockade. If precipitated withdrawal occurs, agonizing symptoms and cardiovascular stress can last many hours and cannot be easily treated—leading ACMT and AACT medical toxicology societies to recommend standard naloxone first.',
+  },
+  {
+    product: 'Nalmefene 1.5 mg IM/SC Auto-Injector (Zurnai — Rx, FDA-approved Aug 2024)',
+    onset: '2.5–5 minutes (FDA label, clinical study)',
+    duration: 'Many hours (terminal half-life ~9 h per FDA Zurnai label)',
+    guidance: 'Same long-acting nalmefene blockade as Opvee in a needle auto-injector for ages 12+. Repeat every 2–5 minutes with a new device if breathing does not improve. Precipitated withdrawal can be prolonged, so call 911 and stay with the person.',
   },
 ];
 

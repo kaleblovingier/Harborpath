@@ -3,7 +3,8 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & DRUG INTERACTION STANDARDS
@@ -237,8 +238,8 @@ export function evaluatePolysubstanceRisk(selectedSubstanceIds = []) {
       ],
       harmReductionPoints: [
         {
-          tipEn: 'Do not use alone; utilize the Never Use Alone hotline (877-696-1997) or local overdose prevention services.',
-          tipEs: 'No consuma a solas; utilice la línea Never Use Alone (877-696-1997) o servicios locales de prevención de sobredosis.'
+          tipEn: 'Do not use alone; utilize the Never Use Alone hotline (' + NEVER_USE_ALONE.label + ') or local overdose prevention services.',
+          tipEs: 'No consuma a solas; utilice la línea Never Use Alone (' + NEVER_USE_ALONE.label + ') o servicios locales de prevención de sobredosis.'
         }
       ]
     };
@@ -389,8 +390,8 @@ export function evaluatePolysubstanceRisk(selectedSubstanceIds = []) {
     tipEs: 'Use tiras reactivas de fentanilo (FTS) y xilacina (XTS) para detectar combinaciones inesperadas de adulterantes en suministros no regulados.'
   });
   harmReductionPoints.push({
-    tipEn: 'Never Use Alone: Connect with the Never Use Alone hotline at 877-696-1997 or use virtual spotter applications.',
-    tipEs: 'Nunca consuma solo: Conéctese con la línea Never Use Alone al 877-696-1997 o utilice aplicaciones de acompañamiento virtual.'
+    tipEn: 'Never Use Alone: Connect with the Never Use Alone hotline at ' + NEVER_USE_ALONE.label + ' or use virtual spotter applications.',
+    tipEs: 'Nunca consuma solo: Conéctese con la línea Never Use Alone al ' + NEVER_USE_ALONE.label + ' o utilice aplicaciones de acompañamiento virtual.'
   });
 
   return {
@@ -489,7 +490,7 @@ export function formatPolysubstanceSummaryText(state = polysubstanceState, lang 
     lines.push(`- ${isEs ? pt.tipEs : pt.tipEn}`);
   });
   lines.push('');
-  lines.push(isEs ? 'Línea Never Use Alone (EE. UU.): 877-696-1997' : 'Never Use Alone Hotline (US): 877-696-1997');
+  lines.push(isEs ? 'Línea Never Use Alone (EE. UU.): ' + NEVER_USE_ALONE.label : 'Never Use Alone Hotline (US): ' + NEVER_USE_ALONE.label);
   lines.push(isEs ? 'Línea de Crisis y Suicidio: 988 | Emergencias: 911' : 'Suicide & Crisis Lifeline: 988 | Emergencies: 911');
 
   return lines.join('\n');
@@ -504,7 +505,7 @@ export function polysubstanceCareView() {
 
   function render() {
     clear(container);
-    const isEs = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const localState = getPolysubstanceState();
     const evalResult = evaluatePolysubstanceRisk(localState.selectedSubstances);
 
@@ -514,7 +515,7 @@ export function polysubstanceCareView() {
         icon('alert-triangle'),
         h('span', {}, isEs ? 'Toxicología y Reducción de Daños' : 'Toxicology & Harm Reduction')
       ]),
-      h('h2', {}, isEs ? 'Navegador de Sinergia de Polisustancias e Interacciones' : 'Polysubstance Overdose Synergy & Drug Interaction Navigator'),
+      h('h1', {}, isEs ? 'Navegador de Sinergia de Polisustancias e Interacciones' : 'Polysubstance Overdose Synergy & Drug Interaction Navigator'),
       h('p', { class: 'view-intro' }, isEs
         ? 'Más del 80% de las muertes por sobredosis involucran combinaciones de sustancias. Conozca las interacciones letales entre depresores, el enmascaramiento de estimulantes, el protocolo de vía aérea cuando la naloxona no basta y cómo protegerse sin juzgar.'
         : 'Over 80% of overdose fatalities involve multi-substance combinations. Understand fatal depressant synergies, stimulant masking, airway rescue protocols when naloxone does not reverse sedation, and non-judgmental harm reduction strategies.')
@@ -775,7 +776,7 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
           reRender();
         }
       }),
-      h('span', {}, isEs ? 'Acompañante de seguridad: Alguien sabe que estoy consumiendo o usaré Never Use Alone (877-696-1997)' : 'Safety spotter: Someone knows I am using or I will connect with Never Use Alone (877-696-1997)')
+      h('span', {}, isEs ? 'Acompañante de seguridad: Alguien sabe que estoy consumiendo o usaré Never Use Alone (' + NEVER_USE_ALONE.label + ')' : 'Safety spotter: Someone knows I am using or I will connect with Never Use Alone (' + NEVER_USE_ALONE.label + ')')
     ]),
     h('label', { class: 'checkbox-label' }, [
       h('input', {

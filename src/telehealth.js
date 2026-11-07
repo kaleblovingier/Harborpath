@@ -8,6 +8,7 @@
 import { readLatLng } from './geo.js';
 import { InputError, KINDS, PAGE_SIZE, UPSTREAM_URL, normalizeFacility } from './findtreatment.js';
 import { describeRegion } from './regions.js';
+import { cachedUpstream, fetchWithRetry, wait } from './upstream.js';
 import { toFiniteNumber } from './util.js';
 
 export const TELEHEALTH_CODE = 'TELE';
@@ -75,39 +76,37 @@ export function buildTelehealthUrl({ state, lat, lng, byDistance, kind, page, co
   return `${UPSTREAM_URL}?${qs}`;
 }
 
-export async function searchTelehealth(query, { taxonomy, fetchImpl = fetch, cache, timeoutMs = 15000 }) {
+/**
+ * Statewide telehealth search, with the same resilience as searchTreatment():
+ * retries within timeoutMs, a stale copy (`stale: true`) from `cache` when the
+ * upstream fails, and one upstream call for identical concurrent searches
+ * sharing an `inflight` Map.
+ */
+export async function searchTelehealth(query, {
+  taxonomy, fetchImpl = fetch, cache, inflight, timeoutMs = 15000, retries = 2, backoffMs = 250, sleep = wait,
+}) {
   const url = buildTelehealthUrl(query);
-  const cached = cache?.get(url);
-  if (cached) return cached;
-
-  const res = await fetchImpl(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
-    signal: AbortSignal.timeout(timeoutMs),
+  return cachedUpstream(url, {
+    cache,
+    inflight,
+    load: async () => {
+      const body = await fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep });
+      const rows = Array.isArray(body.rows) ? body.rows : [];
+      const results = rows
+        .map((r) => normalizeFacility(r, taxonomy))
+        // Distances from a point the visitor did not choose would mislead.
+        .map((f) => (query.byDistance ? f : { ...f, miles: null }));
+      return {
+        page: toFiniteNumber(body.page) ?? query.page,
+        totalPages: toFiniteNumber(body.totalPages) ?? 0,
+        total: toFiniteNumber(body.recordCount) ?? rows.length,
+        pageSize: PAGE_SIZE,
+        state: describeRegion(query.state),
+        byDistance: query.byDistance,
+        results,
+      };
+    },
   });
-  if (!res.ok) throw new Error(`FindTreatment.gov responded with HTTP ${res.status}`);
-  const text = await res.text();
-  let body;
-  try {
-    body = JSON.parse(text);
-  } catch {
-    throw new Error(`FindTreatment.gov returned a non-JSON response (${text.length} bytes)`);
-  }
-  const rows = Array.isArray(body.rows) ? body.rows : [];
-  const results = rows
-    .map((r) => normalizeFacility(r, taxonomy))
-    // Distances from a point the visitor did not choose would mislead.
-    .map((f) => (query.byDistance ? f : { ...f, miles: null }));
-  const result = {
-    page: toFiniteNumber(body.page) ?? query.page,
-    totalPages: toFiniteNumber(body.totalPages) ?? 0,
-    total: toFiniteNumber(body.recordCount) ?? rows.length,
-    pageSize: PAGE_SIZE,
-    state: describeRegion(query.state),
-    byDistance: query.byDistance,
-    results,
-  };
-  cache?.set(url, result);
-  return result;
 }
 
 /**

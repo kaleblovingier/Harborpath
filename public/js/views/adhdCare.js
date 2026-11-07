@@ -5,7 +5,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & PHARMACOTHERAPY DATA
@@ -529,7 +529,7 @@ export function adhdCareView() {
 
   function render() {
     clear(container);
-    const isEs = (t('common.inEnglish', ' (in English)') || '').includes('inglés');
+    const isEs = getLang() === 'es';
 
     // Breadcrumb
     const nav = h('nav', { class: 'breadcrumb', 'aria-label': 'Breadcrumb' },

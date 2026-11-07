@@ -181,7 +181,7 @@ export function telehealthList({ region, kind = 'sa', codes = [], autoload = fal
 
   const eduCallout = h('div', { class: 'callout callout-info telehealth-guide' },
     h('p', { class: 'callout-title' }, icon('phone'), t('reach.telehealthEduTitle', 'DEA/SAMHSA Tele-prescribing & Low-Barrier Telehealth')),
-    h('p', null, t('reach.telehealthEduBody', 'Under federal DEA and SAMHSA telemedicine flexibilities, authorized clinicians can evaluate and prescribe buprenorphine for opioid use disorder via telehealth without requiring an initial in-person visit. Audio-only phone visits provide critical access in broadband-insecure rural and tribal areas. Under SAMHSA guidelines, counseling cannot be an arbitrary barrier to starting life-saving medication.')),
+    h('p', null, t('reach.telehealthEduBody', 'Under federal DEA rules as of late 2026, buprenorphine for opioid use disorder can be started by telehealth without an in-person visit. Temporary DEA/HHS telemedicine flexibilities run through Dec. 31, 2026. Separately, a permanent DEA rule (21 CFR § 1306.51, in effect since the end of 2025) allows starting it by video or audio-only phone visit for an initial supply of up to 6 months after a state prescription-monitoring (PDMP) check; after that, continued prescribing needs an in-person exam or another permitted form of telemedicine, such as a video visit. State rules and individual prescribers may be stricter, and federal rules may change after 2026. Audio-only phone visits provide critical access in broadband-insecure rural and tribal areas. Under SAMHSA guidelines, counseling cannot be an arbitrary barrier to starting life-saving medication.')),
   );
 
   async function load() {

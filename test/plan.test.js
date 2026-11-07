@@ -688,7 +688,7 @@ test('getPlanState, setPlanState, and resetPlanState manage ephemeral RAM safety
   assert.match(formatted, /7\. PROFESSIONALS & CRISIS ESCALATION CONTACTS/);
   assert.match(formatted, /8\. WAYS TO MAKE MY ENVIRONMENT SAFER/);
   assert.match(formatted, /9\. WHERE MY NALOXONE/);
-  assert.match(formatted, /877-696-1996/);
+  assert.match(formatted, /Never Use Alone \(overdose prevention\): 1-800-484-3731 \(or 1-877-696-1996/);
   assert.match(formatted, /800-972-0590/);
   assert.match(formatted, /988/);
   assert.match(formatted, /911/);
