@@ -9,6 +9,7 @@
 export const ROUTE_PARAM_ALLOWLIST = Object.freeze({
   '/api/health': Object.freeze([]),
   '/api/meta': Object.freeze([]),
+  '/api/freshness': Object.freeze([]),
   '/api/geocode': Object.freeze(['q']),
   '/api/region': Object.freeze(['zip', 'lat', 'lng']),
   '/api/states': Object.freeze([]),
