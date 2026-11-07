@@ -48,6 +48,16 @@ describe('ROUTE_PARAM_ALLOWLIST & sanitizeSearchParams()', () => {
     assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/region'], ['zip', 'lat', 'lng']);
     assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/states'], []);
     assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/state'], ['code']);
+    assert.deepEqual(ROUTE_PARAM_ALLOWLIST['/api/treatment'], ['lat', 'lng', 'radius', 'kind', 'codes', 'page']);
+  });
+
+  test('a payer (insurance) parameter never reaches the treatment search', () => {
+    const { cleanParams, strippedParams } = sanitizeSearchParams(
+      '/api/treatment',
+      new URLSearchParams({ lat: '47.61', lng: '-122.33', codes: 'BU', payer: 'Apple Health' }),
+    );
+    assert.equal(cleanParams.has('payer'), false);
+    assert.deepEqual(strippedParams, ['payer']);
   });
 
   test('strips utm_*, fbclid, ssn, email, name, dob, mrn and retains only allowlisted route params', () => {

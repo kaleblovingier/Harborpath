@@ -9,6 +9,7 @@ import {
   RADII_MILES,
   createTreatmentSearchSchema,
 } from './schema.js';
+import { cachedUpstream, fetchWithRetry, wait } from './upstream.js';
 import { clean, normalizeWebsite, stableId, toFiniteNumber } from './util.js';
 
 export { ACCREDITATION_CODES, InputError, KINDS, PAYMENT_CODES, RADII_MILES };
@@ -92,57 +93,6 @@ export function normalizeFacility(row, taxonomy) {
   };
 }
 
-class UpstreamError extends Error {
-  constructor(message, { retryable }) {
-    super(message);
-    this.retryable = retryable;
-  }
-}
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** One upstream request. Network failures and 5xx responses are retryable. */
-async function fetchListing(url, { fetchImpl, timeoutMs }) {
-  let res;
-  try {
-    res = await fetchImpl(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'HarborPath/1.0' },
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-  } catch (err) {
-    throw new UpstreamError(err.message, { retryable: err.name !== 'AbortError' });
-  }
-  if (!res.ok) {
-    throw new UpstreamError(`FindTreatment.gov responded with HTTP ${res.status}`, { retryable: res.status >= 500 });
-  }
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch {
-    // The API answers malformed queries with a plain-text message and HTTP 200.
-    throw new UpstreamError(`FindTreatment.gov returned a non-JSON response (${text.length} bytes)`, { retryable: false });
-  }
-}
-
-/**
- * Retry network errors and 5xx responses with exponential backoff and jitter,
- * all within one overall time budget, so a slow upstream is never waited on
- * longer than timeoutMs in total.
- */
-async function fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep }) {
-  const deadline = Date.now() + timeoutMs;
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await fetchListing(url, { fetchImpl, timeoutMs: Math.max(1, deadline - Date.now()) });
-    } catch (err) {
-      const delay = backoffMs * 2 ** attempt * (0.75 + Math.random() / 2);
-      // Only retry when a later attempt still has a fair amount of time left.
-      if (!err.retryable || attempt >= retries || Date.now() + delay + 1000 > deadline) throw err;
-      await sleep(delay);
-    }
-  }
-}
-
 /**
  * Search FindTreatment.gov. With a `cache`, results are reused and, if the
  * upstream fails, a recent (stale) copy is returned with `stale: true`. With
@@ -154,13 +104,10 @@ export async function searchTreatment(query, {
   taxonomy, fetchImpl = fetch, cache, inflight, timeoutMs = 15000, retries = 2, backoffMs = 250, sleep = wait,
 }) {
   const url = buildUpstreamUrl(query);
-  const cached = cache?.get(url);
-  if (cached) return cached;
-  const pending = inflight?.get(url);
-  if (pending) return pending;
-
-  const work = (async () => {
-    try {
+  return cachedUpstream(url, {
+    cache,
+    inflight,
+    load: async () => {
       const body = await fetchWithRetry(url, { fetchImpl, timeoutMs, retries, backoffMs, sleep });
       const rows = Array.isArray(body.rows) ? body.rows : [];
       const result = {
@@ -192,16 +139,7 @@ export async function searchTreatment(query, {
           // A fallback failure never breaks the primary response.
         }
       }
-      cache?.set(url, result);
       return result;
-    } catch (err) {
-      const stale = cache?.getStale?.(url);
-      if (stale) return { ...stale, stale: true };
-      throw err;
-    } finally {
-      inflight?.delete(url);
-    }
-  })();
-  inflight?.set(url, work);
-  return work;
+    },
+  });
 }

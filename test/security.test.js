@@ -71,3 +71,50 @@ test('H2-3: trusted hop count and empty forwarded entries', () => {
   assert.equal(clientKey(req(' '), true), '10.0.0.1');
   assert.equal(clientKey(req('203.0.113.9'), 2), '10.0.0.1');
 });
+
+test('h() only sets navigating/loading attributes to safe URLs', async () => {
+  const previous = { document: globalThis.document, Node: globalThis.Node };
+  class FakeNode {}
+  class FakeElement extends FakeNode {
+    constructor(tag) { super(); this.tagName = tag; this.attributes = {}; this.dataset = {}; this.children = []; }
+    setAttribute(name, value) { this.attributes[name] = value; }
+    addEventListener() {}
+    append(child) { this.children.push(child); }
+  }
+  globalThis.Node = FakeNode;
+  globalThis.document = { createElement: (tag) => new FakeElement(tag) };
+  try {
+    const { h, tel, sms } = await import('../public/js/dom.js');
+    const href = (value) => h('a', { href: value }).attributes.href;
+    // Kept: web, phone, SMS, email, in-app routes, and same-site paths.
+    for (const ok of [
+      'https://findtreatment.gov/', 'http://example.org/a?b=1', 'tel:988', 'tel:+18006624357',
+      'sms:988?&body=hello', 'mailto:help@example.org', '#/treatment?codes=BU', '#', '#main', '/icons.svg#phone',
+    ]) {
+      assert.equal(href(ok), ok, `${ok} is kept`);
+    }
+    assert.equal(href('  https://findtreatment.gov/  '), 'https://findtreatment.gov/', 'surrounding space trimmed');
+    // Dropped: script, data, and anything that leaves the site without a scheme.
+    for (const bad of [
+      'javascript:alert(1)', ' JavaScript:alert(1)', 'java\tscript:alert(1)', 'data:text/html,<script>alert(1)</script>',
+      'vbscript:msgbox', '//evil.example/', '/\\evil.example/', 'file:///etc/passwd', 'blob:https://x/1', 'relative/path', '',
+    ]) {
+      assert.equal(href(bad), undefined, `${JSON.stringify(bad)} is dropped`);
+    }
+    assert.equal(h('img', { src: 'javascript:alert(1)', alt: '' }).attributes.src, undefined);
+    assert.equal(h('img', { src: '/favicon.svg', alt: '' }).attributes.src, '/favicon.svg');
+    assert.equal(h('form', { action: 'javascript:alert(1)' }).attributes.action, undefined);
+    assert.equal(h('button', { formaction: 'data:x' }).attributes.formaction, undefined);
+    assert.equal(h('a', { HREF: 'javascript:alert(1)' }).attributes.HREF, undefined, 'attribute names are case-insensitive');
+    // Other attributes are untouched.
+    assert.equal(h('a', { href: '#/x', title: 'javascript: is just text here' }).attributes.title, 'javascript: is just text here');
+    // tel() and sms() links still work through h().
+    assert.equal(tel('1-800-662-4357').attributes.href, 'tel:18006624357');
+    assert.equal(sms('988', 'Hi').attributes.href, 'sms:988?&body=Hi');
+  } finally {
+    for (const [name, value] of Object.entries(previous)) {
+      if (value === undefined) delete globalThis[name];
+      else globalThis[name] = value;
+    }
+  }
+});
