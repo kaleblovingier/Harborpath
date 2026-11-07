@@ -9,7 +9,7 @@
 // - Public Health Service Act § 330: 42 U.S.C. § 254b (HRSA Community & Migrant Health Centers)
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 /**
  * Statutory and clinical legal framework for immigrant and language access rights.
@@ -294,7 +294,7 @@ export function formatImmigrantSummaryText(state, lang = 'en') {
  * Mounts the Immigrant Health Rights view.
  */
 export function immigrantHealthView(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';

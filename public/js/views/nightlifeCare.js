@@ -4,7 +4,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY & NIGHTLIFE SUBSTANCE PROFILES
@@ -405,7 +405,7 @@ export function nightlifeCareView() {
 
   function render() {
     clear(container);
-    const isEs = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const localState = getNightlifeState();
     const evalResult = evaluateNightlifeScenario(localState);
 

@@ -8,7 +8,7 @@
 // - American College of Emergency Physicians (ACEP) Post-Arrest & Overdose Care Consensus
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 /**
  * Clinical post-overdose response and survivorship framework.
@@ -285,7 +285,7 @@ export function formatPostOverdoseSummaryText(state, lang = 'en') {
  * Mounts the Post-Overdose Response view.
  */
 export function postOverdoseView(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';

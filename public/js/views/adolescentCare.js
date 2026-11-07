@@ -1474,7 +1474,7 @@ export function evaluateYouthCarePathway(inputs = {}) {
 function initialEphemeralState() {
   return {
     activeTab: 'overview',
-    lang: 'en',
+    lang: getLang() === 'es' ? 'es' : 'en',
     inputs: {
       age: 16,
       state: 'CA',
@@ -1643,6 +1643,11 @@ export function adolescentCareView({ query } = {}) {
     if (query.lang && (query.lang === 'es' || query.lang === 'en')) {
       setAdolescentState({ lang: query.lang });
     }
+  }
+  // Follow the site language on every mount unless the link asked for one.
+  // The in-view toggle below still switches for this visit.
+  if (!(query?.lang === 'es' || query?.lang === 'en')) {
+    setAdolescentState({ lang: getLang() === 'es' ? 'es' : 'en' });
   }
 
   const container = h('div', { class: 'view view-adolescent view-prose' });

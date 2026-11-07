@@ -8,7 +8,7 @@
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
 import { h, clear, icon, tel } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 
 // ============================================================================
 // CLINICAL TAXONOMY: 5 ACUTE TOXIDROME DIFFERENTIAL CONDITIONS
@@ -876,7 +876,7 @@ export function toxicologyTriageView() {
   function renderView() {
     clear(root);
     const localState = getToxicologyTriageState();
-    const isEs = document.documentElement.lang === 'es';
+    const isEs = getLang() === 'es';
     const isClinician = localState.mode === 'clinician';
 
     // 1. Breadcrumbs
