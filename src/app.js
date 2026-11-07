@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompress, constants as zlibConstants, gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
-import { createCache, createRateLimiter } from './cache.js';
+import { createCache, createCircuitBreaker, createRateLimiter } from './cache.js';
 import { createGeocoder, readLatLng } from './geo.js';
 import { createHealthCenterIndex } from './healthCenters.js';
 import { createProviderSearch } from './providers.js';
@@ -13,7 +13,7 @@ import { filterStatesByProtection, getJurisdictionSummary, getLegalProtections, 
 import { createTaxonomy } from './taxonomy.js';
 import { parseTelehealthQuery, searchTelehealth } from './telehealth.js';
 import { createVirtualProviders } from './virtualProviders.js';
-import { InputError, RADII_MILES, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
+import { InputError, UpstreamError, parseRadius, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
 import { DATA_LOADERS, PUBLIC_DIR } from './data.js';
 import { createPrivacyLogger, sanitizeSearchParams } from './privacy.js';
 
@@ -28,6 +28,9 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
   '.webmanifest': 'application/manifest+json',
 };
+
+// The geocoder reads at most 80 characters; anything far longer is not a place.
+const MAX_GEOCODE_QUERY = 200;
 
 // No third-party origins at all: no CDNs, fonts, analytics, or maps. Visiting a
 // substance-use site is itself sensitive health information.
@@ -129,13 +132,15 @@ export function clientKey(req, trustProxy) {
   const hops = trustProxy === true ? 1 : Number.isInteger(trustProxy) && trustProxy > 0 ? trustProxy : 0;
   let addr = null;
   if (hops) {
-    const fwd = req.headers['x-forwarded-for'];
+    const raw = req.headers['x-forwarded-for'];
+    const fwd = Array.isArray(raw) ? raw.join(',') : raw;
     if (typeof fwd === 'string') {
       const parts = fwd.split(',').map((s) => s.trim());
       addr = parts.length >= hops ? parts[parts.length - hops] || null : null;
     }
   }
-  return networkKey(addr ?? req.socket?.remoteAddress ?? 'unknown');
+  // The cap bounds the memory one forged entry can take in the limiter.
+  return networkKey(addr ?? req.socket?.remoteAddress ?? 'unknown').slice(0, 64);
 }
 
 /**
@@ -158,6 +163,72 @@ export function networkKey(addr) {
   if (![...head, ...tail].every((g) => /^[0-9a-f]{1,4}$/.test(g))) return s;
   const full = [...head, ...Array(fill).fill('0'), ...tail];
   return `${full.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, '')).join(':')}::/64`;
+}
+
+/**
+ * How many proxies to trust, from the environment: TRUST_PROXY is the number
+ * of proxies that append to X-Forwarded-For (1 to 99), or one on Vercel
+ * (which always sets X-Forwarded-For). 0 means use the socket address and
+ * ignore X-Forwarded-For entirely.
+ */
+export function trustProxyFromEnv(env = {}) {
+  const v = String(env.TRUST_PROXY ?? '').trim();
+  if (/^\d{1,2}$/.test(v) && Number(v) > 0) return Number(v);
+  if (v === 'true') return 1;
+  return env.VERCEL ? 1 : 0;
+}
+
+// Shown whenever the national directory cannot answer, so a visitor always has
+// a way to reach help. Numbers only, never anything from the request.
+export const UPSTREAM_FALLBACK = Object.freeze({
+  fallbackUrl: 'https://findtreatment.gov/',
+  helpline: '1-800-662-4357',
+  alternatives: Object.freeze([
+    Object.freeze({ name: 'SAMHSA National Helpline', phone: '1-800-662-4357', tel: '+18006624357', hours: '24/7, English and Spanish' }),
+    Object.freeze({ name: '988 Suicide & Crisis Lifeline', phone: '988', tel: '988', hours: '24/7, call or text' }),
+    Object.freeze({ name: 'Never Use Alone', phone: '1-800-484-3731', tel: '+18004843731', hours: '24/7' }),
+  ]),
+});
+
+// ISO 8601, or null for a missing or unparseable date.
+function isoDate(v) {
+  if (!v) return null;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+/**
+ * Freshness of every bundled dataset, from data/meta.json. `sourceUpdated` is
+ * when the publisher last changed the data (HTTP Last-Modified or the
+ * dataset's own modified date); `builtAt` is when HarborPath last downloaded
+ * it. Treatment listings are not bundled: they are searched live.
+ */
+export function buildFreshness(meta, { now = Date.now(), cacheMinutes = 60 } = {}) {
+  const ageDays = (iso) => (iso ? Math.max(0, Math.floor((now - Date.parse(iso)) / 86_400_000)) : null);
+  const datasets = {};
+  for (const [key, src] of Object.entries(meta?.sources ?? {})) {
+    if (!src || typeof src !== 'object') continue;
+    const sourceUpdated = isoDate(src.lastModified) ?? isoDate(src.modified) ?? isoDate(src.fetchedAt);
+    const builtAt = isoDate(src.builtAt);
+    datasets[key] = {
+      count: Number.isFinite(src.count) ? src.count : null,
+      sourceUpdated,
+      sourceAgeDays: ageDays(sourceUpdated),
+      builtAt,
+      updateCadence: typeof src.updateCadence === 'string' ? src.updateCadence : null,
+    };
+  }
+  const directoryUpdated = isoDate(meta?.builtAt);
+  return {
+    directoryUpdated,
+    directoryAgeDays: ageDays(directoryUpdated),
+    datasets,
+    treatment: {
+      live: true,
+      source: 'SAMHSA FindTreatment.gov',
+      maxCacheMinutes: cacheMinutes,
+    },
+  };
 }
 
 export function createApp({
@@ -201,10 +272,15 @@ export function createApp({
   const staticFiles = loadStatic(fileURLToPath(PUBLIC_DIR));
   // Fresh for 30 minutes, then kept 30 more only to answer if FindTreatment.gov
   // is down: never more than the hour the privacy page promises.
-  const treatmentCache = createCache({ ttlMs: 30 * 60 * 1000, staleMs: 30 * 60 * 1000, maxEntries: 1000 });
+  const CACHE_FRESH_MS = 30 * 60 * 1000;
+  const CACHE_STALE_MS = 30 * 60 * 1000;
+  const treatmentCache = createCache({ ttlMs: CACHE_FRESH_MS, staleMs: CACHE_STALE_MS, maxEntries: 1000 });
   const inflight = new Map();
   const limiter = createRateLimiter(rateLimit);
   const safeLogger = createPrivacyLogger(logger);
+  // Shared by treatment and telehealth searches: both call the same upstream.
+  const breaker = upstream.breaker ?? createCircuitBreaker();
+  const upstreamOptions = { fetchImpl, cache: treatmentCache, inflight, ...upstream, breaker };
 
   const srcMeta = (key) => ({
     count: meta.sources?.[key]?.count ?? null,
@@ -220,7 +296,9 @@ export function createApp({
     stateAgencies: srcMeta('stateAgencies'),
     stateMedicaid: srcMeta('stateMedicaid'),
     treatmentSource: 'SAMHSA FindTreatment.gov (live)',
+    directoryUpdated: isoDate(meta.builtAt),
   };
+  const freshness = () => buildFreshness(meta, { cacheMinutes: (CACHE_FRESH_MS + CACHE_STALE_MS) / 60_000 });
 
   function send(req, res, status, body, headers = {}) {
     const acceptsGzip = acceptedEncodings(req.headers['accept-encoding']).has('gzip');
@@ -236,11 +314,12 @@ export function createApp({
     res.end(req.method === 'HEAD' ? undefined : payload);
   }
 
-  function json(req, res, status, value) {
+  function json(req, res, status, value, headers = {}) {
     send(req, res, status, Buffer.from(JSON.stringify(value)), {
       'Content-Type': MIME['.json'],
       // Responses describe a visitor's area; never let a shared cache keep them.
       'Cache-Control': 'no-store',
+      ...headers,
     });
   }
 
@@ -283,18 +362,28 @@ export function createApp({
     // Liveness checks (container health probes) must never be rate limited.
     if (url.pathname === '/api/health') return json(req, res, 200, { ok: true });
     if (!limiter.allow(clientKey(req, trustProxy))) {
-      return json(req, res, 429, { error: 'Too many searches in a short time. Please wait a minute and try again.' });
+      return json(req, res, 429, { error: 'Too many searches in a short time. Please wait a minute and try again.' }, {
+        'Retry-After': String(limiter.retryAfterSeconds()),
+      });
     }
     const { cleanParams: params } = sanitizeSearchParams(url.pathname, url.searchParams);
     try {
       switch (url.pathname) {
         case '/api/meta':
           return json(req, res, 200, publicMeta);
-        case '/api/geocode':
-          return json(req, res, 200, { results: regions().annotate(geocoder().lookup(params.get('q')), params.get('q')) });
+        case '/api/freshness':
+          return json(req, res, 200, freshness());
+        case '/api/geocode': {
+          const q = params.get('q');
+          if (q === null || !q.trim()) throw new InputError('Enter a ZIP code or a city and state.');
+          if (q.length > MAX_GEOCODE_QUERY) throw new InputError('That search is too long. Enter a ZIP code or a city and state.');
+          return json(req, res, 200, { results: regions().annotate(geocoder().lookup(q), q) });
+        }
         case '/api/region': {
           // A ZIP, or coordinates (coarsened by readLocation). Never logged.
           let found;
+          // forZip() answers anything that is not a ZIP with null, and the
+          // response never repeats what was sent.
           if (params.get('zip')) {
             found = regions().forZip(params.get('zip'));
           } else {
@@ -310,7 +399,9 @@ export function createApp({
         case '/api/states':
           return json(req, res, 200, { states: stateDirectory().list(), sources: stateDirectory().sources });
         case '/api/state': {
-          const resources = stateDirectory().get(params.get('code'));
+          const code = String(params.get('code') ?? '').trim();
+          if (!/^[A-Za-z]{2}$/.test(code)) throw new InputError('code must be a two-letter state or territory code');
+          const resources = stateDirectory().get(code);
           if (!resources) return json(req, res, 404, { error: 'Unknown state or territory' });
           return json(req, res, 200, resources);
         }
@@ -361,22 +452,21 @@ export function createApp({
         }
         case '/api/telehealth': {
           const query = parseTelehealthQuery(params, { taxonomy, anchorFor: regions().anchor });
-          const result = await searchTelehealth(query, { taxonomy, fetchImpl, cache: treatmentCache, inflight, ...upstream });
+          const result = await searchTelehealth(query, { taxonomy, ...upstreamOptions });
           // Route only: never the query string, which holds a location.
           if (result.stale) safeLogger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
           return json(req, res, 200, { ...result, source: 'SAMHSA FindTreatment.gov' });
         }
         case '/api/treatment': {
           const query = parseTreatmentQuery(params, taxonomy);
-          const result = await searchTreatment(query, { taxonomy, fetchImpl, cache: treatmentCache, inflight, ...upstream });
+          const result = await searchTreatment(query, { taxonomy, ...upstreamOptions });
           // Route only: never the query string, which holds a location.
           if (result.stale) safeLogger.error(`[api] ${url.pathname} upstream failed; answered from cache`);
           return json(req, res, 200, { ...result, source: 'SAMHSA FindTreatment.gov' });
         }
         case '/api/health-centers': {
           const { lat, lng } = readLocation(params);
-          const radiusMiles = Number(params.get('radius') ?? 25);
-          if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
+          const radiusMiles = parseRadius(params);
           return json(req, res, 200, {
             ...healthCenters().search({ lat, lng, radiusMiles }),
             source: 'HRSA Health Center Program',
@@ -389,8 +479,7 @@ export function createApp({
           return json(req, res, 200, providers().search(params, readLocation(params)));
         case '/api/nearby-summary': {
           const { lat, lng } = readLocation(params);
-          const radiusMiles = Number(params.get('radius') ?? 25);
-          if (!RADII_MILES.includes(radiusMiles)) throw new InputError(`radius must be one of ${RADII_MILES.join(', ')}`);
+          const radiusMiles = parseRadius(params);
           const hc = healthCenters().search({ lat, lng, radiusMiles });
           const prov = providers().summary({ lat, lng, radiusMiles });
           const reg = regions().forPoint(lat, lng);
@@ -420,12 +509,24 @@ export function createApp({
       }
     } catch (err) {
       if (err instanceof InputError) return json(req, res, 400, { error: err.message });
-      // Log the route and failure only: never the query string, which holds a location.
-      safeLogger.error(`[api] ${url.pathname} failed: ${err.message}`);
-      return json(req, res, 502, {
-        error: 'The national treatment directory is not responding right now.',
-        fallbackUrl: 'https://findtreatment.gov/',
-        helpline: '1-800-662-4357',
+      // Log the route and a fixed failure code only: never the query string
+      // (which holds a location), the upstream URL, or a raw error message.
+      if (err instanceof UpstreamError) {
+        safeLogger.error(`[api] ${url.pathname} upstream failed: ${err.code}${err.status ? ` ${err.status}` : ''}`);
+        const retryAfter = breaker.retryAfterSeconds();
+        const unavailable = err.code === 'circuit-open';
+        return json(req, res, unavailable ? 503 : 502, {
+          error: 'The national treatment directory is not responding right now.',
+          reason: err.code,
+          ...UPSTREAM_FALLBACK,
+          ...(unavailable ? { retryAfterSeconds: retryAfter } : {}),
+        }, unavailable ? { 'Retry-After': String(retryAfter) } : {});
+      }
+      safeLogger.error(`[api] ${url.pathname} failed: internal ${String(err?.name ?? 'Error').replace(/[^\w]/g, '').slice(0, 40)}`);
+      return json(req, res, 500, {
+        error: 'Something went wrong on our side. Please try again.',
+        reason: 'internal',
+        ...UPSTREAM_FALLBACK,
       });
     }
   }
@@ -447,7 +548,7 @@ export function createApp({
       return serveStatic(req, res, url.pathname);
     } catch (err) {
       // Last resort: never let one request crash the process.
-      logger.error(`[http] ${url.pathname} failed: ${err?.message}`);
+      safeLogger.error(`[http] ${url.pathname} failed: ${err?.message}`);
       if (!res.headersSent) res.writeHead(500, SECURITY_HEADERS);
       res.end();
     }

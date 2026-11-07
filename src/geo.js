@@ -39,13 +39,24 @@ export function isValidLatLng(lat, lng) {
   return Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
 }
 
-/** Read lat/lng from query params, coarsened. Missing or blank values are invalid (not 0). */
+// Plain decimal degrees only: no hex ("0x10"), exponents ("1e1"), or
+// "Infinity", which Number() would otherwise accept.
+const DECIMAL_DEGREES = /^[+-]?(?:\d{1,3}(?:\.\d{0,15})?|\.\d{1,15})$/;
+
+function readDegrees(raw) {
+  const s = typeof raw === 'string' ? raw.trim() : '';
+  return DECIMAL_DEGREES.test(s) ? Number(s) : NaN;
+}
+
+/**
+ * Read lat/lng from query params, coarsened to about 1 km. Missing, blank,
+ * malformed, or out-of-range values are invalid (never treated as 0). Every
+ * endpoint that accepts coordinates reads them through this function, so the
+ * precise values never reach a handler, the cache, a log, or an upstream.
+ */
 export function readLatLng(params) {
-  const rawLat = params.get('lat');
-  const rawLng = params.get('lng');
-  if (!rawLat?.trim() || !rawLng?.trim()) return null;
-  const lat = Number(rawLat);
-  const lng = Number(rawLng);
+  const lat = readDegrees(params.get('lat'));
+  const lng = readDegrees(params.get('lng'));
   return isValidLatLng(lat, lng) ? { lat: coarsen(lat), lng: coarsen(lng) } : null;
 }
 

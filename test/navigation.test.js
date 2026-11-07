@@ -173,7 +173,7 @@ test('render() focuses the fallback target and announces the page title', () => 
   assert.match(body, /routeFocusTarget\(main\)\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(body, /announce\(resolved\.title\)/);
   assert.match(src, /import \{ announce \} from '\.\/dom\.js';/);
-  assert.match(read('public/index.html'), /<div id="announcer" class="visually-hidden" aria-live="polite"><\/div>/);
+  assert.match(read('public/index.html'), /<div id="announcer" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"><\/div>/);
 });
 
 test('every routed view renders a top-level h1', () => {
@@ -209,6 +209,34 @@ test('Escape that closes the More tools menu does not count toward quick exit', 
   assert.match(branch, /more\.open = false;/);
   assert.match(branch, /lastEscape = 0;/);
   assert.match(branch, /return;/);
+});
+
+test('Escape closes the open mobile menu, returns focus to Menu, and does not count toward quick exit', () => {
+  const src = read('public/js/app.js');
+  const handler = src.slice(src.indexOf('let lastEscape = 0;'), src.indexOf('toggle?.addEventListener'));
+  const branch = handler.slice(handler.indexOf("if (toggle?.getAttribute('aria-expanded') === 'true') {"), handler.indexOf('const now = Date.now();'));
+  assert.match(branch, /closeMenu\(\);/);
+  assert.match(branch, /toggle\.focus\(\);/);
+  assert.match(branch, /lastEscape = 0;/);
+});
+
+test('quick exit turns plain-language mode off', async () => {
+  const { setPlainLanguage, isPlainLanguage } = await import('../public/js/i18n.js');
+  setPlainLanguage(true, { notify: false });
+  try {
+    app.runQuickExitResets();
+    assert.equal(isPlainLanguage(), false);
+  } finally {
+    setPlainLanguage(false, { notify: false });
+  }
+});
+
+test('language and plain-language changes re-render without moving focus', () => {
+  const src = read('public/js/app.js');
+  const body = src.slice(src.indexOf('async function render('), src.indexOf('// ---------------------------------------------------------------- Quick exit'));
+  assert.match(body, /if \(!isInitial && moveFocus\) \{/);
+  const listener = src.slice(src.indexOf('onLanguageChange(() => {'));
+  assert.match(listener.slice(0, 400), /render\(\{ moveFocus: false \}\);/);
 });
 
 test('focused fields scroll clear of the sticky safety bar', () => {
@@ -308,6 +336,20 @@ test('population and situation guides are linked from the home page', () => {
   const src = read('public/js/views/core.js');
   assert.match(src, /h\('a', \{ class: 'path-sublink', href: '#\/family-support' \}/);
   assert.ok(Object.hasOwn(es, 'home.start.supporter.craft'));
+});
+
+test('home opens with emergency, find-treatment, and talk-to-someone cards before the search', () => {
+  const view = core.homeView();
+  const nodes = [...view.walk()];
+  const quick = nodes.find((el) => el.className === 'quick-help');
+  assert.ok(quick, 'quick-help section renders');
+  const hrefs = [...quick.walk()].filter((el) => el.tagName === 'A').map((a) => a.getAttribute('href'));
+  for (const href of ['tel:911', '#/overdose', 'tel:988', '#/treatment', 'tel:18006624357', '#/crisis']) {
+    assert.ok(hrefs.includes(href), `quick-help links ${href}`);
+  }
+  const order = nodes.map((el) => el.className);
+  assert.ok(order.indexOf('quick-help') < order.indexOf('card hero-search'), 'cards come before the location search');
+  assert.ok(order.indexOf('quick-help') < order.indexOf('card topic-search no-print'), 'cards come before topic search');
 });
 
 async function typeInto(input, value) {
