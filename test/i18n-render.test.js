@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { useDictionary, getLang } from '../public/js/i18n.js';
+import { useDictionary, getLang, setPlainLanguage } from '../public/js/i18n.js';
 import es from '../public/js/locales/es.js';
 import esSafety from '../public/js/locales/es-safety.js';
 import { overdoseView, harmReductionView, supportView } from '../public/js/views/guides.js';
@@ -560,4 +560,31 @@ test('no view sniffs the language: no t("lang"), no "inglés" string search, no 
     }
   }
   assert.deepEqual(offenders, []);
+});
+
+// ---------------------------------------------------------------- Plain-language mode
+test('plain-language overdose steps keep the 911 button and switch wording in English and Spanish', () => {
+  withMockDom(() => {
+    resetOverdosePacer();
+    setPlainLanguage(true, { notify: false });
+    try {
+      useDictionary('en', {});
+      const en = allText(overdoseView());
+      assert.match(en, /Check if it is an overdose/);
+      assert.match(en, /Step 1: /);
+      assert.match(en, /Call 911/);
+
+      useDictionary('es', es);
+      const view = overdoseView();
+      const text = allText(view);
+      assert.match(text, /Revise si es una sobredosis/);
+      assert.match(text, /Paso 1: /);
+      assert.match(text, /Llame al 911/);
+      assert.doesNotMatch(text, /Check if it is an overdose|Call 911/);
+      assert.ok(telLinks(view, '911').length >= 1);
+    } finally {
+      setPlainLanguage(false, { notify: false });
+      useDictionary('en', {});
+    }
+  });
 });
