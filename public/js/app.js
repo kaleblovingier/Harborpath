@@ -309,6 +309,15 @@ export const LAZY_LOADERS = {
     viewCache.set('stimulant-care', m.stimulantCareView);
     return m.stimulantCareView;
   }),
+  'recovery-support': () => import('./views/recoverySupport.js').then((m) => {
+    viewCache.set('recovery-support', m.recoverySupportView);
+    routeResets.set('recovery-support', m.resetRecoverySupportState);
+    return m.recoverySupportView;
+  }),
+  'overdose-loss': () => import('./views/overdoseLoss.js').then((m) => {
+    viewCache.set('overdose-loss', m.overdoseLossView);
+    return m.overdoseLossView;
+  }),
   'harm-reduction': () => loadGuidesModule().then((m) => m.harmReductionView),
   overdose: () => loadGuidesModule().then((m) => m.overdoseView),
   support: () => loadGuidesModule().then((m) => m.supportView),
@@ -349,6 +358,8 @@ export const ROUTE_TITLES = {
   'family-support': () => t('route.familySupport', 'Family support & CRAFT guide'),
   'alcohol-care': () => t('route.alcoholCare', 'Alcohol care, withdrawal & MAUD'),
   'chronic-pain': () => t('route.chronicPain', 'Chronic pain & sedative deprescribing'),
+  'recovery-support': () => t('route.recoverySupport', 'Life after treatment: recovery housing & support'),
+  'overdose-loss': () => t('route.overdoseLoss', 'After an overdose death'),
   '': () => t('route.home', 'Find treatment, harm reduction & health services'),
   tools: () => t('route.tools', 'Care tools and guides'),
   workspace: () => t('route.workspace', 'Care team workspace'),
@@ -457,6 +468,8 @@ export function preloadAllLazyViews() {
     preloadRoute('nightlife-care'),
     preloadRoute('polysubstance-care'),
     preloadRoute('dual-diagnosis'),
+    preloadRoute('recovery-support'),
+    preloadRoute('overdose-loss'),
     preloadRoute('harm-reduction'),
   ]);
 }

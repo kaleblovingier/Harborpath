@@ -59,6 +59,7 @@ const APP_SHELL = [
   '/js/locales/es-tools.js',
   '/js/locales/es-workspace.js',
   '/js/locales/es-evidence.js',
+  '/js/locales/es-recovery.js',
 ];
 
 // Elective tier: heavier, non-emergency clinical tools. Warmed in the
@@ -132,6 +133,8 @@ const ELECTIVE_SHELL = [
   '/js/views/pulmonaryCare.js',
   '/js/views/neurologyCare.js',
   '/js/views/metabolicCare.js',
+  '/js/views/recoverySupport.js',
+  '/js/views/overdoseLoss.js',
 ];
 
 self.addEventListener('install', (event) => {

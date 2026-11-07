@@ -18,6 +18,8 @@ const entries = [
   ['health', 'care', 'Low-cost and community health care', 'Search health centers, mental health care, VA, IHS, rural clinics, and emergency hospitals.', ['individual', 'supporter', 'care-team']],
   ['plan', 'planning', 'Safety plan and first appointment', 'Prepare questions, explore what an intake visit is like, and create a private printable plan.', ['individual', 'supporter', 'care-team']],
   ['support', 'planning', 'Recovery and family support', 'Explore peer groups, recovery housing, and ways to support someone without pressure or judgment.', ['individual', 'supporter', 'care-team']],
+  ['recovery-support', 'planning', 'Life after treatment', 'Recovery housing and NARR levels, staying on medication (MOUD), peer recovery coaches, a plan for a return to use, and recovery-ready workplaces.', ['individual', 'supporter', 'care-team']],
+  ['overdose-loss', 'planning', 'After an overdose death', 'First practical steps, toxicology and death certificates, keeping others safe, talking with children, and grief support for families and friends.', ['supporter', 'care-team']],
   ['choosing-care', 'planning', 'Questions to ask a treatment program', 'Check treatment quality, ask about costs and medications, and recognize referral red flags.', ['individual', 'supporter', 'care-team']],
   ['post-overdose', 'planning', 'Care after an overdose', 'Explore follow-up support, treatment connections, and planning after an overdose.', ['individual', 'supporter', 'care-team']],
   ['readiness', 'planning', 'Explore readiness for change', 'Think through your goals and next steps at your own pace.', ['individual', 'supporter', 'care-team']],

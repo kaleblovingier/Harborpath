@@ -7,6 +7,7 @@ import esPrivacy from './es-privacy.js';
 import esTools from './es-tools.js';
 import esWorkspace from './es-workspace.js';
 import esEvidence from './es-evidence.js';
+import esRecovery from './es-recovery.js';
 
 export default {
   // ---------------------------------------------------------------- Sensory mode & Emergency drawer
@@ -1880,4 +1881,5 @@ export default {
   ...esTools,
   ...esWorkspace,
   ...esEvidence,
+  ...esRecovery,
 };
