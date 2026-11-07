@@ -102,6 +102,30 @@ const CRISIS_PATTERNS = [
   /\bquiero\s+morir\b/i,
 ];
 
+// Spanish first-person suicidal statements, matched against accent-folded,
+// lower-cased text (see foldAccents) so "Me voy a suicidar", "ya no quiero
+// vivir más" and "quíero matarme" match whatever the accents or case. Ambiguous
+// words like "matarme" ("kill me" / "kill myself") need a first-person lead-in
+// so figurative phrases such as "mi jefe va a matarme" do not intercept, and
+// "no quiero vivir" must end the clause so "no quiero vivir en esa ciudad" does not.
+const SPANISH_CRISIS_PATTERNS = [
+  /\bsuicidarme\b/,
+  /\bme\s+(?:quiero|voy\s+a|pienso|quisiera|deberia|tengo\s+ganas\s+de)\s+(?:matar|suicidar|morir)\b/,
+  /\bme\s+(?:quiero|voy\s+a|pienso|quisiera)\s+quitar\s+la\s+vida\b/,
+  /\bquitarme\s+la\s+vida\b/,
+  /\b(?:quiero|voy\s+a|pienso|quisiera|deseo|necesito|intente|intentar|intentare|ganas\s+de|pensando\s+en|pienso\s+en|deberia|podria|como)\s+matarme\b/,
+  /(?:^|[.!?¡¿,;:]\s*)matarme\b/,
+  /\b(?:quiero|quisiera)\s+morirme\b/,
+  /\bno\s+quiero\s+(?:seguir\s+)?vivi(?:r|endo)(?:\s+(?:mas|asi|ya))?\s*(?:$|[.!?,;:])/,
+  /\bya\s+no\s+quiero\s+(?:seguir\s+)?vivir\b/,
+  /\bno\s+vale\s+la\s+pena\s+(?:seguir\s+)?vivir\b/,
+  /\bhacerme\s+dano\b/,
+];
+
+function foldAccents(text) {
+  return String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 const SOLO_USE_PATTERNS = [
   /\busing\s+alone\b/i,
   /\babout\s+to\s+use\s+alone\b/i,
@@ -196,8 +220,8 @@ export function detectCrisisOrOverdose(input = '') {
         'Si alguien no responde, no respira normalmente, hace sonidos de gorgoteo o tiene labios o uñas azules o grises: llame al 911 de inmediato, administre naloxona (Narcan) en aerosol nasal, apoye la respiración y repita la naloxona cada 2 a 3 minutos si no despierta.',
       ),
       actions: [
-        { label: 'Call 911 Immediately', href: 'tel:911', kind: 'emergency' },
-        { label: 'Open Step-by-Step Overdose & 2-Minute Naloxone Timer', href: '#/overdose', kind: 'primary' },
+        { label: gt('Call 911 Immediately', 'Llame al 911 de inmediato'), href: 'tel:911', kind: 'emergency' },
+        { label: gt('Open Step-by-Step Overdose & 2-Minute Naloxone Timer', 'Abrir la guía de sobredosis paso a paso y el temporizador de naloxona de 2 minutos'), href: '#/overdose', kind: 'primary' },
         { label: 'Never Use Alone (877-696-1996)', href: 'tel:8776961996', kind: 'hotline' },
         { label: 'SafeSpot Overdose Prevention Line (800-972-0590)', href: 'tel:8009720590', kind: 'hotline' },
       ],
@@ -210,7 +234,8 @@ export function detectCrisisOrOverdose(input = '') {
     flagSet.has('crisis') ||
     flagSet.has('suicide') ||
     flagSet.has('self_harm') ||
-    CRISIS_PATTERNS.some((re) => re.test(normalized));
+    CRISIS_PATTERNS.some((re) => re.test(normalized)) ||
+    SPANISH_CRISIS_PATTERNS.some((re) => re.test(foldAccents(normalized)));
 
   if (isCrisis) {
     return {
@@ -226,10 +251,10 @@ export function detectCrisisOrOverdose(input = '') {
         'Hay apoyo gratuito y confidencial disponible ahora mismo. Llame o envíe un mensaje de texto al 988 para comunicarse con la Línea de Prevención del Suicidio y Crisis (24/7 en inglés y español), o llame al 911 si corre peligro físico inmediato.',
       ),
       actions: [
-        { label: 'Call or Text 988 Suicide & Crisis Lifeline', href: 'tel:988', kind: 'emergency' },
-        { label: 'Call 911', href: 'tel:911', kind: 'emergency' },
-        { label: 'SAMHSA National Helpline (1-800-662-4357)', href: 'tel:18006624357', kind: 'hotline' },
-        { label: 'View All 24/7 Crisis & Community Lines', href: '#/crisis', kind: 'secondary' },
+        { label: gt('Call or Text 988 Suicide & Crisis Lifeline', 'Llame o envíe un mensaje de texto al 988, Línea de Prevención del Suicidio y Crisis'), href: 'tel:988', kind: 'emergency' },
+        { label: gt('Call 911', 'Llame al 911'), href: 'tel:911', kind: 'emergency' },
+        { label: gt('SAMHSA National Helpline (1-800-662-4357)', 'Línea Nacional de Ayuda de SAMHSA (1-800-662-4357)'), href: 'tel:18006624357', kind: 'hotline' },
+        { label: gt('View All 24/7 Crisis & Community Lines', 'Ver todas las líneas de crisis y comunitarias 24/7'), href: '#/crisis', kind: 'secondary' },
       ],
       codes: ['WI', 'PEOFF', 'MHSU'],
       hotlines: hotlinesById('988', 'crisis-text-line', 'samhsa'),
@@ -258,8 +283,8 @@ export function detectCrisisOrOverdose(input = '') {
       actions: [
         { label: 'Never Use Alone (877-696-1996)', href: 'tel:8776961996', kind: 'emergency' },
         { label: 'SafeSpot Overdose Prevention Line (800-972-0590)', href: 'tel:8009720590', kind: 'hotline' },
-        { label: 'Open Harm Reduction & Safer Use Guide', href: '#/harm-reduction', kind: 'primary' },
-        { label: 'Open Step-by-Step Overdose & Naloxone Guide', href: '#/overdose', kind: 'secondary' },
+        { label: gt('Open Harm Reduction & Safer Use Guide', 'Abrir la guía de reducción de daños y consumo más seguro'), href: '#/harm-reduction', kind: 'primary' },
+        { label: gt('Open Step-by-Step Overdose & Naloxone Guide', 'Abrir la guía de sobredosis y naloxona paso a paso'), href: '#/overdose', kind: 'secondary' },
       ],
       codes: ['NOE', 'BU'],
       hotlines: hotlinesById('never-use-alone', 'safespot'),
@@ -1610,18 +1635,18 @@ export function guidedNavigatorView() {
 
   function renderSynthesis(shouldAnnounce = false) {
     clear(synthesisContainer);
-    const triage =
-      guidedState.lastTriage ??
-      runGuidedTriage({
-        freeText: guidedState.freeText,
-        flags: guidedState.emergencyFlag !== 'none' ? [guidedState.emergencyFlag] : [],
-        substances: guidedState.substances,
-        opioidSymptoms: guidedState.opioidSymptoms,
-        alcoholRisk: guidedState.alcoholRisk,
-        transition: guidedState.transition,
-        asamAnswers: guidedState.asamAnswers,
-        populations: guidedState.populations,
-      });
+    // Recompute instead of reusing lastTriage: the result carries display text
+    // (headline, guidance, action labels) in the language active when it ran.
+    const triage = (guidedState.lastTriage = runGuidedTriage({
+      freeText: guidedState.freeText,
+      flags: guidedState.emergencyFlag !== 'none' ? [guidedState.emergencyFlag] : [],
+      substances: guidedState.substances,
+      opioidSymptoms: guidedState.opioidSymptoms,
+      alcoholRisk: guidedState.alcoholRisk,
+      transition: guidedState.transition,
+      asamAnswers: guidedState.asamAnswers,
+      populations: guidedState.populations,
+    }));
 
     if (triage.crisisIntercept.intercepted) {
       const intercept = triage.crisisIntercept;
