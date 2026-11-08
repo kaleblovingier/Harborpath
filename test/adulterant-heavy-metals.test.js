@@ -134,6 +134,10 @@ test('Adulterants & Heavy Metals: DOM View Rendering and Mount', () => {
     const view = adulterantHeavyMetalsView();
     assert.ok(view, 'View mounts successfully');
     assert.equal(view.className, 'adulterant-view specialized-clinical-view');
+    const sbar = view.querySelector('.nsti-sbar-textarea');
+    assert.ok(sbar && (sbar.value.length > 50 || sbar.textContent.length > 50), 'SBAR textarea is populated with handoff content');
+    const hrInput = view.querySelector('#hr-input');
+    assert.ok(hrInput, 'Heart rate input is mounted in DOM');
 
     if (typeof view._cleanup === 'function') {
       view._cleanup();

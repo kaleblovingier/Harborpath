@@ -259,6 +259,7 @@ export async function runBuildCheck({ silent = false } = {}) {
   const publicSourceFiles = walkFiles(PUBLIC_DIR, /\.(js|html|svg)$/);
   const innerHtmlViolations = [];
   const inlineStyleViolations = [];
+  const textareaPropViolations = [];
 
   for (const file of publicSourceFiles) {
     const rel = path.relative(ROOT_DIR, file).split(path.sep).join('/');
@@ -268,6 +269,9 @@ export async function runBuildCheck({ silent = false } = {}) {
     }
     if (/\bstyle\s*=/i.test(text)) {
       inlineStyleViolations.push(rel);
+    }
+    if (/\.js$/.test(file) && /h\(\s*['"]textarea['"]\s*,\s*\{[^}]*\bvalue\s*:/s.test(text)) {
+      textareaPropViolations.push(rel);
     }
   }
 
@@ -285,6 +289,14 @@ export async function runBuildCheck({ silent = false } = {}) {
     inlineStyleViolations.length === 0
       ? `0 inline style= attributes across ${publicSourceFiles.length} public files`
       : `Violations in: ${inlineStyleViolations.join(', ')}`,
+  );
+
+  record(
+    'security:dom-clean-textarea',
+    textareaPropViolations.length === 0,
+    textareaPropViolations.length === 0
+      ? `0 textarea value prop violations across ${publicSourceFiles.length} public files`
+      : `Violations in: ${textareaPropViolations.join(', ')}`,
   );
 
   const vercelPath = path.join(ROOT_DIR, 'vercel.json');

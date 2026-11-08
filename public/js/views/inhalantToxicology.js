@@ -3,8 +3,9 @@
 // ACMT, AACT, and EAPCCT Clinical Consensus Standards.
 // Ephemeral in-RAM state, zero persistent storage, zero PII, WCAG 2.1 AA compliant.
 
-import { h } from '../dom.js';
+import { h, clear } from '../dom.js';
 import { t, getLang } from '../i18n.js';
+import { pageHeader } from './common.js';
 
 export const INHALANT_SUBSTANCES = Object.freeze({
   n2o: {
@@ -269,199 +270,236 @@ export function subscribeInhalantState(fn) {
 // Accessible DOM View
 export function inhalantToxicologyView() {
   const container = h('div', { class: 'inhalant-view specialized-clinical-view' });
+  const lang = getLang();
+  const isEs = lang === 'es';
 
-  function render() {
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
+  // Header via common pageHeader
+  const header = pageHeader(
+    t('tools.item.inhalant-toxicology.title', 'Inhalant, Volatile Solvent & Nitrous Oxide Neuropathy Navigator'),
+    t(
+      'tools.item.inhalant-toxicology.description',
+      'ACMT consensus protocols for Nitrous Oxide (Galaxy Gas) SCD and folate trap prohibition, volatile hydrocarbon sudden sniffing death syndrome (epinephrine prohibition), and toluene Type 1 distal RTA hypokalemic quadriparesis.',
+    ),
+  );
+  container.appendChild(header);
 
+  // Dynamic Lethal Pitfall Warning Banner Container
+  const warningBannerContainer = h('div');
+  container.appendChild(warningBannerContainer);
+
+  // Grid Layout
+  const grid = h('div', { class: 'nsti-grid' });
+  const leftCol = h('div', { class: 'nsti-col' });
+  const rightCol = h('div', { class: 'nsti-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(grid);
+
+  // Substance Select Card
+  const initialSub = INHALANT_SUBSTANCES[getInhalantState().substance] || INHALANT_SUBSTANCES.n2o;
+  const subSelect = h(
+    'select',
+    {
+      class: 'nsti-select',
+      'aria-label': isEs ? 'Seleccionar sustancia inhalada' : 'Select inhaled substance',
+      onchange: (e) => updateInhalantState({ substance: e.target.value }),
+    },
+    Object.values(INHALANT_SUBSTANCES).map((item) =>
+      h('option', { value: item.id, selected: item.id === getInhalantState().substance }, isEs ? item.nameEs : item.name),
+    ),
+  );
+  const mechanismContainer = h('div', { class: 'nsti-stage-info' });
+  const subCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '1. Agente Inhalante Implicado' : '1. Implicated Inhalant / Solvent'),
+    subSelect,
+    mechanismContainer,
+  ]);
+  leftCol.appendChild(subCard);
+
+  // Lab Inputs Card
+  const potassiumInput = h('input', {
+    id: 'potassium-input',
+    type: 'number',
+    step: '0.1',
+    class: 'nsti-num-input',
+    placeholder: 'e.g. 1.8',
+    value: getInhalantState().serumPotassium,
+    oninput: (e) => updateInhalantState({ serumPotassium: e.target.value }),
+  });
+  const labCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '2. Parámetros de Laboratorio y Pruebas POC' : '2. Point-of-Care & Lab Values'),
+    h('div', { class: 'decon-input-group' }, [
+      h('label', { for: 'potassium-input' }, isEs ? 'Potasio Sérico (mEq/L - Alerta si < 3.5 o < 2.0):' : 'Serum Potassium (mEq/L - Alert if < 3.5 or < 2.0):'),
+      potassiumInput,
+    ]),
+  ]);
+  leftCol.appendChild(labCard);
+
+  // Clinical Flags Card
+  const flagCheckboxes = [];
+  const flagsCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '3. Evaluación de Síntomas y Riesgos' : '3. Clinical Flags & Risk Assessment'),
+    h(
+      'div',
+      { class: 'decon-checkbox-group' },
+      INHALANT_CLINICAL_FLAGS.map((f) => {
+        const cb = h('input', {
+          type: 'checkbox',
+          checked: getInhalantState().checkedFlags.has(f.id),
+          onchange: (e) => {
+            const set = new Set(getInhalantState().checkedFlags);
+            if (e.target.checked) set.add(f.id);
+            else set.delete(f.id);
+            updateInhalantState({ checkedFlags: set });
+          },
+        });
+        flagCheckboxes.push({ id: f.id, input: cb });
+        return h(
+          'label',
+          { class: `disaster-check-row ${f.fatal ? 'emergency-row' : ''}` },
+          [
+            cb,
+            h('span', { class: 'disaster-check-label' }, isEs ? f.labelEs : f.label),
+          ],
+        );
+      }),
+    ),
+  ]);
+  leftCol.appendChild(flagsCard);
+
+  // Dynamic Right Column Containers
+  const directivesCardContainer = h('div');
+  const sbarCardContainer = h('div');
+  rightCol.appendChild(directivesCardContainer);
+  rightCol.appendChild(sbarCardContainer);
+
+  function renderDynamic() {
     const state = getInhalantState();
-    const lang = getLang();
-    const isEs = lang === 'es';
     const sub = INHALANT_SUBSTANCES[state.substance] || INHALANT_SUBSTANCES.n2o;
     const evalResult = evaluateInhalantRisk(state);
 
-    // Header
-    const header = h('header', { class: 'tool-header' }, [
-      h('h1', { id: 'page-title' }, [
-        t('tools.item.inhalant-toxicology.title', 'Inhalant, Volatile Solvent & Nitrous Oxide Neuropathy Navigator'),
+    // Update Warning Banner
+    clear(warningBannerContainer);
+    warningBannerContainer.appendChild(
+      h('div', { class: 'movement-blackbox-banner' }, [
+        h('div', { class: 'movement-banner-header' }, [
+          h('strong', {}, isEs ? 'ALERTA NEGRA TOXICOLÓGICA: ' + sub.fatalPitfallEs : 'BLACK-BOX TOXICOLOGY ALERT: ' + sub.fatalPitfall),
+        ]),
+        h('p', {}, isEs ? sub.contraindicationTextEs : sub.contraindicationText),
       ]),
-      h('p', { class: 'tool-desc' }, [
-        t(
-          'tools.item.inhalant-toxicology.description',
-          'ACMT consensus protocols for Nitrous Oxide (Galaxy Gas) SCD and folate trap prohibition, volatile hydrocarbon sudden sniffing death syndrome (epinephrine prohibition), and toluene Type 1 distal RTA hypokalemic quadriparesis.',
+    );
+
+    // Update Mechanism Info
+    clear(mechanismContainer);
+    mechanismContainer.appendChild(h('strong', {}, isEs ? 'Mecanismo Bioquímico: ' : 'Biochemical Mechanism: '));
+    mechanismContainer.appendChild(h('span', {}, isEs ? sub.mechanismEs : sub.mechanism));
+
+    // Update Directives Card
+    clear(directivesCardContainer);
+    directivesCardContainer.appendChild(
+      h('div', { class: 'nsti-card' }, [
+        h('h2', { class: 'nsti-card-title' }, isEs ? '4. Protocolos y Directivas de Manejo' : '4. Triage & Resuscitation Directives'),
+        evalResult.alerts.length > 0
+          ? h(
+              'div',
+              { class: 'disaster-alert-box alert-critical' },
+              evalResult.alerts.map((a) =>
+                h('div', {}, [
+                  h('strong', {}, isEs ? a.titleEs : a.title),
+                  h('p', {}, isEs ? a.bodyEs : a.body),
+                ]),
+              ),
+            )
+          : null,
+        h('div', { class: 'decon-directive-box' }, [
+          h('strong', {}, isEs ? 'Tratamiento de Primera Línea: ' : 'First-Line Antidote / Resuscitation: '),
+          h('p', { class: 'decon-directive-text' }, isEs ? sub.antidoteEs : sub.antidote),
+        ]),
+        h(
+          'div',
+          { class: 'disaster-action-list' },
+          evalResult.actions.map((act) =>
+            h('div', { class: 'disaster-action-item' }, [
+              h('span', { class: `disaster-badge badge-${act.priority === 'stat' ? 'danger' : act.priority === 'urgent' ? 'warning' : 'low'}` }, act.priority.toUpperCase()),
+              h('span', {}, isEs ? act.textEs : act.text),
+            ]),
+          ),
         ),
       ]),
-    ]);
+    );
 
-    // Lethal Pitfall Warning Banner
-    const warningBanner = h('div', { class: 'movement-blackbox-banner' }, [
-      h('div', { class: 'movement-banner-header' }, [
-        h('strong', {}, isEs ? 'ALERTA NEGRA TOXICOLÓGICA: ' + sub.fatalPitfallEs : 'BLACK-BOX TOXICOLOGY ALERT: ' + sub.fatalPitfall),
-      ]),
-      h('p', {}, isEs ? sub.contraindicationTextEs : sub.contraindicationText),
-    ]);
-
-    // Grid Layout
-    const grid = h('div', { class: 'nsti-grid' });
-
-    // Left Column: Inputs & Flags
-    const leftCol = h('div', { class: 'nsti-col' });
-
-    // Substance Select Card
-    const subCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '1. Agente Inhalante Implicado' : '1. Implicated Inhalant / Solvent'),
-      h(
-        'select',
-        {
-          class: 'nsti-select',
-          'aria-label': isEs ? 'Seleccionar sustancia inhalada' : 'Select inhaled substance',
-          onchange: (e) => updateInhalantState({ substance: e.target.value }),
-        },
-        Object.values(INHALANT_SUBSTANCES).map((item) =>
-          h('option', { value: item.id, selected: item.id === state.substance }, isEs ? item.nameEs : item.name),
-        ),
-      ),
-      h('div', { class: 'nsti-stage-info' }, [
-        h('strong', {}, isEs ? 'Mecanismo Bioquímico: ' : 'Biochemical Mechanism: '),
-        h('span', {}, isEs ? sub.mechanismEs : sub.mechanism),
-      ]),
-    ]);
-
-    // Lab Inputs Card
-    const labCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '2. Parámetros de Laboratorio y Pruebas POC' : '2. Point-of-Care & Lab Values'),
-      h('div', { class: 'decon-input-group' }, [
-        h('label', { for: 'potassium-input' }, isEs ? 'Potasio Sérico (mEq/L - Alerta si < 3.5 o < 2.0):' : 'Serum Potassium (mEq/L - Alert if < 3.5 or < 2.0):'),
-        h('input', {
-          id: 'potassium-input',
-          type: 'number',
-          step: '0.1',
-          class: 'nsti-num-input',
-          placeholder: 'e.g. 1.8',
-          value: state.serumPotassium,
-          oninput: (e) => updateInhalantState({ serumPotassium: e.target.value }),
-        }),
-      ]),
-    ]);
-
-    // Clinical Flags Card
-    const flagsCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '3. Evaluación de Síntomas y Riesgos' : '3. Clinical Flags & Risk Assessment'),
-      h(
-        'div',
-        { class: 'decon-checkbox-group' },
-        INHALANT_CLINICAL_FLAGS.map((f) => {
-          const checked = state.checkedFlags.has(f.id);
-          return h(
-            'label',
-            { class: `disaster-check-row ${f.fatal ? 'emergency-row' : ''}` },
-            [
-              h('input', {
-                type: 'checkbox',
-                checked,
-                onchange: (e) => {
-                  const set = new Set(state.checkedFlags);
-                  if (e.target.checked) set.add(f.id);
-                  else set.delete(f.id);
-                  updateInhalantState({ checkedFlags: set });
-                },
-              }),
-              h('span', { class: 'disaster-check-label' }, isEs ? f.labelEs : f.label),
-            ],
-          );
-        }),
-      ),
-    ]);
-
-    leftCol.appendChild(subCard);
-    leftCol.appendChild(labCard);
-    leftCol.appendChild(flagsCard);
-
-    // Right Column: Directives & SBAR Note
-    const rightCol = h('div', { class: 'nsti-col' });
-
-    // Triage Directives Card
-    const directivesCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '4. Protocolos y Directivas de Manejo' : '4. Triage & Resuscitation Directives'),
-      evalResult.alerts.length > 0
-        ? h(
-            'div',
-            { class: 'disaster-alert-box alert-critical' },
-            evalResult.alerts.map((a) =>
-              h('div', {}, [
-                h('strong', {}, isEs ? a.titleEs : a.title),
-                h('p', {}, isEs ? a.bodyEs : a.body),
-              ]),
-            ),
-          )
-        : null,
-      h('div', { class: 'decon-directive-box' }, [
-        h('strong', {}, isEs ? 'Tratamiento de Primera Línea: ' : 'First-Line Antidote / Resuscitation: '),
-        h('p', { class: 'decon-directive-text' }, isEs ? sub.antidoteEs : sub.antidote),
-      ]),
-      h(
-        'div',
-        { class: 'disaster-action-list' },
-        evalResult.actions.map((act) =>
-          h('div', { class: 'disaster-action-item' }, [
-            h('span', { class: `disaster-badge badge-${act.priority === 'stat' ? 'danger' : act.priority === 'urgent' ? 'warning' : 'low'}` }, act.priority.toUpperCase()),
-            h('span', {}, isEs ? act.textEs : act.text),
-          ]),
-        ),
-      ),
-    ]);
-
-    // Zero-PII SBAR Handoff Card
+    // Update SBAR Note Card
     const sbarText = generateInhalantSbar(state, lang);
-    const sbarCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '5. Nota de Transferencia Clínica SBAR (Cero PII)' : '5. Zero-PII SBAR Clinical Handoff Note'),
-      h('textarea', {
+    clear(sbarCardContainer);
+    const sbarTextarea = h(
+      'textarea',
+      {
         class: 'nsti-sbar-textarea',
         rows: '14',
         readonly: true,
         'aria-label': isEs ? 'Nota clínica SBAR generada' : 'Generated SBAR clinical handoff note',
-        value: sbarText,
-      }),
-      h('div', { class: 'nsti-btn-row' }, [
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-primary',
-            onclick: () => {
-              if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(sbarText);
-              }
-            },
-          },
-          isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-secondary',
-            onclick: () => resetInhalantState(),
-          },
-          isEs ? 'Reiniciar Formulario' : 'Reset Form',
-        ),
+      },
+      sbarText,
+    );
+    sbarTextarea.value = sbarText;
+
+    const copyBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-primary',
+        onclick: async () => {
+          try {
+            if (navigator.clipboard?.writeText) {
+              await navigator.clipboard.writeText(sbarTextarea.value);
+            } else {
+              sbarTextarea.select();
+              document.execCommand('copy');
+            }
+            copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
+            setTimeout(() => {
+              copyBtn.textContent = isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note';
+            }, 2000);
+          } catch {
+            sbarTextarea.select();
+          }
+        },
+      },
+      isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
+    );
+
+    const resetBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-secondary',
+        onclick: () => {
+          resetInhalantState();
+          potassiumInput.value = '';
+          subSelect.value = 'n2o';
+          flagCheckboxes.forEach((f) => { f.input.checked = false; });
+        },
+      },
+      isEs ? 'Reiniciar Formulario' : 'Reset Form',
+    );
+
+    sbarCardContainer.appendChild(
+      h('div', { class: 'nsti-card' }, [
+        h('h2', { class: 'nsti-card-title' }, isEs ? '5. Nota de Transferencia Clínica SBAR (Cero PII)' : '5. Zero-PII SBAR Clinical Handoff Note'),
+        sbarTextarea,
+        h('div', { class: 'nsti-btn-row' }, [copyBtn, resetBtn]),
       ]),
-    ]);
-
-    rightCol.appendChild(directivesCard);
-    rightCol.appendChild(sbarCard);
-
-    grid.appendChild(leftCol);
-    grid.appendChild(rightCol);
-
-    container.appendChild(header);
-    container.appendChild(warningBanner);
-    container.appendChild(grid);
+    );
   }
 
-  const unsubscribe = subscribeInhalantState(() => render());
-  render();
+  const unsubscribe = subscribeInhalantState(() => {
+    if (!container.isConnected) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  });
+  renderDynamic();
   container._cleanup = unsubscribe;
   return container;
 }

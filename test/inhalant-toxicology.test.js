@@ -135,6 +135,10 @@ test('Inhalant Toxicology: DOM View Rendering and Mount', () => {
     const view = inhalantToxicologyView();
     assert.ok(view, 'View renders successfully');
     assert.equal(view.className, 'inhalant-view specialized-clinical-view');
+    const sbar = view.querySelector('.nsti-sbar-textarea');
+    assert.ok(sbar && (sbar.value.length > 50 || sbar.textContent.length > 50), 'SBAR textarea is populated with handoff content');
+    const potInput = view.querySelector('#potassium-input');
+    assert.ok(potInput, 'Potassium input is mounted in DOM');
 
     if (typeof view._cleanup === 'function') {
       view._cleanup();

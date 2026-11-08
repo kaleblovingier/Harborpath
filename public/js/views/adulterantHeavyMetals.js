@@ -3,8 +3,9 @@
 // ACMT, AACT, and CDC HAN Clinical Toxicology Standards.
 // Ephemeral in-RAM state, zero persistent storage, zero PII, WCAG 2.1 AA compliant.
 
-import { h } from '../dom.js';
+import { h, clear } from '../dom.js';
 import { t, getLang } from '../i18n.js';
+import { pageHeader } from './common.js';
 
 export const ADULTERANT_TYPES = Object.freeze({
   medetomidine: {
@@ -290,221 +291,261 @@ export function subscribeAdulterantState(fn) {
 // Accessible DOM View
 export function adulterantHeavyMetalsView() {
   const container = h('div', { class: 'adulterant-view specialized-clinical-view' });
+  const lang = getLang();
+  const isEs = lang === 'es';
 
-  function render() {
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
+  // Header via common pageHeader
+  const header = pageHeader(
+    t('tools.item.adulterant-heavy-metals.title', 'Illicit Drug Adulterants, Heavy Metals & Alpha-2 Agonist Triage'),
+    t(
+      'tools.item.adulterant-heavy-metals.description',
+      'Clinical triage for Medetomidine refractory bradycardia (atipamezole prohibition), Brodifacoum superwarfarin coagulopathy (4F-PCC and oral Vitamin K bridge), and street drug Lead plumbism chelation sequencing.',
+    ),
+  );
+  container.appendChild(header);
 
+  // Dynamic Warning Banner Container
+  const warningBannerContainer = h('div');
+  container.appendChild(warningBannerContainer);
+
+  // Grid Layout
+  const grid = h('div', { class: 'nsti-grid' });
+  const leftCol = h('div', { class: 'nsti-col' });
+  const rightCol = h('div', { class: 'nsti-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(grid);
+
+  // Adulterant Select Card
+  const typeSelect = h(
+    'select',
+    {
+      class: 'nsti-select',
+      'aria-label': isEs ? 'Seleccionar tipo de adulterante' : 'Select adulterant type',
+      onchange: (e) => updateAdulterantState({ adulterantType: e.target.value }),
+    },
+    Object.values(ADULTERANT_TYPES).map((item) =>
+      h('option', { value: item.id, selected: item.id === getAdulterantState().adulterantType }, isEs ? item.nameEs : item.name),
+    ),
+  );
+  const profileContainer = h('div', { class: 'nsti-stage-info' });
+  const typeCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '1. Adulterante o Contaminante Sospechoso' : '1. Suspected Adulterant or Contaminant'),
+    typeSelect,
+    profileContainer,
+  ]);
+  leftCol.appendChild(typeCard);
+
+  // Vitals & Lab Card
+  const hrInput = h('input', {
+    id: 'hr-input',
+    type: 'number',
+    class: 'nsti-num-input',
+    placeholder: 'e.g. 34',
+    value: getAdulterantState().heartRate,
+    oninput: (e) => updateAdulterantState({ heartRate: e.target.value }),
+  });
+  const inrInput = h('input', {
+    id: 'inr-input',
+    type: 'number',
+    step: '0.1',
+    class: 'nsti-num-input',
+    placeholder: 'e.g. 10.5',
+    value: getAdulterantState().inrValue,
+    oninput: (e) => updateAdulterantState({ inrValue: e.target.value }),
+  });
+  const bllInput = h('input', {
+    id: 'bll-input',
+    type: 'number',
+    class: 'nsti-num-input',
+    placeholder: 'e.g. 78',
+    value: getAdulterantState().bllValue,
+    oninput: (e) => updateAdulterantState({ bllValue: e.target.value }),
+  });
+  const vitalsCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '2. Signos Vitales y Laboratorio Clave' : '2. Key Vitals & Diagnostic Values'),
+    h('div', { class: 'decon-input-group' }, [
+      h('label', { for: 'hr-input' }, isEs ? 'Frecuencia Cardíaca (lpm - Alerta si < 45):' : 'Heart Rate (bpm - Alert if < 45):'),
+      hrInput,
+    ]),
+    h('div', { class: 'decon-input-group' }, [
+      h('label', { for: 'inr-input' }, isEs ? 'INR (Coagulopatía por Brodifacoum - Alerta si > 5.0 o incalculable):' : 'INR (Brodifacoum Coagulopathy - Alert if > 5.0 or > 10.0):'),
+      inrInput,
+    ]),
+    h('div', { class: 'decon-input-group' }, [
+      h('label', { for: 'bll-input' }, isEs ? 'Plumbemia BLL (ug/dL - Alerta si >= 45 o >= 70):' : 'Blood Lead Level BLL (ug/dL - Alert if >= 45 or >= 70):'),
+      bllInput,
+    ]),
+  ]);
+  leftCol.appendChild(vitalsCard);
+
+  // Clinical Flags Card
+  const flagCheckboxes = [];
+  const flagsCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '3. Banderas de Riesgo Clínico' : '3. Clinical Risk Flags'),
+    h(
+      'div',
+      { class: 'decon-checkbox-group' },
+      ADULTERANT_CLINICAL_FLAGS.map((f) => {
+        const cb = h('input', {
+          type: 'checkbox',
+          checked: getAdulterantState().checkedFlags.has(f.id),
+          onchange: (e) => {
+            const set = new Set(getAdulterantState().checkedFlags);
+            if (e.target.checked) set.add(f.id);
+            else set.delete(f.id);
+            updateAdulterantState({ checkedFlags: set });
+          },
+        });
+        flagCheckboxes.push({ id: f.id, input: cb });
+        return h(
+          'label',
+          { class: `disaster-check-row ${f.fatal ? 'emergency-row' : ''}` },
+          [
+            cb,
+            h('span', { class: 'disaster-check-label' }, isEs ? f.labelEs : f.label),
+          ],
+        );
+      }),
+    ),
+  ]);
+  leftCol.appendChild(flagsCard);
+
+  // Dynamic Right Column Containers
+  const directivesCardContainer = h('div');
+  const sbarCardContainer = h('div');
+  rightCol.appendChild(directivesCardContainer);
+  rightCol.appendChild(sbarCardContainer);
+
+  function renderDynamic() {
     const state = getAdulterantState();
-    const lang = getLang();
-    const isEs = lang === 'es';
     const type = ADULTERANT_TYPES[state.adulterantType] || ADULTERANT_TYPES.medetomidine;
     const evalResult = evaluateAdulterantRisk(state);
 
-    // Header
-    const header = h('header', { class: 'tool-header' }, [
-      h('h1', { id: 'page-title' }, [
-        t('tools.item.adulterant-heavy-metals.title', 'Illicit Drug Adulterants, Heavy Metals & Alpha-2 Agonist Triage'),
+    // Update Warning Banner
+    clear(warningBannerContainer);
+    warningBannerContainer.appendChild(
+      h('div', { class: 'movement-blackbox-banner' }, [
+        h('div', { class: 'movement-banner-header' }, [
+          h('strong', {}, isEs ? 'ALERTA NEGRA TOXICOLÓGICA: ' + type.blackBoxContraindicationEs : 'BLACK-BOX TOXICOLOGY ALERT: ' + type.blackBoxContraindication),
+        ]),
+        h('p', {}, isEs ? type.contraindicationDetailEs : type.contraindicationDetail),
       ]),
-      h('p', { class: 'tool-desc' }, [
-        t(
-          'tools.item.adulterant-heavy-metals.description',
-          'Clinical triage for Medetomidine refractory bradycardia (atipamezole prohibition), Brodifacoum superwarfarin coagulopathy (4F-PCC and oral Vitamin K bridge), and street drug Lead plumbism chelation sequencing.',
+    );
+
+    // Update Profile Info
+    clear(profileContainer);
+    profileContainer.appendChild(h('strong', {}, isEs ? 'Perfil Toxicológico: ' : 'Toxicological Profile: '));
+    profileContainer.appendChild(h('span', {}, isEs ? type.selectivityEs : type.selectivity));
+
+    // Update Directives Card
+    clear(directivesCardContainer);
+    directivesCardContainer.appendChild(
+      h('div', { class: 'nsti-card' }, [
+        h('h2', { class: 'nsti-card-title' }, isEs ? '4. Directivas de Resucitación y Quelación' : '4. Resuscitation & Chelation Directives'),
+        evalResult.alerts.length > 0
+          ? h(
+              'div',
+              { class: 'disaster-alert-box alert-critical' },
+              evalResult.alerts.map((a) =>
+                h('div', {}, [
+                  h('strong', {}, isEs ? a.titleEs : a.title),
+                  h('p', {}, isEs ? a.bodyEs : a.body),
+                ]),
+              ),
+            )
+          : null,
+        h('div', { class: 'decon-directive-box' }, [
+          h('strong', {}, isEs ? 'Manejo de Primera Línea: ' : 'First-Line Management Protocol: '),
+          h('p', { class: 'decon-directive-text' }, isEs ? type.managementEs : type.management),
+        ]),
+        h(
+          'div',
+          { class: 'disaster-action-list' },
+          evalResult.actions.map((act) =>
+            h('div', { class: 'disaster-action-item' }, [
+              h('span', { class: `disaster-badge badge-${act.priority === 'stat' ? 'danger' : act.priority === 'urgent' ? 'warning' : 'low'}` }, act.priority.toUpperCase()),
+              h('span', {}, isEs ? act.textEs : act.text),
+            ]),
+          ),
         ),
       ]),
-    ]);
+    );
 
-    // Lethal Pitfall Warning Banner
-    const warningBanner = h('div', { class: 'movement-blackbox-banner' }, [
-      h('div', { class: 'movement-banner-header' }, [
-        h('strong', {}, isEs ? 'ALERTA NEGRA TOXICOLÓGICA: ' + type.blackBoxContraindicationEs : 'BLACK-BOX TOXICOLOGY ALERT: ' + type.blackBoxContraindication),
-      ]),
-      h('p', {}, isEs ? type.contraindicationDetailEs : type.contraindicationDetail),
-    ]);
-
-    // Grid Layout
-    const grid = h('div', { class: 'nsti-grid' });
-
-    // Left Column
-    const leftCol = h('div', { class: 'nsti-col' });
-
-    // Adulterant Select Card
-    const typeCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '1. Adulterante o Contaminante Sospechoso' : '1. Suspected Adulterant or Contaminant'),
-      h(
-        'select',
-        {
-          class: 'nsti-select',
-          'aria-label': isEs ? 'Seleccionar tipo de adulterante' : 'Select adulterant type',
-          onchange: (e) => updateAdulterantState({ adulterantType: e.target.value }),
-        },
-        Object.values(ADULTERANT_TYPES).map((item) =>
-          h('option', { value: item.id, selected: item.id === state.adulterantType }, isEs ? item.nameEs : item.name),
-        ),
-      ),
-      h('div', { class: 'nsti-stage-info' }, [
-        h('strong', {}, isEs ? 'Perfil Toxicológico: ' : 'Toxicological Profile: '),
-        h('span', {}, isEs ? type.selectivityEs : type.selectivity),
-      ]),
-    ]);
-
-    // Vitals & Lab Card
-    const vitalsCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '2. Signos Vitales y Laboratorio Clave' : '2. Key Vitals & Diagnostic Values'),
-      h('div', { class: 'decon-input-group' }, [
-        h('label', { for: 'hr-input' }, isEs ? 'Frecuencia Cardíaca (lpm - Alerta si < 45):' : 'Heart Rate (bpm - Alert if < 45):'),
-        h('input', {
-          id: 'hr-input',
-          type: 'number',
-          class: 'nsti-num-input',
-          placeholder: 'e.g. 34',
-          value: state.heartRate,
-          oninput: (e) => updateAdulterantState({ heartRate: e.target.value }),
-        }),
-      ]),
-      h('div', { class: 'decon-input-group' }, [
-        h('label', { for: 'inr-input' }, isEs ? 'INR (Coagulopatía por Brodifacoum - Alerta si > 5.0 o incalculable):' : 'INR (Brodifacoum Coagulopathy - Alert if > 5.0 or > 10.0):'),
-        h('input', {
-          id: 'inr-input',
-          type: 'number',
-          step: '0.1',
-          class: 'nsti-num-input',
-          placeholder: 'e.g. 10.5',
-          value: state.inrValue,
-          oninput: (e) => updateAdulterantState({ inrValue: e.target.value }),
-        }),
-      ]),
-      h('div', { class: 'decon-input-group' }, [
-        h('label', { for: 'bll-input' }, isEs ? 'Plumbemia BLL (ug/dL - Alerta si >= 45 o >= 70):' : 'Blood Lead Level BLL (ug/dL - Alert if >= 45 or >= 70):'),
-        h('input', {
-          id: 'bll-input',
-          type: 'number',
-          class: 'nsti-num-input',
-          placeholder: 'e.g. 78',
-          value: state.bllValue,
-          oninput: (e) => updateAdulterantState({ bllValue: e.target.value }),
-        }),
-      ]),
-    ]);
-
-    // Clinical Flags Card
-    const flagsCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '3. Banderas de Riesgo Clínico' : '3. Clinical Risk Flags'),
-      h(
-        'div',
-        { class: 'decon-checkbox-group' },
-        ADULTERANT_CLINICAL_FLAGS.map((f) => {
-          const checked = state.checkedFlags.has(f.id);
-          return h(
-            'label',
-            { class: `disaster-check-row ${f.fatal ? 'emergency-row' : ''}` },
-            [
-              h('input', {
-                type: 'checkbox',
-                checked,
-                onchange: (e) => {
-                  const set = new Set(state.checkedFlags);
-                  if (e.target.checked) set.add(f.id);
-                  else set.delete(f.id);
-                  updateAdulterantState({ checkedFlags: set });
-                },
-              }),
-              h('span', { class: 'disaster-check-label' }, isEs ? f.labelEs : f.label),
-            ],
-          );
-        }),
-      ),
-    ]);
-
-    leftCol.appendChild(typeCard);
-    leftCol.appendChild(vitalsCard);
-    leftCol.appendChild(flagsCard);
-
-    // Right Column
-    const rightCol = h('div', { class: 'nsti-col' });
-
-    // Directives Card
-    const directivesCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '4. Directivas de Resucitación y Quelación' : '4. Resuscitation & Chelation Directives'),
-      evalResult.alerts.length > 0
-        ? h(
-            'div',
-            { class: 'disaster-alert-box alert-critical' },
-            evalResult.alerts.map((a) =>
-              h('div', {}, [
-                h('strong', {}, isEs ? a.titleEs : a.title),
-                h('p', {}, isEs ? a.bodyEs : a.body),
-              ]),
-            ),
-          )
-        : null,
-      h('div', { class: 'decon-directive-box' }, [
-        h('strong', {}, isEs ? 'Manejo de Primera Línea: ' : 'First-Line Management Protocol: '),
-        h('p', { class: 'decon-directive-text' }, isEs ? type.managementEs : type.management),
-      ]),
-      h(
-        'div',
-        { class: 'disaster-action-list' },
-        evalResult.actions.map((act) =>
-          h('div', { class: 'disaster-action-item' }, [
-            h('span', { class: `disaster-badge badge-${act.priority === 'stat' ? 'danger' : act.priority === 'urgent' ? 'warning' : 'low'}` }, act.priority.toUpperCase()),
-            h('span', {}, isEs ? act.textEs : act.text),
-          ]),
-        ),
-      ),
-    ]);
-
-    // SBAR Handoff Card
+    // Update SBAR Handoff Card
     const sbarText = generateAdulterantSbar(state, lang);
-    const sbarCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '5. Nota SBAR de Transferencia Toxicológica (Cero PII)' : '5. Zero-PII SBAR Toxicology Handoff Note'),
-      h('textarea', {
+    clear(sbarCardContainer);
+    const sbarTextarea = h(
+      'textarea',
+      {
         class: 'nsti-sbar-textarea',
         rows: '14',
         readonly: true,
         'aria-label': isEs ? 'Nota clínica SBAR generada' : 'Generated SBAR clinical handoff note',
-        value: sbarText,
-      }),
-      h('div', { class: 'nsti-btn-row' }, [
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-primary',
-            onclick: () => {
-              if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(sbarText);
-              }
-            },
-          },
-          isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-secondary',
-            onclick: () => resetAdulterantState(),
-          },
-          isEs ? 'Reiniciar Formulario' : 'Reset Form',
-        ),
+      },
+      sbarText,
+    );
+    sbarTextarea.value = sbarText;
+
+    const copyBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-primary',
+        onclick: async () => {
+          try {
+            if (navigator.clipboard?.writeText) {
+              await navigator.clipboard.writeText(sbarTextarea.value);
+            } else {
+              sbarTextarea.select();
+              document.execCommand('copy');
+            }
+            copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
+            setTimeout(() => {
+              copyBtn.textContent = isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note';
+            }, 2000);
+          } catch {
+            sbarTextarea.select();
+          }
+        },
+      },
+      isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
+    );
+
+    const resetBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-secondary',
+        onclick: () => {
+          resetAdulterantState();
+          hrInput.value = '';
+          inrInput.value = '';
+          bllInput.value = '';
+          typeSelect.value = 'medetomidine';
+          flagCheckboxes.forEach((f) => { f.input.checked = false; });
+        },
+      },
+      isEs ? 'Reiniciar Formulario' : 'Reset Form',
+    );
+
+    sbarCardContainer.appendChild(
+      h('div', { class: 'nsti-card' }, [
+        h('h2', { class: 'nsti-card-title' }, isEs ? '5. Nota SBAR de Transferencia Toxicológica (Cero PII)' : '5. Zero-PII SBAR Toxicology Handoff Note'),
+        sbarTextarea,
+        h('div', { class: 'nsti-btn-row' }, [copyBtn, resetBtn]),
       ]),
-    ]);
-
-    rightCol.appendChild(directivesCard);
-    rightCol.appendChild(sbarCard);
-
-    grid.appendChild(leftCol);
-    grid.appendChild(rightCol);
-
-    container.appendChild(header);
-    container.appendChild(warningBanner);
-    container.appendChild(grid);
+    );
   }
 
-  const unsubscribe = subscribeAdulterantState(() => render());
-  render();
+  const unsubscribe = subscribeAdulterantState(() => {
+    if (!container.isConnected) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  });
+  renderDynamic();
   container._cleanup = unsubscribe;
   return container;
 }

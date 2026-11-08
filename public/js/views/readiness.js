@@ -1183,14 +1183,13 @@ export function readinessView({ query } = {}) {
       class: 'input',
       rows: 2,
       placeholder: t('readiness.db.notesPlaceholder', 'Type personal notes here (held in RAM only)...'),
-      value: inMemoryReadinessState.decisionalBalance[customKey] || '',
       oninput: (e) => {
         setReadinessState({
           decisionalBalance: { [customKey]: e.target.value },
           timestamp: Date.now(),
         });
       },
-    });
+    }, inMemoryReadinessState.decisionalBalance[customKey] || '');
     card.append(textLabel, textarea);
     dbGrid.append(card);
   }
@@ -1229,11 +1228,10 @@ export function readinessView({ query } = {}) {
     class: 'input',
     rows: 3,
     placeholder: t('readiness.craft.allyNotesPlaceholder', 'Record boundaries you wish to set or positive moments you noticed (held in RAM only)...'),
-    value: inMemoryReadinessState.craftNotes || '',
     oninput: (e) => {
       setReadinessState({ craftNotes: e.target.value, timestamp: Date.now() });
     },
-  });
+  }, inMemoryReadinessState.craftNotes || '');
   craftNotesField.append(craftNotesLabel, craftNotesTextarea);
   craftSection.append(craftNotesField);
   root.append(craftSection);
@@ -1246,11 +1244,10 @@ export function readinessView({ query } = {}) {
     class: 'input',
     rows: 3,
     placeholder: t('readiness.notes.placeholder', 'Write any personal insights, questions for your doctor, or goals here...'),
-    value: inMemoryReadinessState.notes || '',
     oninput: (e) => {
       setReadinessState({ notes: e.target.value, timestamp: Date.now() });
     },
-  });
+  }, inMemoryReadinessState.notes || '');
   notesField.append(notesLabel, notesTextarea);
   root.append(notesField);
 

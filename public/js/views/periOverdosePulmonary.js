@@ -3,8 +3,9 @@
 // ATS, IDSA, and ACMT Clinical Consensus Standards.
 // Ephemeral in-RAM state, zero persistent storage, zero PII, WCAG 2.1 AA compliant.
 
-import { h } from '../dom.js';
+import { h, clear } from '../dom.js';
 import { t, getLang } from '../i18n.js';
+import { pageHeader } from './common.js';
 
 export const PULMONARY_SYNDROMES = Object.freeze({
   ncpe: {
@@ -283,209 +284,247 @@ export function subscribePulmonaryState(fn) {
 // Accessible DOM View
 export function periOverdosePulmonaryView() {
   const container = h('div', { class: 'pulmonary-view specialized-clinical-view' });
+  const lang = getLang();
+  const isEs = lang === 'es';
 
-  function render() {
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
+  // Header via common pageHeader
+  const header = pageHeader(
+    t('tools.item.peri-overdose-pulmonary.title', 'Peri-Overdose Pulmonary Syndromes & Non-Cardiogenic Edema Navigator'),
+    t(
+      'tools.item.peri-overdose-pulmonary.description',
+      'Clinical triage for Post-Naloxone NCPE (PEEP recruitment vs loop diuretic prohibition), Mendelson chemical pneumonitis (48-hour prophylactic antibiotic prohibition), and "Crack Lung" DAH (corticosteroids vs beta-blocker prohibition).',
+    ),
+  );
+  container.appendChild(header);
 
+  // Dynamic Warning Banner Container
+  const warningBannerContainer = h('div');
+  container.appendChild(warningBannerContainer);
+
+  // Grid
+  const grid = h('div', { class: 'nsti-grid' });
+  const leftCol = h('div', { class: 'nsti-col' });
+  const rightCol = h('div', { class: 'nsti-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(grid);
+
+  // Syndrome Card
+  const syndSelect = h(
+    'select',
+    {
+      class: 'nsti-select',
+      'aria-label': isEs ? 'Seleccionar síndrome pulmonar' : 'Select pulmonary syndrome',
+      onchange: (e) => updatePulmonaryState({ syndrome: e.target.value }),
+    },
+    Object.values(PULMONARY_SYNDROMES).map((item) =>
+      h('option', { value: item.id, selected: item.id === getPulmonaryState().syndrome }, isEs ? item.nameEs : item.name),
+    ),
+  );
+  const pathophysContainer = h('div', { class: 'nsti-stage-info' });
+  const syndCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '1. Síndrome Pulmonar Peri-Sobredosis' : '1. Peri-Overdose Pulmonary Syndrome'),
+    syndSelect,
+    pathophysContainer,
+  ]);
+  leftCol.appendChild(syndCard);
+
+  // Vitals Card
+  const spo2Input = h('input', {
+    id: 'spo2-input',
+    type: 'number',
+    class: 'nsti-num-input',
+    placeholder: 'e.g. 84',
+    value: getPulmonaryState().spo2Value,
+    oninput: (e) => updatePulmonaryState({ spo2Value: e.target.value }),
+  });
+  const hoursInput = h('input', {
+    id: 'hours-input',
+    type: 'number',
+    class: 'nsti-num-input',
+    placeholder: 'e.g. 12',
+    value: getPulmonaryState().hoursPostAspiration,
+    oninput: (e) => updatePulmonaryState({ hoursPostAspiration: e.target.value }),
+  });
+  const vitalsCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '2. Signos Vitales y Parámetros Respiratorios' : '2. Key Respiratory Parameters'),
+    h('div', { class: 'decon-input-group' }, [
+      h('label', { for: 'spo2-input' }, isEs ? 'Oximetría SpO2 (% - Alerta si < 88% o < 92%):' : 'Pulse Oximetry SpO2 (% - Alert if < 88% or < 92%):'),
+      spo2Input,
+    ]),
+    h('div', { class: 'decon-input-group' }, [
+      h('label', { for: 'hours-input' }, isEs ? 'Horas Transcurridas Desde Aspiración (Regla de 48h):' : 'Hours Elapsed Since Aspiration Event (48h Rule):'),
+      hoursInput,
+    ]),
+  ]);
+  leftCol.appendChild(vitalsCard);
+
+  // Flags Card
+  const flagCheckboxes = [];
+  const flagsCard = h('div', { class: 'nsti-card' }, [
+    h('h2', { class: 'nsti-card-title' }, isEs ? '3. Banderas Clínicas y Riesgos de Resucitación' : '3. Clinical Flags & Resuscitation Risks'),
+    h(
+      'div',
+      { class: 'decon-checkbox-group' },
+      PULMONARY_CLINICAL_FLAGS.map((f) => {
+        const cb = h('input', {
+          type: 'checkbox',
+          checked: getPulmonaryState().checkedFlags.has(f.id),
+          onchange: (e) => {
+            const set = new Set(getPulmonaryState().checkedFlags);
+            if (e.target.checked) set.add(f.id);
+            else set.delete(f.id);
+            updatePulmonaryState({ checkedFlags: set });
+          },
+        });
+        flagCheckboxes.push({ id: f.id, input: cb });
+        return h(
+          'label',
+          { class: `disaster-check-row ${f.fatal ? 'emergency-row' : ''}` },
+          [
+            cb,
+            h('span', { class: 'disaster-check-label' }, isEs ? f.labelEs : f.label),
+          ],
+        );
+      }),
+    ),
+  ]);
+  leftCol.appendChild(flagsCard);
+
+  // Dynamic Right Column Containers
+  const directivesCardContainer = h('div');
+  const sbarCardContainer = h('div');
+  rightCol.appendChild(directivesCardContainer);
+  rightCol.appendChild(sbarCardContainer);
+
+  function renderDynamic() {
     const state = getPulmonaryState();
-    const lang = getLang();
-    const isEs = lang === 'es';
     const synd = PULMONARY_SYNDROMES[state.syndrome] || PULMONARY_SYNDROMES.ncpe;
     const evalResult = evaluatePulmonaryRisk(state);
 
-    // Header
-    const header = h('header', { class: 'tool-header' }, [
-      h('h1', { id: 'page-title' }, [
-        t('tools.item.peri-overdose-pulmonary.title', 'Peri-Overdose Pulmonary Syndromes & Non-Cardiogenic Edema Navigator'),
+    // Update Warning Banner
+    clear(warningBannerContainer);
+    warningBannerContainer.appendChild(
+      h('div', { class: 'movement-blackbox-banner' }, [
+        h('div', { class: 'movement-banner-header' }, [
+          h('strong', {}, isEs ? 'ALERTA NEGRA RESPIRATORIA: ' + synd.blackBoxContraindicationEs : 'BLACK-BOX RESPIRATORY ALERT: ' + synd.blackBoxContraindication),
+        ]),
+        h('p', {}, isEs ? synd.contraindicationTextEs : synd.contraindicationText),
       ]),
-      h('p', { class: 'tool-desc' }, [
-        t(
-          'tools.item.peri-overdose-pulmonary.description',
-          'Clinical triage for Post-Naloxone NCPE (PEEP recruitment vs loop diuretic prohibition), Mendelson chemical pneumonitis (48-hour prophylactic antibiotic prohibition), and "Crack Lung" DAH (corticosteroids vs beta-blocker prohibition).',
+    );
+
+    // Update Pathophys Info
+    clear(pathophysContainer);
+    pathophysContainer.appendChild(h('strong', {}, isEs ? 'Fisiopatología: ' : 'Pathophysiology: '));
+    pathophysContainer.appendChild(h('span', {}, isEs ? synd.pathophysiologyEs : synd.pathophysiology));
+
+    // Update Directives Card
+    clear(directivesCardContainer);
+    directivesCardContainer.appendChild(
+      h('div', { class: 'nsti-card' }, [
+        h('h2', { class: 'nsti-card-title' }, isEs ? '4. Directivas Ventilatorias y Farmacológicas' : '4. Ventilatory & Pharmacologic Directives'),
+        evalResult.alerts.length > 0
+          ? h(
+              'div',
+              { class: 'disaster-alert-box alert-critical' },
+              evalResult.alerts.map((a) =>
+                h('div', {}, [
+                  h('strong', {}, isEs ? a.titleEs : a.title),
+                  h('p', {}, isEs ? a.bodyEs : a.body),
+                ]),
+              ),
+            )
+          : null,
+        h('div', { class: 'decon-directive-box' }, [
+          h('strong', {}, isEs ? 'Manejo Ventilatorio de Primera Línea: ' : 'First-Line Ventilatory Management: '),
+          h('p', { class: 'decon-directive-text' }, isEs ? synd.firstLineManagementEs : synd.firstLineManagement),
+        ]),
+        h(
+          'div',
+          { class: 'disaster-action-list' },
+          evalResult.actions.map((act) =>
+            h('div', { class: 'disaster-action-item' }, [
+              h('span', { class: `disaster-badge badge-${act.priority === 'stat' ? 'danger' : act.priority === 'urgent' ? 'warning' : 'low'}` }, act.priority.toUpperCase()),
+              h('span', {}, isEs ? act.textEs : act.text),
+            ]),
+          ),
         ),
       ]),
-    ]);
+    );
 
-    // Warning Banner
-    const warningBanner = h('div', { class: 'movement-blackbox-banner' }, [
-      h('div', { class: 'movement-banner-header' }, [
-        h('strong', {}, isEs ? 'ALERTA NEGRA RESPIRATORIA: ' + synd.blackBoxContraindicationEs : 'BLACK-BOX RESPIRATORY ALERT: ' + synd.blackBoxContraindication),
-      ]),
-      h('p', {}, isEs ? synd.contraindicationTextEs : synd.contraindicationText),
-    ]);
-
-    // Grid
-    const grid = h('div', { class: 'nsti-grid' });
-
-    // Left Column
-    const leftCol = h('div', { class: 'nsti-col' });
-
-    // Syndrome Card
-    const syndCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '1. Síndrome Pulmonar Peri-Sobredosis' : '1. Peri-Overdose Pulmonary Syndrome'),
-      h(
-        'select',
-        {
-          class: 'nsti-select',
-          'aria-label': isEs ? 'Seleccionar síndrome pulmonar' : 'Select pulmonary syndrome',
-          onchange: (e) => updatePulmonaryState({ syndrome: e.target.value }),
-        },
-        Object.values(PULMONARY_SYNDROMES).map((item) =>
-          h('option', { value: item.id, selected: item.id === state.syndrome }, isEs ? item.nameEs : item.name),
-        ),
-      ),
-      h('div', { class: 'nsti-stage-info' }, [
-        h('strong', {}, isEs ? 'Fisiopatología: ' : 'Pathophysiology: '),
-        h('span', {}, isEs ? synd.pathophysiologyEs : synd.pathophysiology),
-      ]),
-    ]);
-
-    // Vitals Card
-    const vitalsCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '2. Signos Vitales y Parámetros Respiratorios' : '2. Key Respiratory Parameters'),
-      h('div', { class: 'decon-input-group' }, [
-        h('label', { for: 'spo2-input' }, isEs ? 'Oximetría SpO2 (% - Alerta si < 88% o < 92%):' : 'Pulse Oximetry SpO2 (% - Alert if < 88% or < 92%):'),
-        h('input', {
-          id: 'spo2-input',
-          type: 'number',
-          class: 'nsti-num-input',
-          placeholder: 'e.g. 84',
-          value: state.spo2Value,
-          oninput: (e) => updatePulmonaryState({ spo2Value: e.target.value }),
-        }),
-      ]),
-      h('div', { class: 'decon-input-group' }, [
-        h('label', { for: 'hours-input' }, isEs ? 'Horas Transcurridas Desde Aspiración (Regla de 48h):' : 'Hours Elapsed Since Aspiration Event (48h Rule):'),
-        h('input', {
-          id: 'hours-input',
-          type: 'number',
-          class: 'nsti-num-input',
-          placeholder: 'e.g. 12',
-          value: state.hoursPostAspiration,
-          oninput: (e) => updatePulmonaryState({ hoursPostAspiration: e.target.value }),
-        }),
-      ]),
-    ]);
-
-    // Flags Card
-    const flagsCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '3. Banderas Clínicas y Riesgos de Resucitación' : '3. Clinical Flags & Resuscitation Risks'),
-      h(
-        'div',
-        { class: 'decon-checkbox-group' },
-        PULMONARY_CLINICAL_FLAGS.map((f) => {
-          const checked = state.checkedFlags.has(f.id);
-          return h(
-            'label',
-            { class: `disaster-check-row ${f.fatal ? 'emergency-row' : ''}` },
-            [
-              h('input', {
-                type: 'checkbox',
-                checked,
-                onchange: (e) => {
-                  const set = new Set(state.checkedFlags);
-                  if (e.target.checked) set.add(f.id);
-                  else set.delete(f.id);
-                  updatePulmonaryState({ checkedFlags: set });
-                },
-              }),
-              h('span', { class: 'disaster-check-label' }, isEs ? f.labelEs : f.label),
-            ],
-          );
-        }),
-      ),
-    ]);
-
-    leftCol.appendChild(syndCard);
-    leftCol.appendChild(vitalsCard);
-    leftCol.appendChild(flagsCard);
-
-    // Right Column
-    const rightCol = h('div', { class: 'nsti-col' });
-
-    // Directives Card
-    const directivesCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '4. Directivas Ventilatorias y Farmacológicas' : '4. Ventilatory & Pharmacologic Directives'),
-      evalResult.alerts.length > 0
-        ? h(
-            'div',
-            { class: 'disaster-alert-box alert-critical' },
-            evalResult.alerts.map((a) =>
-              h('div', {}, [
-                h('strong', {}, isEs ? a.titleEs : a.title),
-                h('p', {}, isEs ? a.bodyEs : a.body),
-              ]),
-            ),
-          )
-        : null,
-      h('div', { class: 'decon-directive-box' }, [
-        h('strong', {}, isEs ? 'Manejo Ventilatorio de Primera Línea: ' : 'First-Line Ventilatory Management: '),
-        h('p', { class: 'decon-directive-text' }, isEs ? synd.firstLineManagementEs : synd.firstLineManagement),
-      ]),
-      h(
-        'div',
-        { class: 'disaster-action-list' },
-        evalResult.actions.map((act) =>
-          h('div', { class: 'disaster-action-item' }, [
-            h('span', { class: `disaster-badge badge-${act.priority === 'stat' ? 'danger' : act.priority === 'urgent' ? 'warning' : 'low'}` }, act.priority.toUpperCase()),
-            h('span', {}, isEs ? act.textEs : act.text),
-          ]),
-        ),
-      ),
-    ]);
-
-    // SBAR Handoff Card
+    // Update SBAR Handoff Card
     const sbarText = generatePulmonarySbar(state, lang);
-    const sbarCard = h('div', { class: 'nsti-card' }, [
-      h('h2', { class: 'nsti-card-title' }, isEs ? '5. Nota SBAR de Transferencia Respiratoria (Cero PII)' : '5. Zero-PII SBAR Respiratory Handoff Note'),
-      h('textarea', {
+    clear(sbarCardContainer);
+    const sbarTextarea = h(
+      'textarea',
+      {
         class: 'nsti-sbar-textarea',
         rows: '14',
         readonly: true,
         'aria-label': isEs ? 'Nota clínica SBAR generada' : 'Generated SBAR clinical handoff note',
-        value: sbarText,
-      }),
-      h('div', { class: 'nsti-btn-row' }, [
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-primary',
-            onclick: () => {
-              if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(sbarText);
-              }
-            },
-          },
-          isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-secondary',
-            onclick: () => resetPulmonaryState(),
-          },
-          isEs ? 'Reiniciar Formulario' : 'Reset Form',
-        ),
+      },
+      sbarText,
+    );
+    sbarTextarea.value = sbarText;
+
+    const copyBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-primary',
+        onclick: async () => {
+          try {
+            if (navigator.clipboard?.writeText) {
+              await navigator.clipboard.writeText(sbarTextarea.value);
+            } else {
+              sbarTextarea.select();
+              document.execCommand('copy');
+            }
+            copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
+            setTimeout(() => {
+              copyBtn.textContent = isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note';
+            }, 2000);
+          } catch {
+            sbarTextarea.select();
+          }
+        },
+      },
+      isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
+    );
+
+    const resetBtn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-secondary',
+        onclick: () => {
+          resetPulmonaryState();
+          spo2Input.value = '';
+          hoursInput.value = '';
+          syndSelect.value = 'ncpe';
+          flagCheckboxes.forEach((f) => { f.input.checked = false; });
+        },
+      },
+      isEs ? 'Reiniciar Formulario' : 'Reset Form',
+    );
+
+    sbarCardContainer.appendChild(
+      h('div', { class: 'nsti-card' }, [
+        h('h2', { class: 'nsti-card-title' }, isEs ? '5. Nota SBAR de Transferencia Respiratoria (Cero PII)' : '5. Zero-PII SBAR Respiratory Handoff Note'),
+        sbarTextarea,
+        h('div', { class: 'nsti-btn-row' }, [copyBtn, resetBtn]),
       ]),
-    ]);
-
-    rightCol.appendChild(directivesCard);
-    rightCol.appendChild(sbarCard);
-
-    grid.appendChild(leftCol);
-    grid.appendChild(rightCol);
-
-    container.appendChild(header);
-    container.appendChild(warningBanner);
-    container.appendChild(grid);
+    );
   }
 
-  const unsubscribe = subscribePulmonaryState(() => render());
-  render();
+  const unsubscribe = subscribePulmonaryState(() => {
+    if (!container.isConnected) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  });
+  renderDynamic();
   container._cleanup = unsubscribe;
   return container;
 }

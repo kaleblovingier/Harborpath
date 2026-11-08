@@ -134,6 +134,10 @@ test('Peri-Overdose Pulmonary: DOM View Rendering and Mount', () => {
     const view = periOverdosePulmonaryView();
     assert.ok(view, 'View renders successfully');
     assert.equal(view.className, 'pulmonary-view specialized-clinical-view');
+    const sbar = view.querySelector('.nsti-sbar-textarea');
+    assert.ok(sbar && (sbar.value.length > 50 || sbar.textContent.length > 50), 'SBAR textarea is populated with handoff content');
+    const spo2Input = view.querySelector('#spo2-input');
+    assert.ok(spo2Input, 'SpO2 input is mounted in DOM');
 
     if (typeof view._cleanup === 'function') {
       view._cleanup();

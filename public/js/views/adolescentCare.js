@@ -2154,11 +2154,10 @@ export function adolescentCareView({ query } = {}) {
         class: 'textarea adolescent-notes-input',
         rows: '4',
         placeholder: tr('e.g., Ask about HIPAA EOB suppression, ask if buprenorphine is available, ask about A-CRA...', 'ej., Preguntar sobre supresión de EOB bajo HIPAA, disponibilidad de buprenorfina...'),
-        value: state.notes,
         oninput: (e) => {
           setAdolescentState({ notes: e.target.value });
         },
-      })
+      }, state.notes || '')
     );
 
     checklistPanel.append(checklistForm, notesCard);

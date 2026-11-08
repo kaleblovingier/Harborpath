@@ -27,7 +27,10 @@ export function h(tag, props, ...children) {
         const url = safeUrlAttribute(value);
         if (url !== null) el.setAttribute(key, url);
       } else if (value === true) el.setAttribute(key, '');
-      else el.setAttribute(key, String(value));
+      else if (key === 'value') {
+        el.value = String(value);
+        el.setAttribute(key, String(value));
+      } else el.setAttribute(key, String(value));
     }
   }
   append(el, children);
