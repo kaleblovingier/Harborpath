@@ -1450,4 +1450,25 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
 - **Carceral Intake & Reentry MOUD Continuity & Overdose Prevention Directives (`#/carceral-moud-reentry`)**:
   - Booking-to-gate-release finite state machine (S0 to S5), 4 Reentry Pillars tracker (Section 1115 Medicaid enrollment, 24–48h community clinic warm handoff, 30-day bridge medication supply, gate-exit naloxone kit distribution), Title II ADA statutory non-discrimination mandates, and mitigation of the post-release 40x–129x overdose mortality spike.
 
+### 62. Wave 64: Extreme Weather Disaster MOUD Continuity, Stimulant Movement Disorders & Opportunistic Fungal Care
+- **Disaster MOUD Continuity, Wildfire Smoke & Climate Resilience Navigator (`#/disaster-moud-climate`)**:
+  - SAMHSA 42 CFR Part 8 disaster flexibilities (up to 28-day take-home doses for stable patients, 14 days for acute), interstate guest dosing protocols, mobile medical unit (MMU) muster redeployment, EPA PM2.5 wildfire smoke harm reduction (N95 filtration vs hazardous wet bandanas), low-cost DIY Corsi-Rosenthal filtration, and floodwater leptospirosis / puncture tetanus triage.
+- **Stimulant-Induced Movement Disorders, Choreoathetosis & Acute Dystonia / EPS Decision Engine (`#/movement-disorders-eps`)**:
+  - ACMT and Project BETA consensus: Differential staging of choreoathetosis ("meth dance"), acute dystonic reaction (laryngeal airway stridor), akathisia, NMS, and Hunter serotonin syndrome criteria. Anticholinergic reversal (benztropine, diphenhydramine) and absolute black-box haloperidol prohibition during acute stimulant intoxication.
+- **Opportunistic Deep Fungal Infections, Endemic Mycoses & MOUD Navigator (`#/fungal-opportunistic-care`)**:
+  - IDSA guidelines for Blastomycosis (verrucous plaques, lethal corticosteroid monotherapy hazard), Coccidioidomycosis (Valley Fever), Histoplasmosis, and angioinvasive molds (Mucorales black eschars). Disc-sparing fungal spondylitis differential and lethal Azole-Methadone CYP3A4 inhibition (proactive 25–50% methadone dose reductions) and multiplicative QTc prolongation monitoring.
+
+### 63. Wave 65: Inhalant Neurotoxicity, Illicit Adulterants/Heavy Metals & Peri-Overdose Pulmonary Syndromes
+- **Inhalant, Volatile Solvent & Nitrous Oxide Neuropathy Navigator (`#/inhalant-toxicology`)**:
+  - Irreversible oxidation of cob(I)alamin by N2O (Galaxy Gas 640g cylinders), inactivation of methionine synthase, subacute combined degeneration (SCD) of dorsal/lateral columns, inverted Lhermitte sign, and high-risk hyperhomocysteinemia VTE.
+  - Fatal contraindication gatekeeping: Folic acid prohibition before high-dose parenteral B12 (folate trap exacerbation), epinephrine prohibition in hydrocarbon sudden sniffing death syndrome (myocardial sensitization), and potassium repletion before sodium bicarbonate in toluene distal RTA.
+- **Illicit Drug Adulterants, Heavy Metals & High-Potency Alpha-2 Agonist Triage (`#/adulterant-heavy-metals`)**:
+  - Medetomidine & Dexmedetomidine in street fentanyl (1,620:1 alpha-2 selectivity), profound refractory bradycardia (HR 25–45 bpm), core hypothermia (< 35°C), 12–24h coma, dissociated naloxone response, and strict veterinary Atipamezole prohibition in humans.
+  - Brodifacoum superwarfarin synthetic cannabinoid coagulopathy (half-life 20–60+ days), STAT 4F-PCC (Kcentra) for acute bleeding, and long-term oral Vitamin K1 (phytonadione 50–100 mg PO daily for 3–6+ months).
+  - Heavy metal contamination: Lead plumbism (lead colic, basophilic stippling, bilateral wrist drop). Oral Succimer (DMSA) for BLL 45–69 ug/dL, and sequential Dimercaprol (BAL) FIRST followed 4h later by Calcium Disodium EDTA for BLL >= 70 ug/dL or encephalopathy (strict EDTA alone and Na2EDTA prohibitions).
+- **Peri-Overdose Pulmonary Syndromes & Non-Cardiogenic Pulmonary Edema (NCPE) Navigator (`#/peri-overdose-pulmonary`)**:
+  - Post-Naloxone NCPE (0.2–3.6% incidence, onset 5–60 min): Central catecholamine surge, capillary stress failure, pink frothy sputum, bilateral infiltrates with normal cardiac size. PEEP recruitment (CPAP/BiPAP 8–12 cmH2O) and absolute loop diuretic (furosemide) prohibition.
+  - Mendelson chemical pneumonitis (sterile acid burn) vs delayed secondary bacterial aspiration pneumonia: Strict 48-hour prophylactic antibiotic prohibition per ATS/IDSA stewardship guidelines.
+  - "Crack Lung" / Cocaine Diffuse Alveolar Hemorrhage (DAH) from pyrolyzed vapor (AEME): Hemoptysis, melanoptysis, ground-glass opacities, high-flow O2, corticosteroids, and absolute beta-blocker contraindication due to unopposed alpha-1 coronary vasospasm.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

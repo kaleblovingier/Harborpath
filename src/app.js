@@ -422,6 +422,9 @@ export function createApp({
               disasterResilience: 'SAMHSA 42 CFR Part 8 disaster MOUD flexibilities (28-day take-homes), PM2.5 wildfire harm reduction, and post-flood triage.',
               movementDisorders: 'Stimulant choreoathetosis ("meth dance"), acute dystonia, NMS, Hunter serotonin criteria & haloperidol prohibition.',
               opportunisticInfections: 'Deep endemic mycoses (Blastomycosis, Valley Fever, Histoplasmosis, Mucorales) and lethal Azole-Methadone CYP3A4/QTc management.',
+              inhalantToxicology: 'ACMT consensus for Nitrous Oxide (Galaxy Gas) SCD and folate trap prohibition, volatile hydrocarbon SSDS epinephrine prohibition, and toluene Type 1 distal RTA.',
+              adulterantHeavyMetals: 'Clinical triage for Medetomidine refractory bradycardia (atipamezole prohibition), Brodifacoum superwarfarin coagulopathy (4F-PCC), and street drug Lead plumbism chelation sequencing.',
+              periOverdosePulmonary: 'Post-Naloxone NCPE (PEEP recruitment vs loop diuretic prohibition), Mendelson chemical pneumonitis (48h antibiotic delay), and Crack Lung DAH (corticosteroids vs beta-blocker prohibition).',
               widgets: 'Zero-cookie iframe tools and SVG partner seals for municipal departments and clinics.',
             },
           });

@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'inhalant-toxicology': () => import('./views/inhalantToxicology.js').then((m) => {
+    viewCache.set('inhalant-toxicology', m.inhalantToxicologyView);
+    routeResets.set('inhalant-toxicology', m.resetInhalantState);
+    return m.inhalantToxicologyView;
+  }),
+  'adulterant-heavy-metals': () => import('./views/adulterantHeavyMetals.js').then((m) => {
+    viewCache.set('adulterant-heavy-metals', m.adulterantHeavyMetalsView);
+    routeResets.set('adulterant-heavy-metals', m.resetAdulterantState);
+    return m.adulterantHeavyMetalsView;
+  }),
+  'peri-overdose-pulmonary': () => import('./views/periOverdosePulmonary.js').then((m) => {
+    viewCache.set('peri-overdose-pulmonary', m.periOverdosePulmonaryView);
+    routeResets.set('peri-overdose-pulmonary', m.resetPulmonaryState);
+    return m.periOverdosePulmonaryView;
+  }),
   'disaster-moud-climate': () => import('./views/disasterMoudClimate.js').then((m) => {
     viewCache.set('disaster-moud-climate', m.disasterMoudClimateView);
     routeResets.set('disaster-moud-climate', m.resetDisasterState);
@@ -482,6 +497,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'inhalant-toxicology': () => t('route.inhalantToxicology', 'Inhalant, volatile solvent & nitrous oxide neuropathy navigator'),
+  'adulterant-heavy-metals': () => t('route.adulterantHeavyMetals', 'Illicit drug adulterants, heavy metals & alpha-2 agonist triage'),
+  'peri-overdose-pulmonary': () => t('route.periOverdosePulmonary', 'Peri-overdose pulmonary syndromes & non-cardiogenic edema navigator'),
   'disaster-moud-climate': () => t('route.disasterMoudClimate', 'Disaster MOUD continuity, wildfire smoke & climate resilience navigator'),
   'movement-disorders-eps': () => t('route.movementDisordersEps', 'Stimulant movement disorders, choreoathetosis & acute dystonia / EPS decision engine'),
   'fungal-opportunistic-care': () => t('route.fungalOpportunisticCare', 'Opportunistic deep fungal infections, endemic mycoses & MOUD navigator'),
@@ -600,6 +618,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('inhalant-toxicology'),
+    preloadRoute('adulterant-heavy-metals'),
+    preloadRoute('peri-overdose-pulmonary'),
     preloadRoute('disaster-moud-climate'),
     preloadRoute('movement-disorders-eps'),
     preloadRoute('fungal-opportunistic-care'),

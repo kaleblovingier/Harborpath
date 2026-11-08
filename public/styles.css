@@ -12130,7 +12130,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .carceral-pillars-list{display:flex;flex-direction:column;gap:0.5rem}
 .carceral-pillar-row.pillar-complete{border-color:#22c55e;background:#f0fdf4}
 .carceral-pillar-row.pillar-pending{border-color:#f59e0b;background:#fffbeb}
-.disaster-moud-view,.movement-disorders-view,.fungal-care-view{max-width:1280px;margin:0 auto;padding:1rem 0 3rem}
+.disaster-moud-view,.movement-disorders-view,.fungal-care-view,.inhalant-view,.adulterant-view,.pulmonary-view{max-width:1280px;margin:0 auto;padding:1rem 0 3rem}
 .disaster-grid,.movement-grid,.fungal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
 @media(max-width:900px){.disaster-grid,.movement-grid,.fungal-grid{grid-template-columns:1fr}}
 .disaster-col,.movement-col,.fungal-col{display:flex;flex-direction:column;gap:1.25rem}

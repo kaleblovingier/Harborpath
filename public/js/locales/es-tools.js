@@ -244,4 +244,10 @@ export default {
   'tools.item.movement-disorders-eps.description': 'Consenso ACMT y Project BETA: Estadificación de coreoatetosis («baile del cristal»), distonía aguda (estridor laríngeo grave), acatisia, SNM y criterios de Hunter con reversión anticolinérgica y prohibición estricta de haloperidol.',
   'tools.item.fungal-opportunistic-care.title': 'Micosis fúngicas profundas, infecciones oportunistas y MOUD',
   'tools.item.fungal-opportunistic-care.description': 'Pautas IDSA para blastomicosis (placas verrugosas, peligro letal de corticoides), fiebre del valle, histoplasmosis, mohos angioinvasivos (escaras negras por mucorales), espondilitis que respeta el disco e inhibición letal de CYP3A4 y prolongación de QTc por azoles con metadona.',
+  'tools.item.inhalant-toxicology.title': 'Toxicología de inhalantes, solventes volátiles y neuropatía por óxido nitroso',
+  'tools.item.inhalant-toxicology.description': 'Protocolos ACMT para degeneración combinada subaguda por óxido nitroso (Galaxy Gas) y trampa de folato, muerte súbita por inhalación (prohibición de epinefrina) y ATR distal Tipo 1 por tolueno con cuadriparesia hipopotasémica.',
+  'tools.item.adulterant-heavy-metals.title': 'Triaje de adulterantes ilícitos, metales pesados y agonistas alfa-2',
+  'tools.item.adulterant-heavy-metals.description': 'Triaje clínico para bradicardia refractaria por medetomidina (prohibición de atipamezol), coagulopatía por superwarfarina/brodifacoum (CCP-4 y vitamina K oral) y quelación secuencial de saturnismo por plomo en drogas.',
+  'tools.item.peri-overdose-pulmonary.title': 'Síndromes pulmonares peri-sobredosis y edema no cardiogénico',
+  'tools.item.peri-overdose-pulmonary.description': 'Triaje clínico para edema pulmonar no cardiogénico post-naloxona (reclutamiento alveolar con PEEP vs prohibición de furosemida), neumonitis química de Mendelson (prohibición de antibióticos en 48h) y pulmón de crack (corticoides vs prohibición de betabloqueadores).',
 };

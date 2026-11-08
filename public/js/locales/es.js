@@ -2076,6 +2076,9 @@ export const es = {
   'route.disasterMoudClimate': 'Continuidad de MOUD en desastres, humo de incendios y resiliencia climática',
   'route.movementDisordersEps': 'Trastornos motores por estimulantes, coreoatetosis y triaje de SEP / distonía aguda',
   'route.fungalOpportunisticCare': 'Micosis fúngicas profundas, infecciones oportunistas y MOUD',
+  'route.inhalantToxicology': 'Toxicología de inhalantes, solventes volátiles y neuropatía por óxido nitroso',
+  'route.adulterantHeavyMetals': 'Triaje de adulterantes ilícitos, metales pesados y agonistas alfa-2',
+  'route.periOverdosePulmonary': 'Síndromes pulmonares peri-sobredosis y edema no cardiogénico',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 
