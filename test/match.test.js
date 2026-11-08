@@ -315,3 +315,17 @@ test('zero-PII in-RAM filtering preserves distance tie-breaking', () => {
   assert.equal(filtered[2].candidate?.miles ?? filtered[2].miles, 15);
   assert.equal(filtered[3].id, 'ft:far-bup');
 });
+
+test('expired, future, and malformed network attestations cannot confirm insurance', () => {
+  const profile = normalizeProfile({ coverage: 'medicaid', state: 'WA' });
+  for (const verifiedAt of ['2020-01-01', '2099-01-01', '2026-02-30', 'not-a-date']) {
+    const candidate = fac('expired', ['MD'], {
+      networkVerifications: [{ payer: 'medicaid', source: 'Fixture payer', verifiedAt }],
+    });
+    assert.equal(assessCoverage(profile, candidate).tier, 'provider-reported', verifiedAt);
+  }
+  const fresh = fac('fresh', ['MD'], {
+    networkVerifications: [{ payer: 'medicaid', source: 'Fixture payer', verifiedAt: new Date().toISOString().slice(0, 10) }],
+  });
+  assert.equal(assessCoverage(profile, fresh).tier, 'confirmed');
+});
