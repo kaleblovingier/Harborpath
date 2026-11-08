@@ -75,4 +75,5 @@ export default {
   'workspace.link.giCare': 'Emergencias digestivas, pancreatitis y estreñimiento por opioides',
   'workspace.link.hematologyCare': 'Hematología, coagulopatías, levamisol y hemólisis tóxica',
   'workspace.link.orthopedicCare': 'Absceso epidural espinal, artritis séptica y cuidado óseo OVIVA',
+  'workspace.link.ocularCare': 'Oftalmología, endoftalmitis, ceguera por metanol y toxicología ocular',
 };

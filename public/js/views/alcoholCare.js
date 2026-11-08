@@ -588,6 +588,12 @@ export function alcoholCareView() {
     h('a', { href: '#/gi-care' }, 'Open GI Emergencies, Pancreatitis & Boerhaave Navigator →')
   ]);
   panelWernicke.append(giLinkCard);
+  const ocularLinkCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', null, 'Methanol ("Moonshine") Optic Neuropathy & Topiramate Angle-Closure Glaucoma: '),
+    h('span', null, '"Snowstorm vision" after adulterated alcohol requires immediate Fomepizole, IV Leucovorin, and dialysis. Bilateral blurry vision on Topiramate requires stopping Topiramate and avoiding Pilocarpine: '),
+    h('a', { href: '#/ocular-care' }, 'Open Ophthalmology, Methanol Blindness & Ocular Toxicology Navigator →')
+  ]);
+  panelWernicke.append(ocularLinkCard);
 
   panelsContainer.append(panelPawss, panelMaud, panelWernicke);
   container.append(panelsContainer);

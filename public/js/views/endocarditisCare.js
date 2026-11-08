@@ -761,6 +761,14 @@ export function endocarditisCareView() {
       ]),
     ]);
     section.appendChild(orthopedicCard);
+    const ocularCard = h('div', { class: 'ec-card mt-3' }, [
+      h('h3', {}, 'Endogenous Endophthalmitis, Roth Spots & Central Retinal Artery Occlusion'),
+      h('p', {}, 'Fungemia/bacteremia and endocarditis emboli seed the retina and vitreous cavity (where IV vancomycin and micafungin fail without intravitreal injection): '),
+      h('p', {}, [
+        h('a', { href: '#/ocular-care', class: 'btn btn-secondary' }, 'Open Ophthalmology, Endophthalmitis & Ocular Toxicology Navigator →'),
+      ]),
+    ]);
+    section.appendChild(ocularCard);
     return section;
   }
 

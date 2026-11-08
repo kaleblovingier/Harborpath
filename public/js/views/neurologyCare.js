@@ -682,6 +682,16 @@ export function neurologyCareView() {
       })
     );
     panel.appendChild(rulesList);
+    const ocularBanner = h('div', { class: 'neurology-directive-card' }, [
+      h('h3', { class: 'neurology-directive-title' }, isEs ? 'Neurooftalmología: Ictus Retiniano (OACR), Seno Cavernoso y Nervio Óptico por Metanol' : 'Neuro-Ophthalmology: Retinal Stroke (CRAO), Cavernous Sinus & Methanol Optic Nerve'),
+      h('p', { class: 'neurology-directive-text' }, [
+        h('span', {}, isEs
+          ? 'La pérdida visual monocular indolora (OACR), parálisis del VI par en trombosis del seno cavernoso y ceguera por ácido fórmico requieren triaje neurooftalmológico urgente: '
+          : 'Sudden painless monocular vision loss (CRAO), CN VI palsy in cavernous sinus thrombosis, and formic acid optic neuropathy require urgent neuro-ophthalmic triage: '),
+        h('a', { href: '#/ocular-care' }, isEs ? 'Abrir Navegador de Oftalmología y Toxicología Ocular →' : 'Open Ophthalmology & Ocular Toxicology Navigator →'),
+      ]),
+    ]);
+    panel.appendChild(ocularBanner);
   }
 
   // Panel 5: SBAR Clinical Note Generator

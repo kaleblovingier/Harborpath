@@ -795,6 +795,14 @@ export function inhalantCareView() {
       ]),
     ]);
     section.appendChild(hematologyCard);
+    const ocularCard = h('div', { class: 'ic-rule-card mt-3' }, [
+      h('h3', {}, 'Poppers Maculopathy (Foveal Cone Ellipsoid Zone Phototoxicity)'),
+      h('p', {}, 'Central flickering yellow light spots (phosphenes) or central visual blur after inhaling alkyl nitrites ("Poppers") requires macular SD-OCT imaging and immediate nitrite cessation: '),
+      h('p', {}, [
+        h('a', { href: '#/ocular-care', class: 'btn btn-secondary' }, 'Open Ophthalmology & Ocular Toxicology Navigator →'),
+      ]),
+    ]);
+    section.appendChild(ocularCard);
     return section;
   }
 

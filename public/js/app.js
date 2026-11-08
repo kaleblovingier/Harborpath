@@ -57,6 +57,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'ocular-care': () => import('./views/ocularCare.js').then((m) => {
+    viewCache.set('ocular-care', m.ocularCareView);
+    routeResets.set('ocular-care', m.resetOcularState);
+    return m.ocularCareView;
+  }),
   'orthopedic-care': () => import('./views/orthopedicCare.js').then((m) => {
     viewCache.set('orthopedic-care', m.orthopedicCareView);
     routeResets.set('orthopedic-care', m.resetOrthopedicState);
@@ -351,6 +356,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'ocular-care': () => t('route.ocularCare', 'Ophthalmology, endogenous endophthalmitis, methanol blindness & ocular toxicology navigator'),
   'orthopedic-care': () => t('route.orthopedicCare', 'Spinal epidural abscess, septic arthritis, pyomyositis & OVIVA bone/joint navigator'),
   'hematology-care': () => t('route.hematologyCare', 'Hematology, coagulopathy, levamisole vasculitis & toxic hemolysis navigator'),
   'gi-care': () => t('route.giCare', 'GI & mesenteric emergencies, acute pancreatitis & opioid constipation'),
@@ -443,6 +449,7 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('ocular-care'),
     preloadRoute('orthopedic-care'),
     preloadRoute('hematology-care'),
     preloadRoute('gi-care'),
