@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "build": "node -e \"import('node:fs').then(fs => fs.existsSync('scripts/build-check.mjs') && import('./scripts/build-check.mjs').then(m => m.runBuildCheck().then(r => !r.ok && process.exit(1))))\"",
+    "build": "node scripts/build-check.mjs --fix && node scripts/build-check.mjs",
     "lint": "node scripts/build-check.mjs --lint",
     "stamp:sw": "node scripts/build-check.mjs --fix",
     "test": "node --test",
