@@ -552,9 +552,7 @@ export function dermatologyCareView() {
         : 'Emergency Dermatology, Xylazine Necrotic Ulcers, SJS/TEN & DRESS Syndrome'
     )
   );
-  const title = el(
-    'h1',
-    { id: 'dermatology-care-heading', className: 'view-title' },
+  const title = h('h1', { id: 'dermatology-care-heading', class: 'view-title' },
     t(
       'dermatology.title',
       isEs

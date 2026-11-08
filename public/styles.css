@@ -10917,11 +10917,174 @@ body.sensory-mode-active [tabindex]:focus-visible {
 
 @media (max-width: 768px) {
   .ent-care-view,
-  .dermatology-care-view {
+  .dermatology-care-view,
+  .cardiology-care-view,
+  .oncology-palliative-view {
     padding: 1rem;
   }
   .ent-header,
-  .dermatology-header {
+  .dermatology-header,
+  .cardiology-header,
+  .oncology-header {
     padding: 1.25rem;
   }
+}
+
+/* ==========================================================================
+   Wave 53: Cardiology & Arrhythmia Emergencies (#/cardiology-care) &
+            Oncology, Palliative Care & Sickle Cell (#/oncology-palliative)
+   ========================================================================== */
+.cardiology-care-view,
+.oncology-palliative-view {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+.cardiology-header {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 55%, #b91c1c 100%);
+  color: #ffffff;
+  padding: 1.75rem 2rem;
+  border-radius: 0.85rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 25px rgba(127, 29, 29, 0.2);
+}
+
+.oncology-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 55%, #4f46e5 100%);
+  color: #ffffff;
+  padding: 1.75rem 2rem;
+  border-radius: 0.85rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 25px rgba(30, 58, 138, 0.2);
+}
+
+.cardiology-header h1,
+.oncology-header h1 {
+  color: #ffffff;
+  margin: 0.35rem 0 0.65rem;
+  font-size: 1.75rem;
+  line-height: 1.25;
+}
+
+.cardiology-subtitle,
+.oncology-subtitle {
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 1rem;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.cardiology-mode-toggle,
+.oncology-mode-toggle,
+.cardiology-tabs,
+.oncology-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.cardiology-panel,
+.oncology-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cardiology-card,
+.oncology-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 0.75rem;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.cardiology-card-critical,
+.oncology-card-critical {
+  border-left: 6px solid #dc2626;
+  background: #fef2f2;
+}
+
+.cardiology-card-urgent,
+.oncology-card-urgent {
+  border-left: 6px solid #d97706;
+  background: #fffbeb;
+}
+
+.cardiology-syndrome-grid,
+.oncology-syndrome-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.cardiology-flags-list,
+.oncology-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.cardiology-flag-row,
+.oncology-flag-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.cardiology-redflag-box,
+.oncology-redflag-box {
+  background: #fef2f2;
+  border: 2px solid #dc2626;
+  border-radius: 0.65rem;
+  padding: 1rem 1.25rem;
+  margin: 0.75rem 0;
+  color: #7f1d1d;
+}
+
+.cardiology-rules-grid,
+.oncology-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.cardiology-rule-card {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-top: 4px solid #b91c1c;
+  border-radius: 0.65rem;
+  padding: 1rem 1.25rem;
+}
+
+.oncology-rule-card {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-top: 4px solid #4338ca;
+  border-radius: 0.65rem;
+  padding: 1rem 1.25rem;
+}
+
+.cardiology-sbar-pre,
+.oncology-sbar-pre {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 0.75rem;
 }

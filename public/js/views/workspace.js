@@ -47,6 +47,8 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/urology-care', key: 'workspace.link.urologyCare', label: 'Urologic emergencies, ischemic priapism, Fournier gangrene & urinary retention' },
       { href: '#/ent-care', key: 'workspace.link.entCare', label: 'Otolaryngology, Ludwig angina, Lemierre syndrome, septal perforation & airway' },
       { href: '#/dermatology-care', key: 'workspace.link.dermatologyCare', label: 'Dermatology, xylazine necrotic eschar, SJS/TEN, DRESS & cutaneous necrosis' },
+      { href: '#/cardiology-care', key: 'workspace.link.cardiologyCare', label: 'Cardiology, stimulant chest pain, wide-QRS bicarbonate & Torsades (QTc)' },
+      { href: '#/oncology-palliative', key: 'workspace.link.oncologyPalliative', label: 'Oncology, palliative care, sickle cell crisis & cancer pain on MOUD' },
     ],
   },
   {

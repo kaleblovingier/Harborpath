@@ -79,4 +79,6 @@ export default {
   'workspace.link.urologyCare': 'Urgencias urológicas, priapismo isquémico, gangrena de Fournier y retención urinaria',
   'workspace.link.entCare': 'Otorrinolaringología, angina de Ludwig, síndrome de Lemierre, perforación septal y vía aérea',
   'workspace.link.dermatologyCare': 'Dermatología, escaras por xilacina, SSJ/NET, síndrome DRESS y necrosis cutánea',
+  'workspace.link.cardiologyCare': 'Cardiología, dolor torácico por estimulantes, bicarbonato en QRS ancho y Torsades (QTc)',
+  'workspace.link.oncologyPalliative': 'Oncología, cuidados paliativos, crisis de células falciformes y dolor por cáncer en MOUD',
 };

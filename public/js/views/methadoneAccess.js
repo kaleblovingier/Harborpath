@@ -643,6 +643,17 @@ export function methadoneAccessView() {
       h('p', null, h('strong', null, 'Clinical Management: '), METHADONE_PHARMACOKINETICS_SAFETY.cardiacEn.management)
     );
     panel.appendChild(cardCard);
+
+    const cardioOncLinkCard = h('article', { class: 'action-card' },
+      h('h3', null, 'Advanced QTc / Torsades Protocols & Split-Dose Cancer Analgesia on Methadone'),
+      h('p', null, 'Need emergency bedside management for QTc > 500 ms / Torsades de Pointes (2g IV MgSO4 + K+ > 4.5 mEq/L while preserving MOUD) or ASCO/NCCN TID/QID split-dosing of methadone for severe cancer or sickle cell pain?'),
+      h('p', null,
+        h('a', { href: '#/cardiology-care', class: 'btn btn-secondary' }, 'Open Cardiology & QTc / Torsades Navigator →'),
+        ' ',
+        h('a', { href: '#/oncology-palliative', class: 'btn btn-secondary' }, 'Open Oncology, Palliative & Sickle Cell Pain Navigator →')
+      )
+    );
+    panel.appendChild(cardioOncLinkCard);
   }
 
   // TAB 4: Guest Dosing & Travel Navigator

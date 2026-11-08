@@ -791,6 +791,20 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open GI Emergencies, Pancreatitis & OIC Navigator →')
   ]);
   container.appendChild(giCareCard);
+  const cardioOncCareCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Cardiología de Urgencias, Dolor Oncológico y Crisis de Células Falciformes en MOUD: ' : 'Inpatient Cardiology, Oncology, Palliative Care & Sickle Cell Crisis on MOUD: '),
+    h('span', {}, isEs
+      ? 'Manejo de SCA por cocaína/metanfetamina (prohibición de betabloqueantes), bloqueo QRS ancho con bicarbonato, Torsades (MgSO4 IV), crisis drepanocítica (analgesia <= 30 min) y dolor por cáncer en buprenorfina/metadona: '
+      : 'Cocaine/meth ACS (beta-blocker prohibition), wide-QRS sodium bicarbonate rescue, Torsades (IV MgSO4), sickle cell crisis (<= 30-min parenteral analgesia), and split-dose cancer pain on MOUD: '),
+    h('a', { href: '#/cardiology-care' }, isEs
+      ? 'Abrir Navegador de Cardiología y Arritmias →'
+      : 'Open Cardiology & Arrhythmia Navigator →'),
+    h('span', {}, ' · '),
+    h('a', { href: '#/oncology-palliative' }, isEs
+      ? 'Abrir Navegador de Oncología, Paliativos y Drepanocitosis →'
+      : 'Open Oncology, Palliative & Sickle Cell Navigator →')
+  ]);
+  container.appendChild(cardioOncCareCard);
 
   return container;
 }

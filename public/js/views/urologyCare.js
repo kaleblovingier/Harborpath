@@ -584,9 +584,7 @@ export function urologyCareView() {
         : 'Acute Urology, Genitourinary Toxicology & Harm Reduction'
     )
   );
-  const title = el(
-    'h1',
-    { id: 'urology-care-heading', className: 'view-title' },
+  const title = h('h1', { id: 'urology-care-heading', class: 'view-title' },
     t(
       'urology.title',
       isEs

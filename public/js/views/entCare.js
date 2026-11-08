@@ -554,9 +554,7 @@ export function entCareView() {
         : 'Otolaryngology, Upper Airway, Deep Neck Infections & Intranasal Harm Reduction'
     )
   );
-  const title = el(
-    'h1',
-    { id: 'ent-care-heading', className: 'view-title' },
+  const title = h('h1', { id: 'ent-care-heading', class: 'view-title' },
     t(
       'ent.title',
       isEs

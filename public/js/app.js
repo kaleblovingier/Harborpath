@@ -57,6 +57,16 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'oncology-palliative': () => import('./views/oncologyPalliative.js').then((m) => {
+    viewCache.set('oncology-palliative', m.oncologyPalliativeView);
+    routeResets.set('oncology-palliative', m.resetOncologyState);
+    return m.oncologyPalliativeView;
+  }),
+  'cardiology-care': () => import('./views/cardiologyCare.js').then((m) => {
+    viewCache.set('cardiology-care', m.cardiologyCareView);
+    routeResets.set('cardiology-care', m.resetCardiologyState);
+    return m.cardiologyCareView;
+  }),
   'dermatology-care': () => import('./views/dermatologyCare.js').then((m) => {
     viewCache.set('dermatology-care', m.dermatologyCareView);
     routeResets.set('dermatology-care', m.resetDermatologyState);
@@ -371,6 +381,8 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'oncology-palliative': () => t('route.oncologyPalliative', 'Oncology, palliative care, sickle cell crisis & complex cancer pain on MOUD navigator'),
+  'cardiology-care': () => t('route.cardiologyCare', 'Cardiology, stimulant chest pain, sodium-channel QRS blockade & Torsades (QTc) navigator'),
   'dermatology-care': () => t('route.dermatologyCare', 'Dermatology, xylazine necrotic eschar, Stevens-Johnson (SJS/TEN) & DRESS navigator'),
   'ent-care': () => t('route.entCare', 'Otolaryngology, Ludwig angina, Lemierre syndrome, septal perforation & airway navigator'),
   'urology-care': () => t('route.urologyCare', 'Urologic emergencies, ischemic priapism, Fournier gangrene & urinary retention navigator'),
@@ -467,6 +479,8 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('oncology-palliative'),
+    preloadRoute('cardiology-care'),
     preloadRoute('dermatology-care'),
     preloadRoute('ent-care'),
     preloadRoute('urology-care'),

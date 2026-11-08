@@ -2015,6 +2015,12 @@ export default {
   'nav.route.youth.link.mhsu': 'Programas para jóvenes que tratan juntas la salud mental y el consumo de sustancias',
   'nav.route.youth.link.tele': 'Programas para jóvenes con telesalud',
   'nav.route.youth.link.ya': 'Programas para adultos jóvenes',
+  'route.cardiologyCare': 'Navegador de cardiología, dolor torácico por estimulantes, bloqueo QRS y Torsades (QTc)',
+  'cardiology.title': 'Navegador de Cardiología, Arritmias de Urgencia y Toxicología Cardiovascular',
+  'cardiology.subtitle': 'Protocolos de consenso AHA/ACC, ESC y ACMT para SCA por cocaína/metanfetamina (prohibición de betabloqueantes), bloqueo de canales de sodio (bicarbonato 8.4%), Torsades de Pointes (MgSO4 IV), disección aórtica, Takotsubo y miocardiopatía/HAP por metanfetamina.',
+  'route.oncologyPalliative': 'Navegador de oncología, cuidados paliativos, crisis de células falciformes y dolor por cáncer en MOUD',
+  'oncology.title': 'Navegador de Oncología, Cuidados Paliativos, Crisis Drepanocítica y Dolor Complejo en MOUD',
+  'oncology.subtitle': 'Protocolos de consenso ASCO, NCCN, ASH/NHLBI y AAHPM para dolor oncológico en buprenorfina/metadona (dosis fraccionada TID/QID + agonistas plenos), crisis vasooclusiva drepanocítica (analgesia parenteral <= 30 min), neurotoxicidad por opioides (rotación M3G/H3G), neuropatía CIPN y seguridad con parches de fentanilo.',
 
   ...esMatch,
   ...esClinical,

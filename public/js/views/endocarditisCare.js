@@ -769,6 +769,14 @@ export function endocarditisCareView() {
       ]),
     ]);
     section.appendChild(ocularCard);
+    const cardiologyCard = h('div', { class: 'ec-card mt-3' }, [
+      h('h3', {}, 'Stimulant ACS, Wide-QRS Sodium-Channel Blockade, Torsades (QTc) & Meth-PAH'),
+      h('p', {}, 'Chest pain, syncope, or heart failure in people who use stimulants or MOUD may also reflect coronary vasospasm, sodium-channel QRS widening, QTc prolongation, aortic dissection, or methamphetamine cardiomyopathy/PAH: '),
+      h('p', {}, [
+        h('a', { href: '#/cardiology-care', class: 'btn btn-secondary' }, 'Open Cardiology, Arrhythmia & Stimulant ACS Navigator →'),
+      ]),
+    ]);
+    section.appendChild(cardiologyCard);
     return section;
   }
 

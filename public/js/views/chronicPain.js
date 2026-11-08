@@ -608,6 +608,13 @@ export function chronicPainView() {
     )
   );
 
+  const oncologyLinkBanner = h('div', { class: 'card banner-tip mt-2' },
+    h('p', null,
+      h('strong', null, 'Managing active cancer pain on buprenorphine/methadone, sickle cell vaso-occlusive crisis, opioid-induced neurotoxicity, or hospice fentanyl patches? '),
+      h('a', { href: '#/oncology-palliative' }, 'Open the Oncology, Palliative Care, Sickle Cell & Complex Cancer Pain Navigator →')
+    )
+  );
+
 
   const sedativeIntroCard = h('article', { class: 'card' },
     h('h2', null, BENZODIAZEPINE_STANDARDS.ASHTON_TAPER_PROTOCOL.titleEn),
@@ -748,7 +755,7 @@ export function chronicPainView() {
     )
   );
 
-  panelMultimodal.append(multimodalCard, cdcGuidelineCard, orthopedicLinkBanner);
+  panelMultimodal.append(multimodalCard, cdcGuidelineCard, orthopedicLinkBanner, oncologyLinkBanner);
 
   panelsContainer.append(panelPain, panelSedative, panelMultimodal);
   container.append(panelsContainer);
