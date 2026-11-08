@@ -601,6 +601,13 @@ export function chronicPainView() {
     )
   );
 
+  const orthopedicLinkBanner = h('div', { class: 'card banner-tip mt-2' },
+    h('p', null,
+      h('strong', null, 'Experiencing new midline back pain, swollen joints, groin pain, or managing long-term opioid bone density (OPIAD)? '),
+      h('a', { href: '#/orthopedic-care' }, 'Open the Spine, Septic Arthritis, Osteonecrosis & OVIVA Bone/Joint Navigator →')
+    )
+  );
+
 
   const sedativeIntroCard = h('article', { class: 'card' },
     h('h2', null, BENZODIAZEPINE_STANDARDS.ASHTON_TAPER_PROTOCOL.titleEn),
@@ -741,7 +748,7 @@ export function chronicPainView() {
     )
   );
 
-  panelMultimodal.append(multimodalCard, cdcGuidelineCard);
+  panelMultimodal.append(multimodalCard, cdcGuidelineCard, orthopedicLinkBanner);
 
   panelsContainer.append(panelPain, panelSedative, panelMultimodal);
   container.append(panelsContainer);

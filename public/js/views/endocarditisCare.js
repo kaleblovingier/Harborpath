@@ -753,6 +753,14 @@ export function endocarditisCareView() {
       ]),
     ]);
     section.appendChild(pulmonaryCard);
+    const orthopedicCard = h('div', { class: 'ec-card mt-3' }, [
+      h('h3', {}, 'Metastatic Vertebral Osteomyelitis, Epidural Abscess & OVIVA Oral Step-Down'),
+      h('p', {}, 'Bacteremic endocarditis frequently seeds the spine (epidural abscess/discitis), sternoclavicular joint, or psoas muscle. Review OVIVA oral and Dalbavancin bone protocols: '),
+      h('p', {}, [
+        h('a', { href: '#/orthopedic-care', class: 'btn btn-secondary' }, 'Open Spine, Septic Arthritis & OVIVA Bone/Joint Navigator →'),
+      ]),
+    ]);
+    section.appendChild(orthopedicCard);
     return section;
   }
 

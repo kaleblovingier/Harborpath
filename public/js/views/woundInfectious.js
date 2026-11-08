@@ -840,6 +840,18 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       : 'Open Infective Endocarditis & Valve Care Navigator →')
   );
   root.append(endocarditisCard);
+  const orthopedicCard = h(
+    'div',
+    { class: 'info-card mb-4' },
+    h('strong', {}, isEs ? 'Absceso Epidural Espinal, Artritis Séptica y Piomiositis (Ensayo OVIVA): ' : 'Spinal Epidural Abscess, Septic Arthritis & Pyomyositis (OVIVA Trial): '),
+    h('span', {}, isEs
+      ? 'Dolor nuevo de espalda en línea media, hinchazón esternoclavicular/articular o mionecrosis profunda tras "skin popping" (Efecto Eagle: asociar Clindamicina): '
+      : 'New midline back pain, sternoclavicular/joint swelling, or deep muscle myonecrosis after skin-popping (Eagle Effect: pair Clindamycin): '),
+    h('a', { href: '#/orthopedic-care' }, isEs
+      ? 'Abrir Navegador de Columna, Ortopedia e Infecciones Osteoarticulares →'
+      : 'Open Spine, Orthopedic & Bone/Joint Infections Navigator →')
+  );
+  root.append(orthopedicCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);

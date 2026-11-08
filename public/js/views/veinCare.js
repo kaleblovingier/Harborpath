@@ -852,6 +852,14 @@ export function veinCareView() {
       ]),
     ]);
     section.appendChild(endocarditisCard);
+    const orthopedicCard = h('div', { class: 'rehab-card mt-3' }, [
+      h('h3', {}, '5. Spine, Sternoclavicular & Psoas Infections (OVIVA & Dalbavancin)'),
+      h('p', {}, 'Neck ("pocket shot") and groin ("femoral") injections frequently seed the sternoclavicular joint, vertebral spine, or retroperitoneal psoas muscle: '),
+      h('p', {}, [
+        h('a', { href: '#/orthopedic-care', class: 'btn btn-secondary' }, 'Open Spine, Septic Arthritis & OVIVA Bone/Joint Navigator →'),
+      ]),
+    ]);
+    section.appendChild(orthopedicCard);
     return section;
   }
 

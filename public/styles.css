@@ -10247,3 +10247,228 @@ body.sensory-mode-active [tabindex]:focus-visible {
     font-size: 1.4rem;
   }
 }
+
+/* ============================================================================
+   WAVE 49: SPINE, MUSCULOSKELETAL & ORTHOPEDIC INFECTIONS NAVIGATOR (#/orthopedic-care)
+   ============================================================================ */
+
+.orthopedic-care-view {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.orthopedic-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+  color: #ffffff;
+  padding: 1.75rem 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(23, 37, 84, 0.25);
+}
+
+.orthopedic-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.orthopedic-clinical-badge {
+  background: rgba(191, 219, 254, 0.2);
+  border: 1px solid rgba(191, 219, 254, 0.45);
+  color: #bfdbfe;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.orthopedic-privacy-pill {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #f8fafc;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.orthopedic-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+.orthopedic-subtitle {
+  margin: 0;
+  color: #dbeafe;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.orthopedic-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.orthopedic-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.925rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.orthopedic-tab-btn:hover {
+  background: #eff6ff;
+  border-color: #60a5fa;
+}
+
+.orthopedic-tab-btn.active {
+  background: #1d4ed8;
+  color: #ffffff;
+  border-color: #1e3a8a;
+}
+
+.orthopedic-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.orthopedic-panel-intro h2 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.35rem;
+  color: #0f172a;
+}
+
+.orthopedic-panel-intro p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.orthopedic-syndromes-list,
+.orthopedic-directives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.orthopedic-syndrome-card,
+.orthopedic-directive-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #1d4ed8;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.orthopedic-syndrome-title,
+.orthopedic-directive-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  color: #1e3a8a;
+}
+
+.orthopedic-section {
+  margin-bottom: 0.75rem;
+}
+
+.orthopedic-section p {
+  margin: 0.25rem 0 0 0;
+  color: #334155;
+  font-size: 0.93rem;
+  line-height: 1.55;
+}
+
+.orthopedic-evaluator-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.75rem;
+}
+
+.orthopedic-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.orthopedic-check-item.selected {
+  background: #eff6ff;
+  border-color: #2563eb;
+}
+
+.orthopedic-eval-results {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 2px solid #cbd5e1;
+  background: #f8fafc;
+}
+
+.orthopedic-eval-results.acuity-emergency_911 {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.orthopedic-eval-results.acuity-urgent_eval {
+  border-color: #d97706;
+  background: #fffbeb;
+}
+
+.orthopedic-sbar-output {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #334155;
+}
+
+.orthopedic-footer-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .orthopedic-care-view {
+    padding: 1rem;
+  }
+  .orthopedic-header {
+    padding: 1.25rem;
+  }
+  .orthopedic-title {
+    font-size: 1.4rem;
+  }
+}

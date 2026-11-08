@@ -42,6 +42,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/metabolic-care', key: 'workspace.link.metabolicCare', label: 'Metabolic emergencies, ketoacidosis & adrenal crisis' },
       { href: '#/gi-care', key: 'workspace.link.giCare', label: 'GI emergencies, pancreatitis & opioid constipation' },
       { href: '#/hematology-care', key: 'workspace.link.hematologyCare', label: 'Hematology, coagulopathy, levamisole & toxic hemolysis' },
+      { href: '#/orthopedic-care', key: 'workspace.link.orthopedicCare', label: 'Spinal epidural abscess, septic arthritis & OVIVA bone care' },
     ],
   },
   {
