@@ -44,6 +44,7 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/hematology-care', key: 'workspace.link.hematologyCare', label: 'Hematology, coagulopathy, levamisole & toxic hemolysis' },
       { href: '#/orthopedic-care', key: 'workspace.link.orthopedicCare', label: 'Spinal epidural abscess, septic arthritis & OVIVA bone care' },
       { href: '#/ocular-care', key: 'workspace.link.ocularCare', label: 'Ophthalmology, endophthalmitis, methanol blindness & ocular toxicology' },
+      { href: '#/urology-care', key: 'workspace.link.urologyCare', label: 'Urologic emergencies, ischemic priapism, Fournier gangrene & urinary retention' },
     ],
   },
   {

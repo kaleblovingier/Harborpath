@@ -10697,3 +10697,104 @@ body.sensory-mode-active [tabindex]:focus-visible {
     font-size: 1.4rem;
   }
 }
+
+/* ==========================================================================
+   Wave 51: Urologic & Genitourinary Emergencies Navigator (#/urology-care)
+   ========================================================================== */
+.urology-care-view {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.urology-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: #f8fafc;
+  padding: 1.75rem;
+  border-radius: 0.875rem;
+  border-left: 6px solid #38bdf8;
+}
+
+.urology-safety-banner {
+  background: #fef2f2;
+  border: 2px solid #dc2626;
+  border-left-width: 6px;
+  color: #7f1d1d;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  line-height: 1.55;
+}
+
+.urology-syndrome-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.urology-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.urology-flag-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.urology-redflag-box {
+  background: #fef2f2;
+  border: 2px solid #dc2626;
+  border-radius: 0.65rem;
+  padding: 1rem 1.25rem;
+  margin: 0.75rem 0;
+  color: #7f1d1d;
+}
+
+.urology-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.urology-rule-card {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-top: 4px solid #0284c7;
+  border-radius: 0.65rem;
+  padding: 1rem 1.25rem;
+}
+
+.urology-sbar-pre {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .urology-care-view {
+    padding: 1rem;
+  }
+  .urology-header {
+    padding: 1.25rem;
+  }
+}

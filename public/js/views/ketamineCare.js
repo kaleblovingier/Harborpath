@@ -767,6 +767,12 @@ export function ketamineCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rulesGrid);
+    const urologyCrossLink = h('div', { class: 'kc-card mt-3' }, [
+      h('h3', {}, 'Obstructive Uropathy, Hydronephrosis & Acute Urinary Retention'),
+      h('p', {}, 'Severe ketamine ulcerative cystitis can progress to bilateral ureteral stricture, hydronephrosis, and acute urinary retention. Access acute urologic decompression, post-obstructive diuresis, and genitourinary emergency protocols: '),
+      h('a', { href: '#/urology-care' }, 'Open Urologic & Genitourinary Emergencies Navigator →'),
+    ]);
+    section.appendChild(urologyCrossLink);
     return section;
   }
 

@@ -76,4 +76,5 @@ export default {
   'workspace.link.hematologyCare': 'Hematología, coagulopatías, levamisol y hemólisis tóxica',
   'workspace.link.orthopedicCare': 'Absceso epidural espinal, artritis séptica y cuidado óseo OVIVA',
   'workspace.link.ocularCare': 'Oftalmología, endoftalmitis, ceguera por metanol y toxicología ocular',
+  'workspace.link.urologyCare': 'Urgencias urológicas, priapismo isquémico, gangrena de Fournier y retención urinaria',
 };

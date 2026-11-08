@@ -800,6 +800,7 @@ export function sexualHealthView() {
         h('h3', {}, 'Barrier Materials & Lubricant Compatibility'),
         h('p', { class: 'cross-nav-p' }, [
           h('a', { class: 'btn btn-secondary', href: '#/inhalant-care' }, 'Poppers (Alkyl Nitrites) & PDE-5 Interaction Safety'),
+          h('a', { class: 'btn btn-secondary', href: '#/urology-care' }, 'Ischemic Priapism, Constriction Rings & Urologic Emergencies →'),
         ]),
         h('div', { class: 'materials-grid' }, BARRIER_HARM_REDUCTION.materials.map((m) => h('div', { class: 'material-item' }, [
           h('h4', {}, m.material),

@@ -186,6 +186,8 @@ export default {
   'tools.item.orthopedic-care.description': 'Consenso IDSA, AAOS y NEJM OVIVA para absceso epidural espinal (AEE), osteomielitis vertebral, artritis séptica esternoclavicular/sacroilíaca, absceso del psoas, mionecrosis clostridial, paso oral OVIVA/dalbavancina y necrosis avascular.',
   'tools.item.ocular-care.title': 'Navegador de oftalmología, endoftalmitis endógena, ceguera por metanol y toxicología ocular',
   'tools.item.ocular-care.description': 'Consenso AAO, IDSA y ACMT para neuropatía óptica por metanol (ácido fórmico), endoftalmitis fúngica/bacteriana intravítrea, "córnea de crack", OACR, glaucoma por topiramato y maculopatía por poppers.',
+  'tools.item.urology-care.title': 'Navegador de urgencias urológicas, priapismo isquémico, gangrena de Fournier y retención urinaria',
+  'tools.item.urology-care.description': 'Consenso AUA, EAU e IDSA para priapismo isquémico de bajo flujo por trazodona/cocaína/antipsicóticos (fenilefrina y aspiración 19G), gangrena de Fournier, retención urinaria por opioides/anticolinérgicos, trombosis de vena dorsal del pene y uropatía obstructiva por ketamina.',
   'tools.item.renal-care.title': 'Navegador de salud renal, rabdomiólisis, FRA y MOUD en diálisis',
   'tools.item.renal-care.description': 'Consenso KDIGO y ASN para rabdomiólisis tras sobredosis, estabilización de hiperpotasemia en ECG, 6 P del síndrome compartimental, MOUD en hemodiálisis y contraindicación de morfina/AINEs.',
   'tools.item.endocarditis-care.title': 'Navegador de endocarditis infecciosa, daño valvular y protocolo POET',

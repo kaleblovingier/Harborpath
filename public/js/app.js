@@ -57,6 +57,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'urology-care': () => import('./views/urologyCare.js').then((m) => {
+    viewCache.set('urology-care', m.urologyCareView);
+    routeResets.set('urology-care', m.resetUrologyState);
+    return m.urologyCareView;
+  }),
   'ocular-care': () => import('./views/ocularCare.js').then((m) => {
     viewCache.set('ocular-care', m.ocularCareView);
     routeResets.set('ocular-care', m.resetOcularState);
@@ -356,6 +361,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'urology-care': () => t('route.urologyCare', 'Urologic emergencies, ischemic priapism, Fournier gangrene & urinary retention navigator'),
   'ocular-care': () => t('route.ocularCare', 'Ophthalmology, endogenous endophthalmitis, methanol blindness & ocular toxicology navigator'),
   'orthopedic-care': () => t('route.orthopedicCare', 'Spinal epidural abscess, septic arthritis, pyomyositis & OVIVA bone/joint navigator'),
   'hematology-care': () => t('route.hematologyCare', 'Hematology, coagulopathy, levamisole vasculitis & toxic hemolysis navigator'),
@@ -449,6 +455,7 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('urology-care'),
     preloadRoute('ocular-care'),
     preloadRoute('orthopedic-care'),
     preloadRoute('hematology-care'),

@@ -852,6 +852,18 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       : 'Open Spine, Orthopedic & Bone/Joint Infections Navigator →')
   );
   root.append(orthopedicCard);
+  const urologyCard = h(
+    'div',
+    { class: 'info-card mb-4' },
+    h('strong', {}, isEs ? 'Gangrena de Fournier, Trombosis de Vena Dorsal del Pene y Necrosis Genital: ' : 'Fournier Gangrene, Dorsal Penile Vein Thrombosis & Genital Necrosis: '),
+    h('span', {}, isEs
+      ? 'Dolor perineal/escrotal severo, crepitación subcutánea o escaras tras inyección femoral/perineal/peneana (NUNCA usar epinefrina en bloqueos peneanos): '
+      : 'Severe perineal/scrotal pain, subcutaneous crepitus, or eschar after femoral/perineal/penile injection (NEVER use epinephrine in penile blocks): '),
+    h('a', { href: '#/urology-care' }, isEs
+      ? 'Abrir Navegador de Urgencias Urológicas y Genitourinarias →'
+      : 'Open Urologic & Genitourinary Emergencies Navigator →')
+  );
+  root.append(urologyCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);

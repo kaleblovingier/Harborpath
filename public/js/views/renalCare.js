@@ -807,6 +807,12 @@ export function renalCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rulesGrid);
+    const urologyCrossLink = h('div', { class: 'rc-card mt-3' }, [
+      h('h3', {}, 'Post-Renal Obstructive AKI, Acute Urinary Retention & Ketamine Hydronephrosis'),
+      h('p', {}, 'Always rule out silent bladder distension (opioids, anticholinergics, stimulants) and ketamine ureteral stricture in acute kidney injury, and monitor for post-obstructive diuresis (> 200 mL/hr) after catheter decompression: '),
+      h('a', { href: '#/urology-care' }, 'Open Urologic & Genitourinary Emergencies Navigator →'),
+    ]);
+    section.appendChild(urologyCrossLink);
     return section;
   }
 
