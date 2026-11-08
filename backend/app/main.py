@@ -122,8 +122,9 @@ async def directory_summary():
         },
         "capabilities": {
             "interoperability": "HL7 FHIR R4 US Core ServiceRequest, 42 CFR Part 2 Consent syndication & offline verifiable MOUD rights directives",
-            "field_medicine": "ACS Stop the Bleed hemorrhage control, NHCHC/CDC encampment medicine, and SALT mass overdose cluster spike response",
-            "toxicology": "AACT/EAPCCT toxic alcohol osmolal/anion gap calculator with fomepizole/ethanol dosing and EXTRIP hemodialysis triggers",
+            "field_medicine": "ACS Stop the Bleed hemorrhage control, NHCHC/CDC encampment medicine, SALT mass overdose spike response, and NSTI/LRINEC wound staging",
+            "toxicology": "AACT/EAPCCT toxic alcohol osmolal/anion gap calculator and AAP/ACMT pediatric One Pill Can Kill decontamination engine",
+            "reentry": "DOJ Title II ADA carceral MOUD continuity, Section 1115 Medicaid enrollment, and 30-day bridge overdose prevention",
             "syndication": "Zero-cookie iframe widgets & partner seals"
         }
     }

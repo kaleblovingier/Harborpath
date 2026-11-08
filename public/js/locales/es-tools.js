@@ -232,4 +232,10 @@ export default {
   'tools.item.mass-overdose-mci.description': 'Protocolos CDC y NAEMT TECC para superagonistas sintéticos (carfentanilo, nitazenos), xilacina/medetomidina, rigidez de tórax de madera y triaje masivo SALT con ventilación primero.',
   'tools.item.moud-directive.title': 'Pase de derechos MOUD y directiva de continuación hospitalaria',
   'tools.item.moud-directive.description': 'Pase de derechos de tratamiento y tarjeta de bolsillo verificable sin conexión (cero-PII) bajo el Título II de la Ley ADA, continuación hospitalaria DEA 21 CFR § 1306.07(c) y manejo del dolor agudo.',
+  'tools.item.nsti-wound-staging.title': 'Fascitis necrosante (LRINEC), POCUS y úlceras por xilacina',
+  'tools.item.nsti-wound-staging.description': 'Consenso IDSA y Wong et al. para infecciones necrosantes de partes blandas (NSTI), signos duros (crepitación, flictenas, agua de fregar), criterios ecográficos STAFF, calculadora analítica LRINEC y preservación tendinosa en xilacina.',
+  'tools.item.pediatric-ingestion-decon.title': 'Ingesta pediátrica («Una pastilla puede matar») y descontaminación',
+  'tools.item.pediatric-ingestion-decon.description': 'Consenso AAP, ACMT y Centro de Toxicología para ingestas letales en dosis única en niños (metadona, buprenorfina, clonidina, calcioantagonistas, sulfonilureas), carbón activado vs contraindicaciones, WBI y naloxona.',
+  'tools.item.carceral-moud-reentry.title': 'Continuidad de MOUD en prisión y reingreso comunitario seguro',
+  'tools.item.carceral-moud-reentry.description': 'Decretos del Título II de la Ley ADA, mandato tri-medicación (metadona, buprenorfina, Vivitrol), exención de Medicaid Sección 1115, recetas puente de 30 días y kits de naloxona para prevenir el pico de sobredosis mortal tras la excarcelación.',
 };

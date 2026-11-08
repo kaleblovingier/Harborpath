@@ -1433,4 +1433,21 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - Service worker cache updated with `npm run stamp:sw` (`341.0 KB gzip`, strictly under `< 350 KB` budget limit).
   - All 1,840 tests passing across 254 suites; 20/20 build checks passing.
 
+### 58. Wave 60: Clinical Burn Toxicology, Embeddable Widgets & Street Outreach Handouts (`#/burn-toxicology`)
+- Comprehensive chemical vs thermal burn staging, cyanide/CO inhalation toxicology, Rule of Nines Parkland resuscitation formula, and embeddable outreach widgets.
+
+### 59. Wave 61: Encampment Medicine, Street Trauma Bleeding Control, and FHIR R4 Referral Syndication (`#/encampment-medicine`, `#/street-trauma`, `#/fhir-export`)
+- Field outreach protocols for unsheltered environments, tourniquet and hemostatic gauze wound management, and HL7 FHIR R4 Consent/ServiceRequest bundle syndication.
+
+### 60. Wave 62: Toxic Alcohol Navigator, Mass Overdose SALT Triage, and Emergency MOUD Directives (`#/toxic-alcohols`, `#/mass-overdose-salt`, `#/emergency-moud-directives`)
+- Osmolal/anion gap triage for methanol and ethylene glycol with fomepizole/ethanol dosing, SALT mass-casualty triage algorithm for mass overdose incidents, and 72-hour emergency MOUD continuation protocols under 21 CFR § 1306.07(b).
+
+### 61. Wave 63: NSTI LRINEC/POCUS Staging, Pediatric Ingestion Decontamination & Carceral MOUD Reentry Directives
+- **Complex Wound & Necrotizing Soft Tissue Infection (NSTI) Staging (`#/nsti-wound-staging`)**:
+  - Full LRINEC lab calculator (0–13 pts), hard vs soft signs of necrotizing fasciitis, POCUS differential (cellulitis cobblestoning vs drainable abscess vs STAFF criteria), 4-stage xylazine ulcer continuum with tendon-sparing autolytic/collagenase protocols, and zero-PII SBAR clinical handoff notes.
+- **Pediatric & Adolescent Polysubstance Ingestion Decontamination Engine (`#/pediatric-ingestion-decon`)**:
+  - Toddler "One Pill Can Kill" toxic xenobiotic thresholds (methadone, buprenorphine, clonidine, CCBs, sulfonylureas, TCAs, camphor), activated charcoal eligibility window (<= 120 min) with airway/PHAILS/hydrocarbon contraindication enforcement, whole bowel irrigation (25–40 mL/kg/hr PEG-ELS), weight-based naloxone micro-titration (0.01 mg/kg to RR 12–20), and 1-800-222-1222 Poison Control integration.
+- **Carceral Intake & Reentry MOUD Continuity & Overdose Prevention Directives (`#/carceral-moud-reentry`)**:
+  - Booking-to-gate-release finite state machine (S0 to S5), 4 Reentry Pillars tracker (Section 1115 Medicaid enrollment, 24–48h community clinic warm handoff, 30-day bridge medication supply, gate-exit naloxone kit distribution), Title II ADA statutory non-discrimination mandates, and mitigation of the post-release 40x–129x overdose mortality spike.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

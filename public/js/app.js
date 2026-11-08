@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'nsti-wound-staging': () => import('./views/nstiWoundStaging.js').then((m) => {
+    viewCache.set('nsti-wound-staging', m.nstiWoundStagingView);
+    routeResets.set('nsti-wound-staging', m.resetNstiState);
+    return m.nstiWoundStagingView;
+  }),
+  'pediatric-ingestion-decon': () => import('./views/pediatricIngestionDecon.js').then((m) => {
+    viewCache.set('pediatric-ingestion-decon', m.pediatricIngestionDeconView);
+    routeResets.set('pediatric-ingestion-decon', m.resetPediatricDeconState);
+    return m.pediatricIngestionDeconView;
+  }),
+  'carceral-moud-reentry': () => import('./views/carceralMoudReentry.js').then((m) => {
+    viewCache.set('carceral-moud-reentry', m.carceralMoudReentryView);
+    routeResets.set('carceral-moud-reentry', m.resetCarceralReentryState);
+    return m.carceralMoudReentryView;
+  }),
   'toxic-alcohol': () => import('./views/toxicAlcohol.js').then((m) => {
     viewCache.set('toxic-alcohol', m.toxicAlcoholView);
     routeResets.set('toxic-alcohol', m.resetToxicAlcoholState);
@@ -452,6 +467,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'nsti-wound-staging': () => t('route.nstiWoundStaging', 'Complex wound, necrotizing fasciitis (LRINEC) & POCUS navigator'),
+  'pediatric-ingestion-decon': () => t('route.pediatricIngestionDecon', 'Pediatric ingestion, One Pill Can Kill & decontamination engine'),
+  'carceral-moud-reentry': () => t('route.carceralMoudReentry', 'Carceral MOUD continuity & safe reentry directives'),
   'toxic-alcohol': () => t('route.toxicAlcohol', 'Toxic alcohol poisoning, fomepizole & osmolal gap navigator'),
   'mass-overdose-mci': () => t('route.massOverdoseMci', 'Mass overdose cluster, contaminated supply & SALT triage navigator'),
   'moud-directive': () => t('route.moudDirective', 'Offline emergency MOUD directive & verifiable inpatient rights pass'),
@@ -564,6 +582,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('nsti-wound-staging'),
+    preloadRoute('pediatric-ingestion-decon'),
+    preloadRoute('carceral-moud-reentry'),
     preloadRoute('toxic-alcohol'),
     preloadRoute('mass-overdose-mci'),
     preloadRoute('moud-directive'),

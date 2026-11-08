@@ -2070,6 +2070,9 @@ export const es = {
   'route.toxicAlcohol': 'Navegador de intoxicación por alcoholes tóxicos, fomepizol y brecha osmolal',
   'route.massOverdoseMci': 'Navegador de brotes masivos de sobredosis, adulterantes y triaje SALT',
   'route.moudDirective': 'Pase de derechos MOUD y directiva de continuación hospitalaria sin conexión',
+  'route.nstiWoundStaging': 'Navegador de fascitis necrosante (LRINEC), POCUS y heridas complejas',
+  'route.pediatricIngestionDecon': 'Navegador de ingestas pediátricas («Una pastilla puede matar») y descontaminación',
+  'route.carceralMoudReentry': 'Continuidad de MOUD en prisión y directivas de reingreso comunitario seguro',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 

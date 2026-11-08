@@ -213,7 +213,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
   vertical-align: -0.2em;
 }
 
-/* ------------------------------------------------------------ Safety bar */
+/* Safety bar */
 .safety-bar {
   position: sticky; top: 0; z-index: 50;
   background: #0f172a;
@@ -245,7 +245,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
 .quick-exit:active { transform: translateY(1px); }
 .quick-exit:focus-visible { outline-color: #fde047; }
 
-/* ------------------------------------------------------------ Header & Language Switch */
+/* Header & Language Switch */
 .site-header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -399,7 +399,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
   .site-nav { order: 7; }
 }
 
-/* ------------------------------------------------------------ Buttons */
+/* Buttons */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 44px; padding: 0 18px;
@@ -430,7 +430,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
 }
 .link-btn:hover { color: var(--brand-strong); }
 
-/* ------------------------------------------------------------ Layout pieces */
+/* Layout pieces */
 .view { padding: 32px 0 64px; overflow-wrap: break-word; }
 .view-prose { max-width: 820px; }
 .view-medications { max-width: 960px; }
@@ -459,7 +459,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
 .help { font-size: 0.88rem; color: var(--muted); margin: 0; line-height: 1.45; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0; }
 
-/* ------------------------------------------------------------ Callouts */
+/* Callouts */
 .callout { border-radius: var(--radius); padding: 18px 20px; margin: 24px 0; border: 1px solid transparent; box-shadow: var(--shadow-xs); }
 .callout p:last-child { margin-bottom: 0; }
 .callout-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.08rem; }
@@ -472,7 +472,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
 .callout-ok { background: var(--ok-soft); border-color: var(--ok-border); }
 .callout-ok .callout-title { color: var(--ok-strong); }
 
-/* ------------------------------------------------------------ Home */
+/* Home */
 .hero { padding: 8px 0 0; }
 .hero h1 { max-width: 22ch; margin-bottom: 14px; }
 .view-home { padding-top: 20px; }
@@ -532,7 +532,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
 .promise-grid li > .icon { width: 28px; height: 28px; color: var(--brand); margin-bottom: 8px; }
 .promise-grid p { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
 
-/* ------------------------------------------------------------ Forms */
+/* Forms */
 .label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--text); }
 .input, .select {
   width: 100%; min-height: 48px;
@@ -596,7 +596,7 @@ textarea.input {
 .check small { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
 .check input:disabled + span { opacity: 0.5; }
 
-/* ------------------------------------------------------------ Finder & Presets */
+/* Finder & Presets */
 .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .preset {
   display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px;
@@ -651,7 +651,7 @@ textarea.input {
 .empty .callout { text-align: left; }
 .empty-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
 
-/* ------------------------------------------------------------ Relaxed Near-Match Fallback */
+/* Relaxed NearMatch Fallback */
 .relaxed-matches {
   margin-bottom: 24px;
 }
@@ -690,7 +690,7 @@ textarea.input {
   font-weight: 500;
 }
 
-/* ------------------------------------------------------------ Reach & State Resources */
+/* Reach & State Resources */
 .reach { text-align: left; }
 .reach .telehealth-list { margin-top: 14px; }
 .state-panel {
@@ -714,12 +714,12 @@ textarea.input {
 }
 .state-grid a:hover, .region-grid a:hover { border-color: var(--brand); background: var(--surface-2); }
 
-/* ------------------------------------------------------------ Federal Provider Finder */
+/* Federal Provider Finder */
 .provider-desc { color: var(--muted); margin-bottom: 12px; max-width: 72ch; }
 .provider-callout { margin: 12px 0 18px; }
 .provider-subfilters { margin-bottom: 12px; }
 
-/* ------------------------------------------------------------ Clinical Navigator & Safety Plan */
+/* Clinical Navigator & Safety Plan */
 #asam-recommendation-card > .card {
   border-top: 4px solid var(--brand);
 }
@@ -737,7 +737,7 @@ textarea.input {
   color: var(--text);
 }
 
-/* ------------------------------------------------------------ Wave 2: Safety-Net Snapshot & Clinical Tools */
+/* Wave 2: SafetyNet Snapshot & Clinical Tools */
 .safety-net-block {
   margin: 12px 0 18px;
   padding: 14px 16px;
@@ -845,7 +845,7 @@ textarea.input {
   margin-top: 10px;
 }
 
-/* ------------------------------------------------------------ Facility cards */
+/* Facility cards */
 .facility-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
 .facility-name { font-size: 1.15rem; margin-bottom: 4px; overflow-wrap: anywhere; font-weight: 750; }
 .subname { color: var(--muted); margin: 0; font-size: 0.95rem; }
@@ -927,7 +927,7 @@ textarea.input {
 }
 @keyframes pulse { 50% { opacity: 0.5; } }
 
-/* ------------------------------------------------------------ Tabs */
+/* Tabs */
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
 .tab {
   min-height: 44px; padding: 0 18px; border-radius: var(--radius-full);
@@ -939,7 +939,7 @@ textarea.input {
 .tab:hover { border-color: var(--brand); color: var(--text); box-shadow: var(--shadow-sm); }
 .tab[aria-selected="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
 
-/* ------------------------------------------------------------ Overdose guide */
+/* Overdose guide */
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .step {
   display: grid; grid-template-columns: 44px 1fr; gap: 14px;
@@ -1017,7 +1017,7 @@ textarea.input {
   }
 }
 
-/* ------------------------------------------------------------ Overdose Rescue Pacing Assistant */
+/* Overdose Rescue Pacing Assistant */
 .overdose-pacer {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1232,7 +1232,7 @@ textarea.input {
   margin-top: 6px;
 }
 
-/* ------------------------------------------------------------ Guides */
+/* Guides */
 .toc { margin: 8px 0 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .toc-title { font-weight: 700; margin-bottom: 4px; }
 .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 16px; }
@@ -1279,7 +1279,7 @@ tbody th { font-weight: 700; min-width: 200px; }
 .ext::after { content: "↗"; display: inline-block; margin-left: 0.15em; font-size: 0.85em; text-decoration: none; }
 .btn.ext::after { content: none; }
 
-/* ------------------------------------------------------------ Footer */
+/* Footer */
 .site-footer {
   margin-top: auto;
   background: var(--surface);
@@ -1292,7 +1292,7 @@ tbody th { font-weight: 700; min-width: 200px; }
 .site-footer nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
 .site-footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
 
-/* ------------------------------------------------------------ Motion & print */
+/* Motion & print */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
@@ -1310,7 +1310,7 @@ tbody th { font-weight: 700; min-width: 200px; }
   .btn-sensory-mode, .btn-emergency-drawer { border: 1px solid ButtonText; }
 }
 
-/* ------------------------------------------------------------ Find care that fits */
+/* Find care that fits */
 .hero-more { margin: 14px 0 0; font-size: 0.95rem; }
 .wizard { display: grid; gap: 18px; }
 .wizard h2 { margin: 0; }
@@ -1404,7 +1404,7 @@ tbody th { font-weight: 700; min-width: 200px; }
 .excluded summary { cursor: pointer; font-weight: 700; }
 .action-plan h2 { margin-top: 0; }
 
-/* ------------------------------------------------------------ Equity, Xylazine & Printable Clinical Handouts */
+/* Equity, Xylazine & Printable Clinical Handouts */
 .print-handout,
 .verification-script-card,
 .asam-summary-card,
@@ -1433,7 +1433,7 @@ tbody th { font-weight: 700; min-width: 200px; }
   border-left: 4px solid var(--brand);
 }
 
-/* ------------------------------------------------------------ Sensory Calming Mode (Withdrawal, Migraine & Sensory Relief) */
+/* Sensory Calming Mode (Withdrawal, Migraine & Sensory Relief) */
 body.sensory-mode-active,
 :root.sensory-mode-active {
   --bg: #0f172a;
@@ -1550,7 +1550,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   display: block;
 }
 
-/* ------------------------------------------------------------ Emergency Quick Reference Drawer */
+/* Emergency Quick Reference Drawer */
 .emergency-drawer-wrapper {
   position: fixed;
   inset: 0;
@@ -1807,7 +1807,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 14px;
 }
 
-/* ------------------------------------------------------------ Header Sensory & Emergency Buttons */
+/* Header Sensory & Emergency Buttons */
 .btn-sensory-mode {
   display: inline-flex;
   align-items: center;
@@ -1856,7 +1856,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: #ffffff;
 }
 
-/* ------------------------------------------------------------ State Legal & Harm Reduction Protections */
+/* State Legal & Harm Reduction Protections */
 .state-legal-card {
   border-left: 4px solid var(--brand);
 }
@@ -2168,7 +2168,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: #047857;
 }
 
-/* ------------------------------------------------------------ Wave 19: Polysubstance Care */
+/* Wave 19: Polysubstance Care */
 .polysubstance-view {
   display: flex;
   flex-direction: column;
@@ -2313,7 +2313,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   align-self: center;
 }
 
-/* ------------------------------------------------------------ Wave 20: Nightlife & Festival Harm Reduction */
+/* Wave 20: Nightlife & Festival Harm Reduction */
 .nightlife-view {
   display: flex;
   flex-direction: column;
@@ -2380,7 +2380,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   font-weight: 500;
 }
 
-/* ------------------------------------------------------------ Wave 21: Sleep Restoration & Insomnia */
+/* Wave 21: Sleep Restoration & Insomnia */
 .sleep-care-view {
   display: flex;
   flex-direction: column;
@@ -2472,7 +2472,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: var(--brand);
 }
 
-/* ------------------------------------------------------------ Wave 22: Dental & Oral Health */
+/* Wave 22: Dental & Oral Health */
 .dental-care-view {
   display: flex;
   flex-direction: column;
@@ -3269,9 +3269,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 
 
-/* ============================================================================
-   Benzodiazepine Deprescribing, Ashton Taper & BIND Care (Wave 26)
-   ============================================================================ */
+/* Benzodiazepine Deprescribing, Ashton Taper & BIND Care (Wave 26) */
 .benzo-care-view {
   max-width: 960px;
   margin: 0 auto;
@@ -3441,9 +3439,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   background: rgba(153, 27, 27, 0.08);
 }
 
-/* ============================================================================
-   ADHD, Neurodiversity & Co-Occurring Substance Use (Wave 27)
-   ============================================================================ */
+/* ADHD, Neurodiversity & CoOccurring Substance Use (Wave 27) */
 .adhd-care-view {
   max-width: 960px;
   margin: 0 auto;
@@ -3857,9 +3853,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   WAVE 30: NEEDLE STICK, SHARPS INJURY & PEP PROTOCOL VIEW
-   ========================================================================== */
+/* WAVE 30: NEEDLE STICK, SHARPS INJURY & PEP PROTOCOL VIEW */
 
 .needle-exposure-view {
   display: flex;
@@ -4258,9 +4252,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0.5rem 0 0 0;
 }
 
-/* ==========================================================================
-   WAVE 31: SEXUAL HEALTH, DOXY-PEP & EMERGENCY CONTRACEPTION VIEW
-   ========================================================================== */
+/* WAVE 31: SEXUAL HEALTH, DOXYPEP & EMERGENCY CONTRACEPTION VIEW */
 
 .sexual-health-view {
   display: flex;
@@ -4582,9 +4574,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   flex-shrink: 0;
 }
 
-/* ==========================================================================
-   Wave 32: Novel Substances, Kratom, Tianeptine & Emerging OTC Misuse Navigator
-   ========================================================================== */
+/* Wave 32: Novel Substances, Kratom, Tianeptine & Emerging OTC Misuse Navigator */
 
 .novel-substances-view {
   max-width: 1040px;
@@ -5016,9 +5006,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   font-weight: 700;
 }
 
-/* ==========================================================================
-   Wave 33: Gabapentinoid Misuse, Respiratory Synergy & Deprescribing Navigator
-   ========================================================================== */
+/* Wave 33: Gabapentinoid Misuse, Respiratory Synergy & Deprescribing Navigator */
 
 .gabapentinoid-care-view {
   max-width: 1040px;
@@ -5466,9 +5454,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ==========================================================================
-   WAVE 34: PSYCHEDELIC CARE, 5-HT2A CRISIS DE-ESCALATION & HPPD
-   ========================================================================== */
+/* WAVE 34: PSYCHEDELIC CARE, 5HT2A CRISIS DEESCALATION & HPPD */
 
 .psychedelic-care-view {
   max-width: 1200px;
@@ -5980,9 +5966,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ==========================================================================
-   WAVE 35: GHB, GBL & 1,4-BDO HARM REDUCTION, COMA TRIAGE & WITHDRAWAL
-   ========================================================================== */
+/* WAVE 35: GHB, GBL & 1,4BDO HARM REDUCTION, COMA TRIAGE & WITHDRAWAL */
 
 .ghb-care-view {
   max-width: 1200px;
@@ -6328,9 +6312,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ==========================================================================
-   WAVE 36: VASCULAR HEALTH, VEIN CARE & INJECTION ANATOMY
-   ========================================================================== */
+/* WAVE 36: VASCULAR HEALTH, VEIN CARE & INJECTION ANATOMY */
 
 .vein-care-view {
   max-width: 1200px;
@@ -6700,9 +6682,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ============================================================================
-   WAVE 37: INHALANT, SOLVENT & NITROUS OXIDE CARE VIEW
-   ============================================================================ */
+/* WAVE 37: INHALANT, SOLVENT & NITROUS OXIDE CARE VIEW */
 
 .inhalant-care-view {
   max-width: 1200px;
@@ -7045,9 +7025,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ============================================================================
-   WAVE 38: KETAMINE HARM REDUCTION, DISSOCIATIVE CARE & UROPATHY VIEW
-   ============================================================================ */
+/* WAVE 38: KETAMINE HARM REDUCTION, DISSOCIATIVE CARE & UROPATHY VIEW */
 
 .ketamine-care-view {
   max-width: 1200px;
@@ -7376,9 +7354,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ==========================================================================
-   Wave 39: Weather Care & Environmental Extremes Navigator
-   ========================================================================== */
+/* Wave 39: Weather Care & Environmental Extremes Navigator */
 
 .weather-care-view {
   max-width: 1200px;
@@ -7655,9 +7631,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ==========================================================================
-   Wave 40: Liver Care & Hepatic Safety Navigator
-   ========================================================================== */
+/* Wave 40: Liver Care & Hepatic Safety Navigator */
 
 .liver-care-view {
   max-width: 1200px;
@@ -7946,9 +7920,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin: 0;
 }
 
-/* ==========================================================================
-   Wave 41: Endocarditis Care, Valve Destruction & POET Protocol Navigator
-   ========================================================================== */
+/* Wave 41: Endocarditis Care, Valve Destruction & POET Protocol Navigator */
 
 .endocarditis-care-view {
   max-width: 1200px;
@@ -8208,9 +8180,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 
 
-/* ==========================================================================
-   Renal Care & Rhabdomyolysis Navigator View (.renal-care-view)
-   ========================================================================== */
+/* Renal Care & Rhabdomyolysis Navigator View (.renalcareview) */
 
 .renal-care-view {
   max-width: 1200px;
@@ -8559,9 +8529,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 
 
-/* ==========================================================================
-   Pulmonary Care & Inhalation Safety Navigator View (.pulmonary-care-view)
-   ========================================================================== */
+/* Pulmonary Care & Inhalation Safety Navigator View (.pulmonarycareview) */
 
 .pulmonary-care-view {
   max-width: 1200px;
@@ -8818,9 +8786,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   Wave 44: Neurological Health & Neuroprotection Navigator (.neurology-care-view)
-   ========================================================================== */
+/* Wave 44: Neurological Health & Neuroprotection Navigator (.neurologycareview) */
 
 .neurology-care-view {
   display: flex;
@@ -9319,9 +9285,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   Wave 45: Endocrine & Metabolic Care Navigator (.metabolic-care-view)
-   ========================================================================== */
+/* Wave 45: Endocrine & Metabolic Care Navigator (.metaboliccareview) */
 
 .metabolic-care-view {
   display: flex;
@@ -9749,9 +9713,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   Wave 46: Gastrointestinal & Mesenteric Care Navigator (.gi-care-view)
-   ========================================================================== */
+/* Wave 46: Gastrointestinal & Mesenteric Care Navigator (.gicareview) */
 
 .gi-care-view {
   display: flex;
@@ -10173,9 +10135,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ============================================================================
-   WAVE 48: HEMATOLOGY, COAGULOPATHY & TOXIC HEMOLYSIS NAVIGATOR (#/hematology-care)
-   ============================================================================ */
+/* WAVE 48: HEMATOLOGY, COAGULOPATHY & TOXIC HEMOLYSIS NAVIGATOR (#/hematologycare) */
 
 .hematology-care-view {
   max-width: 1120px;
@@ -10398,9 +10358,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ============================================================================
-   WAVE 49: SPINE, MUSCULOSKELETAL & ORTHOPEDIC INFECTIONS NAVIGATOR (#/orthopedic-care)
-   ============================================================================ */
+/* WAVE 49: SPINE, MUSCULOSKELETAL & ORTHOPEDIC INFECTIONS NAVIGATOR (#/orthopediccare) */
 
 .orthopedic-care-view {
   max-width: 1120px;
@@ -10623,9 +10581,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ============================================================================
-   WAVE 50: OPHTHALMOLOGY, VISION LOSS & OCULAR TOXICOLOGY NAVIGATOR (#/ocular-care)
-   ============================================================================ */
+/* WAVE 50: OPHTHALMOLOGY, VISION LOSS & OCULAR TOXICOLOGY NAVIGATOR (#/ocularcare) */
 
 .ocular-care-view {
   max-width: 1120px;
@@ -10848,9 +10804,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   Wave 51: Urologic & Genitourinary Emergencies Navigator (#/urology-care)
-   ========================================================================== */
+/* Wave 51: Urologic & Genitourinary Emergencies Navigator (#/urologycare) */
 .urology-care-view {
   max-width: 1120px;
   margin: 0 auto;
@@ -10949,9 +10903,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   Wave 52: Otolaryngology (#/ent-care) & Dermatology (#/dermatology-care)
-   ========================================================================== */
+/* Wave 52: Otolaryngology (#/entcare) & Dermatology (#/dermatologycare) */
 .ent-care-view,
 .dermatology-care-view {
   max-width: 1120px;
@@ -11080,10 +11032,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
-/* ==========================================================================
-   Wave 53: Cardiology & Arrhythmia Emergencies (#/cardiology-care) &
-            Oncology, Palliative Care & Sickle Cell (#/oncology-palliative)
-   ========================================================================== */
+/* Wave 53: Cardiology & Arrhythmia Emergencies (#/cardiologycare) & */
 .cardiology-care-view,
 .oncology-palliative-view {
   max-width: 1120px;
@@ -11241,10 +11190,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 0.75rem;
 }
 
-/* ==========================================================================
-   Wave 54: Obstetric Emergencies & ESC (#/obstetric-emergencies) &
-            Critical Care (ICU) & Perioperative MOUD (#/icu-perioperative)
-   ========================================================================== */
+/* Wave 54: Obstetric Emergencies & ESC (#/obstetricemergencies) & */
 .obstetric-emergencies-view,
 .icu-perioperative-view {
   max-width: 1120px;
@@ -11340,7 +11286,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   padding: 1rem 1.25rem;
 }
 
-/* ------------------------------------------------------------ Wave 55: Pediatric Exposures & Geriatric Care */
+/* Wave 55: Pediatric Exposures & Geriatric Care */
 .pediatric-exposures-view,
 .geriatric-care-view {
   display: flex;
@@ -11497,9 +11443,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 0.75rem;
 }
 
-/* ============================================================================
-   Operator Analytics & Telemetry Dashboard (adminMetrics.js)
-   ============================================================================ */
+/* Operator Analytics & Telemetry Dashboard (adminMetrics.js) */
 
 .admin-metrics-view {
   max-width: 1080px;
@@ -11866,9 +11810,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   padding: 0.5rem 0;
 }
 
-/* ============================================================================
-   WAVE 60: BURN TOXICOLOGY, EMBED BUILDER & STREET OUTREACH MATERIALS
-   ============================================================================ */
+/* WAVE 60: BURN TOXICOLOGY, EMBED BUILDER & STREET OUTREACH MATERIALS */
 
 /* --- Track A: Burn, Inhalation & Chemical Toxicology Navigator --- */
 .burn-toxicology-view {
@@ -12435,9 +12377,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 0.75rem;
 }
 
-/* ==========================================================================
-   Wave 61: Encampment Medicine, Street Trauma, and FHIR Export Modules
-   ========================================================================== */
+/* Wave 61: Encampment Medicine, Street Trauma, and FHIR Export Modules */
 
 /* Track A: Encampment Medicine */
 .encampment-medicine-view {
@@ -13224,9 +13164,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 1rem;
 }
 
-/* ==========================================================================
-   Wave 62: Toxic Alcohol, Mass Overdose MCI, and MOUD Rights Directive
-   ========================================================================== */
+/* Wave 62: Toxic Alcohol, Mass Overdose MCI, and MOUD Rights Directive */
 
 /* Track A: Toxic Alcohol Poisoning */
 .toxic-alcohol-view {
@@ -13949,13 +13887,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
     page-break-inside: avoid !important;
   }
 
-  .pocket-step-number {
-    background: #000000 !important;
-    color: #ffffff !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
+  .pocket-step-number,
   .pocket-card-badge {
     background: #000000 !important;
     color: #ffffff !important;
@@ -13964,3 +13896,55 @@ body.sensory-mode-active [tabindex]:focus-visible {
   }
 }
 
+/* WAVE 63: NSTI LRINEC/POCUS, PEDIATRIC DECON & CARCERAL MOUD REENTRY */
+.nsti-staging-view,.pediatric-decon-view,.carceral-reentry-view{max-width:1280px;margin:0 auto;padding:1rem 0 3rem}
+.nsti-grid,.decon-grid,.carceral-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
+@media(max-width:900px){.nsti-grid,.decon-grid,.carceral-grid{grid-template-columns:1fr}}
+.nsti-col,.decon-col,.carceral-col{display:flex;flex-direction:column;gap:1.25rem}
+.nsti-card,.decon-card,.carceral-card{padding:1.25rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+.nsti-card-title,.decon-card-title,.carceral-card-title{display:flex;align-items:center;gap:0.5rem;font-size:1.1rem;margin:0 0 0.75rem}
+.nsti-card-header-flex,.carceral-card-header-flex{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem}
+.nsti-select,.decon-select,.carceral-select{width:100%;padding:0.65rem 0.85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem;margin-bottom:0.75rem}
+.nsti-sbar-textarea,.decon-sbar-textarea,.carceral-sbar-textarea{width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-mono,monospace);font-size:0.85rem;line-height:1.45;resize:vertical;margin-bottom:0.75rem}
+.nsti-btn-row,.decon-btn-row,.carceral-btn-row{display:flex;align-items:center;gap:0.75rem}
+.nsti-num-input,.decon-num-input,.carceral-days-input{padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem}
+.nsti-check-row,.decon-check-row,.carceral-pillar-row{display:flex;align-items:flex-start;gap:0.75rem;padding:0.65rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:0.5rem;background:var(--surface-2)}
+.nsti-check-row.active-hard{border-color:#ef4444;background:#fef2f2}
+.nsti-check-row.active-soft{border-color:#f59e0b;background:#fffbeb}
+.nsti-check-label,.decon-check-label{display:flex;flex-direction:column;gap:0.2rem;cursor:pointer;font-size:0.95rem}
+.nsti-check-desc,.decon-subtext{font-size:0.85rem;color:var(--muted);line-height:1.4}
+.nsti-pocus-details,.decon-tox-details,.nsti-stage-info,.carceral-reg-details,.decon-directive-box{background:var(--surface-2);padding:0.85rem;border-radius:var(--radius-sm);font-size:0.9rem;line-height:1.5}
+.nsti-emergent-banner,.decon-emergency-bar,.carceral-spike-banner,.carceral-legal-banner{border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem}
+.nsti-banner-header,.decon-emergency-header,.carceral-banner-header{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;font-size:1.05rem}
+.nsti-emergent-banner,.carceral-spike-banner{background:#fef2f2;border:2px solid #ef4444;color:#991b1b}
+.nsti-emergent-banner{border-left:6px solid #b91c1c}
+.carceral-legal-banner{background:#f0fdfa;border:1.5px solid #0d9488;color:#134e4a}
+.decon-emergency-bar{background:#f0fdf4;border:1.5px solid #22c55e}
+.nsti-badge,.carceral-badge{display:inline-flex;align-items:center;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.85rem;font-weight:700}
+.badge-low,.badge-success{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.badge-moderate,.badge-warning{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.badge-high,.badge-danger{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.nsti-lab-inputs{display:flex;flex-direction:column;gap:0.65rem;margin-top:1rem}
+.nsti-lab-row{display:grid;grid-template-columns:2fr 1fr auto;align-items:center;gap:0.75rem}
+.nsti-lab-label{font-size:0.9rem;font-weight:500}
+.nsti-pts-badge{font-size:0.8rem;font-weight:700;color:#0369a1;background:#e0f2fe;padding:0.25rem 0.5rem;border-radius:4px}
+.nsti-protocol-text{margin-top:0.5rem;color:#0f766e}
+.nsti-tendon-alert{margin-top:0.75rem;background:#fff1f2;border:1.5px solid #e11d48;border-radius:var(--radius-sm);padding:0.75rem;color:#9f1239;font-size:0.85rem;display:flex;align-items:flex-start;gap:0.5rem;line-height:1.4}
+.decon-obs-pill{display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.5rem;background:#e0e7ff;color:#3730a3;padding:0.35rem 0.65rem;border-radius:4px;font-size:0.85rem;font-weight:600}
+.decon-input-group{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.85rem}
+.decon-checkbox-group{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem}
+.card-success{border-color:#22c55e}
+.card-alert{border-color:#eab308}
+.decon-directive-box{border-left:4px solid #0284c7}
+.decon-directive-text{font-size:0.95rem;line-height:1.5;margin:0}
+.decon-wbi-box{margin-top:0.85rem;background:#eff6ff;border:1px solid #bfdbfe;padding:0.75rem;border-radius:var(--radius-sm);font-size:0.9rem}
+.decon-nalox-badge{background:#fdf4ff;border:1px solid #f0abfc;color:#86198f;padding:0.5rem 0.75rem;border-radius:var(--radius-sm);margin-bottom:0.5rem;display:inline-block}
+.decon-nalox-desc{font-size:0.9rem;line-height:1.5;color:var(--text)}
+.carceral-task-list{list-style:none;padding:0;margin:0.5rem 0 0;display:flex;flex-direction:column;gap:0.4rem}
+.carceral-task-list li{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.9rem;line-height:1.4;color:var(--text)}
+.carceral-bridge-tip{margin-top:0.5rem;color:#047857}
+.carceral-countdown-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;background:var(--surface-2);padding:0.75rem;border-radius:var(--radius-sm)}
+.carceral-days-input{width:90px;font-weight:700;text-align:center}
+.carceral-pillars-list{display:flex;flex-direction:column;gap:0.5rem}
+.carceral-pillar-row.pillar-complete{border-color:#22c55e;background:#f0fdf4}
+.carceral-pillar-row.pillar-pending{border-color:#f59e0b;background:#fffbeb}
