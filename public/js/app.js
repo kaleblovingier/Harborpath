@@ -899,6 +899,29 @@ function renderFooterMeta() {
 }
 
 if (hasDom) {
+  function alignNavMoreMenu(details) {
+    if (!details || !details.open) return;
+    const menu = details.querySelector('.nav-more-links');
+    if (!menu) return;
+    const rect = details.getBoundingClientRect();
+    const menuWidth = menu.offsetWidth || 288;
+    const spaceOnRight = window.innerWidth - rect.left;
+    if (spaceOnRight < menuWidth && rect.right >= menuWidth) {
+      menu.classList.add('align-right');
+    } else {
+      menu.classList.remove('align-right');
+    }
+  }
+
+  for (const details of nav?.querySelectorAll('.nav-more-menu') ?? []) {
+    details.addEventListener('toggle', () => alignNavMoreMenu(details));
+  }
+  window.addEventListener('resize', () => {
+    for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) {
+      alignNavMoreMenu(details);
+    }
+  }, { passive: true });
+
   // Internal navigation replaces the current history entry instead of adding
   // one, so HarborPath occupies a single slot in the back history. After a
   // quick exit, pressing Back skips past this site.

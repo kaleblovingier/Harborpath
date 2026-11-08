@@ -746,4 +746,10 @@ describe('Suite 6: Security, WCAG 2.2 AA & Zero-Dependency Audit', () => {
     assert.ok(legalCardSrc.includes('aria-controls'), 'stateLegalCard has aria-controls');
     assert.ok(legalCardSrc.includes('role: \'region\'') || legalCardSrc.includes('"role", "region"'), 'stateLegalCard defines accessible region landmark');
   });
+
+  test('nav-more dropdown positioning prevents off-screen clipping on wrapped lines', () => {
+    const css = readFileSync(resolve(rootDir, 'public/styles.css'), 'utf8');
+    assert.match(css, /\.site-nav \.nav-more-links\s*\{[^}]*left:\s*0/, 'nav-more-links defaults to left: 0 to avoid off-screen negative clipping');
+    assert.match(css, /\.site-nav \.nav-more-links\.align-right\s*\{[^}]*right:\s*0/, 'nav-more-links.align-right supports right: 0 when adjacent to right viewport');
+  });
 });
