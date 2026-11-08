@@ -14,6 +14,7 @@
     "lint": "node scripts/build-check.mjs --lint",
     "stamp:sw": "node scripts/build-check.mjs --fix",
     "test": "node --test",
+    "test:backend": "python -m unittest discover -s backend/tests",
     "data:build": "node scripts/build-data.mjs",
     "mobile:sync": "node scripts/mobile-sync.mjs"
   }

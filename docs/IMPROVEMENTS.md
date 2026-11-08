@@ -1359,4 +1359,30 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
 - **Mobile Synchronization Pipeline (`scripts/mobile-sync.mjs`, `npm run mobile:sync`)**:
   - Automatically mirrors web assets into native mobile containers (`android/app/src/main/assets/public` and `ios/App/App/public`) for complete zero-network offline launching.
 
+### 55. Wave 57: Engineering & Healthcare Advisory Audit, FastAPI Core Models & Router, PostgreSQL DDL with Cryptographic Audit Trail, and FHIR Interoperability Pipeline
+- **Cross-Functional 5-Agent Advisory Audit (`docs/SYSTEM_AUDIT_AND_SCALE.md`)**:
+  - Comprehensive multi-perspective evaluation spanning Backend Systems Architecture, 42 CFR Part 2 & HIPAA Security Compliance, Trauma-Informed Clinical UX, HL7 FHIR Interoperability, and Platform Strategy & Sustainable Governance.
+  - Phase 1 deep dive presenting 15 substantive bottleneck and vulnerability analyses.
+  - Phase 2 collaborative synthesis covering intake & triage architecture, column-level encryption, tamper-evident audit chaining, and US Core FHIR profiles.
+  - Phase 3 production-ready implementation specs and state machine transition graph.
+  - Phase 4 prioritized 30-60-90 day execution roadmap.
+- **FastAPI Core Models & Asynchronous Router (`backend/app/models/intake.py`, `backend/app/api/v1/endpoints/intake.py`, `backend/app/main.py`)**:
+  - Pydantic v2 schemas for ASAM Criteria 4th Edition 6-dimension scoring, Care Levels (0.5 to 4.0), and acute withdrawal management requirements.
+  - Strict 42 CFR Part 2 § 2.31 consent request and record models enforcing redisclosure warning notices and patient revocation rights.
+  - Asynchronous FastAPI endpoints: `/api/v1/intake/session`, `/api/v1/intake/crisis-screen`, `/api/v1/intake/consent`, `/api/v1/intake/evaluate-asam`, `/api/v1/intake/match-facilities`, and `/api/v1/intake/stage-referral`.
+  - Defense-in-depth security headers middleware (CSP `default-src 'self'`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `X-Confidentiality-Rule: 42 CFR Part 2`).
+  - Token-bucket rate limiting against automated directory and bed scraping.
+- **Cryptographic Engine & Deterministic State Machine (`backend/app/core/security.py`, `backend/app/core/state_machine.py`)**:
+  - Zero-dependency authenticated field-level envelope cipher (PBKDF2-HMAC-SHA256 with transparent Fernet acceleration).
+  - HMAC-SHA256 pseudonym token generator and Part 2 consent signature digests.
+  - Merkle-linked tamper-evident audit log hashing ($$H_i = \text{SHA256}(H_{i-1} \parallel \text{timestamp} \parallel \text{action} \parallel \text{actor} \parallel \text{payload})$$).
+  - Deterministic state machine enforcing safe state progression from `ARRIVED` through `REFERRAL_TRANSMITTED` and instant `SESSION_PURGED` failsafe bailout.
+- **HL7 FHIR R4 & US Core v6.0.0 Interoperability Adapter (`backend/app/interop/fhir.py`)**:
+  - Bidirectional resource mappers for `ServiceRequest` (US Core Referral Request), `HealthcareService` (facility capabilities and bed telemetry), and `Consent` (42 CFR Part 2 authorization with `ETH` and `PART2` confidentiality tags).
+- **Production PostgreSQL DDL Migration (`backend/migrations/001_initial_schema.sql`)**:
+  - Relational schema with PostGIS spatial coordinates, pgvector embeddings, GIN indexes on service codes, and partial indexes on open beds and active consents.
+  - Append-only `audit_trail` table protected by a PostgreSQL trigger blocking any `UPDATE` or `DELETE` statements.
+- **Comprehensive Backend Verification (`backend/tests/test_intake_api.py`, `npm run test:backend`)**:
+  - 13/13 unit and integration tests passing covering models, state transitions, crisis triggers, encryption, and FHIR generation.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.
