@@ -22,6 +22,9 @@ export const ROUTE_PARAM_ALLOWLIST = Object.freeze({
   '/api/virtual-providers': Object.freeze(['state']),
   '/api/providers': Object.freeze(['type', 'lat', 'lng', 'radius', 'filter']),
   '/api/nearby-summary': Object.freeze(['lat', 'lng', 'radius']),
+  '/api/telemetry/event': Object.freeze([]),
+  '/api/admin/metrics': Object.freeze(['key']),
+  '/api/admin/metrics/reset': Object.freeze(['key']),
 });
 
 export const FORBIDDEN_PII_PARAM_NAMES = new Set([

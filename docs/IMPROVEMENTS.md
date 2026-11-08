@@ -1385,4 +1385,27 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
 - **Comprehensive Backend Verification (`backend/tests/test_intake_api.py`, `npm run test:backend`)**:
   - 13/13 unit and integration tests passing covering models, state transitions, crisis triggers, encryption, and FHIR generation.
 
+### 56. Wave 58: Operator Analytics & Privacy-Preserving Telemetry Dashboard (`#/admin`, `src/analytics.js`, `public/js/telemetry.js`, `public/js/views/adminMetrics.js`)
+- **Multi-Agent Engineered Private Telemetry Engine (`src/analytics.js`, `src/privacy.js`)**:
+  - Privacy-preserving aggregate metric store designed under strict zero-PII, HIPAA, and 42 CFR Part 2 invariants.
+  - Zero IP address storage, zero query parameter logging, zero cookie tracking, and native respect for browser Do Not Track (DNT) / Global Privacy Control (GPC).
+  - Maintains rolling 24-hour hourly traffic buckets, route popularity rankings, emergency hotline click counts, modality breakdown (iOS PWA, Android PWA, Mobile Web, Desktop), and recent anonymized activity buffers.
+- **Client Telemetry & Interaction Beacons (`public/js/telemetry.js`, `public/js/app.js`)**:
+  - Automatic, lightweight route impression dispatcher hooked into `resolveRoute()` in `app.js`.
+  - Global `tel:` link interceptor recording lifeline activations (988 Lifeline, 911 EMS, Never Use Alone `800-484-3731`, Poison Control `800-222-1222`, SAMHSA Helpline `800-662-4357`).
+  - Automatic modality detection distinguishing standalone iOS PWA, Android PWA, mobile browsers, and desktop browsers.
+  - Instantly neutralized and disabled when Quick Exit (`Esc` x2) is pressed.
+- **Protected Operator Analytics Dashboard (`public/js/views/adminMetrics.js`, `#/admin`)**:
+  - Exclusively accessible to the platform owner via constant-time HMAC secret key verification (configured via `HARBORPATH_ADMIN_KEY`).
+  - Secret key can be entered manually via a secure lock gate or bookmarked via `/#/admin?key=...` (query parameters are immediately stripped from the address bar to prevent history leaks).
+  - Renders 4 high-level KPI cards (Total Impressions, Crisis Interventions, Clinical Tools Run, Bilingual Split), a pure SVG 24-hour traffic timeline chart (zero external charting libraries; 100% CSP compliant), top navigators leaderboard with visual progress tracks, emergency lifeline click breakdown, device modality breakdown, and a live anonymized event stream.
+  - One-click data export: "Export JSON" and "Export CSV" buttons for offline platform reporting, plus an administrative "Reset Metrics" action.
+- **Server API Endpoints (`src/app.js`)**:
+  - `POST /api/telemetry/event`: Fire-and-forget beacon ingestion with strict body size capping (< 2 KB).
+  - `GET /api/admin/metrics`: Protected by Bearer token or `?key=...` query param; returns aggregate analytics payload.
+  - `POST /api/admin/metrics/reset`: Protected metrics reset endpoint.
+- **Verification & App Shell Budget**:
+  - Added `test/admin-analytics.test.js` (11/11 tests passing). Total repo tests: **1,835 / 1,835 pass** across 253 suites.
+  - Service worker cache hash updated to `4cceba5907fa` (`339.8 KB gzip`, within `< 350 KB` budget).
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

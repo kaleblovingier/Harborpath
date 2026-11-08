@@ -22,6 +22,7 @@ import { HOTLINES } from './content/hotlines.js';
 // The header's Emergency button (naloxone and rescue breathing steps) must open
 // with no signal too, so its drawer is not downloaded on first press.
 import * as emergencyDrawer from './components/emergencyDrawer.js';
+import { trackPageView, trackHotlineClick } from './telemetry.js';
 
 const SITE = 'HarborPath';
 const EXIT_URL = 'https://www.weather.gov/';
@@ -57,6 +58,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  admin: () => import('./views/adminMetrics.js').then((m) => {
+    viewCache.set('admin', m.adminMetricsView);
+    routeResets.set('admin', m.resetAdminMetricsState);
+    return m.adminMetricsView;
+  }),
   'pediatric-exposures': () => import('./views/pediatricExposures.js').then((m) => {
     viewCache.set('pediatric-exposures', m.pediatricExposuresView);
     routeResets.set('pediatric-exposures', m.resetPediatricState);
@@ -401,6 +407,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  admin: () => 'Operator Analytics & Platform Telemetry',
   'pediatric-exposures': () => t('route.pediatricExposures', 'Pediatric accidental exposures, child toxicology & safe storage navigator'),
   'geriatric-care': () => t('route.geriatricCare', 'Geriatric addiction medicine, Beers Criteria, anticholinergic cognitive burden & fall risk navigator'),
   'icu-perioperative': () => t('route.icuPerioperative', 'Critical care (ICU), safe RSI intubation, fentanyl/xylazine sedation & perioperative MOUD navigator'),
@@ -503,6 +510,7 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('admin'),
     preloadRoute('pediatric-exposures'),
     preloadRoute('geriatric-care'),
     preloadRoute('icu-perioperative'),
@@ -762,6 +770,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
   lastPath = path;
   const resolved = resolveRoute(path, query);
   document.title = path ? `${resolved.title} · ${SITE}` : `${SITE}: ${resolved.title}`;
+  trackPageView(path);
 
   for (const link of document.querySelectorAll('[data-nav]')) {
     if (link.dataset.nav === path) link.setAttribute('aria-current', 'page');
@@ -854,6 +863,16 @@ if (hasDom) {
   document.addEventListener('click', (e) => {
     if (!e.target?.closest?.('.nav-more-menu')) {
       for (const details of nav?.querySelectorAll('.nav-more-menu[open]') ?? []) details.open = false;
+    }
+    const telLink = e.target.closest?.('a[href^="tel:"]');
+    if (telLink) {
+      const href = telLink.getAttribute('href') || '';
+      if (href.includes('988')) trackHotlineClick('988_suicide_crisis');
+      else if (href.includes('911')) trackHotlineClick('911_emergency');
+      else if (href.includes('484-3731')) trackHotlineClick('never_use_alone');
+      else if (href.includes('222-1222')) trackHotlineClick('poison_control');
+      else if (href.includes('662-4357')) trackHotlineClick('samhsa_national_helpline');
+      else trackHotlineClick('other_helpline');
     }
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     // Same-page anchors (the skip link) move focus without touching the hash,

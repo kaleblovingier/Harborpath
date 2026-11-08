@@ -16,6 +16,7 @@ import { createVirtualProviders } from './virtualProviders.js';
 import { InputError, UpstreamError, parseRadius, parseTreatmentQuery, searchTreatment } from './findtreatment.js';
 import { DATA_LOADERS, PUBLIC_DIR } from './data.js';
 import { createPrivacyLogger, sanitizeSearchParams } from './privacy.js';
+import { createAnalyticsStore } from './analytics.js';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -237,6 +238,7 @@ export function createApp({
   rateLimit = { windowMs: 60_000, max: 120 },
   logger = console,
   upstream = {},
+  analytics = null,
 } = {}) {
   const taxonomy = createTaxonomy(DATA_LOADERS.serviceCodes());
   const meta = DATA_LOADERS.meta();
@@ -281,6 +283,7 @@ export function createApp({
   // Shared by treatment and telehealth searches: both call the same upstream.
   const breaker = upstream.breaker ?? createCircuitBreaker();
   const upstreamOptions = { fetchImpl, cache: treatmentCache, inflight, ...upstream, breaker };
+  const analyticsStore = analytics ?? createAnalyticsStore({ adminKey: process.env.HARBORPATH_ADMIN_KEY });
 
   const srcMeta = (key) => ({
     count: meta.sources?.[key]?.count ?? null,
@@ -358,6 +361,28 @@ export function createApp({
     return loc;
   }
 
+  function readJsonBody(req, maxBytes = 2048) {
+    return new Promise((resolve, reject) => {
+      let raw = '';
+      req.on('data', (chunk) => {
+        raw += chunk;
+        if (raw.length > maxBytes) {
+          req.destroy();
+          reject(new InputError('Payload exceeds maximum allowed size.'));
+        }
+      });
+      req.on('end', () => {
+        if (!raw.trim()) return resolve({});
+        try {
+          resolve(JSON.parse(raw));
+        } catch {
+          reject(new InputError('Invalid JSON body.'));
+        }
+      });
+      req.on('error', reject);
+    });
+  }
+
   async function handleApi(req, res, url) {
     // Liveness checks (container health probes) must never be rate limited.
     if (url.pathname === '/api/health') return json(req, res, 200, { ok: true });
@@ -373,6 +398,39 @@ export function createApp({
           return json(req, res, 200, publicMeta);
         case '/api/freshness':
           return json(req, res, 200, freshness());
+        case '/api/telemetry/event': {
+          if (req.method !== 'POST') {
+            res.writeHead(405, { ...SECURITY_HEADERS, Allow: 'POST' });
+            return res.end();
+          }
+          const eventData = await readJsonBody(req);
+          analyticsStore.recordEvent(eventData);
+          return json(req, res, 200, { ok: true });
+        }
+        case '/api/admin/metrics': {
+          const authHeader = req.headers['authorization'];
+          const bearerKey = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+          const key = bearerKey || params.get('key');
+          const metrics = analyticsStore.getMetrics(key);
+          if (!metrics.authorized) {
+            return json(req, res, 401, { error: 'Unauthorized: Invalid operator access key' });
+          }
+          return json(req, res, 200, metrics);
+        }
+        case '/api/admin/metrics/reset': {
+          if (req.method !== 'POST') {
+            res.writeHead(405, { ...SECURITY_HEADERS, Allow: 'POST' });
+            return res.end();
+          }
+          const authHeader = req.headers['authorization'];
+          const bearerKey = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+          const key = bearerKey || params.get('key');
+          const result = analyticsStore.resetMetrics(key);
+          if (!result.ok) {
+            return json(req, res, 401, { error: 'Unauthorized: Invalid operator access key' });
+          }
+          return json(req, res, 200, result);
+        }
         case '/api/geocode': {
           const q = params.get('q');
           if (q === null || !q.trim()) throw new InputError('Enter a ZIP code or a city and state.');
@@ -532,15 +590,16 @@ export function createApp({
   }
 
   return async function handler(req, res) {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      res.writeHead(405, { ...SECURITY_HEADERS, Allow: 'GET, HEAD' });
-      return res.end();
-    }
     let url;
     try {
       url = new URL(req.url, 'http://localhost');
     } catch {
       res.writeHead(400, SECURITY_HEADERS);
+      return res.end();
+    }
+    const isPostAllowed = req.method === 'POST' && (url.pathname === '/api/telemetry/event' || url.pathname === '/api/admin/metrics/reset');
+    if (req.method !== 'GET' && req.method !== 'HEAD' && !isPostAllowed) {
+      res.writeHead(405, { ...SECURITY_HEADERS, Allow: 'GET, HEAD' });
       return res.end();
     }
     try {
