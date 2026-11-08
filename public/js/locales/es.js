@@ -2073,6 +2073,9 @@ export const es = {
   'route.nstiWoundStaging': 'Navegador de fascitis necrosante (LRINEC), POCUS y heridas complejas',
   'route.pediatricIngestionDecon': 'Navegador de ingestas pediátricas («Una pastilla puede matar») y descontaminación',
   'route.carceralMoudReentry': 'Continuidad de MOUD en prisión y directivas de reingreso comunitario seguro',
+  'route.disasterMoudClimate': 'Continuidad de MOUD en desastres, humo de incendios y resiliencia climática',
+  'route.movementDisordersEps': 'Trastornos motores por estimulantes, coreoatetosis y triaje de SEP / distonía aguda',
+  'route.fungalOpportunisticCare': 'Micosis fúngicas profundas, infecciones oportunistas y MOUD',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 

@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'disaster-moud-climate': () => import('./views/disasterMoudClimate.js').then((m) => {
+    viewCache.set('disaster-moud-climate', m.disasterMoudClimateView);
+    routeResets.set('disaster-moud-climate', m.resetDisasterState);
+    return m.disasterMoudClimateView;
+  }),
+  'movement-disorders-eps': () => import('./views/movementDisordersEps.js').then((m) => {
+    viewCache.set('movement-disorders-eps', m.movementDisordersEpsView);
+    routeResets.set('movement-disorders-eps', m.resetMovementState);
+    return m.movementDisordersEpsView;
+  }),
+  'fungal-opportunistic-care': () => import('./views/fungalOpportunisticCare.js').then((m) => {
+    viewCache.set('fungal-opportunistic-care', m.fungalOpportunisticCareView);
+    routeResets.set('fungal-opportunistic-care', m.resetFungalState);
+    return m.fungalOpportunisticCareView;
+  }),
   'nsti-wound-staging': () => import('./views/nstiWoundStaging.js').then((m) => {
     viewCache.set('nsti-wound-staging', m.nstiWoundStagingView);
     routeResets.set('nsti-wound-staging', m.resetNstiState);
@@ -467,6 +482,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'disaster-moud-climate': () => t('route.disasterMoudClimate', 'Disaster MOUD continuity, wildfire smoke & climate resilience navigator'),
+  'movement-disorders-eps': () => t('route.movementDisordersEps', 'Stimulant movement disorders, choreoathetosis & acute dystonia / EPS decision engine'),
+  'fungal-opportunistic-care': () => t('route.fungalOpportunisticCare', 'Opportunistic deep fungal infections, endemic mycoses & MOUD navigator'),
   'nsti-wound-staging': () => t('route.nstiWoundStaging', 'Complex wound, necrotizing fasciitis (LRINEC) & POCUS navigator'),
   'pediatric-ingestion-decon': () => t('route.pediatricIngestionDecon', 'Pediatric ingestion, One Pill Can Kill & decontamination engine'),
   'carceral-moud-reentry': () => t('route.carceralMoudReentry', 'Carceral MOUD continuity & safe reentry directives'),
@@ -582,6 +600,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('disaster-moud-climate'),
+    preloadRoute('movement-disorders-eps'),
+    preloadRoute('fungal-opportunistic-care'),
     preloadRoute('nsti-wound-staging'),
     preloadRoute('pediatric-ingestion-decon'),
     preloadRoute('carceral-moud-reentry'),

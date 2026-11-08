@@ -13948,3 +13948,40 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .carceral-pillars-list{display:flex;flex-direction:column;gap:0.5rem}
 .carceral-pillar-row.pillar-complete{border-color:#22c55e;background:#f0fdf4}
 .carceral-pillar-row.pillar-pending{border-color:#f59e0b;background:#fffbeb}
+/* Wave 64: Disaster MOUD Climate, Movement Disorders EPS & Fungal Opportunistic Care */
+.disaster-moud-view,.movement-disorders-view,.fungal-care-view{max-width:1280px;margin:0 auto;padding:1rem 0 3rem}
+.disaster-grid,.movement-grid,.fungal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
+@media(max-width:900px){.disaster-grid,.movement-grid,.fungal-grid{grid-template-columns:1fr}}
+.disaster-col,.movement-col,.fungal-col{display:flex;flex-direction:column;gap:1.25rem}
+.disaster-card,.movement-card,.fungal-card{padding:1.25rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+.disaster-card-title,.movement-card-title,.fungal-card-title{display:flex;align-items:center;gap:0.5rem;font-size:1.1rem;margin:0 0 0.75rem}
+.disaster-field-group,.movement-field-group,.fungal-field-group{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.85rem}
+.disaster-select,.movement-select,.fungal-select{width:100%;padding:0.65rem 0.85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem}
+.disaster-num-input,.movement-num-input,.fungal-num-input{width:110px;padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem}
+.disaster-check-row,.movement-check-row,.fungal-check-row{display:flex;align-items:flex-start;gap:0.75rem;padding:0.65rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:0.5rem;background:var(--surface-2)}
+.disaster-check-row.emergency-row,.movement-check-row.emergency-row,.fungal-check-row.emergency-row{border-color:#ef4444;background:#fef2f2}
+.disaster-check-label,.movement-check-label,.fungal-check-label{display:flex;flex-direction:column;gap:0.2rem;cursor:pointer;font-size:0.95rem}
+.disaster-subtext,.movement-subtext,.fungal-subtext{font-size:0.85rem;color:var(--muted);line-height:1.4}
+.disaster-auth-banner,.movement-blackbox-banner{border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem}
+.disaster-auth-banner{background:#f0fdf4;border:1.5px solid #22c55e;color:#166534}
+.movement-blackbox-banner{background:#450a0a;border:2px solid #ef4444;color:#fee2e2}
+.movement-bb-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.75rem;margin-top:0.75rem}
+@media(max-width:768px){.movement-bb-grid{grid-template-columns:1fr}}
+.movement-bb-item{background:rgba(0,0,0,0.3);padding:0.65rem;border-radius:var(--radius-sm);border:1px solid rgba(239,68,68,0.4);font-size:0.85rem}
+.disaster-alert-box,.movement-alert-box,.fungal-alert-box{display:flex;align-items:flex-start;gap:0.65rem;padding:0.85rem 1rem;border-radius:var(--radius-sm);margin-bottom:0.85rem;font-size:0.9rem;line-height:1.45}
+.alert-critical{background:#fee2e2;border:1.5px solid #ef4444;color:#991b1b}
+.alert-danger{background:#fff1f2;border:1.5px solid #f43f5e;color:#9f1239}
+.alert-warning{background:#fffbeb;border:1.5px solid #f59e0b;color:#92400e}
+.disaster-action-list,.movement-action-list,.fungal-action-list{display:flex;flex-direction:column;gap:0.65rem}
+.disaster-action-item,.movement-action-item,.fungal-action-item{padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2)}
+.disaster-action-head,.movement-action-head,.fungal-action-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem}
+.priority-stat .disaster-badge,.priority-stat .movement-badge,.priority-stat .fungal-badge{background:#dc2626;color:#fff}
+.priority-urgent .disaster-badge,.priority-urgent .movement-badge,.priority-urgent .fungal-badge{background:#e11d48;color:#fff}
+.priority-high .disaster-badge,.priority-high .movement-badge,.priority-high .fungal-badge{background:#ea580c;color:#fff}
+.priority-medium .disaster-badge,.priority-medium .movement-badge,.priority-medium .fungal-badge{background:#0284c7;color:#fff}
+.disaster-badge,.movement-badge,.fungal-badge{display:inline-block;padding:0.15rem 0.45rem;border-radius:4px;font-size:0.75rem;font-weight:700}
+.disaster-supply-list,.movement-supply-list,.fungal-supply-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+.disaster-supply-list li,.movement-supply-list li,.fungal-supply-list li{display:flex;align-items:center;gap:0.5rem;font-size:0.9rem;color:var(--text)}
+.disaster-sbar-textarea,.movement-sbar-textarea,.fungal-sbar-textarea{width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-mono,monospace);font-size:0.85rem;line-height:1.45;resize:vertical;margin-bottom:0.75rem}
+.movement-pheno-details,.fungal-path-details{background:var(--surface-2);padding:0.75rem;border-radius:var(--radius-sm);font-size:0.88rem;line-height:1.45;margin-top:0.65rem}
+

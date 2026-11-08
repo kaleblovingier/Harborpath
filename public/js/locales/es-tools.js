@@ -238,4 +238,10 @@ export default {
   'tools.item.pediatric-ingestion-decon.description': 'Consenso AAP, ACMT y Centro de Toxicología para ingestas letales en dosis única en niños (metadona, buprenorfina, clonidina, calcioantagonistas, sulfonilureas), carbón activado vs contraindicaciones, WBI y naloxona.',
   'tools.item.carceral-moud-reentry.title': 'Continuidad de MOUD en prisión y reingreso comunitario seguro',
   'tools.item.carceral-moud-reentry.description': 'Decretos del Título II de la Ley ADA, mandato tri-medicación (metadona, buprenorfina, Vivitrol), exención de Medicaid Sección 1115, recetas puente de 30 días y kits de naloxona para prevenir el pico de sobredosis mortal tras la excarcelación.',
+  'tools.item.disaster-moud-climate.title': 'Continuidad de MOUD en desastres, humo de incendios y resiliencia climática',
+  'tools.item.disaster-moud-climate.description': 'Flexibilidades de SAMHSA 42 CFR Parte 8 (suministro de hasta 28 días para llevar), dosificación interestatal de invitados, despliegue de unidades móviles MMU, reducción de daños por humo PM2,5, filtros Corsi-Rosenthal y triaje de leptospirosis e infecciones por inundaciones.',
+  'tools.item.movement-disorders-eps.title': 'Trastornos motores por estimulantes, coreoatetosis y triaje de SEP / distonía aguda',
+  'tools.item.movement-disorders-eps.description': 'Consenso ACMT y Project BETA: Estadificación de coreoatetosis («baile del cristal»), distonía aguda (estridor laríngeo grave), acatisia, SNM y criterios de Hunter con reversión anticolinérgica y prohibición estricta de haloperidol.',
+  'tools.item.fungal-opportunistic-care.title': 'Micosis fúngicas profundas, infecciones oportunistas y MOUD',
+  'tools.item.fungal-opportunistic-care.description': 'Pautas IDSA para blastomicosis (placas verrugosas, peligro letal de corticoides), fiebre del valle, histoplasmosis, mohos angioinvasivos (escaras negras por mucorales), espondilitis que respeta el disco e inhibición letal de CYP3A4 y prolongación de QTc por azoles con metadona.',
 };

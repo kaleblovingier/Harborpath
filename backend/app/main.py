@@ -125,6 +125,9 @@ async def directory_summary():
             "field_medicine": "ACS Stop the Bleed hemorrhage control, NHCHC/CDC encampment medicine, SALT mass overdose spike response, and NSTI/LRINEC wound staging",
             "toxicology": "AACT/EAPCCT toxic alcohol osmolal/anion gap calculator and AAP/ACMT pediatric One Pill Can Kill decontamination engine",
             "reentry": "DOJ Title II ADA carceral MOUD continuity, Section 1115 Medicaid enrollment, and 30-day bridge overdose prevention",
+            "disaster_resilience": "SAMHSA 42 CFR Part 8 disaster MOUD flexibilities (28-day take-homes), PM2.5 wildfire harm reduction, and post-flood triage",
+            "movement_disorders": "Stimulant choreoathetosis (meth dance), acute dystonia, NMS, Hunter serotonin criteria & haloperidol prohibition",
+            "opportunistic_infections": "Deep endemic mycoses (Blastomycosis, Valley Fever, Histoplasmosis, Mucorales) and lethal Azole-Methadone CYP3A4/QTc management",
             "syndication": "Zero-cookie iframe widgets & partner seals"
         }
     }

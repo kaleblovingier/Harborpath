@@ -179,6 +179,9 @@ const ELECTIVE_SHELL = [
   '/js/views/nstiWoundStaging.js',
   '/js/views/pediatricIngestionDecon.js',
   '/js/views/carceralMoudReentry.js',
+  '/js/views/disasterMoudClimate.js',
+  '/js/views/movementDisordersEps.js',
+  '/js/views/fungalOpportunisticCare.js',
 ];
 
 const SHELL_PATHS = new Set(APP_SHELL);
