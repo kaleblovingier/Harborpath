@@ -16,6 +16,7 @@
     "test": "node --test",
     "test:backend": "python -m unittest discover -s backend/tests",
     "data:build": "node scripts/build-data.mjs",
-    "mobile:sync": "node scripts/mobile-sync.mjs"
+    "mobile:sync": "node scripts/mobile-sync.mjs",
+    "mobile:clean": "node -e \"import('node:fs').then(fs => { fs.rmSync('android/app/src/main/assets/public', { recursive: true, force: true }); fs.rmSync('ios/App/App/public', { recursive: true, force: true }); console.log('Cleaned native mobile assets.'); })\""
   }
 }

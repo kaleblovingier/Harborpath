@@ -1,0 +1,13 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.gradle": true,
+    "**/android/app/src/main/assets/public": true,
+    "**/ios/App/App/public": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/android/app/src/main/assets/public": true,
+    "**/ios/App/App/public": true
+  }
+}
