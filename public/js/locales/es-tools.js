@@ -226,4 +226,10 @@ export default {
   'tools.item.street-trauma.description': 'Directivas de campo ACS Stop the Bleed y CoTCCC: aplicación de torniquete con molinete, empaquetamiento de heridas en zonas de unión con gasa hemostática y advertencias sobre doble hueso.',
   'tools.item.fhir-export.title': 'Generador de derivaciones FHIR R4 e interoperabilidad EHR',
   'tools.item.fhir-export.description': 'Genere paquetes estandarizados y privados HL7 FHIR R4 US Core (ServiceRequest, Consent, HealthcareService) con cláusulas estatutarias 42 CFR Parte 2 y cero PII.',
+  'tools.item.toxic-alcohol.title': 'Navegador de alcoholes tóxicos, fomepizol y brecha osmolal',
+  'tools.item.toxic-alcohol.description': 'Consenso AACT, EAPCCT y EXTRIP para metanol (ceguera por ácido fórmico), etilenglicol (cristales de oxalato cálcico), dietilenglicol e isopropanol (seudoinsuficiencia renal sin acidosis) con dosificación de fomepizol y etanol.',
+  'tools.item.mass-overdose-mci.title': 'Navegador de brotes masivos de sobredosis, adulterantes y triaje SALT',
+  'tools.item.mass-overdose-mci.description': 'Protocolos CDC y NAEMT TECC para superagonistas sintéticos (carfentanilo, nitazenos), xilacina/medetomidina, rigidez de tórax de madera y triaje masivo SALT con ventilación primero.',
+  'tools.item.moud-directive.title': 'Pase de derechos MOUD y directiva de continuación hospitalaria',
+  'tools.item.moud-directive.description': 'Pase de derechos de tratamiento y tarjeta de bolsillo verificable sin conexión (cero-PII) bajo el Título II de la Ley ADA, continuación hospitalaria DEA 21 CFR § 1306.07(c) y manejo del dolor agudo.',
 };

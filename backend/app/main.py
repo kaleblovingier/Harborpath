@@ -121,8 +121,9 @@ async def directory_summary():
             "syndication": "Sandboxed embeddable iframe widgets & SVG partner seals enabled."
         },
         "capabilities": {
-            "interoperability": "HL7 FHIR R4 US Core ServiceRequest & 42 CFR Part 2 Consent syndication (JSON & SMART Bulk NDJSON)",
-            "field_medicine": "ACS Stop the Bleed hemorrhage control & NHCHC/CDC encampment medicine protocols",
+            "interoperability": "HL7 FHIR R4 US Core ServiceRequest, 42 CFR Part 2 Consent syndication & offline verifiable MOUD rights directives",
+            "field_medicine": "ACS Stop the Bleed hemorrhage control, NHCHC/CDC encampment medicine, and SALT mass overdose cluster spike response",
+            "toxicology": "AACT/EAPCCT toxic alcohol osmolal/anion gap calculator with fomepizole/ethanol dosing and EXTRIP hemodialysis triggers",
             "syndication": "Zero-cookie iframe widgets & partner seals"
         }
     }

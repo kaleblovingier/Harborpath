@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'toxic-alcohol': () => import('./views/toxicAlcohol.js').then((m) => {
+    viewCache.set('toxic-alcohol', m.toxicAlcoholView);
+    routeResets.set('toxic-alcohol', m.resetToxicAlcoholState);
+    return m.toxicAlcoholView;
+  }),
+  'mass-overdose-mci': () => import('./views/massOverdoseMci.js').then((m) => {
+    viewCache.set('mass-overdose-mci', m.massOverdoseMciView);
+    routeResets.set('mass-overdose-mci', m.resetMassOverdoseMciState);
+    return m.massOverdoseMciView;
+  }),
+  'moud-directive': () => import('./views/moudDirective.js').then((m) => {
+    viewCache.set('moud-directive', m.moudDirectiveView);
+    routeResets.set('moud-directive', m.resetMoudDirectiveState);
+    return m.moudDirectiveView;
+  }),
   'encampment-medicine': () => import('./views/encampmentMedicine.js').then((m) => {
     viewCache.set('encampment-medicine', m.encampmentMedicineView);
     routeResets.set('encampment-medicine', m.resetEncampmentMedicineState);
@@ -437,6 +452,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'toxic-alcohol': () => t('route.toxicAlcohol', 'Toxic alcohol poisoning, fomepizole & osmolal gap navigator'),
+  'mass-overdose-mci': () => t('route.massOverdoseMci', 'Mass overdose cluster, contaminated supply & SALT triage navigator'),
+  'moud-directive': () => t('route.moudDirective', 'Offline emergency MOUD directive & verifiable inpatient rights pass'),
   'encampment-medicine': () => t('route.encampmentMedicine', 'Encampment medicine, street zoonoses & vector-borne disease navigator'),
   'street-trauma': () => t('route.streetTrauma', 'Street trauma, tourniquets & life-threatening hemorrhage control navigator'),
   'fhir-export': () => t('route.fhirExport', 'FHIR R4 referral & EHR interoperability syndication generator'),
@@ -546,6 +564,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('toxic-alcohol'),
+    preloadRoute('mass-overdose-mci'),
+    preloadRoute('moud-directive'),
     preloadRoute('encampment-medicine'),
     preloadRoute('street-trauma'),
     preloadRoute('fhir-export'),

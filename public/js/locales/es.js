@@ -2067,6 +2067,9 @@ export const es = {
   'route.encampmentMedicine': 'Navegador de medicina en campamentos, zoonosis callejeras y enfermedades transmitidas por vectores',
   'route.streetTrauma': 'Navegador de trauma en calle, torniquetes y control de hemorragias potencialmente mortales',
   'route.fhirExport': 'Generador de derivación y sindicación de interoperabilidad EHR en FHIR R4',
+  'route.toxicAlcohol': 'Navegador de intoxicación por alcoholes tóxicos, fomepizol y brecha osmolal',
+  'route.massOverdoseMci': 'Navegador de brotes masivos de sobredosis, adulterantes y triaje SALT',
+  'route.moudDirective': 'Pase de derechos MOUD y directiva de continuación hospitalaria sin conexión',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 

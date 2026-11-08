@@ -415,8 +415,9 @@ export function createApp({
               syndication: 'Open-access public health iframe widgets and verified partner seals supported.',
             },
             capabilities: {
-              interoperability: 'HL7 FHIR R4 US Core ServiceRequest & 42 CFR Part 2 Consent syndication (JSON and SMART Bulk NDJSON).',
-              fieldMedicine: 'Street trauma bleeding control (ACS Stop the Bleed) and encampment zoonoses navigator (NHCHC/CDC).',
+              interoperability: 'HL7 FHIR R4 US Core ServiceRequest, 42 CFR Part 2 Consent syndication & offline verifiable MOUD rights directives.',
+              fieldMedicine: 'ACS Stop the Bleed hemorrhage control, NHCHC/CDC encampment medicine, and SALT mass overdose cluster spike response.',
+              toxicology: 'AACT/EAPCCT toxic alcohol osmolal/anion gap calculator with fomepizole/ethanol dosing and EXTRIP hemodialysis triggers.',
               widgets: 'Zero-cookie iframe tools and SVG partner seals for municipal departments and clinics.',
             },
           });
