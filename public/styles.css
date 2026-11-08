@@ -28,6 +28,10 @@
   --radius: 14px;
   --radius-sm: 9px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
   color-scheme: light;
 }
 
@@ -66,9 +70,11 @@
 
 html {
   -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
   /* Keep focused fields and anchor targets clear of the sticky safety bar,
-     which wraps to two lines on narrow screens. */
+     which wraps to two lines on narrow screens, plus safe-area insets. */
   scroll-padding-top: 88px;
+  scroll-padding-top: calc(88px + var(--sat));
 }
 
 body {
@@ -131,6 +137,9 @@ a:hover { color: var(--brand-strong); }
   background: #102a30;
   color: #e9f2f3;
   font-size: 0.92rem;
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
 }
 .safety-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
 .safety-text { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
@@ -1135,7 +1144,12 @@ tbody th { font-weight: 700; min-width: 200px; }
 .btn.ext::after { content: none; }
 
 /* ------------------------------------------------------------ Footer */
-.site-footer { margin-top: auto; background: var(--surface); border-top: 1px solid var(--border); padding: 28px 0 36px; }
+.site-footer {
+  margin-top: auto;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 28px var(--sar) calc(36px + var(--sab)) var(--sal);
+}
 .footer-inner { display: grid; gap: 16px; }
 @media (min-width: 760px) { .footer-inner { grid-template-columns: 1fr auto; } .footer-disclaimer { grid-column: 1 / -1; } }
 .footer-brand { font-weight: 800; margin-bottom: 4px; }

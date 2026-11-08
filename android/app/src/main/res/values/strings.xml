@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HarborPath</string>
+    <string name="title_activity_main">HarborPath</string>
+    <string name="package_name">org.harborpath.app</string>
+    <string name="custom_url_scheme">org.harborpath.app</string>
+
+    <!-- Emergency Shortcuts -->
+    <string name="shortcut_overdose_short">Overdose (911)</string>
+    <string name="shortcut_overdose_long">Emergency Overdose Response &amp; Timer</string>
+    <string name="shortcut_crisis_short">Crisis (988)</string>
+    <string name="shortcut_crisis_long">988 Suicide &amp; Crisis Lifeline</string>
+</resources>

@@ -1334,4 +1334,29 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Severe Opioid-Induced Constipation (OIC) & Fecal Impaction Prevention (`severe_oic_fecal_impaction`)*: Enforces the **Mandatory Prophylactic Bowel Regimen Rule** (PEG 3350 + Senna) from day 1 of opioid therapy, prohibits bulk-forming psyllium in hypomotility, guides PAMORAs (Methylnaltrexone, Naloxegol) without central withdrawal, and identifies fecal impaction as an easily missed trigger of geriatric delirium.
   - *Cognitive Impairment, Dementia & Caregiver-Supported MOUD Protocols (`cognitive_impairment_caregiver_moud`)*: Solves executive dysfunction and accidental double-dosing hazards via locked automated pill carousels, caregiver-designated administration, long-acting monthly subcutaneous buprenorphine depot (Sublocade), and updated 2024 SAMHSA 42 CFR Part 8 OTP accommodations.
 
+### 54. Wave 56: Mobile Native Foundation (PWA & Haptics) & Native Capacitor Scaffolding (Android & iOS)
+- **Mobile Web Foundation & Safe Area Architecture (`public/styles.css`, `public/index.html`)**:
+  - Implements CSS environment variables `--sat`, `--sar`, `--sab`, `--sal` (`env(safe-area-inset-*)`) ensuring seamless edge-to-edge layout, notch/Dynamic Island avoidance on modern iPhones, and navigation bar clearance on modern Android devices.
+  - Upgrades viewport meta with `viewport-fit=cover` and configures Apple standalone PWA meta tags (`apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`, `apple-mobile-web-app-title`, `apple-touch-icon`, `format-detection: telephone=no`).
+- **Web App Manifest Mobile Shortcuts (`public/manifest.webmanifest`)**:
+  - Adds 4 home-screen long-press quick actions: Overdose Response (`/#/overdose`), 988 Crisis Support (`/#/crisis`), Find Care & Treatment (`/#/match`), and Clinical Care Tools (`/#/tools`).
+  - Declares categories (`health`, `medical`, `lifestyle`) and unrestricted screen orientation (`orientation: any`).
+- **Emergency Overdose Rescue Haptics (`public/js/components/haptics.js`)**:
+  - Encapsulates Web Vibration API with safe fallback in non-supported environments.
+  - Integrates tactile heartbeat cue (`hapticOverdoseBeat`) into `overdosePacing.js` to physically pulse rescue breathing rhythms (every 5 seconds) and CPR chest compression cadence.
+  - Precached in offline service worker `APP_SHELL` while maintaining app shell budget `< 350 KB gzip` (`337.2 KB gzip`).
+- **Capacitor Native Bridge Scaffolding (`capacitor.config.json`)**:
+  - Configures application ID `org.harborpath.app`, name `HarborPath`, webDir `public`, HTTPS androidScheme, and splash screen zero-delay launch.
+- **Android Native Project Scaffolding (`android/`)**:
+  - Full Android Studio / Gradle project setup (compileSdk 34, minSdk 24).
+  - Strict privacy manifest declaring only `INTERNET` and `VIBRATE`; zero location tracking, zero external storage, and zero ad identifiers.
+  - Native XML shortcuts (`res/xml/shortcuts.xml`) for instant lock-screen/home-screen launch into emergency overdose and crisis tools.
+  - Strict HTTPS cleartext traffic prohibition in `network_security_config.xml`.
+- **iOS Native Project Scaffolding (`ios/`)**:
+  - Xcode Swift / CocoaPods project setup with `UIViewControllerBasedStatusBarAppearance` and `ITSAppUsesNonExemptEncryption = false`.
+  - Apple 2024+ Privacy Manifest (`PrivacyInfo.xcprivacy`) strictly declaring `NSPrivacyTracking = false`, zero collected data types, and zero tracking domains.
+  - Native 3D/Haptic Touch quick actions (`UIApplicationShortcutItems`) for `#/overdose` and `#/crisis`.
+- **Mobile Synchronization Pipeline (`scripts/mobile-sync.mjs`, `npm run mobile:sync`)**:
+  - Automatically mirrors web assets into native mobile containers (`android/app/src/main/assets/public` and `ios/App/App/public`) for complete zero-network offline launching.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

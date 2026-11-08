@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="overdose_emergency"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_emergency"
+        android:shortcutShortLabel="@string/shortcut_overdose_short"
+        android:shortcutLongLabel="@string/shortcut_overdose_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.harborpath.app"
+            android:targetClass="org.harborpath.app.MainActivity"
+            android:data="https://harborpath-platform.vercel.app/#/overdose" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="crisis_support"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_crisis"
+        android:shortcutShortLabel="@string/shortcut_crisis_short"
+        android:shortcutLongLabel="@string/shortcut_crisis_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.harborpath.app"
+            android:targetClass="org.harborpath.app.MainActivity"
+            android:data="https://harborpath-platform.vercel.app/#/crisis" />
+    </shortcut>
+</shortcuts>

@@ -26,6 +26,7 @@ import {
 } from '../content/reversalFormulations.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
+import { hapticOverdoseBeat, hapticPattern, hapticPulse } from './haptics.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetOverdosePacer);
@@ -321,7 +322,7 @@ export function startRescueBreathingTimer(options = {}) {
     pacerState.currentBreathSecond = 1;
     pacerState.breathPhase = 'inhale';
     pacerState.breathCount += 1;
-    try { navigator?.vibrate?.([150]); } catch {}
+    hapticOverdoseBeat();
     try { announce(t('pacer.announce.breathingStarted', 'Rescue breathing started: Inhale 1 breath now.')); } catch {}
     if (typeof onBreath === 'function') onBreath(pacerState.breathCount);
   }
@@ -352,7 +353,7 @@ function tickRescueBreathingStep(options = {}) {
   if (pacerState.currentBreathSecond === 1) {
     pacerState.breathCount += 1;
     pacerState.breathPhase = 'inhale';
-    try { navigator?.vibrate?.([150]); } catch {}
+    hapticOverdoseBeat();
     try { announce(t('pacer.announce.breathDelivered', 'Breath {n}: Deliver 1 breath now.', { n: pacerState.breathCount })); } catch {}
     if (typeof onBreath === 'function') onBreath(pacerState.breathCount);
   } else {
@@ -425,7 +426,7 @@ function tickReDoseTimerStep(options = {}) {
     try {
       announce(t('pacer.announce.alert2min', 'Two minutes elapsed. If breathing is still slow, shallow, or absent, give another naloxone dose with a new nasal spray in the other nostril, following the product label. Continue 911-directed breathing support or CPR.'));
     } catch {}
-    try { navigator?.vibrate?.([200, 100, 200]); } catch {}
+    hapticPattern([200, 100, 200]);
     if (typeof onAlert === 'function') onAlert('2min_evaluate', getOverdosePacerState());
   }
 
@@ -436,7 +437,7 @@ function tickReDoseTimerStep(options = {}) {
     try {
       announce(t('pacer.announce.alert3min', 'Three minutes reached. If breathing is still slow, shallow, or absent, give another dose with a new nasal spray in the other nostril, following the product label. If breathing is normal, stay with the person and keep watching their breathing.'));
     } catch {}
-    try { navigator?.vibrate?.([300, 150, 300, 150, 300]); } catch {}
+    hapticPattern([300, 150, 300, 150, 300]);
     if (typeof onAlert === 'function') onAlert('3min_redose_prompt', getOverdosePacerState());
   }
 

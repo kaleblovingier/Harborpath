@@ -14,6 +14,7 @@
     "lint": "node scripts/build-check.mjs --lint",
     "stamp:sw": "node scripts/build-check.mjs --fix",
     "test": "node --test",
-    "data:build": "node scripts/build-data.mjs"
+    "data:build": "node scripts/build-data.mjs",
+    "mobile:sync": "node scripts/mobile-sync.mjs"
   }
 }
