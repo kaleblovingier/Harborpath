@@ -1408,4 +1408,29 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - Added `test/admin-analytics.test.js` (11/11 tests passing). Total repo tests: **1,835 / 1,835 pass** across 253 suites.
   - Service worker cache hash updated to `4cceba5907fa` (`339.8 KB gzip`, within `< 350 KB` budget).
 
+### 57. Wave 59: UI/UX Redesign, Design System Modernization & Accessibility Overhaul (`public/styles.css`, `test/design-system.test.js`)
+- **"Clinical Calm & Dignified Access" Design System (`public/styles.css`)**:
+  - Implemented a complete semantic color token overhaul inspired by trauma-informed healthcare principles:
+    - Slate/Navy neutral foundations (`--bg: #f8fafc`, `--surface: #ffffff`, `--surface-2: #f1f5f9`, `--surface-3: #e2e8f0`, `--text: #0f172a`, `--muted: #475569`, `--border: #cbd5e1`, `--border-strong: #64748b`).
+    - Grounding restorative ocean teal brand accents (`--brand: #0d9488`, `--brand-strong: #0f766e`, `--brand-soft: #f0fdfa`, `--brand-border: #99f6e4`).
+    - WCAG 2.1 AA/AAA accessible status tokens with minimum 4.5:1 body copy contrast (`--danger: #dc2626`, `--warn: #b45309`, `--ok: #15803d`, `--info: #0284c7`).
+  - Dark mode (`@media (prefers-color-scheme: dark)`): Deep midnight slate canvas (`--bg: #090e17`, `--surface: #0f172a`, `--surface-2: #1e293b`) with calming luminescent teal (`--brand: #2dd4bf`, `--brand-strong: #5eead4`) and high-contrast text (`--text: #f8fafc`, `--muted: #94a3b8`).
+  - Sensory Calming Mode (`body.sensory-mode-active, :root.sensory-mode-active`): Unified low-glare midnight slate palette with high-contrast amber focus rings (`--focus: #facc15`).
+- **Typography & Ergonomic Spatial Grid**:
+  - 8pt spatial scale: `--space-1` (4px), `--space-2` (8px), `--space-3` (12px), `--space-4` (16px), `--space-5` (20px), `--space-6` (24px), `--space-8` (32px), `--space-10` (40px), `--space-12` (48px).
+  - Modernized typography with `-webkit-font-smoothing: antialiased`, `text-rendering: optimizeLegibility`, comfortable line-heights (`1.6` on body copy) to reduce cognitive strain for stressed patients and clinical navigators.
+  - Strict hierarchical heading scale (`h1` through `h4`) with optical margins and responsive fluid font sizes (`clamp()`).
+- **Tactile Component Ergonomics & Zero-CLS Layouts**:
+  - Multi-layered soft elevation shadows (`--shadow-xs`, `--shadow-sm`, `--shadow`, `--shadow-md`, `--shadow-lg`) providing physical depth and calm clinical structure.
+  - Buttons (`.btn`, `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.btn-emergency`): Pill geometry with micro-elevations, smooth color transitions, and tactile active press states (`transform: translateY(1px);`).
+  - Inputs & Controls: Minimum 48px touch targets, rounded corners, clear focus transitions with accessible 3px focus rings (`:focus-visible`).
+  - Cards, chips, pills, badges, tabs, and filters: Enhanced contrast, crisp borders, and relaxed near-match styling.
+- **Manifest, Favicon & Metadata Synchronization**:
+  - Synchronized `public/manifest.webmanifest` and `public/index.html` theme-color meta tags (`#0d9488` light / `#090e17` dark, `#f8fafc` background).
+  - Upgraded `public/favicon.svg` and `public/icons.svg` with the restorative ocean teal palette.
+- **Automated Verification & Offline Budget**:
+  - Added `test/design-system.test.js` validating all design tokens, dark mode palette, typography, touch target heights, and manifest parity.
+  - Service worker cache updated with `npm run stamp:sw` (`341.0 KB gzip`, strictly under `< 350 KB` budget limit).
+  - All 1,840 tests passing across 254 suites; 20/20 build checks passing.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.
