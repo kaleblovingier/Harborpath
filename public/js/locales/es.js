@@ -2021,6 +2021,12 @@ export default {
   'route.oncologyPalliative': 'Navegador de oncología, cuidados paliativos, crisis de células falciformes y dolor por cáncer en MOUD',
   'oncology.title': 'Navegador de Oncología, Cuidados Paliativos, Crisis Drepanocítica y Dolor Complejo en MOUD',
   'oncology.subtitle': 'Protocolos de consenso ASCO, NCCN, ASH/NHLBI y AAHPM para dolor oncológico en buprenorfina/metadona (dosis fraccionada TID/QID + agonistas plenos), crisis vasooclusiva drepanocítica (analgesia parenteral <= 30 min), neurotoxicidad por opioides (rotación M3G/H3G), neuropatía CIPN y seguridad con parches de fentanilo.',
+  'route.obstetricEmergencies': 'Navegador de emergencias obstétricas, TMO fraccionado en 3.er trimestre, cesárea y modelo Comer-Dormir-Consolar',
+  'obstetric.title': 'Navegador de Emergencias Obstétricas, Desprendimiento Placentario, Dosis Fraccionada en 3.er Trimestre, Cesárea en TMO y Modelo Comer-Dormir-Consolar',
+  'obstetric.subtitle': 'Soporte clínico cero-PII en memoria RAM según consensos ACOG, SMFM, ASAM y AAP: hipertensión severa y desprendimiento de placenta por estimulantes, fraccionamiento de Metadona/Buprenorfina en el 3.er trimestre, prohibición de Nalbufina/Butorfanol en parto, hemorragia posparto (sin Metilergonovina en HTA), modelo neonatal Comer-Dormir-Consolar (ESC) y prevención de sobredosis en el 4.º trimestre.',
+  'route.icuPerioperative': 'Navegador de cuidados intensivos (UCI), intubación ISR segura, sedación en fentanilo/xilacina y anestesia perioperatoria en TMO',
+  'icu.title': 'Navegador de Cuidados Intensivos (UCI), Intubación Segura, Sedación en Fentanilo/Xilacina, Síndrome por Propofol y Anestesia Perioperatoria en TMO',
+  'icu.subtitle': 'Soporte clínico cero-PII en memoria RAM según consensos SCCM (PADIS), ASA, ASRA y ACMT: prohibición de Succinilcolina en rabdomiólisis por sobredosis, reemplazo alfa-2 (Dexmedetomidina/Clonidina) para asincronía ventilatoria por xilacina, síndrome por infusión de propofol (SIP), cirugía en Buprenorfina/Metadona/Vivitrol y puentes de extubación.',
 
   ...esMatch,
   ...esClinical,

@@ -630,4 +630,18 @@ function renderResponderSupportTab(container, isEs) {
       : 'Open GI Emergencies, Pancreatitis & OIC Navigator →')
   ]);
   container.appendChild(giCard);
+  const icuCardioCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Intubación Post-Sobredosis (Sin Succinilcolina en Rabdomiólisis), Sedación UCI y Arritmias: ' : 'Post-Overdose Intubation (No Succinylcholine in Rhabdo), ICU Sedation & Arrhythmias: '),
+    h('span', {}, isEs
+      ? 'Evite paro hiperpotasémico por Succinilcolina tras inmovilización prolongada (usar Rocuronio), trate abstinencia ventilatoria por xilacina con Dexmedetomidina/Clonidina y evalúe QRS ancho o Torsades: '
+      : 'Prevent hyperkalemic arrest from Succinylcholine after prolonged down-time (use Rocuronium), treat xylazine ventilator withdrawal with Dexmedetomidine/Clonidine, and evaluate wide-QRS or Torsades: '),
+    h('a', { href: '#/icu-perioperative' }, isEs
+      ? 'Abrir Navegador de UCI, Intubación y Anestesia →'
+      : 'Open ICU, Safe RSI Intubation & Perioperative Navigator →'),
+    h('span', {}, ' · '),
+    h('a', { href: '#/cardiology-care' }, isEs
+      ? 'Abrir Navegador de Cardiología y Arritmias →'
+      : 'Open Cardiology & Arrhythmia Navigator →')
+  ]);
+  container.appendChild(icuCardioCard);
 }

@@ -49,6 +49,8 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/dermatology-care', key: 'workspace.link.dermatologyCare', label: 'Dermatology, xylazine necrotic eschar, SJS/TEN, DRESS & cutaneous necrosis' },
       { href: '#/cardiology-care', key: 'workspace.link.cardiologyCare', label: 'Cardiology, stimulant chest pain, wide-QRS bicarbonate & Torsades (QTc)' },
       { href: '#/oncology-palliative', key: 'workspace.link.oncologyPalliative', label: 'Oncology, palliative care, sickle cell crisis & cancer pain on MOUD' },
+      { href: '#/obstetric-emergencies', key: 'workspace.link.obstetricEmergencies', label: 'Obstetric emergencies, 3rd-trimester split MOUD, Cesarean & Eat-Sleep-Console' },
+      { href: '#/icu-perioperative', key: 'workspace.link.icuPerioperative', label: 'Critical care (ICU), safe RSI intubation, xylazine sedation & surgery on MOUD' },
     ],
   },
   {

@@ -1561,6 +1561,17 @@ export function perinatalView({ query } = {}) {
     ]);
     container.append(ecBanner);
 
+    const obEmergBanner = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+      h('strong', {}, isEs ? '¿Urgencia Obstétrica, Dosis Fraccionada en 3.er Trimestre, Cesárea en TMO o Modelo Comer-Dormir-Consolar (ESC)? ' : 'Acute Obstetric Emergency, 3rd-Trimester Split-Dosing, Cesarean Analgesia on MOUD, or Eat-Sleep-Console (ESC)? '),
+      h('span', {}, isEs
+        ? 'Protocolos ACOG/SMFM/ASAM/AAP para preeclampsia/desprendimiento placentario, prohibición de Nalbufina/Butorfanol, hemorragia posparto (sin Metilergonovina en HTA) y cuidados neonatales ESC: '
+        : 'ACOG/SMFM/ASAM/AAP protocols for preeclampsia/placental abruption, Nalbuphine/Butorphanol prohibition, postpartum hemorrhage (no Methergine in HTN/stimulants), and neonatal ESC care: '),
+      h('a', { href: '#/obstetric-emergencies' }, isEs
+        ? 'Abrir Navegador de Emergencias Obstétricas, TMO Periparto y Modelo ESC →'
+        : 'Open Obstetric Emergencies, Peripartum MOUD & Eat-Sleep-Console Navigator →')
+    ]);
+    container.append(obEmergBanner);
+
     container.append(
       header,
       controlsBar,

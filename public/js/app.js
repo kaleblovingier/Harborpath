@@ -57,6 +57,16 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'icu-perioperative': () => import('./views/icuPerioperative.js').then((m) => {
+    viewCache.set('icu-perioperative', m.icuPerioperativeView);
+    routeResets.set('icu-perioperative', m.resetIcuState);
+    return m.icuPerioperativeView;
+  }),
+  'obstetric-emergencies': () => import('./views/obstetricEmergencies.js').then((m) => {
+    viewCache.set('obstetric-emergencies', m.obstetricEmergenciesView);
+    routeResets.set('obstetric-emergencies', m.resetObstetricState);
+    return m.obstetricEmergenciesView;
+  }),
   'oncology-palliative': () => import('./views/oncologyPalliative.js').then((m) => {
     viewCache.set('oncology-palliative', m.oncologyPalliativeView);
     routeResets.set('oncology-palliative', m.resetOncologyState);
@@ -381,6 +391,8 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'icu-perioperative': () => t('route.icuPerioperative', 'Critical care (ICU), safe RSI intubation, fentanyl/xylazine sedation & perioperative MOUD navigator'),
+  'obstetric-emergencies': () => t('route.obstetricEmergencies', 'Obstetric emergencies, 3rd-trimester split MOUD, Cesarean analgesia & Eat-Sleep-Console navigator'),
   'oncology-palliative': () => t('route.oncologyPalliative', 'Oncology, palliative care, sickle cell crisis & complex cancer pain on MOUD navigator'),
   'cardiology-care': () => t('route.cardiologyCare', 'Cardiology, stimulant chest pain, sodium-channel QRS blockade & Torsades (QTc) navigator'),
   'dermatology-care': () => t('route.dermatologyCare', 'Dermatology, xylazine necrotic eschar, Stevens-Johnson (SJS/TEN) & DRESS navigator'),
@@ -479,6 +491,8 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('icu-perioperative'),
+    preloadRoute('obstetric-emergencies'),
     preloadRoute('oncology-palliative'),
     preloadRoute('cardiology-care'),
     preloadRoute('dermatology-care'),

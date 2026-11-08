@@ -1473,6 +1473,21 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(liverLink);
 
+    const icuCardioLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Intubación en Toxicología (ISR), Emergencias Hipertérmicas en UCI y Bloqueo QRS / Torsades' : 'Toxicology Intubation (RSI), ICU Hyperthermic Crises & Wide-QRS / Torsades'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para prohibición de Succinilcolina en rabdomiólisis, ventilación minuto en acidosis metabólica, diferencial de hipertermia (> 40°C: clonus vs rigidez en tubo de plomo), bicarbonato en QRS ancho y MgSO4 en Torsades: '
+        : 'For Succinylcholine prohibition in down-time rhabdomyolysis, metabolic acidosis minute ventilation, ICU hyperthermia (> 40°C: clonus vs lead-pipe rigidity), wide-QRS sodium bicarbonate, and IV MgSO4 in Torsades: '),
+      h('a', { href: '#/icu-perioperative' }, isEs
+        ? 'Abrir Navegador de UCI, Intubación y Anestesia →'
+        : 'Open ICU, Safe Intubation & Perioperative Navigator →'),
+      h('span', null, ' · '),
+      h('a', { href: '#/cardiology-care' }, isEs
+        ? 'Abrir Navegador de Cardiología y Arritmias →'
+        : 'Open Cardiology & Arrhythmia Navigator →')
+    );
+    container.appendChild(icuCardioLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

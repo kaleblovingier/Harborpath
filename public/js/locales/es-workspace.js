@@ -81,4 +81,6 @@ export default {
   'workspace.link.dermatologyCare': 'Dermatología, escaras por xilacina, SSJ/NET, síndrome DRESS y necrosis cutánea',
   'workspace.link.cardiologyCare': 'Cardiología, dolor torácico por estimulantes, bicarbonato en QRS ancho y Torsades (QTc)',
   'workspace.link.oncologyPalliative': 'Oncología, cuidados paliativos, crisis de células falciformes y dolor por cáncer en MOUD',
+  'workspace.link.obstetricEmergencies': 'Emergencias obstétricas, TMO fraccionado en 3.er trimestre, cesárea y Comer-Dormir-Consolar',
+  'workspace.link.icuPerioperative': 'Cuidados intensivos (UCI), intubación ISR segura, sedación en xilacina y cirugía en TMO',
 };

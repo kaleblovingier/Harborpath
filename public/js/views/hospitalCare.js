@@ -805,6 +805,20 @@ function renderSbarTab(localState, isEs, isClinician) {
       : 'Open Oncology, Palliative & Sickle Cell Navigator →')
   ]);
   container.appendChild(cardioOncCareCard);
+  const obIcuCareCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Urgencias Obstétricas, Modelo Comer-Dormir-Consolar (ESC), Intubación UCI y Anestesia en TMO: ' : 'Obstetric Emergencies, Eat-Sleep-Console (ESC), ICU Sedation & Perioperative Anesthesia on MOUD: '),
+    h('span', {}, isEs
+      ? 'Fraccionamiento de TMO en 3.er trimestre, prohibición de Nalbufina/Butorfanol en parto, prohibición de Succinilcolina en rabdomiólisis, sedación con Dexmedetomidina/Clonidina en xilacina y cirugía en Buprenorfina/Vivitrol: '
+      : '3rd-trimester split-dose MOUD, intrapartum Nalbuphine/Butorphanol prohibition, Succinylcholine prohibition in rhabdomyolysis, Dexmedetomidine/Clonidine for xylazine ventilator dyssynchrony, and surgery on Buprenorphine/Vivitrol: '),
+    h('a', { href: '#/obstetric-emergencies' }, isEs
+      ? 'Abrir Navegador de Emergencias Obstétricas y Modelo ESC →'
+      : 'Open Obstetric Emergencies & Eat-Sleep-Console Navigator →'),
+    h('span', {}, ' · '),
+    h('a', { href: '#/icu-perioperative' }, isEs
+      ? 'Abrir Navegador de UCI, Intubación y Anestesia Perioperatoria →'
+      : 'Open ICU, Safe Intubation & Perioperative Anesthesia Navigator →')
+  ]);
+  container.appendChild(obIcuCareCard);
 
   return container;
 }
