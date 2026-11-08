@@ -71,6 +71,7 @@ const entries = [
   ['neurology-care', 'emergency', 'Neurological health, post-overdose brain injury & neuroprotection', 'AAN and Neurocritical Care consensus for hypoxic-ischemic encephalopathy (HIE), delayed post-hypoxic leukoencephalopathy (DPHL), PRES, osmotic demyelination syndrome (ODS), and Wernicke thiamine emergencies.', ['individual', 'supporter', 'care-team']],
   ['metabolic-care', 'emergency', 'Metabolic emergencies, alcoholic ketoacidosis & adrenal crisis', 'ADA, Endocrine Society & ASAM consensus for alcoholic ketoacidosis (AKA), stimulant-induced DKA/HHS, SGLT2 euglycemic DKA (euDKA), masked hypoglycemia, and opioid-induced adrenal crisis (OIAI).', ['individual', 'supporter', 'care-team']],
   ['gi-care', 'emergency', 'GI & mesenteric emergencies, acute pancreatitis & opioid constipation', 'ACG, AGA, NEJM WATERFALL & WSES consensus for acute pancreatitis, cocaine mesenteric ischemia, opioid-induced constipation (PAMORAs), narcotic bowel syndrome, Boerhaave rupture, and body packing.', ['individual', 'supporter', 'care-team']],
+  ['hematology-care', 'emergency', 'Hematology, coagulopathy, levamisole vasculitis & toxic hemolysis', 'ASH, ACMT, AASLD & AGA consensus for levamisole cocaine agranulocytosis, brodifacoum (K2/Spice) superwarfarin coagulopathy, G6PD methemoglobinemia, IV tablet TMA/TTP, and cirrhosis hemostasis.', ['individual', 'supporter', 'care-team']],
   ['endocarditis-care', 'emergency', 'Infective endocarditis, valve destruction & POET protocol navigator', 'AHA/IDSA consensus for right-sided tricuspid septic pulmonary emboli vs. left-sided aortic root abscess, 3-blood-culture rule, 2023 Duke criteria, POET oral step-down, dalbavancin, and ethical valve surgery.', ['individual', 'supporter', 'care-team']],
 ];
 
@@ -178,6 +179,7 @@ export const TOOL_KEYWORDS = Object.freeze({
   'neurology-care': ['brain', 'brain injury', 'brain damage', 'memory', 'seizure', 'hypoxia', 'cerebro', 'lesión cerebral', 'memoria', 'convulsión'],
   'metabolic-care': ['diabetes', 'blood sugar', 'low blood sugar', 'ketoacidosis', 'dka', 'adrenal', 'azúcar en la sangre', 'cetoacidosis', 'suprarrenal'],
   'gi-care': ['stomach', 'stomach pain', 'belly pain', 'constipation', 'pancreatitis', 'ischemic colitis', 'mesenteric ischemia', 'pamora', 'boerhaave', 'body packing', 'estómago', 'dolor de estómago', 'estreñimiento', 'pancreatitis', 'colitis'],
+  'hematology-care': ['blood', 'bleeding', 'anemia', 'platelets', 'inr', 'levamisole', 'brodifacoum', 'superwarfarin', 'k2', 'spice', 'g6pd', 'methemoglobinemia', 'methylene blue', 'ttp', 'tma', 'zieve', 'sangre', 'sangrado', 'plaquetas', 'levamisol'],
   'endocarditis-care': ['heart infection', 'heart valve', 'endocarditis', 'fever', 'infección del corazón', 'válvula del corazón', 'fiebre'],
   'recovery-support': ['sober living', 'sober house', 'recovery housing', 'recovery residence', 'halfway house', 'oxford house', 'peer coach', 'peer support', 'relapse', 'aftercare', 'after rehab',
     'vivienda sobria', 'casa de recuperación', 'recaída', 'coach de recuperación', 'apoyo entre pares', 'después del tratamiento'],

@@ -787,6 +787,14 @@ export function inhalantCareView() {
 
     section.appendChild(introCard);
     section.appendChild(rulesGrid);
+    const hematologyCard = h('div', { class: 'ic-rule-card mt-3' }, [
+      h('h3', {}, 'Poppers Methemoglobinemia, Heinz-Body Hemolysis & G6PD Methylene Blue Ban'),
+      h('p', {}, 'Alkyl nitrites ("Poppers") oxidize hemoglobin to MetHb and cause Heinz-body "bite cell" hemolysis. Methylene Blue is strictly contraindicated in G6PD deficiency: '),
+      h('p', {}, [
+        h('a', { href: '#/hematology-care', class: 'btn btn-secondary' }, 'Open Hematology, Coagulopathy & Toxic Hemolysis Navigator →'),
+      ]),
+    ]);
+    section.appendChild(hematologyCard);
     return section;
   }
 

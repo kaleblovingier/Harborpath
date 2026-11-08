@@ -667,5 +667,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open GI Emergencies & Mesenteric Ischemia Navigator →')
   ]);
   container.appendChild(giTip);
+  const hematologyTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Vasculitis ANCA por Cocaína con Levamisol y Agranulocitosis Grave: ' : 'Levamisole-Adulterated Cocaine ANCA Vasculitis & Agranulocytosis: '),
+    h('span', {}, isEs
+      ? 'El levamisol en la cocaína provoca púrpura retiforme en las orejas/mejillas y agranulocitosis severa (RAN < 500/mcL) con riesgo de sepsis neutropénica: '
+      : 'Levamisole in cocaine causes earlobe/cheek retiform purpura and severe agranulocytosis (ANC < 500/mcL) with life-threatening neutropenic sepsis risk: '),
+    h('a', { href: '#/hematology-care' }, isEs
+      ? 'Abrir Navegador de Hematología, Coagulopatías y Vasculitis por Levamisol →'
+      : 'Open Hematology, Coagulopathy & Levamisole Vasculitis Navigator →')
+  ]);
+  container.appendChild(hematologyTip);
 
 }

@@ -786,6 +786,14 @@ export function liverCareView() {
       ]),
     ]);
     section.appendChild(renalCard);
+    const hematologyCard = h('div', { class: 'lc-card mt-3' }, [
+      h('h3', {}, 'Cirrhosis "Rebalanced Hemostasis", Prophylactic FFP Ban & Zieve Syndrome'),
+      h('p', {}, 'Elevated INR in cirrhosis does not predict procedural bleeding; prophylactic FFP transfusion increases portal pressure and variceal bleeding risk: '),
+      h('p', {}, [
+        h('a', { href: '#/hematology-care', class: 'btn btn-secondary' }, 'Open Hematology, Coagulopathy & Hemolysis Navigator →'),
+      ]),
+    ]);
+    section.appendChild(hematologyCard);
     return section;
   }
 

@@ -550,6 +550,12 @@ export function adulterantCareView() {
       grid.appendChild(card);
     }
     panel.appendChild(grid);
+    const hematologyBanner = h('div', { class: 'card mt-3' }, [
+      h('h3', null, 'Hematologic Adulterants: Levamisole Agranulocytosis, Brodifacoum & Quinine TMA'),
+      h('p', null, 'Cocaine cut with levamisole (ANC < 500/mcL), synthetic cannabinoids sprayed with brodifacoum ("superwarfarin"), and quinine/PEO-induced TMA require targeted hematologic reversal: '),
+      h('a', { href: '#/hematology-care', class: 'btn btn-secondary' }, 'Open Hematology, Coagulopathy & Toxic Hemolysis Navigator →'),
+    ]);
+    panel.appendChild(hematologyBanner);
   }
 
   // TAB 2: Sedation vs Overdose Triage Calculator

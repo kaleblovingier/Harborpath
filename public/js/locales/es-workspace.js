@@ -73,4 +73,5 @@ export default {
   'workspace.link.neurologyCare': 'Salud neurológica, lesión cerebral post-sobredosis y neuroprotección',
   'workspace.link.metabolicCare': 'Emergencias metabólicas, cetoacidosis y crisis suprarrenal',
   'workspace.link.giCare': 'Emergencias digestivas, pancreatitis y estreñimiento por opioides',
+  'workspace.link.hematologyCare': 'Hematología, coagulopatías, levamisol y hemólisis tóxica',
 };

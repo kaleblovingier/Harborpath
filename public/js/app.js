@@ -57,6 +57,11 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'hematology-care': () => import('./views/hematologyCare.js').then((m) => {
+    viewCache.set('hematology-care', m.hematologyCareView);
+    routeResets.set('hematology-care', m.resetHematologyState);
+    return m.hematologyCareView;
+  }),
   'gi-care': () => import('./views/giCare.js').then((m) => {
     viewCache.set('gi-care', m.giCareView);
     routeResets.set('gi-care', m.resetGiState);
@@ -341,6 +346,7 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'hematology-care': () => t('route.hematologyCare', 'Hematology, coagulopathy, levamisole vasculitis & toxic hemolysis navigator'),
   'gi-care': () => t('route.giCare', 'GI & mesenteric emergencies, acute pancreatitis & opioid constipation'),
   'metabolic-care': () => t('route.metabolicCare', 'Metabolic emergencies, alcoholic ketoacidosis & adrenal crisis'),
   'neurology-care': () => t('route.neurologyCare', 'Neurological health, post-overdose brain injury & neuroprotection'),
@@ -431,6 +437,7 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('hematology-care'),
     preloadRoute('gi-care'),
     preloadRoute('metabolic-care'),
     preloadRoute('neurology-care'),

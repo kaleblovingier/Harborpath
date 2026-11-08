@@ -10022,3 +10022,228 @@ body.sensory-mode-active [tabindex]:focus-visible {
     font-size: 1.4rem;
   }
 }
+
+/* ============================================================================
+   WAVE 48: HEMATOLOGY, COAGULOPATHY & TOXIC HEMOLYSIS NAVIGATOR (#/hematology-care)
+   ============================================================================ */
+
+.hematology-care-view {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hematology-header {
+  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+  color: #ffffff;
+  padding: 1.75rem 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(69, 10, 10, 0.25);
+}
+
+.hematology-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.hematology-clinical-badge {
+  background: rgba(254, 202, 202, 0.2);
+  border: 1px solid rgba(254, 202, 202, 0.45);
+  color: #fecaca;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.hematology-privacy-pill {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #f8fafc;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.hematology-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+.hematology-subtitle {
+  margin: 0;
+  color: #fee2e2;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.hematology-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.hematology-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.925rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.hematology-tab-btn:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
+.hematology-tab-btn.active {
+  background: #991b1b;
+  color: #ffffff;
+  border-color: #7f1d1d;
+}
+
+.hematology-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.hematology-panel-intro h2 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.35rem;
+  color: #0f172a;
+}
+
+.hematology-panel-intro p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.hematology-syndromes-list,
+.hematology-directives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.hematology-syndrome-card,
+.hematology-directive-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #991b1b;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.hematology-syndrome-title,
+.hematology-directive-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  color: #7f1d1d;
+}
+
+.hematology-section {
+  margin-bottom: 0.75rem;
+}
+
+.hematology-section p {
+  margin: 0.25rem 0 0 0;
+  color: #334155;
+  font-size: 0.93rem;
+  line-height: 1.55;
+}
+
+.hematology-evaluator-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.75rem;
+}
+
+.hematology-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.hematology-check-item.selected {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
+.hematology-eval-results {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 2px solid #cbd5e1;
+  background: #f8fafc;
+}
+
+.hematology-eval-results.acuity-emergency_911 {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.hematology-eval-results.acuity-urgent_eval {
+  border-color: #d97706;
+  background: #fffbeb;
+}
+
+.hematology-sbar-output {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #334155;
+}
+
+.hematology-footer-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .hematology-care-view {
+    padding: 1rem;
+  }
+  .hematology-header {
+    padding: 1.25rem;
+  }
+  .hematology-title {
+    font-size: 1.4rem;
+  }
+}
