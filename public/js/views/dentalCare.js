@@ -622,6 +622,14 @@ function renderStimulantsHeartTab(isEs) {
     endoList.appendChild(card);
   });
   endoCard.appendChild(endoList);
+  const entCrossLink = h('div', { class: 'callout callout-info' }, [
+    h('strong', {}, isEs ? 'Angina de Ludwig, Síndrome de Lemierre y Fístula Palatina por Cocaína (CIMDL): ' : 'Ludwig Angina, Lemierre Syndrome & Cocaine Palatal Fistula (CIMDL): '),
+    h('span', {}, isEs
+      ? 'Para induración submandibular leñosa (nunca acostar en supino), tromboflebitis séptica yugular o prótesis obturadora palatina: '
+      : 'For woody submandibular floor-of-mouth induration (never lay supine), septic jugular thrombophlebitis, or palatal obturator prostheses: '),
+    h('a', { href: '#/ent-care' }, isEs ? 'Abrir Navegador de Otorrinolaringología y Vía Aérea Superior →' : 'Open Otolaryngology, Deep Neck & Upper Airway Navigator →'),
+  ]);
+  endoCard.appendChild(entCrossLink);
 
   wrapper.appendChild(stimCard);
   wrapper.appendChild(endoCard);

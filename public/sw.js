@@ -11,7 +11,7 @@ const CACHE_PREFIX = 'harborpath-offline';
 // any of them changes this name, so the new copy is saved as a whole beside the
 // old one and swapped in at activation. Kept current by `npm run stamp:sw`
 // (scripts/build-check.mjs fails while it is stale).
-const BUILD = 'eac92e4d5c67';
+const BUILD = '3ee9f41e3aeb';
 const CACHE_NAME = `${CACHE_PREFIX}-${BUILD}`;
 // Shell requests wait this long for the network before a saved copy is used,
 // so overdose steps open promptly on a weak or captive connection.
@@ -156,6 +156,8 @@ const ELECTIVE_SHELL = [
   '/js/views/orthopedicCare.js',
   '/js/views/ocularCare.js',
   '/js/views/urologyCare.js',
+  '/js/views/entCare.js',
+  '/js/views/dermatologyCare.js',
 ];
 
 const SHELL_PATHS = new Set(APP_SHELL);

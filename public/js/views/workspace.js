@@ -45,6 +45,8 @@ export const CARE_WORKSPACE_STAGES = Object.freeze([
       { href: '#/orthopedic-care', key: 'workspace.link.orthopedicCare', label: 'Spinal epidural abscess, septic arthritis & OVIVA bone care' },
       { href: '#/ocular-care', key: 'workspace.link.ocularCare', label: 'Ophthalmology, endophthalmitis, methanol blindness & ocular toxicology' },
       { href: '#/urology-care', key: 'workspace.link.urologyCare', label: 'Urologic emergencies, ischemic priapism, Fournier gangrene & urinary retention' },
+      { href: '#/ent-care', key: 'workspace.link.entCare', label: 'Otolaryngology, Ludwig angina, Lemierre syndrome, septal perforation & airway' },
+      { href: '#/dermatology-care', key: 'workspace.link.dermatologyCare', label: 'Dermatology, xylazine necrotic eschar, SJS/TEN, DRESS & cutaneous necrosis' },
     ],
   },
   {

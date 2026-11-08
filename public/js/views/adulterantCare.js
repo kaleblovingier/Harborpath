@@ -702,6 +702,12 @@ export function adulterantCareView() {
       )
     );
     panel.appendChild(sepsisBox);
+    const dermBanner = h('div', { class: 'card mt-3' }, [
+      h('h3', null, 'Tendon-Sparing Xylazine Eschar Care, Cutaneous Anthrax, Botulism & SCAR'),
+      h('p', null, 'Access detailed protocols for enzymatic/autolytic xylazine eschar preservation over exposed tendon, skin-popping cutaneous anthrax & wound botulism (HBAT), vancomycin DRESS, and SJS/TEN: '),
+      h('a', { href: '#/dermatology-care', class: 'btn btn-secondary' }, 'Open Dermatology, Xylazine Eschar & Cutaneous Necrosis Navigator →'),
+    ]);
+    panel.appendChild(dermBanner);
   }
 
   // TAB 4: Withdrawal & Autonomic Storm Protocol

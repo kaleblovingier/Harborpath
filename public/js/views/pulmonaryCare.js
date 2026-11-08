@@ -700,6 +700,12 @@ export function pulmonaryCareView() {
       h('a', { href: '#/neurology-care' }, 'Open Neurological Health & Brain Injury Navigator →'),
     ]);
     section.appendChild(neuroCrossLink);
+    const entCrossLink = h('div', { class: 'pc-card mt-3' }, [
+      h('h3', {}, 'Upper Airway Thermal Supraglottitis, N2O Frostbite & Deep Neck Infections'),
+      h('p', {}, 'Stridor, muffled "hot potato" voice, or drooling after crack-pipe/metal-mesh inhalation, direct N2O cylinder frostbite, or odontogenic/jugular neck infections require immediate upright airway triage: '),
+      h('a', { href: '#/ent-care' }, 'Open Otolaryngology, Deep Neck & Upper Airway Navigator →'),
+    ]);
+    section.appendChild(entCrossLink);
     return section;
   }
 

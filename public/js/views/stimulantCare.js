@@ -677,5 +677,15 @@ function renderSaferUseTab(container, isEs) {
       : 'Open Hematology, Coagulopathy & Levamisole Vasculitis Navigator →')
   ]);
   container.appendChild(hematologyTip);
+  const entDermTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Perforación Septal (CIMDL), Supraglotitis Térmica y Formicación Cutánea: ' : 'Cocaine Septal Perforation (CIMDL), Thermal Supraglottitis & Cutaneous Formication: '),
+    h('span', {}, isEs
+      ? 'Explore rehabilitación con botón septal/obturador palatino, quemaduras de vía aérea por pipa y parches hidrocoloides para excoriaciones: '
+      : 'Explore Silastic septal button/palatal obturator rehabilitation, crack-pipe thermal epiglottitis, and hydrocolloid barrier therapy for formication: '),
+    h('a', { href: '#/ent-care' }, isEs ? 'Navegador de ORL y Vía Aérea →' : 'Otolaryngology & Airway Navigator →'),
+    h('span', {}, ' | '),
+    h('a', { href: '#/dermatology-care' }, isEs ? 'Navegador de Dermatología y Heridas →' : 'Dermatology & Cutaneous Navigator →')
+  ]);
+  container.appendChild(entDermTip);
 
 }

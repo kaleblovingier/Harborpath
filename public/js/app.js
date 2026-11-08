@@ -57,6 +57,16 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'dermatology-care': () => import('./views/dermatologyCare.js').then((m) => {
+    viewCache.set('dermatology-care', m.dermatologyCareView);
+    routeResets.set('dermatology-care', m.resetDermatologyState);
+    return m.dermatologyCareView;
+  }),
+  'ent-care': () => import('./views/entCare.js').then((m) => {
+    viewCache.set('ent-care', m.entCareView);
+    routeResets.set('ent-care', m.resetEntState);
+    return m.entCareView;
+  }),
   'urology-care': () => import('./views/urologyCare.js').then((m) => {
     viewCache.set('urology-care', m.urologyCareView);
     routeResets.set('urology-care', m.resetUrologyState);
@@ -361,6 +371,8 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'dermatology-care': () => t('route.dermatologyCare', 'Dermatology, xylazine necrotic eschar, Stevens-Johnson (SJS/TEN) & DRESS navigator'),
+  'ent-care': () => t('route.entCare', 'Otolaryngology, Ludwig angina, Lemierre syndrome, septal perforation & airway navigator'),
   'urology-care': () => t('route.urologyCare', 'Urologic emergencies, ischemic priapism, Fournier gangrene & urinary retention navigator'),
   'ocular-care': () => t('route.ocularCare', 'Ophthalmology, endogenous endophthalmitis, methanol blindness & ocular toxicology navigator'),
   'orthopedic-care': () => t('route.orthopedicCare', 'Spinal epidural abscess, septic arthritis, pyomyositis & OVIVA bone/joint navigator'),
@@ -455,6 +467,8 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('dermatology-care'),
+    preloadRoute('ent-care'),
     preloadRoute('urology-care'),
     preloadRoute('ocular-care'),
     preloadRoute('orthopedic-care'),
