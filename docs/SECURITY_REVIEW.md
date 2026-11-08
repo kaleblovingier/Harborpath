@@ -5,7 +5,7 @@
 > All 14 findings are now closed. Findings 2–8 and 14 were fixed in round 2 by the clinical-safety and privacy/compliance swarms. Every fix has a regression test.
 >
 > | # | Severity | Status |
-> |---|---|---|
+> | --- | --- | --- |
 > | 1 | High | **Fixed.** Rate-limit key uses the trusted hop from the right of `X-Forwarded-For`; `TRUST_PROXY` is opt-in (`test/security.test.js`). |
 > | 2 | Medium | **Fixed.** Navigator output is framed as the person's own self-reported answers, with a "not a diagnosis" disclaimer and no clinician-document wording (`test/clinical-safety.test.js`). |
 > | 3 | Medium | **Fixed.** Uncited mortality percentages are replaced with qualitative wording; the naltrexone claim is corrected (EN + ES). |
@@ -24,7 +24,7 @@
 > **Round 2 adversarial review (security swarm H2): all findings fixed**
 >
 > | # | Severity | Finding | Fix |
-> |---|---|---|---|
+> | --- | --- | --- | --- |
 > | R2-1 | Medium | One shared overflow bucket let ~10k distinct keys lock out every new visitor, and could fail container health checks. | 1024 salted overflow buckets; `/api/health` exempt from limiting (`src/cache.js`, `src/app.js`). |
 > | R2-2 | Medium | IPv6 clients could rotate through 2^64 keys in their /64. | Keys are IPv6 /64 prefixes; IPv4-mapped addresses are keyed as IPv4 (`networkKey`). |
 > | R2-3 | Low | One fixed trusted hop; empty `X-Forwarded-For` entries produced the key `''`. | `TRUST_PROXY` is a hop count; empty entries fall back to the socket address. |
@@ -36,7 +36,7 @@
 > **Accessibility audit (QA swarm I2, axe-core 4.14, 120 page states): all findings fixed except one noted below**
 >
 > | Severity | Finding | Fix |
-> |---|---|---|
+> | --- | --- | --- |
 > | High | Focus dropped to `<body>` whenever match results re-rendered (filters, compare, results load, "Everyone is safe"). | `rerender(focusId)` restores focus to the control, or to the results or step heading. |
 > | Medium | Arrow keys on the "anyone in danger?" radio opened the emergency panel (WCAG 3.2.2). | The question is now a button. |
 > | High | `#/navigator` and `#/plan` overflowed horizontally at 320–375px. A round-2 check also found a long URL overflowing `#/privacy`. | `.select` max-width, `min-width: 0` on flex/fieldset children, `overflow-wrap` on views. |
@@ -58,7 +58,7 @@
 ## Summary
 
 | # | Sev | Area | Finding |
-|---|-----|------|---------|
+| --- | ----- | ------ | --------- |
 | 1 | High | API | The rate limit can be bypassed by sending a fake `X-Forwarded-For` header. The Docker image trusts that header by default. |
 | 2 | Medium | Clinical | The navigator produces an "ASAM 4th Edition Clinical Care Summary & Provider Handoff Note" with "Physician clinical notes" and a "Recommended level of care", built from self-report. |
 | 3 | Medium | Clinical | The navigator says extended-release naltrexone cuts fatal overdose risk "by more than half". Several other mortality percentages in the navigator have no source. |
@@ -79,6 +79,7 @@
 ## Findings
 
 ### 1. HIGH: Spoofed `X-Forwarded-For` bypasses the rate limit, and the Docker image trusts it by default
+
 - **Where**
   - `src/app.js:115-121` (`clientKey` takes the leftmost XFF entry).
   - `Dockerfile` (`ENV TRUST_PROXY=1`).
@@ -101,6 +102,7 @@
   - On serverless platforms the per-instance in-memory limiter is weak. Add a platform WAF or rate-limit rule for `/api/treatment` and `/api/telehealth`.
 
 ### 2. MEDIUM (clinical safety): A self-report screen is presented as a clinician-grade ASAM assessment and handoff note
+
 - **Where**
   - `public/js/views/navigator.js:495-560` (`formatAsamHandoffText`): the headers are "ASAM 4TH EDITION CLINICAL CARE SUMMARY & PROVIDER HANDOFF NOTE", "RECOMMENDED LEVEL OF CARE", "Clinical Rationale", and "PHYSICIAN CLINICAL NOTES".
   - `:1206` ("ASAM Criteria (4th Edition) Clinical Care Pathway").
@@ -119,6 +121,7 @@
   - Change "ASAM Criteria (4th Edition)" to "informed by the six ASAM dimensions", or get permission from ASAM.
 
 ### 3. MEDIUM (clinical accuracy): An inaccurate mortality claim for naltrexone, and unsourced percentages
+
 - **Where**
   - `navigator.js:643`: "buprenorphine (BU), methadone (MU/OTP), and extended-release naltrexone (NU)—cut fatal overdose risk by more than half".
   - `navigator.js:374`: "cuts fatal overdose risk by 60–80%".
@@ -134,6 +137,7 @@
   - Have a clinician review all clinical strings in the navigator.
 
 ### 4. MEDIUM (clinical safety): A patient-facing buprenorphine micro-induction dosing schedule
+
 - **Where**
   - `public/js/views/medications.js:1253-1281`: the Bernese table (`BERNESE_EXAMPLE_SCHEDULE`) shows doses from 0.25–0.5 mg up to 12–24 mg/day while the person keeps using a full agonist.
   - `medications.js:354`.
@@ -145,6 +149,7 @@
   - Consider replacing exact milligram amounts with a description of the phases plus a "ask your prescriber or a bridge clinic" CTA and the SAMHSA helpline.
 
 ### 5. MEDIUM (clinical safety): Reported self-harm thoughts produce a headline of outpatient-level care
+
 - **Where**
   - `navigator.js:773-780`: `mentalHealth === 'severe_crisis'` only sets `needsLevel2IOPOrPHP`.
   - `:726-733`: the crisis text is shown as a red flag.
@@ -157,6 +162,7 @@
   - When `severe_crisis` is chosen, put a crisis-first card *above* the level card ("Right now: call/text 988, or 911 if in immediate danger"). Make 988 the primary CTA and the treatment search secondary.
 
 ### 6. MEDIUM (privacy/compliance): Privacy claims go beyond what the system guarantees
+
 - **Claims**
   - `core.js` Privacy page: "Our server does not record search terms, ZIP codes, or coordinates."
   - `navigator.js:1649-1655`: "never sent to a server, saved to disk… Closing this tab or pressing Quick Exit erases everything immediately", and "100% private, zero-knowledge".
@@ -176,6 +182,7 @@
   3. Rewrite the claims to be exact: "HarborPath's code does not log…; our host keeps standard access logs for N days"; "erases what HarborPath stored in this browser". Remove "zero-knowledge" and "never saved to disk".
 
 ### 7. MEDIUM (privacy, shared-device threat model): Health-revealing state survives in history, session restore, and the clipboard
+
 - **Where**
   - `navigator.js:379,483,914-915`: navigator results become `#/treatment?codes=…` links.
   - `views/populationHelpers.js:12-60` (`PW,HI,DT…` pregnancy, `CJ` justice-involved).
@@ -193,7 +200,9 @@
   - Make the navigator's privacy text match what actually happens.
 
 ### 8. MEDIUM (compliance): Consumer-health-data law obligations are not addressed
+
 See the **Compliance analysis** section below. The short version:
+
 - The server receives the IP address together with SUD service selections and a location close to 1 km. Under WA MHMDA, that is "consumer health data", because it identifies a consumer seeking health care services and is reasonably linkable through the IP.
 - Missing pieces:
   - a separate Consumer Health Data Privacy Policy linked from the homepage;
@@ -204,16 +213,19 @@ See the **Compliance analysis** section below. The short version:
 **Fix:** add a short MHMDA-style policy page and link it from the home page and footer. List the categories (IP, rounded location, ZIP or typed place, service filters), purposes, the third parties (the hosting provider as processor, and SAMHSA FindTreatment.gov as the recipient of rounded location and codes *without* IP), retention (in-memory cache ≤ 1 h, limiter 1 window, host logs N days), and how to contact the operator. Sign a DPA with the host.
 
 ### 9. LOW: Limiter IPs stay in memory when there is no traffic
+
 - **Where:** `src/cache.js:60-76`. The comment says "Keys live only in memory for one window", but the `Map` is replaced only inside `allow()`.
 - **How it fails:** after a burst, if no `/api/` request arrives, the last window's client IPs stay in process memory indefinitely and appear in heap dumps or crash dumps.
 - **Fix:** clear the map on an `unref()`'d `setInterval(windowMs)`, the same way `createCache` sweeps.
 
 ### 10. LOW: Upstream body text is logged
+
 - **Where:** `findtreatment.js:149` and `telehealth.js:111` put `text.slice(0, 80)` into `err.message`, and `app.js:324` logs `err.message`.
 - **How it fails:** if FindTreatment.gov echoes the request parameters in its plain-text error, the coarse coordinates and codes reach the logs, against the "never logged" promise. The current known message ("Invalid request. Please verify the parameters.") does not echo them.
 - **Fix:** log a fixed message plus the HTTP status, and keep upstream text out of logs.
 
 ### 11. LOW: No HSTS header
+
 - **Where:** `src/app.js:31-41` and `vercel.json:6-37`.
 - **What happens:**
   - Vercel adds HSTS on its own domains. Docker and self-hosted deployments behind a TLS proxy get none unless the proxy adds it.
@@ -221,6 +233,7 @@ See the **Compliance analysis** section below. The short version:
 - **Fix:** add `Strict-Transport-Security: max-age=63072000; includeSubDomains` in both places. Send it only over HTTPS, or put it in the proxy documentation.
 
 ### 12. LOW (defense in depth): Client link helpers trust the `href`
+
 - **Where:**
   - `dom.js:45-49` (`ext`);
   - `facilityCard.js:105,166,298` (`f.website`, `web`);
@@ -239,6 +252,7 @@ See the **Compliance analysis** section below. The short version:
   - Strip credentials in `normalizeWebsite`.
 
 ### 13. INFO (offline safety): `APP_SHELL` must list every module
+
 - **Where:** `public/sw.js:9-40`.
 - **What happens:**
   - The install step pre-caches a fixed list.
@@ -247,6 +261,7 @@ See the **Compliance analysis** section below. The short version:
 - **Fix:** whoever adds `public/js/match/*` or new views must add them to `APP_SHELL`. Better, add a test that walks imports from `app.js` and checks that each one appears in `APP_SHELL`.
 
 ### 14. INFO: The legacy compliance document overclaims
+
 - **Where:** `legacy/ARCHITECTURE_AND_COMPLIANCE.md:7,14` ("Full compliance with … HIPAA Privacy & Security Rules …").
 - **Status:**
   - `.vercelignore` and `.dockerignore` exclude `legacy/`, and `legacy/README.md` says it is not served.
@@ -257,6 +272,7 @@ See the **Compliance analysis** section below. The short version:
 ---
 
 ## Controls verified as good
+
 - **Static serving:** an exact-match lookup in a `Map` built at startup (`app.js:48-63`, `:205-232`). There is no filesystem access per request, so path traversal is not possible. Unknown paths return `index.html` with status 404.
 - **Methods:** only GET and HEAD are accepted, anything else gets 405 with an `Allow` header (`:334-337`). A bad URL gets 400.
 - **Input validation:**
@@ -292,7 +308,7 @@ See the **Compliance analysis** section below. The short version:
 **Data flows.** Browser → HarborPath origin: IP, user agent, query strings (typed place or ZIP, location rounded to about 1 km, SUD/MH service codes). The server holds them transiently in memory: the limiter keeps the IP for one window (finding 9), and the treatment cache keeps the rounded URL for ≤ 1 h. HarborPath server → SAMHSA FindTreatment.gov: rounded coordinates and codes, without the IP. Browser → Google/Apple Maps: facility address when the user clicks a link (disclosed). Device: the opt-in saved list (facility names), the language, and the opt-in SW cache of static files. There are no accounts, no server-side PHI storage, and no analytics.
 
 | Regime | Applies? | Why / what to do |
-|---|---|---|
+| --- | --- | --- |
 | **HIPAA** | **No** | HarborPath is not a health plan, clearinghouse, or provider doing standard transactions, and not a business associate of one. The UI correctly never claims HIPAA compliance. It must not be added to marketing. Fix the legacy document (finding 14). If HarborPath ever integrates with a provider (for example, sending intake data to a clinic on its behalf), BA status could attach. |
 | **42 CFR Part 2** | **Not currently** | Part 2 covers *federally assisted* programs that *hold themselves out* as providing SUD diagnosis, treatment, or **referral for treatment**, and it protects *patient records*. HarborPath creates no patient records. Two cautions. (a) The navigator's "clinical care pathway / provider handoff" language (finding 2) leans toward "holding out" as referral or diagnosis. (b) "Federal assistance" in §2.12(b) includes IRS tax-exempt status and federal grants, so a nonprofit operator that later stores navigator answers or sends handoffs server-side could become a Part 2 program. Keep all clinical data on the client and keep the "information, not referral" framing. |
 | **FTC Act §5 / Health Breach Notification Rule (16 CFR 318, as amended 2024)** | **§5: yes. HBNR: probably not today, but close** | HBNR covers vendors of personal health records: apps with health information that can be drawn from multiple sources (the 2024 amendments say an API counts) and is managed by or for the user. A "breach" includes *unauthorized disclosure*, not only hacks. HarborPath combines SAMHSA, HRSA and CMS data with user input, but it keeps no identifiable record server-side, and the saved list stays on the device. If the operator ever adds server-side saved lists, accounts, or analytics or pixels, HBNR applies (precedent: GoodRx, Easy Healthcare/Premom). §5 already applies: privacy statements must be accurate (finding 6). |
@@ -302,6 +318,7 @@ See the **Compliance analysis** section below. The short version:
 ---
 
 ## Test run
+
 ```
 $ npm test
 # tests 93

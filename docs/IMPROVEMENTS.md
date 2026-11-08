@@ -179,7 +179,6 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Essential services: Clean bed, meals, locked medication storage (MOUD lockboxes and refrigerated insulin), wound care, transportation to follow-up visits, and SSI/SSDI SOAR case management.
   - Safe hospital discharge protections (EMTALA) prohibiting unsafe discharges to the street ("patient dumping").
 
-
 ## 11. Wave 13 Chronic Pain, Buprenorphine Analgesia, Benzodiazepine Deprescribing & Care Team Documentation
 
 - **Chronic Pain Management & Buprenorphine Analgesia Specialist (`#/chronic-pain`, `chronicPain.js`)**:
@@ -200,7 +199,6 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 
 - **Care Tools Catalog Expansion (`#/tools`, `tools.js`)**:
   - Adds `chronic-pain` to the searchable tools directory across individual, supporter, and care-team audiences.
-
 
 ## 12. Wave 14 Alcohol Care, Medical Withdrawal Risk (PAWSS) & MAUD Specialist
 
@@ -311,11 +309,11 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bupropion (Wellbutrin) Seizure Warning: Lowers seizure threshold. Strictly contraindicated during acute alcohol or benzodiazepine withdrawal, and in active bulimia/anorexia.
 - **Immunoassay Toxicology False-Positive Registry & Patient Rights**:
   - Documents widespread cross-reactivity on point-of-care rapid urine cups:
-    * Bupropion -> Amphetamine / Methamphetamine
-    * Sertraline -> Benzodiazepines
-    * Quetiapine -> Methadone
-    * Venlafaxine -> Phencyclidine (PCP)
-    * Diphenhydramine / Doxylamine -> Methadone, Opiates, or PCP
+    - Bupropion -> Amphetamine / Methamphetamine
+    - Sertraline -> Benzodiazepines
+    - Quetiapine -> Methadone
+    - Venlafaxine -> Phencyclidine (PCP)
+    - Diphenhydramine / Doxylamine -> Methadone, Opiates, or PCP
   - Mandatory Advocacy Directive: Rapid screens are presumptive only. Under ASAM, SAMHSA, and CLIA federal laboratory standards, any disputed screen must be confirmed with Gas Chromatography-Mass Spectrometry (GC-MS) or LC-MS/MS before punitive consequences are imposed.
 - **Trauma & Seeking Safety Grounding Protocols**:
   - Sensory Grounding (5-4-3-2-1 technique).
@@ -327,10 +325,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Self-Advocacy Script Composer**:
   - Plain-language scripts for requesting IDDT care, demanding confirmatory GC-MS testing, seeking adult ADHD evaluation, and setting trauma-informed care boundaries.
 
-
 ## 17. Wave 19 — Polysubstance Overdose Synergy, Depressant Stacking & Interaction Navigator
 
 ### Clinical, Pharmacological & Public Health Objectives
+
 - **Polysubstance Overdose Synergy**: Addresses the epidemiological reality that over 80% of accidental overdose deaths in the United States involve multi-substance combinations (CDC Overdose Data to Action).
 - **Depressant Stacks (Opioids + Benzodiazepines + Alcohol + Gabapentinoids + Alpha-2 Agonists)**:
   - Details the fatal pharmacodynamic mechanism: Opioids blunt hypoxic ventilatory drive; Benzodiazepines and Alcohol blunt hypercapnic respiratory arousal reflexes; Gabapentinoids impair compensatory ventilatory mechanics.
@@ -350,10 +348,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual plain-text summary generator for patient-peer communication without PII.
   - WCAG 2.2 AA compliant tabbed interface with full keyboard navigation and accessible headings.
 
-
 ## 18. Wave 20 — Nightlife, Club Drugs, Dissociatives & Festival Harm Reduction
 
 ### Clinical, Toxicological & Harm Reduction Objectives
+
 - **Dance Culture & Festival Grounding**: Addresses critical harm reduction for party environments, festivals, and nightlife venues using DanceSafe, American College of Medical Toxicology (ACMT), and Crew 2000 evidence-based clinical standards.
 - **Ketamine Bladder Health & K-Cystitis Protocol**:
   - Explains the pathophysiology of Ketamine-Induced Ulcerative Cystitis: norketamine urothelial cytotoxicity, micro-ulcerations, mucosal sloughing, severe bladder contraction, frequency (>60 times/day), and hematuria.
@@ -381,10 +379,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual export without PII.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
-
 ## 19. Wave 21 — Sleep Restoration, Insomnia & Post-Acute Withdrawal (PAWS) Navigator
 
 ### Clinical, Neurobiological & Behavioral Objectives
+
 - **Relapse Prevention Through Sleep Stabilization**: Insomnia is the #1 neurobiological predictor of relapse in early addiction recovery across opioids, alcohol, and stimulants (SAMHSA TIP 63 / TIP 45, ASAM Guidelines).
 - **Substance-Specific Sleep Architectures**:
   - **Opioids**: Loss of restorative slow-wave delta sleep and REM sleep; acute rebound insomnia lasting 1-14 days; post-acute withdrawal (PAWS) sleep fragmentation persisting 6-12 months due to depleted endogenous endorphinergic tone. Explains why split-dose buprenorphine stabilizes nocturnal withdrawal.
@@ -413,6 +411,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 ## 20. Wave 22 — Dental & Oral Health, Buprenorphine Enamel Protocol & Endocarditis Prevention
 
 ### Clinical, Stomatological & Systemic Objectives
+
 - **FDA 2022 Drug Safety Communication on Transmucosal Buprenorphine**:
   - Addresses acidic oral dissolution (Suboxone/Subutex tablets and buccal/sublingual films, pKa ~3.5–4.5) causing severe dental decay, cervical caries, tooth fractures, and enamel erosion.
   - Implements the critical 6-step oral harm reduction protocol:
@@ -441,10 +440,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual exportable plain-text summary for dental visits without PII.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
-
 ## 21. Wave 23 — Cannabinoid Hyperemesis Syndrome (CHS), High-Potency Concentrates & Cannabis Harm Reduction
 
 ### Clinical, Gastroenterological & Toxicological Objectives
+
 - **Rome IV Diagnostic Framework & Pathophysiological Staging**:
   - Addresses the paradoxical phenomenon where chronic, supraphysiological stimulation of central and enteric Cannabinoid-1 (CB1) receptors induces severe downregulation, uncoupling, and gastrointestinal dysmotility.
   - Diagnostic criteria: Regular cannabinoid exposure (>1 year, high-frequency/concentrate use), cyclic violent vomiting (5–15+ episodes/hour), pathognomonic compulsive hot bathing ("scald-seeking" behavior through TRPV1 vanilloid cutaneous activation), and permanent symptom resolution post-cessation.
@@ -468,10 +467,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual exportable plain-text summary for Emergency Department or Gastroenterology encounters to prevent unnecessary invasive procedures (cholecystectomies, repeated CTs) and advocate for evidence-based capsaicin and haloperidol therapy without stigma.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
-
 ## 22. Wave 24 — Viral Hepatitis (HCV/HBV), Direct-Acting Antivirals (DAAs), FIB-4 Fibrosis Scoring & HIV PrEP/PEP
 
 ### Clinical, Hepatological & Infectious Disease Objectives
+
 - **AASLD / IDSA Simplified Treatment Guidance & Patient Rights**:
   - Establishes the clear, non-negotiable clinical standard: **Active substance use, ongoing injection, or engagement in MOUD (methadone/buprenorphine) is NEVER a reason to withhold, delay, or deny Hepatitis C curative treatment.**
   - Overcomes historical Medicaid sobriety restrictions with evidence-based patient self-advocacy tools.
@@ -501,10 +500,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual exportable plain-text clinical summary for primary care or hepatology consultations without PII.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
-
 ## 23. Wave 25 — Tobacco, Nicotine, Vaping & Smoking Cessation in Recovery
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **Concurrent Tobacco Treatment in Addiction Recovery**:
   - Dispels the harmful clinical myth that quitting smoking during substance use treatment threatens sobriety.
   - Implements the ASAM/SAMHSA consensus: **Concurrent smoking cessation during treatment for opioids, alcohol, or stimulants increases overall long-term abstinence by 25% or more.**
@@ -529,10 +528,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Bilingual exportable plain-text summary for clinician/quitline consultation without PII.
   - WCAG 2.2 AA compliant accessible DOM structure.
 
-
 ## 24. Wave 26 — Benzodiazepine & Z-Drug Deprescribing, Ashton Manual Tapering, Flumazenil Toxicity Alerts & Protracted Withdrawal (BIND) Navigator
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **Evidence-Based Ashton Manual Deprescribing Protocols**:
   - Implements the gold-standard Ashton Manual (Heather Ashton DM, FRCP) gradual tapering and crossover methodology.
   - Formulates multi-stage substitution schedules into Diazepam (Valium) for high-potency, short-half-life agents (Alprazolam/Xanax, Lorazepam/Ativan, Clonazepam/Klonopin, Triazolam/Halcion) to eliminate interdose peak-and-valley rebound panic attacks.
@@ -561,10 +560,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
-
 ## 25. Wave 27 — ADHD, Neurodiversity, Counterfeit Pill FTS Protocols & Stimulant Pharmacotherapy Navigator
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **ADHD & Substance Use Disorder (SUD) Clinical Consensus**:
   - Highlights that 25% to 30% of adults seeking SUD treatment meet criteria for ADHD, frequently remaining undiagnosed or untreated due to clinical stigma.
   - Deconstructs the "Self-Medication Hypothesis": unmanaged prefrontal dopamine ($D_1/D_2$) and norepinephrine hypofunction leads individuals to intuitive self-medication with street stimulants (methamphetamine, cocaine) or excessive caffeine to achieve cognitive focus and emotional calm.
@@ -600,10 +599,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
-
 ## 26. Wave 28 — Acute Toxicology Triage, Project BETA Verbal De-Escalation, Restraint Avoidance & SBAR Clinical Handoff
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **Multi-Toxidrome Differential Engine (5 Conditions)**:
   - Expands acute clinical differential diagnosis to 5 life-threatening toxicological and psychiatric crises:
     1. *Opioid & Alpha-2 Adrenergic (Xylazine / Medetomidine) Toxicity*: Distinguishes opioid-induced mu-receptor respiratory depression from central alpha-2 adrenergic refractory sedation and bradycardia; guides rescue breathing and clarifies why naloxone does not reverse alpha-2 sedation.
@@ -649,10 +648,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
-
 ## 27. Wave 29 — Inpatient Addiction Medicine, Acute Hospital Care, Pain on MOUD & Patient-Directed Discharge ("AMA") Navigator
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **CA Bridge High-Dose Emergency & Inpatient Buprenorphine Rapid Induction Protocol**:
   - Implements the landmark CA Bridge protocol (Herring et al., 2021) for acute hospital and emergency settings:
     - Step 1: Objective withdrawal confirmation (COWS >= 8).
@@ -692,12 +691,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Zero device storage (`localStorage`, `sessionStorage`, `document.cookie`).
   - Strict compliance with WCAG 2.2 AA accessibility and responsive design.
 
-
-
-
 ## 28. Wave 30 — Needle Stick, Sharps Injury & Bloodborne Pathogen Post-Exposure Prophylaxis (PEP) Navigator
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **CDC / USPHS Antiretroviral Post-Exposure Prophylaxis (PEP) Protocols (oPEP & nPEP)**:
   - Implements CDC / USPHS Guidelines for Occupational Exposures to HIV and Recommendations for Postexposure Prophylaxis (Kuhar et al., Updated) and Nonoccupational PEP (nPEP):
     - **72-Hour Golden Window**: PEP must be initiated immediately (< 2 hours ideal window, up to 72 hours maximum post-exposure). Beyond 72 hours, animal and human trials show no preventive benefit.
@@ -730,12 +727,10 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
 - **Zero-PII Exposure SBAR Generator**:
   - Instant clipboard export of structured Situation, Background, Assessment, and Recommendation notes for Emergency Department triage and Employee Health handoffs.
 
-
-
-
 ## 29. Wave 31 — Sexual Health, STI Post-Exposure Prophylaxis (Doxy-PEP), HIV PrEP Navigation & Emergency Contraception
 
 ### Clinical, Behavioral & Pharmacological Objectives
+
 - **CDC 2024 Doxycycline Post-Exposure Prophylaxis (Doxy-PEP) Guidelines**:
   - Implements the CDC 2024 clinical guidelines for bacterial STI post-exposure prophylaxis:
     - Regimen: Doxycycline 200 mg orally as a single dose, taken as soon as possible within 72 hours of condomless sex (max 200 mg per 24 hours).
@@ -761,6 +756,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - Instant clipboard export of structured Situation, Background, Assessment, and Recommendation notes for urgent care, telehealth, or primary care consultations.
 
 ### 30. Wave 32: Novel Psychoactive Substances, Kratom, Tianeptine & Emerging OTC Misuse Navigator (`#/novel-substances`)
+
 - **Tianeptine ("Gas Station Heroin", ZaZa, Tianaa, Pegasus, TD Red)**:
   - Clinical consensus: ACMT, ASAM, and FDA Public Health Alerts.
   - Pharmacology: Atypical tricyclic antidepressant operating as a full mu-opioid receptor agonist and glutamatergic modulator at supra-therapeutic doses (1,000–5,000+ mg/day vs 37.5 mg therapeutic).
@@ -792,6 +788,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Emergency Department triage, inpatient addiction consultation, and primary care.
 
 ### 31. Wave 33: Gabapentinoid Misuse, Respiratory Depression Synergy & Deprescribing Navigator (`#/gabapentinoid-care`)
+
 - **Comparative Pharmacology: Gabapentin (Neurontin) vs. Pregabalin (Lyrica)**:
   - Gabapentin: Saturable L-amino acid transporter (LAT1) absorption; non-linear bioavailability drops sharply from ~60% at 300 mg to < 27% at 4,800 mg/day; short half-life (5–7 hours) requiring TID dosing.
   - Pregabalin: Linear, rapid absorption throughout GI tract (> 90% bioavailability across all doses); ~6-fold higher binding affinity at alpha-2-delta subunits; higher euphoric reinforcement; Schedule V controlled substance.
@@ -815,6 +812,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Primary Care, Pain Specialists, Neurology, and Emergency Department handoffs.
 
 ### 32. Wave 34: Psychedelic Harm Reduction, 5-HT2A Pharmacology, Crisis De-Escalation & HPPD Navigator (`#/psychedelic-care`)
+
 - **5-HT2A Pharmacology & Substance Duration Profiles**:
   - *Psilocybin / Psilocin*: Prodrug dephosphorylated to psilocin; 5-HT2A partial agonist; temporary disintegration of default mode network (DMN); 4–6 hour duration.
   - *LSD (Lysergic Acid Diethylamide)*: 5-HT2A agonist with molecular "lid" trapping compound in receptor pocket; microgram potency (25–100+ mcg); protracted 8–14 hour duration.
@@ -847,6 +845,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Emergency Department triage, festival medical teams, or crisis intervention responders.
 
 ### 33. Wave 35: GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Severe Withdrawal Navigator (`#/ghb-care`)
+
 - **Substance Science & Comparative Kinetics**:
   - *GHB (Gamma-Hydroxybutyrate / Sodium Oxybate)*: Full agonist at inhibitory GABA-B and excitatory GHB receptors; steep, non-linear dose-response curve (1.0–1.5 g euphoria, 2.0–2.5 g heavy sedation, > 3.0 g coma). Rapid half-life of 30–50 minutes.
   - *GBL (Gamma-Butyrolactone)*: Highly lipophilic chemical prodrug converted into GHB within 60 seconds by serum lactonase; ~2x potency by volume (1 mL GBL equates to ~1.6–2.0 g GHB); acrid chemical taste, corrosive to plastics.
@@ -873,6 +872,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Emergency Department triage, ICU transfer, or addiction consultation.
 
 ### 34. Wave 36: Vein Care, Vascular Health, Arterial Puncture Triage & Safer Injection Anatomy Navigator (`#/vein-care`)
+
 - **Anatomical Injection Risk Stratification (Green, Yellow & Red Zones)**:
   - *Green Zone (Safer)*: Forearm & inside elbow (cephalic, basilic, median cubital veins). Superficial, prominent, robust valves, high blood flow velocity, separated from deep arteries by muscular fascial planes.
   - *Yellow Zone (Caution - Fragility & Sclerosis)*: Dorsum of hands and wrists. Thin-walled, fragile veins that roll; sluggish flow; rapid sclerosis and chemical phlebitis; high risk of missed shots and deep abscesses.
@@ -903,6 +903,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Emergency Department triage, vascular surgery consultations, and street medicine teams.
 
 ### 35. Wave 37: Inhalants, Solvents & Nitrous Oxide Safety Navigator (`#/inhalant-care`)
+
 - **Substance Science & Molecular Mechanisms**:
   - *Nitrous Oxide (N₂O / Whippets, Cylinders, "Galaxy Gas")*: Irreversibly oxidizes cobalt core of Vitamin B12 (cobalamin) from active Co⁺ to inactive Co³⁺, shutting down methionine synthase and arresting myelin sheath synthesis.
   - *Volatile Hydrocarbons, Aerosols & Dusters (Butane, Difluoroethane [DFE], Propane, Toluene)*: Highly lipophilic membrane disrupters. Halogenated hydrocarbons sensitize myocardial beta-adrenergic receptors to endogenous catecholamines (epinephrine).
@@ -928,6 +929,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Emergency Department triage, neurology consultation, and poison center handoffs.
 
 ### 36. Wave 38: Ketamine Harm Reduction, Dissociative Care & Uropathy ("K-Bladder" & "K-Cramps") Navigator (`#/ketamine-care`)
+
 - **Pharmacology, Cytotoxicity & Biliary Dyskinesia**:
   - *NMDA Antagonism & Norketamine Excretion*: Hepatic CYP3A4/CYP2B6 demethylates ketamine into Norketamine, which concentrates in the urinary bladder at orders of magnitude higher than serum levels.
   - *Direct Urothelial Cytotoxicity*: Ketamine and norketamine trigger intrinsic mitochondrial apoptosis of umbrella cells, disruption of tight junctions, microvascular ischemia, and breakdown of the protective glycosaminoglycan (GAG) layer, leading to neurogenic detrusor contracture and progressive transmural muscular fibrosis.
@@ -952,6 +954,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Urologists, Emergency Physicians, and Addiction Specialists.
 
 ### 37. Wave 39: Accidental Hypothermia, Frostbite, Trench Foot & Heat Stroke Safety Navigator (`#/weather-care`)
+
 - **Thermal Pharmacology & Substance Thermoregulation Dysregulation**:
   - *Depressants & Alcohol in Extreme Cold*: Ethanol triggers prominent cutaneous vasodilation (creating a false subjective sensation of warmth while rapidly dumping core heat to the ambient environment) and inhibits hepatic gluconeogenesis, producing profound hypoglycemia. Opioids directly suppress hypothalamic thermal setpoints and abolish shivering thermogenesis. Sedatives cause prolonged outdoor immobility on freezing ground or wet concrete.
   - *Stimulants & Psychotropics in Extreme Heat*: Methamphetamine, cocaine, and MDMA stimulate central alpha-1 and beta-adrenergic receptors, uncouple mitochondrial oxidative phosphorylation, and drive severe hyperlocomotion, generating massive endogenous metabolic heat. Anticholinergics and typical/atypical antipsychotics block muscarinic receptors on sweat glands, causing anhidrosis (inability to dissipate heat via sweating).
@@ -976,6 +979,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for EMS, Emergency Physicians, Street Medicine Clinicians, and Shelter Outreach Workers.
 
 ### 38. Wave 40: Hepatic Health, Cirrhosis, Acetaminophen (APAP) Toxicity & MOUD Liver Safety Navigator (`#/liver-care`)
+
 - **MOUD Pharmacokinetics in Hepatic Impairment**:
   - *Buprenorphine & Suboxone vs. Subutex*: Buprenorphine undergoes hepatic CYP3A4 metabolism and UGT1A1/1A3 glucuronidation. In mild to moderate hepatic impairment (Child-Pugh A & B), buprenorphine is safe and effective. In decompensated cirrhosis (Child-Pugh Class C), buprenorphine clearance drops ~35%, but clearance of naloxone plunges over 14-fold due to loss of first-pass hepatic metabolism. Sublingual naloxone reaches active systemic circulation, triggering acute precipitated withdrawal. Clinical directive: Switch patients in Child-Pugh C to buprenorphine mono-product (Subutex). Never withhold life-saving buprenorphine from individuals with liver disease.
   - *Methadone Bioaccumulation Hazard*: Methadone is 85%–90% protein-bound and cleared by hepatic CYP3A4/2B6. In advanced cirrhosis, impaired protein synthesis increases the free active drug fraction and dramatically prolongs elimination half-life beyond 36 hours. Requires lower initial dosing, longer titration intervals, and serial 12-lead ECG monitoring for QTc prolongation and torsades de pointes.
@@ -1003,6 +1007,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Hepatologists, Toxicologists, Emergency Physicians, and Addiction Consult Teams.
 
 ### 39. Wave 41: Infective Endocarditis (IE), Valve Destruction, Septic Emboli & POET Protocol Navigator (`#/endocarditis-care`)
+
 - **Anatomical & Pathological Divergence: Right-Sided vs. Left-Sided Endocarditis**:
   - *Right-Sided Endocarditis (Tricuspid Valve - ~60–75% of IDU Cases)*: Particulate micro-abrasions (talc, chalk, insoluble binders) create turbulent shear stress and sterile platelet-fibrin thrombi, colonized by bacteremic skin pathogens (*Staphylococcus aureus* in > 70% of cases, MRSA). Classically presents with **respiratory symptoms**: Septic Pulmonary Emboli, pleuritic chest pain, cough, hemoptysis (coughing up blood), dyspnea, and multiple peripheral cavitary nodules or wedge-shaped infiltrates mimicking pneumonia. Murmur (Carvallo sign) may be faint or absent early on.
   - *Left-Sided Endocarditis (Aortic & Mitral Valves - ~25–35% of Cases)*: High-pressure valves suffer rapid leaflet perforation, chordae tendineae rupture, and acute severe regurgitation leading to cardiogenic pulmonary edema. Systemic arterial embolic shower produces classic peripheral vasculitic stigmata: Janeway lesions (painless erythematous macules on palms/soles from septic micro-emboli), Osler nodes (tender, painful, violaceous nodules on finger/toe pads from immune complex vasculitis), Roth spots (retinal hemorrhages with pale centers), and embolic stroke. Perivalvular aortic root extension directly invades the Atrioventricular (AV) Node, producing PR interval prolongation (first-degree heart block) progressing to complete heart block.
@@ -1028,6 +1033,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Cardiothoracic Surgery, Infectious Disease, Cardiology, and Addiction Consult Teams.
 
 ### 40. Wave 42: Renal Health, Rhabdomyolysis, AKI & MOUD in Renal Impairment / Dialysis Navigator (`#/renal-care`)
+
 - **Rhabdomyolysis Pathophysiology & Pigment Nephropathy**:
   - *Compressive Muscle Necrosis*: Prolonged immobilization ("down time") following opioid overdose or sedative coma, as well as stimulant hyperthermia (methamphetamine, cocaine, MDMA) and severe agitation, causes skeletal muscle compression, ischemia, and cellular lysis.
   - *Nephrotoxicity Mechanism*: Intracellular myoglobin filters freely through glomeruli and precipitates with Tamm-Horsfall protein in acidic distal tubules (pH < 5.6), forming obstructing casts. Ferrihemate generates hydroxyl free radicals, driving direct cytotoxic Acute Tubular Necrosis (ATN) and renal vasoconstriction.
@@ -1059,6 +1065,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Nephrology, Trauma Surgery, Emergency Medicine, and Addiction Consult Teams.
 
 ### 41. Wave 43: Pulmonary Health, Post-Overdose Lung Injury, "Crack Lung" & Inhalation Safety Navigator (`#/pulmonary-care`)
+
 - **Non-Cardiogenic Pulmonary Edema (NCPE) & Negative Pressure Pulmonary Edema (NPPE)**:
   - *Post-Overdose Pathogenesis*: Occurs in 2%–10% of severe opioid overdoses, especially following rapid naloxone reversal. Synergistic mechanisms: massive sympathoadrenal catecholamine surge causing hydrostatic capillary shift + extreme negative intrathoracic pressure (-50 to -100 cmH2O) generated by forced inspiration against closed vocal cords (laryngospasm during agonal breathing).
   - *Pink Frothy Sputum Cardinal Rule*: Patient presents with sudden tachypnea, severe hypoxemia (SpO2 < 85%), diffuse bilateral rales, and pink frothy sputum. **Pink frothy sputum is alveolar pulmonary edema, NOT persistent opioid sedation!** Administering additional naloxone is ineffective, exacerbates adrenergic storm, and precipitates cardiac arrhythmias. Diuretics (furosemide) are contraindicated because patients are intravascularly depleted.
@@ -1088,6 +1095,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Pulmonology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
 
 ### 42. Wave 44: Neurological Health, Post-Overdose Brain Injury, PRES, Toxic Leukoencephalopathy & Osmotic Demyelination Navigator (`#/neurology-care`)
+
 - **Hypoxic-Ischemic Encephalopathy (HIE) & Delayed Post-Hypoxic Leukoencephalopathy (DPHL)**:
   - *Acute Anoxic Pathophysiology*: Prolonged respiratory depression (SpO2 < 70%, agonal respirations, or apnea > 3–5 minutes) selectively destroys oxygen-vulnerable regions: cerebral cortex (laminar necrosis), hippocampus (CA1 Sommer sector - acute anterograde amnesia), cerebellar Purkinje cells (ataxia), and basal ganglia (bilateral globus pallidus and putamen infarction - acute parkinsonism, dystonia).
   - *Delayed Post-Hypoxic Leukoencephalopathy (DPHL - Grinker Myelinopathy)*: Biphasic course characterized by apparent complete recovery post-resuscitation followed by a lucid interval of **2 to 40 days** (median 14–21 days). Insidious relapse into apathy, mutism, catastrophic cognitive decline, extrapyramidal rigidity, and coma due to delayed apoptotic death of oligodendrocytes.
@@ -1120,6 +1128,7 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Neurology, Neurocritical Care, Emergency Medicine, and Addiction Consult Teams.
 
 ### 43. Wave 45: Endocrine & Metabolic Emergencies, Alcoholic Ketoacidosis, euDKA & Adrenal Crisis Navigator (`#/metabolic-care`)
+
 - **Alcoholic Ketoacidosis (AKA) vs. Diabetic Ketoacidosis**:
   - *Pathophysiology*: Severe starvation and volume depletion following chronic heavy alcohol consumption and abrupt cessation due to intractable vomiting. Ethanol-induced suppression of gluconeogenesis causes severe glycogen depletion, triggering massive lipolysis and ketogenesis.
   - *The False-Negative Urine Dipstick Trap*: High NADH/NAD+ redox ratio driven by alcohol dehydrogenase shifts the ketone equilibrium heavily toward beta-hydroxybutyrate (BOHB:acetoacetate often > 5:1 to 10:1). Routine nitroprusside urine dipsticks (which only detect acetoacetate) are falsely negative or trace, masking severe high anion gap metabolic acidosis (anion gap > 20 mEq/L, HCO3 < 10–15 mEq/L).
@@ -1151,7 +1160,9 @@ Step-by-step guided triage that walks visitors through care needs in plain langu
   - 1-click clipboard export in English and Spanish for Endocrinology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
 
 ### 44. Wave 46: Life After Treatment (`#/recovery-support`) & After an Overdose Death (`#/overdose-loss`)
+
 Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gaps families and people in recovery ask about. Both open with crisis lines from `content/hotlines.js`, use a single `h1`, support printing, link to existing guides instead of duplicating them, and keep nothing in device storage.
+
 - **Life after treatment (`#/recovery-support`)**:
   - *Recovery housing*: what recovery residences are, the four NARR levels of support (peer-run to clinical), NARR-certified and Oxford House homes, questions to ask before moving in, and warning signs of patient brokering (links to `#/choosing-care` for EKRA and fraud reporting).
   - *Medication in recovery housing*: SAMHSA *Best Practices for Recovery Housing* (2023, PEP23-10-00-002) says homes should not restrict prescribed medications; DOJ *The ADA and Opioid Use Disorder* (2022) on protections for people taking prescribed MOUD who are not using drugs illegally; where to report discrimination (DOJ, HUD).
@@ -1167,6 +1178,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
 - Tests: `test/recovery-support.test.js` and `test/overdose-loss.test.js` (EN and ES render, single `h1`, official sources, hotline reuse, no inline styles or storage, route / catalog / service worker / Spanish key registration).
 
 ### 45. Wave 47: Gastrointestinal & Mesenteric Emergencies, Acute Pancreatitis, Cocaine Ischemic Colitis, Opioid-Induced Bowel Dysfunction & Boerhaave Navigator (`#/gi-care`)
+
 - **Alcohol- & Hypertriglyceridemia-Induced Acute Pancreatitis (Atlanta Criteria & WATERFALL Protocol)**:
   - *Pathophysiology*: Ethanol increases acinar zymogen synthesis, sensitizes acinar cells to cholecystokinin (CCK), increases ductal permeability, and induces Sphincter of Oddi spasm, triggering premature intrapancreatic activation of trypsinogen to trypsin and autodigestion. Severe hypertriglyceridemia (> 1,000 mg/dL) releases toxic free fatty acids via pancreatic lipase.
   - *Revised Atlanta Classification*: Requires >= 2 of 3 criteria: 1) Persistent severe epigastric pain radiating to the back; 2) Serum Lipase >= 3x upper limit of normal (Lipase is strictly preferred over amylase due to higher sensitivity/specificity and 8–14 day window); 3) Characteristic CT/MRI findings.
@@ -1200,6 +1212,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - 1-click clipboard export in English and Spanish for General Surgery, Gastroenterology, Critical Care / ICU, Emergency Medicine, and Addiction Consult Teams.
 
 ### 46. Wave 48: Hematology, Coagulopathy, Levamisole Vasculitis & Toxic Hemolysis Navigator (`#/hematology-care`)
+
 - **Levamisole-Adulterated Cocaine ANCA Vasculitis, Retiform Purpura & Severe Agranulocytosis (`levamisole_vasculitis`)**:
   - *Pathophysiology*: Levamisole (veterinary anthelmintic cutting agent in 70%–80% of illicit cocaine; metabolized to aminorex) acts as a hapten on neutrophils, inducing dual positivity for p-ANCA (anti-MPO) and c-ANCA (anti-PR3), human neutrophil elastase (HNE) antibodies, immune-complex small-vessel thrombotic/leukocytoclastic vasculopathy, and T-cell-mediated bone marrow myeloid arrest.
   - *Clinical Hallmarks & Protocol*: Pathognomonic painful violaceous retiform purpura with necrotic eschars on the bilateral earlobes (auricular helices), cheeks, and extremities, paired with profound agranulocytosis (ANC < 500/mcL) and neutropenic sepsis. Management: Immediate cocaine cessation, stat CBC with manual differential, empiric IV antipseudomonal beta-lactams (Cefepime or Piperacillin-Tazobactam) within 60 minutes for neutropenic fever, and Filgrastim (G-CSF 5 mcg/kg/day).
@@ -1220,6 +1233,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - 6 actionable field rules plus a 1-click bilingual Zero-PII SBAR Clinical Handoff Note Generator for Hematology, Blood Bank, Toxicology, and ICU teams.
 
 ### 47. Wave 49: Spine, Musculoskeletal & Orthopedic Infections Navigator (`#/orthopedic-care`)
+
 - **Spinal Epidural Abscess (SEA) & Native Vertebral Osteomyelitis (NVO / Discitis) (`spinal_epidural_abscess`)**:
   - *Pathophysiology*: Hematogenous seeding of vertebral endplates and Batson's valveless epidural venous plexus by *S. aureus* (MRSA/MSSA), *Streptococcus* spp., or *Pseudomonas aeruginosa*, causing intervertebral disc destruction, epidural purulent collection, mechanical thecal sac compression, and septic venous thrombophlebitis of the spinal cord.
   - *The 15% Classic Triad Trap & Protocol*: Fewer than 15% of SEA patients present with the full triad of back pain, fever, and neurologic deficits at initial visit. Any new focal midline spine pain in PWID requires urgent ESR/CRP (> 95% sensitivity) and Contrast-Enhanced MRI of the Entire Spine (15%–20% skip lesions). If any neurologic deficit or urinary retention is present, draw 2 sets of blood cultures, administer immediate IV Vancomycin + Cefepime/Ceftriaxone, and proceed to emergent neurosurgical decompressive laminectomy within < 12–24 hours.
@@ -1237,6 +1251,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *The Normal X-Ray AVN Trap*: Plain hip X-rays are normal in early Stage I–II femoral head osteonecrosis; bilateral Hip MRI (> 99% sensitivity, T2 "double-line sign") is required to diagnose AVN before Stage III subchondral collapse ("crescent sign"). Guides DEXA screening, Vitamin D3 + calcium, and endocrine evaluation for OPIAD.
 
 ### 48. Wave 50: Ophthalmology, Vision Loss & Ocular Toxicology Navigator (`#/ocular-care`)
+
 - **Methanol ("Moonshine") Toxic Optic Neuropathy & Formic Acid Retrolaminar Blindness (`methanol_optic_neuropathy`)**:
   - *Pathophysiology*: Hepatic ADH and ALDH convert methanol into Formic Acid (Formate), which inhibits mitochondrial Cytochrome c Oxidase (Complex IV) in the retrolaminar optic nerve and basal ganglia (putamen), causing "snowstorm vision", central scotoma, and High Anion-Gap Metabolic Acidosis (HAGMA).
   - *Sight-Saving Antidote Protocol*: Immediate ADH blockade with **Fomepizole (15 mg/kg IV load, then 10 mg/kg q12h)** or Ethanol, PLUS high-dose **IV Leucovorin (Folinic Acid 50 mg IV q4–6h) or Folic Acid** to metabolize formate to CO2 and H2O, PLUS **IV Sodium Bicarbonate** (target pH 7.45–7.50 to ion-trap formate outside the optic nerve), and emergent **Intermittent Hemodialysis**.
@@ -1254,6 +1269,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Red Flags*: Proptosis, painful ophthalmoplegia, loss of red color saturation (dyschromatopsia), and **CN VI lateral rectus palsy** (earliest cavernous sinus cranial nerve deficit), requiring stat CTV/MRV, IV Vancomycin + Cefepime/Ceftriaxone + Metronidazole, surgical drainage, and IV Heparin for CST.
 
 ### 49. Wave 51: Urologic & Genitourinary Emergencies, Ischemic Priapism, Fournier Gangrene & Acute Urinary Retention Navigator (`#/urology-care`)
+
 - **Drug-Induced Low-Flow (Ischemic) Priapism (`ischemic_priapism`)**:
   - *Pathophysiology & Differential*: Alpha-1 adrenergic blockade (*Trazodone*, typical/atypical antipsychotics) or sympathetic/nitric oxide dysregulation (*Cocaine*, PDE5 inhibitors, intracavernosal alprostadil) causes closed-compartment ischemia of the corpora cavernosa (`pO2 < 30 mmHg`, `pCO2 > 60 mmHg`, `pH < 7.25`), characterized by rigid, painful corpora cavernosa while the **glans penis and corpus spongiosum remain soft**.
   - *The 4-Hour Golden Window & Bedside Protocol*: Dorsal penile nerve or ring block using **1% Lidocaine WITHOUT Epinephrine** -> **Lateral 19G Butterfly Needle Aspiration** at the 2 o'clock or 10 o'clock position -> **Intracavernosal Phenylephrine** (pure alpha-1 agonist diluted to 100–500 mcg/mL, injecting 100–200 mcg q3–5min up to 1,000 mcg max) -> emergent **Distal Corporoglanular Shunt (Winter or T-Shunt)** if refractory. Oral pseudoephedrine/terbutaline are ineffective and must never delay aspiration/phenylephrine.
@@ -1271,6 +1287,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Distal Glans Salvage*: Guides osmotic reduction (D50W gauze) + manual reduction or dorsal slit for paraphimosis, string compression or cold-saline-irrigated ring cutting for entrapped metal constriction rings, and retrograde urethrography for blood at the urethral meatus.
 
 ### 50. Wave 52 (10-Agent Expansion): Otolaryngology & Upper Airway Navigator (`#/ent-care`) AND Dermatology, Xylazine Eschar & SCAR Navigator (`#/dermatology-care`)
+
 - **Track A — Otolaryngology, Deep Neck Space Infections, Thermal/Cryogenic Airway Injury & Intranasal Harm Reduction (`#/ent-care`)**:
   - *Ludwig Angina & Deep Neck Space Infections (`ludwig_angina_deep_neck`)*: Bilateral submandibular/sublingual/submental cellulitis from mandibular molars or neck injection; enforces the **Never Lay Supine for CT Rule** and guides upright Awake Fiberoptic Nasotracheal Intubation with surgical tracheostomy backup + IV Ampicillin-Sulbactam/Piperacillin-Tazobactam + Vancomycin + Dexamethasone.
   - *Lemierre Syndrome (`lemierre_ijv_thrombophlebitis`)*: Internal Jugular Vein septic thrombophlebitis (*Fusobacterium necrophorum* or *MRSA*) with septic pulmonary emboli; pairs MRSA coverage with beta-lactamase-stable anaerobic therapy.
@@ -1287,6 +1304,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Stimulant Formication ("Meth Mites") & Ecthyma (`stimulant_formication_excoriation`)*: Pairs trauma-informed validation with **Hydrocolloid Occlusive Barrier Dressings** and targeted topical/oral anti-staphylococcal therapy.
 
 ### 51. Wave 53 (10-Agent Expansion): Cardiovascular & Arrhythmia Emergencies Navigator (`#/cardiology-care`) AND Oncology, Palliative Care, Sickle Cell & Complex Cancer Pain on MOUD Navigator (`#/oncology-palliative`)
+
 - **Track A — Cardiovascular & Arrhythmia Emergencies, Stimulant ACS, Sodium-Channel QRS Blockade & Torsades Navigator (`#/cardiology-care`)**:
   - *Stimulant (Cocaine & Methamphetamine) ACS & Coronary Vasospasm (`stimulant_acs_vasospasm`)*: Enforces the **Stimulant Beta-Blocker Unopposed Alpha-1 Prohibition** (never give pure beta-blockers like metoprolol/propranolol during acute cocaine/methamphetamine toxicity) and guides **IV Benzodiazepines (lorazepam/diazepam) + Sublingual/IV Nitroglycerin + Calcium Channel Blockers (diltiazem/verapamil) or Phentolamine** + Aspirin + urgent PCI/reperfusion for STEMI.
   - *Cocaine, Cocaethylene, TCA, Diphenhydramine & Loperamide Sodium-Channel Blockade (`sodium_channel_qrs_blockade`)*: Identifies wide-QRS (`> 100–120 ms`), terminal R wave in aVR `> 3 mm`, and Brugada phenocopy; enforces immediate **8.4% Hypertonic Sodium Bicarbonate (1–2 mEq/kg IV push)** repeated until QRS narrows `< 100 ms` (target serum pH `7.45–7.55`), with **IV Lidocaine (Class Ib)** as second-line and strict prohibition of Class Ia/Ic antiarrhythmics.
@@ -1303,6 +1321,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Hospice & End-of-Life Harm Reduction (`hospice_eol_harm_reduction`)*: Enforces the **Transdermal Fentanyl Patch Heat Prohibition** (fever `> 38.5°C` or heating pads increase dermal absorption 300–400%), the **18–24h Subcutaneous Depot Rule** after patch removal, never cutting reservoir patches, and safe locked storage/FDA flush disposal.
 
 ### 52. Wave 54 (10-Agent Expansion): Maternal-Fetal & Obstetric Emergencies, NOWS Eat-Sleep-Console & Peripartum MOUD Navigator (`#/obstetric-emergencies`) AND Critical Care (ICU), Safe RSI Intubation, Fentanyl/Xylazine Analgosedation & Perioperative Anesthesia Navigator (`#/icu-perioperative`)
+
 - **Track A — Maternal-Fetal & Obstetric Emergencies, Peripartum MOUD Pharmacokinetics & NOWS Eat-Sleep-Console Navigator (`#/obstetric-emergencies`)**:
   - *Stimulant Hypertensive Crisis vs. Severe Preeclampsia, Eclampsia & Concealed Placental Abruption (`stimulant_preeclampsia_abruption`)*: Enforces the **ACOG 30-to-60 Minute Severe Hypertension Mandate** (`SBP >= 160` or `DBP >= 110 mmHg`: using Immediate-Release Oral Nifedipine or IV Hydralazine when acute cocaine/methamphetamine is active) + **IV Magnesium Sulfate (`4–6 g` load, then `1–2 g/hr`)**, and highlights that ultrasound misses 50–75% of placental abruptions while a pregnancy **Fibrinogen `< 200 mg/dL`** signals severe abruption-induced DIC.
   - *Third-Trimester CYP3A4 / UGT Induction & Split-Dose Buprenorphine / Methadone Protocol (`trimester_moud_pk_split_dosing`)*: Enforces the **ASAM/ACOG Never-Taper-MOUD in Pregnancy Rule** and guides splitting daily **Methadone (BID–QID) or Buprenorphine (TID–QID)** in the 2nd/3rd trimesters to counter 30–60% accelerated hepatic clearance, citing 2024 SAMHSA 42 CFR Part 8 take-home split-dosing authority.
@@ -1319,6 +1338,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *ICU Hyperthermic Emergencies (`hyperthermic_icu_crises_mhs_nms_serotonin`)*: Differentiates **Serotonin Syndrome** (ankle/ocular clonus -> stop Fentanyl/Tramadol, give Cyproheptadine), **NMS** (lead-pipe rigidity -> Dantrolene + Bromocriptine), **Sympathomimetic Crisis** (ice-water cooling + Benzos + Rocuronium), and **Malignant Hyperthermia** (spiking $\text{ETCO}_2$ -> Dantrolene `2.5 mg/kg` IV).
 
 ### 53. Wave 55 (10-Agent Expansion): Pediatric Accidental Exposures, Child Toxicology & Safe Storage Navigator (`#/pediatric-exposures`) AND Geriatric Addiction Medicine, Beers Criteria, Anticholinergic Cognitive Burden & Fall Risk Navigator (`#/geriatric-care`)
+
 - **Track A — Pediatric Accidental Exposures, Child Toxicology & Safe Storage Navigator (`#/pediatric-exposures`)**:
   - *Toddler Buprenorphine Film/Tablet & Methadone Ingestion (`buprenorphine_methadone_ingestion`)*: Young opioid-naive children face life-threatening, delayed respiratory arrest from even a single film or tablet; the ceiling effect seen in tolerant adults does NOT protect toddlers. Enforces the **Every Child Ingestion = ER + Extended Observation Rule** (at least 24h monitoring) and calls Poison Control (`1-800-222-1222`).
   - *Counterfeit Pill & Illicit Opioid/Fentanyl Exposure (`counterfeit_pill_illicit_fentanyl`)*: Debunks the myth of overdose from casual skin contact while providing urgent protocol for ingestion or inhalation; reinforces that standard 4 mg adult nasal spray naloxone is safe and appropriate for pediatric resuscitation.
@@ -1335,6 +1355,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - *Cognitive Impairment, Dementia & Caregiver-Supported MOUD Protocols (`cognitive_impairment_caregiver_moud`)*: Solves executive dysfunction and accidental double-dosing hazards via locked automated pill carousels, caregiver-designated administration, long-acting monthly subcutaneous buprenorphine depot (Sublocade), and updated 2024 SAMHSA 42 CFR Part 8 OTP accommodations.
 
 ### 54. Wave 56: Mobile Native Foundation (PWA & Haptics) & Native Capacitor Scaffolding (Android & iOS)
+
 - **Mobile Web Foundation & Safe Area Architecture (`public/styles.css`, `public/index.html`)**:
   - Implements CSS environment variables `--sat`, `--sar`, `--sab`, `--sal` (`env(safe-area-inset-*)`) ensuring seamless edge-to-edge layout, notch/Dynamic Island avoidance on modern iPhones, and navigation bar clearance on modern Android devices.
   - Upgrades viewport meta with `viewport-fit=cover` and configures Apple standalone PWA meta tags (`apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`, `apple-mobile-web-app-title`, `apple-touch-icon`, `format-detection: telephone=no`).
@@ -1360,6 +1381,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - Automatically mirrors web assets into native mobile containers (`android/app/src/main/assets/public` and `ios/App/App/public`) for complete zero-network offline launching.
 
 ### 55. Wave 57: Engineering & Healthcare Advisory Audit, FastAPI Core Models & Router, PostgreSQL DDL with Cryptographic Audit Trail, and FHIR Interoperability Pipeline
+
 - **Cross-Functional 5-Agent Advisory Audit (`docs/SYSTEM_AUDIT_AND_SCALE.md`)**:
   - Comprehensive multi-perspective evaluation spanning Backend Systems Architecture, 42 CFR Part 2 & HIPAA Security Compliance, Trauma-Informed Clinical UX, HL7 FHIR Interoperability, and Platform Strategy & Sustainable Governance.
   - Phase 1 deep dive presenting 15 substantive bottleneck and vulnerability analyses.
@@ -1386,6 +1408,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - 13/13 unit and integration tests passing covering models, state transitions, crisis triggers, encryption, and FHIR generation.
 
 ### 56. Wave 58: Operator Analytics & Privacy-Preserving Telemetry Dashboard (`#/admin`, `src/analytics.js`, `public/js/telemetry.js`, `public/js/views/adminMetrics.js`)
+
 - **Multi-Agent Engineered Private Telemetry Engine (`src/analytics.js`, `src/privacy.js`)**:
   - Privacy-preserving aggregate metric store designed under strict zero-PII, HIPAA, and 42 CFR Part 2 invariants.
   - Zero IP address storage, zero query parameter logging, zero cookie tracking, and native respect for browser Do Not Track (DNT) / Global Privacy Control (GPC).
@@ -1409,6 +1432,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - Service worker cache hash updated to `4cceba5907fa` (`339.8 KB gzip`, within `< 350 KB` budget).
 
 ### 57. Wave 59: UI/UX Redesign, Design System Modernization & Accessibility Overhaul (`public/styles.css`, `test/design-system.test.js`)
+
 - **"Clinical Calm & Dignified Access" Design System (`public/styles.css`)**:
   - Implemented a complete semantic color token overhaul inspired by trauma-informed healthcare principles:
     - Slate/Navy neutral foundations (`--bg: #f8fafc`, `--surface: #ffffff`, `--surface-2: #f1f5f9`, `--surface-3: #e2e8f0`, `--text: #0f172a`, `--muted: #475569`, `--border: #cbd5e1`, `--border-strong: #64748b`).
@@ -1434,15 +1458,19 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - All 1,840 tests passing across 254 suites; 20/20 build checks passing.
 
 ### 58. Wave 60: Clinical Burn Toxicology, Embeddable Widgets & Street Outreach Handouts (`#/burn-toxicology`)
+
 - Comprehensive chemical vs thermal burn staging, cyanide/CO inhalation toxicology, Rule of Nines Parkland resuscitation formula, and embeddable outreach widgets.
 
 ### 59. Wave 61: Encampment Medicine, Street Trauma Bleeding Control, and FHIR R4 Referral Syndication (`#/encampment-medicine`, `#/street-trauma`, `#/fhir-export`)
+
 - Field outreach protocols for unsheltered environments, tourniquet and hemostatic gauze wound management, and HL7 FHIR R4 Consent/ServiceRequest bundle syndication.
 
 ### 60. Wave 62: Toxic Alcohol Navigator, Mass Overdose SALT Triage, and Emergency MOUD Directives (`#/toxic-alcohols`, `#/mass-overdose-salt`, `#/emergency-moud-directives`)
+
 - Osmolal/anion gap triage for methanol and ethylene glycol with fomepizole/ethanol dosing, SALT mass-casualty triage algorithm for mass overdose incidents, and 72-hour emergency MOUD continuation protocols under 21 CFR § 1306.07(b).
 
 ### 61. Wave 63: NSTI LRINEC/POCUS Staging, Pediatric Ingestion Decontamination & Carceral MOUD Reentry Directives
+
 - **Complex Wound & Necrotizing Soft Tissue Infection (NSTI) Staging (`#/nsti-wound-staging`)**:
   - Full LRINEC lab calculator (0–13 pts), hard vs soft signs of necrotizing fasciitis, POCUS differential (cellulitis cobblestoning vs drainable abscess vs STAFF criteria), 4-stage xylazine ulcer continuum with tendon-sparing autolytic/collagenase protocols, and zero-PII SBAR clinical handoff notes.
 - **Pediatric & Adolescent Polysubstance Ingestion Decontamination Engine (`#/pediatric-ingestion-decon`)**:
@@ -1451,6 +1479,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - Booking-to-gate-release finite state machine (S0 to S5), 4 Reentry Pillars tracker (Section 1115 Medicaid enrollment, 24–48h community clinic warm handoff, 30-day bridge medication supply, gate-exit naloxone kit distribution), Title II ADA statutory non-discrimination mandates, and mitigation of the post-release 40x–129x overdose mortality spike.
 
 ### 62. Wave 64: Extreme Weather Disaster MOUD Continuity, Stimulant Movement Disorders & Opportunistic Fungal Care
+
 - **Disaster MOUD Continuity, Wildfire Smoke & Climate Resilience Navigator (`#/disaster-moud-climate`)**:
   - SAMHSA 42 CFR Part 8 disaster flexibilities (up to 28-day take-home doses for stable patients, 14 days for acute), interstate guest dosing protocols, mobile medical unit (MMU) muster redeployment, EPA PM2.5 wildfire smoke harm reduction (N95 filtration vs hazardous wet bandanas), low-cost DIY Corsi-Rosenthal filtration, and floodwater leptospirosis / puncture tetanus triage.
 - **Stimulant-Induced Movement Disorders, Choreoathetosis & Acute Dystonia / EPS Decision Engine (`#/movement-disorders-eps`)**:
@@ -1459,6 +1488,7 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - IDSA guidelines for Blastomycosis (verrucous plaques, lethal corticosteroid monotherapy hazard), Coccidioidomycosis (Valley Fever), Histoplasmosis, and angioinvasive molds (Mucorales black eschars). Disc-sparing fungal spondylitis differential and lethal Azole-Methadone CYP3A4 inhibition (proactive 25–50% methadone dose reductions) and multiplicative QTc prolongation monitoring.
 
 ### 63. Wave 65: Inhalant Neurotoxicity, Illicit Adulterants/Heavy Metals & Peri-Overdose Pulmonary Syndromes
+
 - **Inhalant, Volatile Solvent & Nitrous Oxide Neuropathy Navigator (`#/inhalant-toxicology`)**:
   - Irreversible oxidation of cob(I)alamin by N2O (Galaxy Gas 640g cylinders), inactivation of methionine synthase, subacute combined degeneration (SCD) of dorsal/lateral columns, inverted Lhermitte sign, and high-risk hyperhomocysteinemia VTE.
   - Fatal contraindication gatekeeping: Folic acid prohibition before high-dose parenteral B12 (folate trap exacerbation), epinephrine prohibition in hydrocarbon sudden sniffing death syndrome (myocardial sensitization), and potassium repletion before sodium bicarbonate in toluene distal RTA.

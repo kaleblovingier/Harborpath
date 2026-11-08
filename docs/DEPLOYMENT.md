@@ -2,14 +2,14 @@
 
 ## Current setup
 
-- **Host:** Vercel. The live site is https://harborpath.vercel.app (per the README). `vercel.json` uses the Node preset and serves `server.js` as a function. Static files get the same security headers as the server, and a test keeps the two header sets identical.
+- **Host:** Vercel. The live site is <https://harborpath.vercel.app> (per the README). `vercel.json` uses the Node preset and serves `server.js` as a function. Static files get the same security headers as the server, and a test keeps the two header sets identical.
 - **Dependencies:** none at runtime, and no build step. `data/*.json` files are bundled through literal `new URL()` reads in `src/data.js`. A new dataset must be added there the same way, as `virtual-providers.json` was, or Vercel will not ship it.
 - **CI:** GitHub Actions runs `npm test` on Node 20 and 22 for pushes to `main` and for pull requests.
 
 ## Environment variables
 
 | Var | Default | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `PORT` | `3000` | |
 | `HOST` | `0.0.0.0` | |
 | `TRUST_PROXY` | off | The number of proxies in front of the app that append to `X-Forwarded-For`: `1` for one load balancer, `2` for a CDN plus a load balancer. The rate limiter keys on the entry that many places from the right; IPv6 clients are keyed by /64. Leave it unset when nothing sits in front of the app. It is automatic on Vercel. |

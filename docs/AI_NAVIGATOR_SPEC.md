@@ -1,9 +1,11 @@
 # Privacy-First Guided & Conversational Navigator Spec for HarborPath
 
 ## Goal
+
 Make HarborPath’s clinical and harm-reduction tools accessible to more individuals through a step-by-step and conversational guided navigator (`public/js/views/guidedNavigator.js`) that routes people to real treatment providers, withdrawal safety guidance, evidence-based medications, and 24/7 crisis lines while preserving every HarborPath privacy guarantee.
 
 ## Non-Negotiable Constraints & Invariants
+
 - **Strict CSP (`default-src 'self'`)**: Zero third-party origins, zero external LLM APIs, and zero network calls from the guided navigator.
 - **100% Client-Side Deterministic Triage**: All free-text keyword analysis, symptom scoring, and ASAM level-of-care synthesis run deterministically in browser RAM by composing existing pure functions.
 - **No Persistent Storage or Transmission of Inputs**: Nothing typed or selected in `guidedNavigator.js` is sent to any server or written to `localStorage`, `sessionStorage`, `indexedDB`, or cookies.
@@ -58,6 +60,7 @@ flowchart TD
      - Population helpers from `public/js/views/populationHelpers.js` (`recommendForPregnancy`, `recommendForYouth`, `recommendForJusticeInvolved`, `recommendForOlderAdults`, `recommendForStimulants`, `recommendForXylazine`, `recommendForCoOccurring`)
      - Medication references from `public/js/views/medications.js` (`MEDICATIONS`)
    - Returns:
+
      ```js
      {
        crisisIntercept,
@@ -93,12 +96,13 @@ flowchart TD
 ## Implementation Options (Ranked by Privacy)
 
 | Rank | Approach | Privacy | Capability | Status |
-|------|----------|---------|------------|--------|
+| ------ | ---------- | --------- | ------------ | -------- |
 | 1 | **Deterministic Client-Side Clinical Composition (`guidedNavigator.js`)** | **Highest** | **High clinical precision, zero hallucination risk** | **Implemented MVP** |
 | 2 | Fully on-device WebLLM / Transformers.js | High | Moderate | Future optional layer; stays inside CSP only if model is bundled/self-hosted |
 | 3 | External Cloud LLM API | Lowest | High | **Rejected** — violates `default-src 'self'` CSP and HarborPath privacy model |
 
 ## Code Touchpoints
+
 - `public/js/views/guidedNavigator.js` — deterministic red-flag interceptor, guided triage engine, RAM state manager, and interactive view
 - `public/js/views/navigator.js` — pure clinical calculators (`scoreOpioidWithdrawal`, `scoreAlcoholSedativeRisk`, `evaluateTransitionRisk`, `evaluateAsamCare`)
 - `public/js/views/populationHelpers.js` — population-specific SAMHSA code recommenders

@@ -32,7 +32,7 @@ public/js/match/engine.js  (rankMatches: pure, runs on device)
 Two workstreams ran as genuinely parallel background agents: Swarm A/E research and the Swarm H audit. The rest were done sequentially by the orchestrator, because they edit the same files. In the table, ✅ means done and verified; ◐ means partial, with what remains written out.
 
 | Swarm | Mission | Lead | Delivered | Status |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | A: Provider intelligence | Provider data model and ingestion | Research agent | Virtual-provider registry schema, validator, review gate, and 6 researched records ([PROVIDER_DATA.md](PROVIDER_DATA.md)) | ◐ Records are held in `pending-review` because the sources were read only through search excerpts |
 | B: Insurance & affordability | Coverage-aware ranking | Orchestrator | `assessCoverage()`: five evidence tiers, affordability flags, plan-verification prompts, insurer question script | ✅ |
 | C: Location & availability | Geographic search | Orchestrator (existing app) | Radius 5–250 mi plus a custom distance, statewide telehealth, virtual programs filtered by state; list view | ◐ No map view (see below) |
@@ -49,7 +49,7 @@ Two workstreams ran as genuinely parallel background agents: Swarm A/E research 
 Four new swarms ran in parallel: two as isolated git worktrees that the orchestrator reviewed and merged, and two as read-only auditors. The orchestrator also found and fixed two engine logic errors of its own: Medicaid acceptance is state-specific, and facility grant funding does not mean lower cost for the person.
 
 | Swarm | Mission | Mode | Outcome |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | K: Clinical safety | Fix audit findings 2–5 | Worktree, merged after diff review | ✅ Self-report framing, crisis-first card, prescriber-only warning, no uncited percentages |
 | L: Privacy & compliance | Fix findings 6–8, 14 | Worktree, merged; locale conflicts resolved | ✅ Honest privacy page, consumer health data notice, filters kept out of URLs, legacy claim removed |
 | H2: Adversarial security | Break round-1 code | Read-only, with repro scripts | ✅ 7 findings (2 Medium), all fixed with tests |
@@ -69,7 +69,7 @@ fromVirtualProvider(registryRecord) -> Candidate
 **Profile.** Every field is optional, and unknown values are dropped by `normalizeProfile`:
 
 | Field | Values |
-|---|---|
+| --- | --- |
 | `helpWith` | `substance` \| `mental-health` \| `both` |
 | `substances[]` | `opioid`, `alcohol`, `stimulant`, `benzodiazepine`, `cannabis`, `other` |
 | `settings[]` | `detox`, `residential`, `inpatient`, `php`, `iop`, `outpatient`, `medication`, `counseling`, `psychiatry`, `recovery-support` |
@@ -92,7 +92,7 @@ fromVirtualProvider(registryRecord) -> Candidate
 **Coverage evidence:**
 
 | Tier | Evidence required |
-|---|---|
+| --- | --- |
 | `confirmed` | A record carries `networkVerifications: [{ payer, source, verifiedAt, state? }]`. No current data source supplies this. |
 | `provider-reported` | A SAMHSA payment code (`MD`, `MC`, `PI`, `TRICARE`, `VAF`, `ITU`). For online programs, the program's own sourced claim for the visitor's state. For uninsured visitors, a listed free, sliding-fee, assistance, or public-funding option. |
 | `possible` | An alternative route: a state-financed plan (`SI`), sliding fee or assistance when the visitor's payer isn't listed, or self-pay. |
