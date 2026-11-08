@@ -210,7 +210,7 @@ export function assessCoverage(profile, c) {
   const today = new Date();
   const confirmed = c.networkVerifications.find((v) => {
     if (v?.payer !== cov || typeof v.source !== 'string' || !v.source.trim()
-      || typeof v.verifiedAt !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(v.verifiedAt)
+      || typeof v.verifiedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v.verifiedAt)
       || (v.state && profile.state && v.state !== profile.state)) return false;
     const date = new Date(v.verifiedAt + 'T00:00:00Z');
     const age = today.getTime() - date.getTime();
