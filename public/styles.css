@@ -12424,6 +12424,795 @@ body.sensory-mode-active [tabindex]:focus-visible {
   margin-top: 0.75rem;
 }
 
+/* ==========================================================================
+   Wave 61: Encampment Medicine, Street Trauma, and FHIR Export Modules
+   ========================================================================== */
+
+/* Track A: Encampment Medicine */
+.encampment-medicine-view {
+  padding: 1.5rem 1rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.encampment-hero {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.encampment-kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary, #0d9488);
+  margin-bottom: 0.4rem;
+}
+
+.encampment-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  line-height: 1.25;
+}
+
+.encampment-subtitle {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 900px;
+}
+
+.encampment-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .encampment-layout-grid {
+    grid-template-columns: 1.15fr 1.35fr;
+  }
+}
+
+.encampment-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.encampment-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.35rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.encampment-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.35rem;
+}
+
+.encampment-card-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.encampment-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.encampment-radio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background: #f8fafc;
+}
+
+.encampment-radio-card:hover {
+  border-color: #0d9488;
+  background: #f0fdfa;
+}
+
+.encampment-radio-card.active {
+  border-color: #0d9488;
+  background: #f0fdfa;
+  box-shadow: 0 0 0 1px #0d9488;
+}
+
+.encampment-radio-card input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+.encampment-radio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.encampment-radio-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+}
+
+.encampment-radio-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.encampment-vector-info {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-left: 1.65rem;
+}
+
+.encampment-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.encampment-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: #1e293b;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.encampment-checkbox-label input[type="checkbox"] {
+  margin-top: 0.15rem;
+}
+
+.encampment-alert-urgent {
+  background: #fef2f2;
+  border: 1.5px solid #ef4444;
+  border-radius: 10px;
+  padding: 1.15rem;
+}
+
+.encampment-alert-title {
+  color: #b91c1c;
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+
+.encampment-alert-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #991b1b;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.encampment-tx-card {
+  background: #ffffff;
+  border-left: 4px solid #0d9488;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.75rem;
+}
+
+.encampment-tx-card.urgent {
+  border-left-color: #dc2626;
+}
+
+.encampment-tx-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.4rem;
+}
+
+.encampment-tx-desc {
+  font-size: 0.88rem;
+  color: #334155;
+  margin: 0 0 0.5rem;
+  line-height: 1.45;
+}
+
+.encampment-tx-regimen {
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  font-family: monospace;
+  font-size: 0.84rem;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  line-height: 1.4;
+}
+
+.encampment-tx-notes {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.encampment-pearl-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+}
+
+.encampment-pearl-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.35rem;
+}
+
+.encampment-pearl-text {
+  font-size: 0.84rem;
+  color: #1e3a8a;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.encampment-sbar-block {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.encampment-sbar-pre {
+  margin: 0;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.encampment-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+/* Track B: Street Trauma & Bleeding Control */
+.street-trauma-view {
+  padding: 1.5rem 1rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.trauma-hero {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.trauma-kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #dc2626;
+  margin-bottom: 0.4rem;
+}
+
+.trauma-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  line-height: 1.25;
+}
+
+.trauma-subtitle {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 900px;
+}
+
+.trauma-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .trauma-layout-grid {
+    grid-template-columns: 1.15fr 1.35fr;
+  }
+}
+
+.trauma-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.trauma-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.35rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.trauma-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.35rem;
+}
+
+.trauma-card-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.trauma-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.trauma-radio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background: #f8fafc;
+}
+
+.trauma-radio-card:hover {
+  border-color: #dc2626;
+  background: #fff5f5;
+}
+
+.trauma-radio-card.active {
+  border-color: #dc2626;
+  background: #fff5f5;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.trauma-radio-card input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+.trauma-radio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trauma-radio-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+}
+
+.trauma-radio-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.trauma-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.trauma-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: #1e293b;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.trauma-checkbox-label input[type="checkbox"] {
+  margin-top: 0.15rem;
+}
+
+.trauma-alert-urgent {
+  background: #fef2f2;
+  border: 1.5px solid #dc2626;
+  border-radius: 10px;
+  padding: 1.15rem;
+}
+
+.trauma-alert-title {
+  color: #991b1b;
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+
+.trauma-alert-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #991b1b;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.trauma-action-card {
+  background: #ffffff;
+  border-left: 4px solid #dc2626;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.75rem;
+}
+
+.trauma-action-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+}
+
+.trauma-steps-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.35rem;
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.trauma-field-rule-box {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+}
+
+.trauma-field-rule-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 0.35rem;
+}
+
+.trauma-field-rule-text {
+  font-size: 0.84rem;
+  color: #78350f;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.trauma-prohibitions-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+}
+
+.trauma-prohibitions-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #b91c1c;
+  margin: 0 0 0.35rem;
+}
+
+.trauma-prohibitions-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #991b1b;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.trauma-sbar-block {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.trauma-sbar-pre {
+  margin: 0;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.trauma-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+/* Track C: FHIR R4 Interoperability Export */
+.fhir-export-view {
+  padding: 1.5rem 1rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fhir-hero {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.fhir-kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary, #0d9488);
+  margin-bottom: 0.4rem;
+}
+
+.fhir-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  line-height: 1.25;
+}
+
+.fhir-subtitle {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 900px;
+}
+
+.fhir-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .fhir-layout-grid {
+    grid-template-columns: 1.05fr 1.45fr;
+  }
+}
+
+.fhir-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fhir-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.35rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.fhir-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.35rem;
+}
+
+.fhir-card-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.fhir-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.95rem;
+}
+
+.fhir-form-label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.fhir-select,
+.fhir-input,
+.fhir-textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.fhir-select:focus,
+.fhir-input:focus,
+.fhir-textarea:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+}
+
+.fhir-textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.fhir-help-text {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.fhir-flags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.fhir-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: #1e293b;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.fhir-checkbox-label input[type="checkbox"] {
+  margin-top: 0.15rem;
+}
+
+.fhir-consent-notice {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+}
+
+.fhir-consent-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 0.35rem;
+}
+
+.fhir-consent-text {
+  font-size: 0.82rem;
+  color: #1e3a8a;
+  margin: 0 0 0.5rem;
+  line-height: 1.45;
+}
+
+.fhir-consent-code {
+  font-family: monospace;
+  font-size: 0.76rem;
+  background: #dbeafe;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.fhir-preview-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fhir-tab-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fhir-tab-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+
+.fhir-tab-btn.active {
+  background: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488;
+}
+
+.fhir-summary-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.fhir-stat-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.fhir-code-container {
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  max-height: 520px;
+}
+
+.fhir-code-pre {
+  margin: 0;
+}
+
+.fhir-code-block {
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #f1f5f9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.fhir-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
 /* Print Stylesheet Overrides */
 @media print {
   body {
@@ -12439,6 +13228,9 @@ body.sensory-mode-active [tabindex]:focus-visible {
   .burn-btn-copy,
   .burn-btn-reset,
   .btn-copy-embed,
+  .encampment-actions,
+  .trauma-actions,
+  .fhir-actions,
   .no-print {
     display: none !important;
   }

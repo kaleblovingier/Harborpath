@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'encampment-medicine': () => import('./views/encampmentMedicine.js').then((m) => {
+    viewCache.set('encampment-medicine', m.encampmentMedicineView);
+    routeResets.set('encampment-medicine', m.resetEncampmentMedicineState);
+    return m.encampmentMedicineView;
+  }),
+  'street-trauma': () => import('./views/streetTrauma.js').then((m) => {
+    viewCache.set('street-trauma', m.streetTraumaView);
+    routeResets.set('street-trauma', m.resetStreetTraumaState);
+    return m.streetTraumaView;
+  }),
+  'fhir-export': () => import('./views/fhirExport.js').then((m) => {
+    viewCache.set('fhir-export', m.fhirExportView);
+    routeResets.set('fhir-export', m.resetFhirExportState);
+    return m.fhirExportView;
+  }),
   'burn-toxicology': () => import('./views/burnToxicology.js').then((m) => {
     viewCache.set('burn-toxicology', m.burnToxicologyView);
     routeResets.set('burn-toxicology', m.resetBurnToxicologyState);
@@ -422,6 +437,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'encampment-medicine': () => t('route.encampmentMedicine', 'Encampment medicine, street zoonoses & vector-borne disease navigator'),
+  'street-trauma': () => t('route.streetTrauma', 'Street trauma, tourniquets & life-threatening hemorrhage control navigator'),
+  'fhir-export': () => t('route.fhirExport', 'FHIR R4 referral & EHR interoperability syndication generator'),
   'burn-toxicology': () => t('route.burnToxicology', 'Burn resuscitation, toxic chemical exposure & inhalation injury navigator'),
   embed: () => t('route.embed', 'Embeddable public health widgets & partner badges'),
   outreach: () => t('route.outreach', 'Community street outreach materials & printable pocket cards'),
@@ -528,6 +546,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('encampment-medicine'),
+    preloadRoute('street-trauma'),
+    preloadRoute('fhir-export'),
     preloadRoute('burn-toxicology'),
     preloadRoute('embed'),
     preloadRoute('outreach'),

@@ -10,7 +10,7 @@ import esEvidence from './es-evidence.js';
 import esSafety from './es-safety.js';
 import esRecovery from './es-recovery.js';
 
-export default {
+export const es = {
   // ---------------------------------------------------------------- Sensory mode & Emergency drawer
   'sensory.enabled': 'Modo sensorial calmante activado. Movimiento y contraste suavizados.',
   'sensory.disabled': 'Modo sensorial calmante desactivado.',
@@ -2064,6 +2064,9 @@ export default {
   'route.burnToxicology': 'Navegador de reanimación de quemaduras, químicos tóxicos y lesión inhalatoria',
   'route.embed': 'Widgets integrables de salud pública y sellos de colaboradores',
   'route.outreach': 'Materiales para promotores comunitarios en calle y tarjetas de bolsillo imprimibles',
+  'route.encampmentMedicine': 'Navegador de medicina en campamentos, zoonosis callejeras y enfermedades transmitidas por vectores',
+  'route.streetTrauma': 'Navegador de trauma en calle, torniquetes y control de hemorragias potencialmente mortales',
+  'route.fhirExport': 'Generador de derivación y sindicación de interoperabilidad EHR en FHIR R4',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 
@@ -2076,3 +2079,5 @@ export default {
   ...esSafety,
   ...esRecovery,
 };
+
+export default es;

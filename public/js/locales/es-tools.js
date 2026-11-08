@@ -220,4 +220,10 @@ export default {
   'tools.item.embed.description': 'Genere herramientas iframe sin cookies con sandbox aislado e insignias vectoriales SVG para departamentos de salud municipal, clínicas y coaliciones de reducción de daños.',
   'tools.item.outreach.title': 'Materiales para promotores comunitarios en calle y tarjetas de bolsillo',
   'tools.item.outreach.description': 'Guías de referencia imprimibles en formato bolsillo para promotores en calle: naloxona en 5 pasos, dilución 10:1 de tiras reactivas, guion del Buen Samaritano y derechos MOUD en hospital.',
+  'tools.item.encampment-medicine.title': 'Medicina en campamentos, zoonosis callejeras y enfermedades vectoriales',
+  'tools.item.encampment-medicine.description': 'Protocolos de campo NHCHC y CDC para fiebre de las trincheras por Bartonella, tifo murino, leptospirosis, sarna costrosa y mordeduras de animales con profilaxis antirrábica y antitetánica.',
+  'tools.item.street-trauma.title': 'Trauma en calle, torniquetes y control de hemorragias graves',
+  'tools.item.street-trauma.description': 'Directivas de campo ACS Stop the Bleed y CoTCCC: aplicación de torniquete con molinete, empaquetamiento de heridas en zonas de unión con gasa hemostática y advertencias sobre doble hueso.',
+  'tools.item.fhir-export.title': 'Generador de derivaciones FHIR R4 e interoperabilidad EHR',
+  'tools.item.fhir-export.description': 'Genere paquetes estandarizados y privados HL7 FHIR R4 US Core (ServiceRequest, Consent, HealthcareService) con cláusulas estatutarias 42 CFR Parte 2 y cero PII.',
 };

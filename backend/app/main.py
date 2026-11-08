@@ -119,5 +119,10 @@ async def directory_summary():
             "zero_pii_posture": "Client-side pseudonym tokenization; zero persistent patient identifiers.",
             "confidentiality_standard": "42 CFR Part 2 & HIPAA 45 CFR § 164.522",
             "syndication": "Sandboxed embeddable iframe widgets & SVG partner seals enabled."
+        },
+        "capabilities": {
+            "interoperability": "HL7 FHIR R4 US Core ServiceRequest & 42 CFR Part 2 Consent syndication (JSON & SMART Bulk NDJSON)",
+            "field_medicine": "ACS Stop the Bleed hemorrhage control & NHCHC/CDC encampment medicine protocols",
+            "syndication": "Zero-cookie iframe widgets & partner seals"
         }
     }

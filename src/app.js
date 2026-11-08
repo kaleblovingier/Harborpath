@@ -414,6 +414,11 @@ export function createApp({
               compliance: '42 CFR Part 2 and HIPAA 45 CFR § 164.522 privacy-by-design.',
               syndication: 'Open-access public health iframe widgets and verified partner seals supported.',
             },
+            capabilities: {
+              interoperability: 'HL7 FHIR R4 US Core ServiceRequest & 42 CFR Part 2 Consent syndication (JSON and SMART Bulk NDJSON).',
+              fieldMedicine: 'Street trauma bleeding control (ACS Stop the Bleed) and encampment zoonoses navigator (NHCHC/CDC).',
+              widgets: 'Zero-cookie iframe tools and SVG partner seals for municipal departments and clinics.',
+            },
           });
         }
         case '/api/freshness':
