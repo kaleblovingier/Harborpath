@@ -2061,6 +2061,9 @@ export default {
   'pediatric.sbarTitle': '4. Resumen SBAR para Toxicología o Urgencias (Cero-PII en RAM)',
 
   'route.geriatricCare': 'Navegador de medicina de adicciones en geriatría, criterios Beers, carga anticolinérgica y riesgo de caídas',
+  'route.burnToxicology': 'Navegador de reanimación de quemaduras, químicos tóxicos y lesión inhalatoria',
+  'route.embed': 'Widgets integrables de salud pública y sellos de colaboradores',
+  'route.outreach': 'Materiales para promotores comunitarios en calle y tarjetas de bolsillo imprimibles',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 

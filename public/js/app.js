@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'burn-toxicology': () => import('./views/burnToxicology.js').then((m) => {
+    viewCache.set('burn-toxicology', m.burnToxicologyView);
+    routeResets.set('burn-toxicology', m.resetBurnToxicologyState);
+    return m.burnToxicologyView;
+  }),
+  embed: () => import('./views/embedBuilder.js').then((m) => {
+    viewCache.set('embed', m.embedBuilderView);
+    routeResets.set('embed', m.resetEmbedBuilderState);
+    return m.embedBuilderView;
+  }),
+  outreach: () => import('./views/outreachMaterials.js').then((m) => {
+    viewCache.set('outreach', m.outreachMaterialsView);
+    routeResets.set('outreach', m.resetOutreachMaterialsState);
+    return m.outreachMaterialsView;
+  }),
   admin: () => import('./views/adminMetrics.js').then((m) => {
     viewCache.set('admin', m.adminMetricsView);
     routeResets.set('admin', m.resetAdminMetricsState);
@@ -407,6 +422,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'burn-toxicology': () => t('route.burnToxicology', 'Burn resuscitation, toxic chemical exposure & inhalation injury navigator'),
+  embed: () => t('route.embed', 'Embeddable public health widgets & partner badges'),
+  outreach: () => t('route.outreach', 'Community street outreach materials & printable pocket cards'),
   admin: () => 'Operator Analytics & Platform Telemetry',
   'pediatric-exposures': () => t('route.pediatricExposures', 'Pediatric accidental exposures, child toxicology & safe storage navigator'),
   'geriatric-care': () => t('route.geriatricCare', 'Geriatric addiction medicine, Beers Criteria, anticholinergic cognitive burden & fall risk navigator'),
@@ -510,6 +528,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('burn-toxicology'),
+    preloadRoute('embed'),
+    preloadRoute('outreach'),
     preloadRoute('admin'),
     preloadRoute('pediatric-exposures'),
     preloadRoute('geriatric-care'),

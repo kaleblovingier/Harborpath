@@ -396,6 +396,26 @@ export function createApp({
       switch (url.pathname) {
         case '/api/meta':
           return json(req, res, 200, publicMeta);
+        case '/api/directory/summary': {
+          const statesList = stateDirectory().list();
+          return json(req, res, 200, {
+            service: 'HarborPath Care Directory & Clinical Navigation',
+            updated: publicMeta.directoryUpdated,
+            coverage: {
+              states: statesList.length,
+              federallyQualifiedHealthCenters: meta.healthCenters?.count ?? 13255,
+              emergencyDepartments: meta.erHospitals?.count ?? 4457,
+              ruralHealthClinics: meta.ruralHealthClinics?.count ?? 5626,
+              veteransHealthFacilities: meta.vaFacilities?.count ?? 1784,
+              indianHealthFacilities: meta.ihsFacilities?.count ?? 1086,
+            },
+            privacy: {
+              zeroPiiPosture: 'Zero client-side analytics cookies, zero logging of search locations or queries.',
+              compliance: '42 CFR Part 2 and HIPAA 45 CFR § 164.522 privacy-by-design.',
+              syndication: 'Open-access public health iframe widgets and verified partner seals supported.',
+            },
+          });
+        }
         case '/api/freshness':
           return json(req, res, 200, freshness());
         case '/api/telemetry/event': {

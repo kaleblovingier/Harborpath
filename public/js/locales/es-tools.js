@@ -214,4 +214,10 @@ export default {
   'tools.item.weather-care.description': 'Protocolos basados en evidencia para hipotermia accidental (Estadios Suizos I–IV), regla de RCP «nadie está muerto hasta estar caliente», preservación tisular en congelación, cuidado de pie de trinchera y enfriamiento de emergencia en golpe de calor.',
   'tools.item.ketamine-care.title': 'Reducción de daños de ketamina y navegador de uropatía',
   'tools.item.ketamine-care.description': 'Pautas clínicas para la uropatía por ketamina (vejiga K, estadios 1 a 4), cólicos biliares (K-cramps), protección antioxidante con EGCG y seguridad ante ahogamientos.',
+  'tools.item.burn-toxicology.title': 'Navegador de reanimación de quemaduras, químicos tóxicos y lesión inhalatoria',
+  'tools.item.burn-toxicology.description': 'Fórmula de reanimación ABA (2 mL/kg/% SCTQ), gluconato de calcio para ácido fluorhídrico, amoníaco anhidro, quemaduras flash por BHO, inhalación de monóxido de carbono/cianuro y escaldaduras por SHC.',
+  'tools.item.embed.title': 'Widgets integrables de salud pública y sellos de colaboradores',
+  'tools.item.embed.description': 'Genere herramientas iframe sin cookies con sandbox aislado e insignias vectoriales SVG para departamentos de salud municipal, clínicas y coaliciones de reducción de daños.',
+  'tools.item.outreach.title': 'Materiales para promotores comunitarios en calle y tarjetas de bolsillo',
+  'tools.item.outreach.description': 'Guías de referencia imprimibles en formato bolsillo para promotores en calle: naloxona en 5 pasos, dilución 10:1 de tiras reactivas, guion del Buen Samaritano y derechos MOUD en hospital.',
 };
