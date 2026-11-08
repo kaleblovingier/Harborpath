@@ -205,8 +205,18 @@ export function assessCoverage(profile, c) {
   if (hasAny(codes, PUBLIC_FUNDING)) affordability.push('public-funding');
   if (c.selfPay?.available && c.selfPay?.price) affordability.push('published-self-pay');
 
-  const confirmed = c.networkVerifications.find((v) => v?.payer === cov && v?.source && v?.verifiedAt
-    && (!v.state || !profile.state || v.state === profile.state));
+  // Never present an expired, future-dated, or malformed network attestation as confirmed.
+  // Verification is time-sensitive and must be rechecked at least annually.
+  const today = new Date();
+  const confirmed = c.networkVerifications.find((v) => {
+    if (v?.payer !== cov || typeof v.source !== 'string' || !v.source.trim()
+      || typeof v.verifiedAt !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(v.verifiedAt)
+      || (v.state && profile.state && v.state !== profile.state)) return false;
+    const date = new Date(v.verifiedAt + 'T00:00:00Z');
+    const age = today.getTime() - date.getTime();
+    return Number.isFinite(age) && age >= 0 && age <= STALE_AFTER_DAYS * 86400000
+      && date.toISOString().slice(0, 10) === v.verifiedAt;
+  });
   if (confirmed) {
     reasons.push(reason('coverage.confirmed', { source: confirmed.source, date: confirmed.verifiedAt }));
     return { tier: 'confirmed', score: 1, payerCodes: [], affordability, reasons, verify };
