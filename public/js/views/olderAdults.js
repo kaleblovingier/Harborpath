@@ -1033,6 +1033,19 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
   );
   root.append(gabapentinoidRenalNotice);
 
+  const geriatricCareNotice = h('div', { class: 'card banner-tip mt-3', role: 'note' },
+    h('p', null,
+      h('strong', null, isEs ? '¿Polifarmacia, Criterios Beers, Carga Anticolinérgica (ACB) o Prevención de Caídas? ' : 'Polypharmacy, Beers Criteria, Anticholinergic Burden (ACB) or Fall Prevention? '),
+      h('span', null, isEs
+        ? 'Criterios AGS Beers 2023 sobre sedantes y opioides, calculadora de puntaje ACB, farmacocinética del TUDO, prevención de caídas STEADI, OIC severo y apoyo al cuidador: '
+        : 'AGS Beers Criteria 2023 sedative/opioid warnings, ACB score calculator, geriatric MOUD pharmacokinetics, STEADI fall prevention, severe OIC, and caregiver-supported dosing: '),
+      h('a', { href: '#/geriatric-care' }, isEs
+        ? 'Abrir Navegador de Medicina de Adicciones en Geriatría y Criterios Beers →'
+        : 'Open Geriatric Addiction Medicine, Beers Criteria & Fall Navigator →')
+    )
+  );
+  root.append(geriatricCareNotice);
+
   // Crisis line footer
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },

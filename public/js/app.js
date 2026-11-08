@@ -57,6 +57,16 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'pediatric-exposures': () => import('./views/pediatricExposures.js').then((m) => {
+    viewCache.set('pediatric-exposures', m.pediatricExposuresView);
+    routeResets.set('pediatric-exposures', m.resetPediatricState);
+    return m.pediatricExposuresView;
+  }),
+  'geriatric-care': () => import('./views/geriatricCare.js').then((m) => {
+    viewCache.set('geriatric-care', m.geriatricCareView);
+    routeResets.set('geriatric-care', m.resetGeriatricState);
+    return m.geriatricCareView;
+  }),
   'icu-perioperative': () => import('./views/icuPerioperative.js').then((m) => {
     viewCache.set('icu-perioperative', m.icuPerioperativeView);
     routeResets.set('icu-perioperative', m.resetIcuState);
@@ -391,6 +401,8 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'pediatric-exposures': () => t('route.pediatricExposures', 'Pediatric accidental exposures, child toxicology & safe storage navigator'),
+  'geriatric-care': () => t('route.geriatricCare', 'Geriatric addiction medicine, Beers Criteria, anticholinergic cognitive burden & fall risk navigator'),
   'icu-perioperative': () => t('route.icuPerioperative', 'Critical care (ICU), safe RSI intubation, fentanyl/xylazine sedation & perioperative MOUD navigator'),
   'obstetric-emergencies': () => t('route.obstetricEmergencies', 'Obstetric emergencies, 3rd-trimester split MOUD, Cesarean analgesia & Eat-Sleep-Console navigator'),
   'oncology-palliative': () => t('route.oncologyPalliative', 'Oncology, palliative care, sickle cell crisis & complex cancer pain on MOUD navigator'),
@@ -491,6 +503,8 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('pediatric-exposures'),
+    preloadRoute('geriatric-care'),
     preloadRoute('icu-perioperative'),
     preloadRoute('obstetric-emergencies'),
     preloadRoute('oncology-palliative'),

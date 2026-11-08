@@ -1488,6 +1488,21 @@ function renderHandoffTab(localState, isEs, isClinician) {
     );
     container.appendChild(icuCardioLink);
 
+    const pedGeriatricLink = h('div', { class: 'card mt-2' },
+      h('h3', null, isEs ? 'Toxicología en Edades Extremas: Ingestión Pediátrica y Criterios Beers en Geriatría' : 'Extreme Ages Toxicology: Pediatric Ingestions & Geriatric Beers Criteria'),
+      h('p', { class: 'fine' }, isEs
+        ? 'Para ingestión de buprenorfina/metadona en niños pequeños, naloxona pediátrica, comestibles de cannabis, o polifarmacia Beers 2023, carga anticolinérgica (ACB) y prevención de caídas: '
+        : 'For toddler buprenorphine/methadone ingestions, pediatric naloxone, cannabis edibles, or geriatric Beers 2023 polypharmacy, anticholinergic burden (ACB), and fall prevention: '),
+      h('a', { href: '#/pediatric-exposures' }, isEs
+        ? 'Abrir Navegador de Exposiciones Pediátricas y Almacenamiento Seguro →'
+        : 'Open Pediatric Accidental Exposures Navigator →'),
+      h('span', null, ' · '),
+      h('a', { href: '#/geriatric-care' }, isEs
+        ? 'Abrir Navegador de Medicina de Adicciones en Geriatría y Criterios Beers →'
+        : 'Open Geriatric Addiction Medicine & Beers Navigator →')
+    );
+    container.appendChild(pedGeriatricLink);
+
   } else {
     // Bystander Mode 911 Dispatch Script
     const bystanderCard = h('div', { class: 'card mb-3' });

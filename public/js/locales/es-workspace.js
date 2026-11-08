@@ -83,4 +83,6 @@ export default {
   'workspace.link.oncologyPalliative': 'Oncología, cuidados paliativos, crisis de células falciformes y dolor por cáncer en MOUD',
   'workspace.link.obstetricEmergencies': 'Emergencias obstétricas, TMO fraccionado en 3.er trimestre, cesárea y Comer-Dormir-Consolar',
   'workspace.link.icuPerioperative': 'Cuidados intensivos (UCI), intubación ISR segura, sedación en xilacina y cirugía en TMO',
+  'workspace.link.pediatricExposures': 'Exposiciones pediátricas accidentales, toxicología infantil y almacenamiento seguro',
+  'workspace.link.geriatricCare': 'Medicina de adicciones en geriatría, criterios Beers y riesgo de caídas',
 };

@@ -1935,6 +1935,18 @@ export function adolescentCareView({ query } = {}) {
     );
     harmReductionPanel.append(inhalantAdolescentCard);
 
+    const pediatricExposureCard = h('article', { class: 'card harm-reduction-card' },
+      h('h3', null, tr('Pediatric & Younger Sibling Accidental Exposures & Safe Storage', 'Exposiciones Accidentales en Hermanos Menores, Niños y Almacenamiento Seguro')),
+      p(tr(
+        'Toddlers and younger siblings at home are uniquely vulnerable to buprenorphine films, methadone, counterfeit pills, and cannabis edibles look-alikes. Access Poison Control (1-800-222-1222), pediatric naloxone dosing, and safe lockbox guidance:',
+        'Los niños pequeños y hermanos menores en el hogar son sumamente vulnerables a películas de buprenorfina, metadona, pastillas falsificadas y gominolas de cannabis. Acceda a Toxicología (1-800-222-1222), naloxona pediátrica y cajas de seguridad:'
+      )),
+      h('p', { class: 'cross-nav-p' },
+        h('a', { class: 'btn btn-secondary', href: '#/pediatric-exposures' }, tr('Pediatric Accidental Exposures Navigator →', 'Navegador de Exposiciones Pediátricas →'))
+      )
+    );
+    harmReductionPanel.append(pediatricExposureCard);
+
     // Tab Panel 7: Interactive Youth Pathway Decision Aid (Navigator)
     // ------------------------------------------------------------------------
     const navPanel = section('panel-navigator', tr('Interactive Ephemeral Pathway Navigator & Decision Aid', 'Navegador de Rutas y Asistente de Decisión Efímero'));

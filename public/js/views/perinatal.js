@@ -1572,6 +1572,17 @@ export function perinatalView({ query } = {}) {
     ]);
     container.append(obEmergBanner);
 
+    const pedExposureBanner = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+      h('strong', {}, isEs ? '¿Ingestión Accidental Pediátrica, Almacenamiento Seguro o Toxicología Infantil? ' : 'Pediatric Accidental Exposure, Safe Storage or Child Toxicology? '),
+      h('span', {}, isEs
+        ? 'Protocolos de emergencia AAP/ACMT para ingestión de buprenorfina/metadona en niños, naloxona pediátrica, comestibles de cannabis y cajas de seguridad: '
+        : 'AAP/ACMT emergency protocols for toddler buprenorphine/methadone ingestion, pediatric naloxone, cannabis edibles, and lockboxes: '),
+      h('a', { href: '#/pediatric-exposures' }, isEs
+        ? 'Abrir Navegador de Exposiciones Pediátricas y Almacenamiento Seguro →'
+        : 'Open Pediatric Accidental Exposures & Safe Storage Navigator →')
+    ]);
+    container.append(pedExposureBanner);
+
     container.append(
       header,
       controlsBar,
