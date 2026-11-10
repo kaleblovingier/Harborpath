@@ -26,6 +26,14 @@ const SRC_DIR = path.join(ROOT_DIR, 'src');
 const SW_PATH = path.join(PUBLIC_DIR, 'sw.js');
 const BUILD_RE = /const BUILD = '([^']*)';/;
 
+/**
+ * A shell file's bytes as deployed: LF line endings. A Windows checkout holds
+ * CRLF (or a mix), and hashing those raw bytes stamped a BUILD that CI rejected.
+ */
+export function readShellFile(full) {
+  return Buffer.from(readFileSync(full, 'latin1').replaceAll('\r\n', '\n'), 'latin1');
+}
+
 /** URLs listed in `const <name> = [ ... ];` inside the service worker source. */
 export function shellList(swText, name) {
   const match = swText.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\];`));
@@ -45,7 +53,7 @@ export function computeShellHash(swText = readFileSync(SW_PATH, 'utf8')) {
     seen.add(urlPath);
     const full = path.join(PUBLIC_DIR, urlPath === '/' ? 'index.html' : urlPath.replace(/^\//, ''));
     hash.update(`${urlPath}\0`);
-    hash.update(existsSync(full) && statSync(full).isFile() ? readFileSync(full) : Buffer.from('\0missing'));
+    hash.update(existsSync(full) && statSync(full).isFile() ? readShellFile(full) : Buffer.from('\0missing'));
     hash.update('\0');
   }
   return hash.digest('hex').slice(0, 12);
@@ -181,7 +189,7 @@ export async function runBuildCheck({ silent = false } = {}) {
         }
         if (!seenFiles.has(full)) {
           seenFiles.add(full);
-          const buf = readFileSync(full);
+          const buf = readShellFile(full);
           totalBytes += buf.length;
           totalGzipBytes += gzipSync(buf, { level: 9 }).length;
         }
@@ -210,7 +218,7 @@ export async function runBuildCheck({ silent = false } = {}) {
           }
           if (seenFiles.has(full)) continue;
           electiveCount += 1;
-          electiveGzipBytes += gzipSync(readFileSync(full), { level: 9 }).length;
+          electiveGzipBytes += gzipSync(readShellFile(full), { level: 9 }).length;
         }
         record(
           'app-shell:elective',

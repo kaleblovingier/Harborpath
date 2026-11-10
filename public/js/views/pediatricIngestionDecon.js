@@ -342,11 +342,163 @@ export function subscribePediatricDeconState(fn) {
 
 export function pediatricIngestionDeconView() {
   const container = h('div', { class: 'pediatric-decon-view', role: 'region', 'aria-label': 'Pediatric Polysubstance Ingestion & Decontamination Decision Engine' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header & Emergency Callout
+  container.append(
+    pageHeader(
+      isEs ? 'Navegador de Ingestas Pediátricas, Tóxicos Letales («Una Pastilla Puede Matar») y Descontaminación' : 'Pediatric & Adolescent Ingestion, "One Pill Can Kill" & Decontamination Decision Engine',
+      isEs ? 'Guía de decisión clínica toxicológica (AAP/ACMT) para ingestas accidentales en niños: umbrales letales, ventana y contraindicaciones de carbón activado, irrigación intestinal total, titulación de naloxona por peso y observación obligatoria de 24 horas.' : 'AAP/ACMT clinical toxicological decision engine for accidental ingestions in toddlers and adolescents: lethal thresholds, activated charcoal eligibility and contraindications, whole bowel irrigation, weight-based naloxone resuscitation, and mandatory inpatient observation.'
+    ),
+    h('div', { class: 'decon-emergency-bar' },
+      h('div', { class: 'decon-emergency-header' },
+        icon('phone-call'),
+        h('strong', null, isEs ? 'Centro de Control de Intoxicaciones y Toxicología (24 Horas):' : 'Regional Poison Control Center (24/7 National Hotline):'),
+        tel('1-800-222-1222', '1-800-222-1222', { class: 'btn btn-danger btn-sm' })
+      ),
+      h('p', { class: 'text-sm text-muted' },
+        isEs ? 'Servicio gratuito, confidencial y disponible 24/7 por toxicólogos clínicos. Llame de inmediato en caso de sospecha de ingesta tóxica.' : 'Free, confidential, 24/7 expert clinical toxicologist support. Call immediately for all suspected toddler and pediatric exposures.'
+      )
+    )
+  );
 
+  const grid = h('div', { class: 'decon-grid' });
+  const leftCol = h('div', { class: 'decon-col' });
+  const rightCol = h('div', { class: 'decon-col' });
+  grid.append(leftCol, rightCol);
+  container.append(grid);
+
+  // Persistent controls (never rebuilt on keystroke)
+  const substanceSel = h('select', { id: 'substance-select', class: 'decon-select' },
+    Object.keys(ONE_PILL_CAN_KILL_LIST).map((k) => {
+      const item = ONE_PILL_CAN_KILL_LIST[k];
+      return h('option', { value: k, selected: deconState.substanceId === k }, isEs ? item.nameEs : item.nameEn);
+    })
+  );
+  substanceSel.addEventListener('change', (e) => setPediatricDeconState({ substanceId: e.target.value }));
+  const toxDetailsSlot = h('div', { class: 'decon-tox-details' });
+
+  leftCol.append(
+    h('div', { class: 'card decon-card' },
+      h('h2', { class: 'decon-card-title' },
+        icon('alert-octagon'),
+        isEs ? '1. Sustancia Ingerida («Una Pastilla Puede Matar»)' : '1. Ingested Substance ("One Pill Can Kill")'
+      ),
+      h('label', { for: 'substance-select', class: 'decon-label' },
+        isEs ? 'Seleccione el fármaco o toxina ingerida:' : 'Select ingested medication or xenobiotic:'
+      ),
+      substanceSel,
+      toxDetailsSlot
+    )
+  );
+
+  const weightInp = h('input', {
+    id: 'weight-input',
+    type: 'number',
+    class: 'decon-num-input',
+    value: String(deconState.weightKg),
+    min: '2',
+    max: '60',
+    step: '0.5',
+    'aria-label': isEs ? 'Peso en kg' : 'Weight in kg',
+  });
+  const timeInp = h('input', {
+    id: 'time-input',
+    type: 'number',
+    class: 'decon-num-input',
+    value: String(deconState.minutesSinceIngestion),
+    min: '0',
+    max: '1440',
+    step: '5',
+    'aria-label': isEs ? 'Minutos transcurridos' : 'Minutes elapsed',
+  });
+  weightInp.addEventListener('input', (e) => setPediatricDeconState({ weightKg: Number(e.target.value) || 12 }));
+  timeInp.addEventListener('input', (e) => setPediatricDeconState({ minutesSinceIngestion: Number(e.target.value) || 0 }));
+
+  const paramCheckDefs = [
+    { id: 'is-alert', key: 'isAlert', label: isEs ? 'Paciente ALERTA con reflejos de tos y deglución intactos' : 'Patient ALERT with intact protective airway reflexes' },
+    { id: 'is-sr', key: 'isSustainedRelease', label: isEs ? 'Formulación de liberación prolongada / cubierta entérica' : 'Sustained-release or enteric-coated formulation' },
+    { id: 'is-apneic', key: 'isApneic', label: isEs ? 'Paro respiratorio o bradipnea crítica (<8 rpm o cianosis)' : 'Respiratory arrest or critical bradypnea (<8 bpm or cyanosis)' },
+    { id: 'is-neonatal', key: 'isNeonatalExposure', label: isEs ? 'Recién nacido con exposición intrauterina crónica a opioides' : 'Neonate with chronic in-utero opioid exposure history' },
+  ];
+  const paramCheckRows = paramCheckDefs.map((def) => {
+    const chk = h('input', { type: 'checkbox', id: def.id, checked: deconState[def.key], 'aria-label': def.label });
+    chk.addEventListener('change', (e) => setPediatricDeconState({ [def.key]: e.target.checked }));
+    return { def, chk, row: h('div', { class: 'decon-check-row' }, chk, h('label', { for: def.id }, def.label)) };
+  });
+
+  leftCol.append(
+    h('div', { class: 'card decon-card' },
+      h('h2', { class: 'decon-card-title' },
+        icon('user'),
+        isEs ? '2. Parámetros del Paciente Pediátrico' : '2. Pediatric Patient Parameters'
+      ),
+      h('div', { class: 'decon-input-group' },
+        h('label', { class: 'decon-label', for: 'weight-input' }, isEs ? 'Peso del Niño (kg):' : 'Child Weight (kg):'),
+        weightInp
+      ),
+      h('div', { class: 'decon-input-group' },
+        h('label', { class: 'decon-label', for: 'time-input' }, isEs ? 'Tiempo Transcurrido desde la Ingesta (minutos):' : 'Minutes Elapsed Since Ingestion:'),
+        timeInp
+      ),
+      h('div', { class: 'decon-checkbox-group' }, ...paramCheckRows.map((p) => p.row))
+    )
+  );
+
+  // Contraindications card (persistent checkboxes)
+  const contraCheckRows = CHARCOAL_CONTRAINDICATIONS.map((c) => {
+    const chk = h('input', {
+      type: 'checkbox',
+      id: `contra-${c.id}`,
+      checked: deconState.activeContraindications.includes(c.id),
+      'aria-label': isEs ? c.nameEs : c.nameEn,
+    });
+    chk.addEventListener('change', (e) => {
+      const next = new Set(deconState.activeContraindications);
+      if (e.target.checked) next.add(c.id);
+      else next.delete(c.id);
+      setPediatricDeconState({ activeContraindications: Array.from(next) });
+    });
+    const row = h('div', { class: 'decon-check-row' },
+      chk,
+      h('label', { for: `contra-${c.id}`, class: 'decon-check-label' },
+        h('strong', null, isEs ? c.nameEs : c.nameEn),
+        h('span', { class: 'decon-subtext' }, isEs ? c.reasonEs : c.reasonEn)
+      )
+    );
+    return { id: c.id, chk, row };
+  });
+  rightCol.append(
+    h('div', { class: 'card decon-card' },
+      h('h2', { class: 'decon-card-title text-warning' },
+        icon('shield-alert'),
+        isEs ? '3. Contraindicaciones de Carbón Activado (Comprobar)' : '3. Activated Charcoal Contraindications Checklist'
+      ),
+      h('p', { class: 'text-sm text-muted' },
+        isEs ? 'Marque si existe alguna de las siguientes contraindicaciones absolutas:' : 'Check if any of the following absolute contraindications are present:'
+      ),
+      ...contraCheckRows.map((r) => r.row)
+    )
+  );
+
+  const dynamicOutputSlot = h('div');
+  rightCol.append(dynamicOutputSlot);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== substanceSel) substanceSel.value = deconState.substanceId;
+    if (active !== weightInp) weightInp.value = String(deconState.weightKg);
+    if (active !== timeInp) timeInp.value = String(deconState.minutesSinceIngestion);
+    paramCheckRows.forEach(({ def, chk }) => {
+      if (active !== chk) chk.checked = Boolean(deconState[def.key]);
+    });
+    contraCheckRows.forEach(({ id, chk }) => {
+      if (active !== chk) chk.checked = deconState.activeContraindications.includes(id);
+    });
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evaluation = evaluatePediatricIngestion({
       substanceId: deconState.substanceId,
       weightKg: deconState.weightKg,
@@ -358,57 +510,8 @@ export function pediatricIngestionDeconView() {
       isNeonatalExposure: deconState.isNeonatalExposure,
     });
 
-    // Page Header
-    container.append(
-      pageHeader(
-        isEs ? 'Navegador de Ingestas Pediátricas, Tóxicos Letales («Una Pastilla Puede Matar») y Descontaminación' : 'Pediatric & Adolescent Ingestion, "One Pill Can Kill" & Decontamination Decision Engine',
-        isEs ? 'Guía de decisión clínica toxicológica (AAP/ACMT) para ingestas accidentales en niños: umbrales letales, ventana y contraindicaciones de carbón activado, irrigación intestinal total, titulación de naloxona por peso y observación obligatoria de 24 horas.' : 'AAP/ACMT clinical toxicological decision engine for accidental ingestions in toddlers and adolescents: lethal thresholds, activated charcoal eligibility and contraindications, whole bowel irrigation, weight-based naloxone resuscitation, and mandatory inpatient observation.'
-      )
-    );
-
-    // Emergency Poison Control Callout
-    const emergencyBar = h('div', { class: 'decon-emergency-bar' },
-      h('div', { class: 'decon-emergency-header' },
-        icon('phone-call'),
-        h('strong', null, isEs ? 'Centro de Control de Intoxicaciones y Toxicología (24 Horas):' : 'Regional Poison Control Center (24/7 National Hotline):'),
-        tel('1-800-222-1222', '1-800-222-1222', { class: 'btn btn-danger btn-sm' })
-      ),
-      h('p', { class: 'text-sm text-muted' },
-        isEs ? 'Servicio gratuito, confidencial y disponible 24/7 por toxicólogos clínicos. Llame de inmediato en caso de sospecha de ingesta tóxica.' : 'Free, confidential, 24/7 expert clinical toxicologist support. Call immediately for all suspected toddler and pediatric exposures.'
-      )
-    );
-    container.append(emergencyBar);
-
-    // Main Interactive Grid
-    const grid = h('div', { class: 'decon-grid' });
-
-    // Left Column: Patient Parameters & Substance Selection
-    const leftCol = h('div', { class: 'decon-col' });
-
-    // Section 1: Substance Selection & Lethal Potential
-    const substCard = h('div', { class: 'card decon-card' },
-      h('h2', { class: 'decon-card-title' },
-        icon('alert-octagon'),
-        isEs ? '1. Sustancia Ingerida («Una Pastilla Puede Matar»)' : '1. Ingested Substance ("One Pill Can Kill")'
-      ),
-      h('label', { for: 'substance-select', class: 'decon-label' },
-        isEs ? 'Seleccione el fármaco o toxina ingerida:' : 'Select ingested medication or xenobiotic:'
-      )
-    );
-
-    const select = h('select', { id: 'substance-select', class: 'decon-select' },
-      Object.keys(ONE_PILL_CAN_KILL_LIST).map((k) => {
-        const item = ONE_PILL_CAN_KILL_LIST[k];
-        const opt = h('option', { value: k }, isEs ? item.nameEs : item.nameEn);
-        if (deconState.substanceId === k) opt.selected = true;
-        return opt;
-      })
-    );
-    select.addEventListener('change', (e) => {
-      setPediatricDeconState({ substanceId: e.target.value });
-    });
-
-    const toxDetails = h('div', { class: 'decon-tox-details' },
+    clear(toxDetailsSlot);
+    toxDetailsSlot.append(
       h('p', null, h('strong', { class: 'text-danger' }, isEs ? 'Umbral Letal: ' : 'Lethal Threshold: '), isEs ? evaluation.substance.fatalThresholdEs : evaluation.substance.fatalThresholdEn),
       h('p', null, h('strong', null, isEs ? 'Mecanismo: ' : 'Mechanism: '), isEs ? evaluation.substance.mechanismEs : evaluation.substance.mechanismEn),
       h('p', null, h('strong', null, isEs ? 'Presentación Clínica: ' : 'Clinical Presentation: '), isEs ? evaluation.substance.syndromeEs : evaluation.substance.syndromeEn),
@@ -418,98 +521,8 @@ export function pediatricIngestionDeconView() {
       )
     );
 
-    substCard.append(select, toxDetails);
-    leftCol.append(substCard);
+    clear(dynamicOutputSlot);
 
-    // Section 2: Patient Parameters (Weight, Timing, Airway)
-    const paramCard = h('div', { class: 'card decon-card' },
-      h('h2', { class: 'decon-card-title' },
-        icon('user'),
-        isEs ? '2. Parámetros del Paciente Pediátrico' : '2. Pediatric Patient Parameters'
-      ),
-      h('div', { class: 'decon-input-group' },
-        h('label', { class: 'decon-label', for: 'weight-input' }, isEs ? 'Peso del Niño (kg):' : 'Child Weight (kg):'),
-        h('input', {
-          id: 'weight-input',
-          type: 'number',
-          class: 'decon-num-input',
-          value: String(deconState.weightKg),
-          min: '2',
-          max: '60',
-          step: '0.5',
-          'aria-label': isEs ? 'Peso en kg' : 'Weight in kg',
-        })
-      ),
-      h('div', { class: 'decon-input-group' },
-        h('label', { class: 'decon-label', for: 'time-input' }, isEs ? 'Tiempo Transcurrido desde la Ingesta (minutos):' : 'Minutes Elapsed Since Ingestion:'),
-        h('input', {
-          id: 'time-input',
-          type: 'number',
-          class: 'decon-num-input',
-          value: String(deconState.minutesSinceIngestion),
-          min: '0',
-          max: '1440',
-          step: '5',
-          'aria-label': isEs ? 'Minutos transcurridos' : 'Minutes elapsed',
-        })
-      ),
-      h('div', { class: 'decon-checkbox-group' },
-        createCheckbox('is-alert', deconState.isAlert, isEs ? 'Paciente ALERTA con reflejos de tos y deglución intactos' : 'Patient ALERT with intact protective airway reflexes', (chk) => setPediatricDeconState({ isAlert: chk })),
-        createCheckbox('is-sr', deconState.isSustainedRelease, isEs ? 'Formulación de liberación prolongada / cubierta entérica' : 'Sustained-release or enteric-coated formulation', (chk) => setPediatricDeconState({ isSustainedRelease: chk })),
-        createCheckbox('is-apneic', deconState.isApneic, isEs ? 'Paro respiratorio o bradipnea crítica (<8 rpm o cianosis)' : 'Respiratory arrest or critical bradypnea (<8 bpm or cyanosis)', (chk) => setPediatricDeconState({ isApneic: chk })),
-        createCheckbox('is-neonatal', deconState.isNeonatalExposure, isEs ? 'Recién nacido con exposición intrauterina crónica a opioides' : 'Neonate with chronic in-utero opioid exposure history', (chk) => setPediatricDeconState({ isNeonatalExposure: chk }))
-      )
-    );
-
-    const weightInput = paramCard.querySelector('#weight-input');
-    weightInput.addEventListener('input', (e) => setPediatricDeconState({ weightKg: Number(e.target.value) || 12 }));
-
-    const timeInput = paramCard.querySelector('#time-input');
-    timeInput.addEventListener('input', (e) => setPediatricDeconState({ minutesSinceIngestion: Number(e.target.value) || 0 }));
-
-    leftCol.append(paramCard);
-    grid.append(leftCol);
-
-    // Right Column: Decontamination Directive, Naloxone Dosing & Handoff
-    const rightCol = h('div', { class: 'decon-col' });
-
-    // Section 3: Charcoal Contraindications Checklist
-    const contraCard = h('div', { class: 'card decon-card' },
-      h('h2', { class: 'decon-card-title text-warning' },
-        icon('shield-alert'),
-        isEs ? '3. Contraindicaciones de Carbón Activado (Comprobar)' : '3. Activated Charcoal Contraindications Checklist'
-      ),
-      h('p', { class: 'text-sm text-muted' },
-        isEs ? 'Marque si existe alguna de las siguientes contraindicaciones absolutas:' : 'Check if any of the following absolute contraindications are present:'
-      )
-    );
-
-    CHARCOAL_CONTRAINDICATIONS.forEach((c) => {
-      const isChecked = deconState.activeContraindications.includes(c.id);
-      const row = h('div', { class: 'decon-check-row' },
-        h('input', {
-          type: 'checkbox',
-          id: `contra-${c.id}`,
-          checked: isChecked,
-          'aria-label': isEs ? c.nameEs : c.nameEn,
-        }),
-        h('label', { for: `contra-${c.id}`, class: 'decon-check-label' },
-          h('strong', null, isEs ? c.nameEs : c.nameEn),
-          h('span', { class: 'decon-subtext' }, isEs ? c.reasonEs : c.reasonEn)
-        )
-      );
-      const chk = row.querySelector('input');
-      chk.addEventListener('change', (e) => {
-        const next = new Set(deconState.activeContraindications);
-        if (e.target.checked) next.add(c.id);
-        else next.delete(c.id);
-        setPediatricDeconState({ activeContraindications: Array.from(next) });
-      });
-      contraCard.append(row);
-    });
-    rightCol.append(contraCard);
-
-    // Section 4: Decontamination Decision Directives (Charcoal & WBI)
     const deconCard = h('div', { class: `card decon-card ${evaluation.charcoalEligible ? 'card-success' : 'card-alert'}` },
       h('h2', { class: 'decon-card-title' },
         icon(evaluation.charcoalEligible ? 'check-circle' : 'alert-triangle'),
@@ -521,17 +534,16 @@ export function pediatricIngestionDeconView() {
     );
 
     if (evaluation.wbiIndicated) {
-      const wbiBox = h('div', { class: 'decon-wbi-box' },
-        h('strong', null, isEs ? 'Irrigación Intestinal Total (WBI) Indicada:' : 'Whole Bowel Irrigation (WBI) Indicated:'),
-        h('p', null, isEs
-          ? `Administrar solución de polietilenglicol (PEG-ELS / GoLYTELY) por sonda nasogástrica a ${evaluation.wbiRateMlHr} mL/hora (25-40 mL/kg/h) hasta que el efluente rectal sea completamente claro y acuoso.`
-          : `Administer polyethylene glycol electrolyte solution (PEG-ELS / GoLYTELY) via NG tube at ${evaluation.wbiRateMlHr} mL/hour (25-40 mL/kg/hr) continuously until rectal effluent is completely clear and watery.`)
-        );
-      deconCard.append(wbiBox);
+      deconCard.append(
+        h('div', { class: 'decon-wbi-box' },
+          h('strong', null, isEs ? 'Irrigación Intestinal Total (WBI) Indicada:' : 'Whole Bowel Irrigation (WBI) Indicated:'),
+          h('p', null, isEs
+            ? `Administrar solución de polietilenglicol (PEG-ELS / GoLYTELY) por sonda nasogástrica a ${evaluation.wbiRateMlHr} mL/hora (25-40 mL/kg/h) hasta que el efluente rectal sea completamente claro y acuoso.`
+            : `Administer polyethylene glycol electrolyte solution (PEG-ELS / GoLYTELY) via NG tube at ${evaluation.wbiRateMlHr} mL/hour (25-40 mL/kg/hr) continuously until rectal effluent is completely clear and watery.`)
+        )
+      );
     }
-    rightCol.append(deconCard);
 
-    // Section 5: Weight-Based Naloxone Resuscitation
     const naloxCard = h('div', { class: 'card decon-card' },
       h('h2', { class: 'decon-card-title' },
         icon('zap'),
@@ -542,35 +554,12 @@ export function pediatricIngestionDeconView() {
       ),
       h('p', { class: 'decon-nalox-desc' }, isEs ? evaluation.naloxoneProtocolEs : evaluation.naloxoneProtocolEn)
     );
-    rightCol.append(naloxCard);
 
-    // Section 6: SBAR Clinical Handoff Note
-    const sbarCard = h('div', { class: 'card decon-card' },
-      h('h2', { class: 'decon-card-title' },
-        icon('file-text'),
-        isEs ? '6. Nota de Interconsulta SBAR para Centro de Toxicología / UCIP' : '6. SBAR Pediatric Toxicology Consultation Note'
-      ),
-      h('textarea', {
-        class: 'decon-sbar-textarea',
-        readonly: true,
-        rows: 8,
-        'aria-label': isEs ? 'Nota SBAR Pediátrica' : 'Pediatric SBAR Note',
-      }, isEs ? evaluation.sbarEs : evaluation.sbarEn),
-      h('div', { class: 'decon-btn-row' },
-        h('button', {
-          type: 'button',
-          class: 'btn btn-primary',
-          'aria-label': isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
-        }, icon('copy'), isEs ? (deconState.copied ? '¡Copiado!' : 'Copiar Nota SBAR') : (deconState.copied ? 'Copied!' : 'Copy SBAR Note')),
-        h('button', {
-          type: 'button',
-          class: 'btn btn-secondary',
-          'aria-label': isEs ? 'Restablecer' : 'Reset Form',
-        }, icon('rotate-ccw'), isEs ? 'Restablecer' : 'Reset')
-      )
-    );
-
-    const copyBtn = sbarCard.querySelector('.btn-primary');
+    const copyBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-primary',
+      'aria-label': isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
+    }, icon('copy'), isEs ? (deconState.copied ? '¡Copiado!' : 'Copiar Nota SBAR') : (deconState.copied ? 'Copied!' : 'Copy SBAR Note'));
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(isEs ? evaluation.sbarEs : evaluation.sbarEn);
@@ -582,29 +571,44 @@ export function pediatricIngestionDeconView() {
       }
     });
 
-    const resetBtn = sbarCard.querySelector('.btn-secondary');
+    const resetBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      'aria-label': isEs ? 'Restablecer' : 'Reset Form',
+    }, icon('rotate-ccw'), isEs ? 'Restablecer' : 'Reset');
     resetBtn.addEventListener('click', () => {
       resetPediatricDeconState();
       announce(isEs ? 'Valores restablecidos' : 'State reset');
     });
 
-    rightCol.append(sbarCard);
+    const sbarCard = h('div', { class: 'card decon-card' },
+      h('h2', { class: 'decon-card-title' },
+        icon('file-text'),
+        isEs ? '6. Nota de Interconsulta SBAR para Centro de Toxicología / UCIP' : '6. SBAR Pediatric Toxicology Consultation Note'
+      ),
+      h('textarea', {
+        class: 'decon-sbar-textarea',
+        readonly: true,
+        rows: 8,
+        'aria-label': isEs ? 'Nota SBAR Pediátrica' : 'Pediatric SBAR Note',
+      }, isEs ? evaluation.sbarEs : evaluation.sbarEn),
+      h('div', { class: 'decon-btn-row' }, copyBtn, resetBtn)
+    );
 
-    grid.append(rightCol);
-    container.append(grid);
+    dynamicOutputSlot.append(deconCard, naloxCard, sbarCard);
   }
 
-  function createCheckbox(id, checked, labelTxt, onChange) {
-    const row = h('div', { class: 'decon-check-row' });
-    const chk = h('input', { type: 'checkbox', id, checked, 'aria-label': labelTxt });
-    chk.addEventListener('change', (e) => onChange(e.target.checked));
-    const label = h('label', { for: id }, labelTxt);
-    row.append(chk, label);
-    return row;
-  }
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  };
 
-  const unsubscribe = subscribePediatricDeconState(render);
-  render();
-
+  const unsubscribe = subscribePediatricDeconState(onStateChange);
+  renderDynamic();
   return container;
 }

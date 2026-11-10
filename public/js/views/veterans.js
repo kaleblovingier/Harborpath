@@ -1293,7 +1293,7 @@ export function veteransView({ query = new URLSearchParams() } = {}) {
     // Question 7: Military Sexual Trauma (MST)
     const q7 = h('div', { class: 'form-group' },
       h('label', { for: 'screener-mst' }, strong(tr('Did you experience Military Sexual Trauma (MST)?', '¿Experimentó Trauma Sexual Militar (MST)?'))),
-      p({ class: 'fine' }, tr(
+      fine(tr(
         'Includes sexual assault, battery, or repeated sexual harassment during active duty, active duty for training, or inactive duty training. Answer is 100% confidential and ephemeral in RAM.',
         'Incluye agresión sexual o acoso sexual reiterado durante el servicio activo o entrenamientos de reserva/guardia. La respuesta es 100% confidencial en RAM.'
       )),

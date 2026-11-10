@@ -295,84 +295,100 @@ export function formatImmigrantSummaryText(state, lang = 'en') {
 }
 
 /**
- * Mounts the Immigrant Health Rights view.
+ * Mounts the Immigrant Health Rights view (supports both route view return and container mount).
  */
-export function immigrantHealthView(container) {
+export function immigrantHealthView(containerOrOptions = {}) {
+  const hasDomContainer = Boolean(
+    containerOrOptions &&
+    (typeof containerOrOptions.append === 'function' ||
+      typeof containerOrOptions.appendChild === 'function' ||
+      containerOrOptions.nodeType ||
+      containerOrOptions.tagName)
+  );
+  const container = hasDomContainer ? containerOrOptions : null;
   const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
-  container.textContent = '';
-
   const wrapper = h('div', { class: 'immigrant-health-view clinical-view-wrapper' });
 
-  // Header
-  const header = h('header', { class: 'clinical-header' }, [
-    h('div', { class: 'clinical-badge' }, [
-      icon('shield', { class: 'badge-icon', 'aria-hidden': 'true' }),
-      h('span', { class: 'badge-text' }, isEs ? 'Derechos de Salud para Inmigrantes' : 'Immigrant & Language Access Rights')
-    ]),
-    h('h1', { class: 'clinical-title' }, isEs ? 'Atención Médica, MOUD y Protección Legal para Inmigrantes' : 'Immigrant Health, MOUD & Language Access Rights'),
-    h('p', { class: 'clinical-subtitle' }, isEs
-      ? 'Orientación legal y clínica sobre áreas protegidas por el DHS, Medicaid de Emergencia, exclusión de carga pública y derechos de intérpretes médicos sin costo.'
-      : 'Legal and clinical protections covering DHS Protected Areas, Emergency Medicaid, 2022 Public Charge exemptions, and federal language access rights.'
-    ),
-    h('div', { class: 'privacy-notice' }, [
-      icon('lock', { class: 'privacy-icon', 'aria-hidden': 'true' }),
-      h('span', {}, isEs
-        ? 'Herramienta en memoria RAM. Ninguna respuesta se registra ni se envía a agencias gubernamentales.'
-        : 'In-RAM ephemeral tool. No responses are stored or shared with any government agency.'
-      )
-    ])
-  ]);
-  wrapper.appendChild(header);
+  function draw() {
+    wrapper.textContent = '';
 
-  // Tab navigation
-  const tabNav = h('nav', { class: 'clinical-tabs-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de navegación' : 'View tabs' });
-  const tabs = [
-    { id: 'overview', labelEn: 'Rights Overview', labelEs: 'Resumen de Derechos' },
-    { id: 'decision-aid', labelEn: 'Rights Decision Aid', labelEs: 'Evaluador de Derechos' },
-    { id: 'language-rights', labelEn: 'Language Access (Title VI)', labelEs: 'Acceso Lingüístico (Título VI)' },
-    { id: 'faq', labelEn: 'Immigration FAQ', labelEs: 'Preguntas Frecuentes' }
-  ];
+    // Header
+    const header = h('header', { class: 'clinical-header' }, [
+      h('div', { class: 'clinical-badge' }, [
+        icon('shield', { class: 'badge-icon', 'aria-hidden': 'true' }),
+        h('span', { class: 'badge-text' }, isEs ? 'Derechos de Salud para Inmigrantes' : 'Immigrant & Language Access Rights')
+      ]),
+      h('h1', { id: 'page-title', tabindex: '-1', class: 'clinical-title' }, isEs ? 'Atención Médica, MOUD y Protección Legal para Inmigrantes' : 'Immigrant Health, MOUD & Language Access Rights'),
+      h('p', { class: 'clinical-subtitle' }, isEs
+        ? 'Orientación legal y clínica sobre áreas protegidas por el DHS, Medicaid de Emergencia, exclusión de carga pública y derechos de intérpretes médicos sin costo.'
+        : 'Legal and clinical protections covering DHS Protected Areas, Emergency Medicaid, 2022 Public Charge exemptions, and federal language access rights.'
+      ),
+      h('div', { class: 'privacy-notice' }, [
+        icon('lock', { class: 'privacy-icon', 'aria-hidden': 'true' }),
+        h('span', {}, isEs
+          ? 'Herramienta en memoria RAM. Ninguna respuesta se registra ni se envía a agencias gubernamentales.'
+          : 'In-RAM ephemeral tool. No responses are stored or shared with any government agency.'
+        )
+      ])
+    ]);
+    wrapper.appendChild(header);
 
-  tabs.forEach(tab => {
-    const btn = h('button', {
-      type: 'button',
-      role: 'tab',
-      class: `tab-button ${immigrantState.activeTab === tab.id ? 'active' : ''}`,
-      'aria-selected': String(immigrantState.activeTab === tab.id),
-      'aria-controls': `tab-content-${tab.id}`,
-      id: `tab-${tab.id}`
-    }, isEs ? tab.labelEs : tab.labelEn);
+    // Tab navigation
+    const tabNav = h('nav', { class: 'clinical-tabs-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de navegación' : 'View tabs' });
+    const tabs = [
+      { id: 'overview', labelEn: 'Rights Overview', labelEs: 'Resumen de Derechos' },
+      { id: 'decision-aid', labelEn: 'Rights Decision Aid', labelEs: 'Evaluador de Derechos' },
+      { id: 'language-rights', labelEn: 'Language Access (Title VI)', labelEs: 'Acceso Lingüístico (Título VI)' },
+      { id: 'faq', labelEn: 'Immigration FAQ', labelEs: 'Preguntas Frecuentes' }
+    ];
 
-    btn.addEventListener('click', () => {
-      immigrantState.activeTab = tab.id;
-      immigrantHealthView(container);
+    tabs.forEach(tab => {
+      const btn = h('button', {
+        type: 'button',
+        role: 'tab',
+        class: `tab-button ${immigrantState.activeTab === tab.id ? 'active' : ''}`,
+        'aria-selected': String(immigrantState.activeTab === tab.id),
+        'aria-controls': `tab-content-${tab.id}`,
+        id: `tab-${tab.id}`
+      }, isEs ? tab.labelEs : tab.labelEn);
+
+      btn.addEventListener('click', () => {
+        immigrantState.activeTab = tab.id;
+        draw();
+      });
+      tabNav.appendChild(btn);
     });
-    tabNav.appendChild(btn);
-  });
-  wrapper.appendChild(tabNav);
+    wrapper.appendChild(tabNav);
 
-  // Content Area
-  const contentArea = h('div', {
-    class: 'tab-content-area',
-    id: `tab-content-${immigrantState.activeTab}`,
-    role: 'tabpanel',
-    'aria-labelledby': `tab-${immigrantState.activeTab}`
-  });
+    // Content Area
+    const contentArea = h('div', {
+      class: 'tab-content-area',
+      id: `tab-content-${immigrantState.activeTab}`,
+      role: 'tabpanel',
+      'aria-labelledby': `tab-${immigrantState.activeTab}`
+    });
 
-  if (immigrantState.activeTab === 'overview') {
-    renderOverviewTab(contentArea, isEs);
-  } else if (immigrantState.activeTab === 'decision-aid') {
-    renderDecisionAidTab(contentArea, isEs, container);
-  } else if (immigrantState.activeTab === 'language-rights') {
-    renderLanguageRightsTab(contentArea, isEs);
-  } else if (immigrantState.activeTab === 'faq') {
-    renderFaqTab(contentArea, isEs);
+    if (immigrantState.activeTab === 'overview') {
+      renderOverviewTab(contentArea, isEs);
+    } else if (immigrantState.activeTab === 'decision-aid') {
+      renderDecisionAidTab(contentArea, isEs, draw);
+    } else if (immigrantState.activeTab === 'language-rights') {
+      renderLanguageRightsTab(contentArea, isEs);
+    } else if (immigrantState.activeTab === 'faq') {
+      renderFaqTab(contentArea, isEs);
+    }
+
+    wrapper.appendChild(contentArea);
   }
 
-  wrapper.appendChild(contentArea);
-  container.appendChild(wrapper);
+  draw();
+  if (container) {
+    container.textContent = '';
+    container.appendChild(wrapper);
+  }
+  return wrapper;
 }
 
 function renderOverviewTab(container, isEs) {
@@ -392,7 +408,7 @@ function renderOverviewTab(container, isEs) {
   container.appendChild(grid);
 }
 
-function renderDecisionAidTab(container, isEs, rootContainer) {
+function renderDecisionAidTab(container, isEs, onRerender) {
   const formCard = h('div', { class: 'decision-aid-card card' });
 
   formCard.appendChild(h('h2', {}, isEs ? 'Evaluador de Derechos de Salud y Acceso' : 'Health Rights & Access Evaluator'));
@@ -411,7 +427,7 @@ function renderDecisionAidTab(container, isEs, rootContainer) {
   });
   emergencyCheckbox.addEventListener('change', (e) => {
     immigrantState.emergencyCondition = e.target.checked;
-    immigrantHealthView(rootContainer);
+    onRerender();
   });
   emergencyLabel.appendChild(emergencyCheckbox);
   emergencyLabel.appendChild(h('span', { class: 'checkbox-text' }, isEs
@@ -437,7 +453,7 @@ function renderDecisionAidTab(container, isEs, rootContainer) {
   });
   concernSelect.addEventListener('change', (e) => {
     immigrantState.immigrationConcern = e.target.value;
-    immigrantHealthView(rootContainer);
+    onRerender();
   });
   concernGroup.appendChild(concernLabel);
   concernGroup.appendChild(concernSelect);
@@ -458,7 +474,7 @@ function renderDecisionAidTab(container, isEs, rootContainer) {
   });
   langSelect.addEventListener('change', (e) => {
     immigrantState.englishProficiency = e.target.value;
-    immigrantHealthView(rootContainer);
+    onRerender();
   });
   langGroup.appendChild(langLabel);
   langGroup.appendChild(langSelect);

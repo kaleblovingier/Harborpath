@@ -68,9 +68,14 @@ export function safeHref(href) {
 /** External link: new tab, no referrer, marked for screen readers. */
 export function ext(href, ...children) {
   href = safeHref(href);
+  let extraProps = {};
+  if (children.length && isPlainProps(children[children.length - 1])) {
+    extraProps = children.pop();
+  }
   if (!href) return h('span', null, ...children);
   const english = !isLocalizedUrl(href);
-  return h('a', { href, target: '_blank', rel: 'noopener noreferrer', class: 'ext', hreflang: english ? 'en' : null },
+  const cls = extraProps.class ? `ext ${extraProps.class}` : 'ext';
+  return h('a', { href, target: '_blank', rel: 'noopener noreferrer', hreflang: english ? 'en' : null, ...extraProps, class: cls },
     ...children, langNote(href), h('span', { class: 'visually-hidden' }, t('common.newTab', ' (opens in a new tab)')));
 }
 

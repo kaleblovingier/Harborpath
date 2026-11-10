@@ -465,7 +465,7 @@ export function healthView({ query }) {
 // ---------------------------------------------------------------- States & Territories Directory (#/states and #/state/:code)
 export function statesView() {
   const body = h('div', { 'aria-live': 'polite' },
-    p({ class: 'help' }, t('reach.loading', 'Loading…')));
+    h('p', { class: 'help' }, t('reach.loading', 'Loading…')));
 
   regionsApi.states()
     .then(({ states }) => {

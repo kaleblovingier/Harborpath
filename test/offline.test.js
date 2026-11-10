@@ -264,7 +264,7 @@ function viewLoadFailedChecks(viewLoadFailed) {
   assert.match(render, /catch\(\(\) => \{ failed = true; return null; \}\)/);
   assert.match(render, /else if \(failed\) buildView = \(\) => viewLoadFailed\(resolved\.title, \(\) => render\(\), \{ overdoseSteps: resolved\.lazyPath === 'overdose' \}\);/);
   // The fallback goes through the same replaceChildren + focus path as any view.
-  assert.match(render, /main\.replaceChildren\(buildView\(\)\);[\s\S]*routeFocusTarget\(main\)\?\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(render, /content = buildView\(\);[\s\S]*main\.replaceChildren\(content\);[\s\S]*routeFocusTarget\(main\)\?\.focus\(\{ preventScroll: true \}\)/);
 }
 
 // ---------------------------------------------------------------- Service worker

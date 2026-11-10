@@ -1702,7 +1702,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   padding: 0;
   margin: 8px 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 8px;
 }
 .legal-immunity-item {
@@ -1925,7 +1925,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .craft-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: 12px;
   margin-top: 14px;
 }
@@ -1977,7 +1977,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .polysubstance-view .grid-2-col {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2102,7 +2102,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .nightlife-view .grid-2-col {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2118,7 +2118,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .reagents-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 1rem;
   margin-top: 1.25rem;
 }
@@ -2210,7 +2210,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .meds-grid, .cbti-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 1.25rem;
   margin-top: 1.25rem;
 }
@@ -2262,7 +2262,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .stim-grid, .endo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 1.25rem;
   margin-top: 1.25rem;
 }
@@ -2282,7 +2282,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .cannabis-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -2359,7 +2359,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .therapies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-top: 1rem;
 }
@@ -2399,7 +2399,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .recovery-timeline-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2434,7 +2434,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .concentrate-highlights {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2499,7 +2499,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .cascade-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2525,7 +2525,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .daa-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 1.25rem;
   margin-top: 1rem;
 }
@@ -2540,6 +2540,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .daa-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.5rem;
@@ -2556,7 +2557,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: #10b981;
   border-radius: 9999px;
   font-weight: 600;
-  white-space: nowrap;
+  white-space: normal;
 }
 .daa-dosing, .daa-highlights {
   font-size: 0.88rem;
@@ -2576,7 +2577,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .fib4-input-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -2600,7 +2601,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .thresholds-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2660,7 +2661,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .reinf-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2738,7 +2739,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .patch-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2792,7 +2793,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .non-nic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 1.25rem;
   margin-top: 1rem;
 }
@@ -2855,7 +2856,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .four-ds-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2915,7 +2916,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .crossover-stages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -2962,7 +2963,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .comfort-meds-grid,
 .toolkit-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -3001,7 +3002,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .bind-checklist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
@@ -3126,7 +3127,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .triage-preset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 12px;
   margin-top: 10px;
 }
@@ -3152,7 +3153,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rass-selector-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   gap: 10px;
   margin-top: 12px;
 }
@@ -3188,7 +3189,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .triage-symptoms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 10px;
   margin-top: 12px;
 }
@@ -3261,7 +3262,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .beta-domains-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 16px;
 }
 .beta-domain-card {
@@ -3346,7 +3347,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rescue-strategies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 12px;
 }
 .rescue-strat-card {
@@ -3357,7 +3358,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pain-principles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 14px;
 }
 .pain-principle-card {
@@ -3368,7 +3369,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .discharge-principles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 12px;
   margin-top: 12px;
 }
@@ -3380,7 +3381,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rights-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 14px;
   margin-top: 12px;
 }
@@ -3392,7 +3393,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .sbar-config-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 14px;
   margin-top: 12px;
 }
@@ -3511,7 +3512,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .exposure-mode-switcher {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
 }
 .mode-toggle-btn {
@@ -3565,7 +3566,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .exposure-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
@@ -3619,7 +3620,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .result-details-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
 }
 .result-item {
@@ -3690,7 +3691,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .osha-rights-grid,
 .pickup-steps-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -3721,7 +3722,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .contra-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
 }
 .contra-item {
@@ -3832,7 +3833,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .sh-mode-switcher {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
 }
 .sh-mode-btn {
@@ -3886,7 +3887,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .sh-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
@@ -3968,7 +3969,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .ec-methods-grid,
 .materials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -4164,7 +4165,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ns-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -4305,7 +4306,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ns-substances-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
 }
 .ns-sub-card {
@@ -4345,7 +4346,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ns-products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.5rem;
 }
 .ns-prod-card {
@@ -4534,7 +4535,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .gc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -4617,7 +4618,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .taper-btn-group {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1rem;
   margin-top: 0.75rem;
 }
@@ -4710,7 +4711,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .gc-substances-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -4762,7 +4763,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .gws-clusters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
 }
 .gws-cluster-card {
@@ -4938,7 +4939,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -5040,7 +5041,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pillars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1.25rem;
 }
 .pillar-item {
@@ -5132,7 +5133,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pc-substances-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -5246,7 +5247,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .hppd-types-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-top: 1rem;
 }
@@ -5330,7 +5331,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ghb-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -5421,7 +5422,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .ghb-compounds-grid,
 .ghb-stages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -5532,7 +5533,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ghb-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
 }
 .ghb-rule-card {
@@ -5656,7 +5657,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .vc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -5760,7 +5761,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .vc-zones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -5828,7 +5829,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .vc-rules-grid,
 .vc-rehab-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -5983,7 +5984,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ic-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6047,7 +6048,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ic-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6092,7 +6093,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ic-diff-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6153,7 +6154,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ic-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6277,7 +6278,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .kc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6332,7 +6333,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .kc-stages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6401,7 +6402,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .kc-diffs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6434,7 +6435,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .kc-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6558,7 +6559,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .wc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6613,7 +6614,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .wc-stages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6641,7 +6642,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .wc-diffs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6669,7 +6670,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .wc-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6793,7 +6794,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .lc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -6848,7 +6849,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .lc-stages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6873,7 +6874,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .lc-diffs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -6916,7 +6917,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .lc-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -7040,7 +7041,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ec-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -7095,7 +7096,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ec-diffs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -7138,7 +7139,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ec-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -7257,7 +7258,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1rem;
 }
 .rc-result-card {
@@ -7319,7 +7320,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rc-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .rc-card {
@@ -7358,7 +7359,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rc-stages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .rc-stage-card {
@@ -7389,7 +7390,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rc-moud-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .rc-moud-card {
@@ -7426,7 +7427,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .rc-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -7557,7 +7558,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pc-inputs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1rem;
 }
 .pc-result-card {
@@ -7619,7 +7620,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pc-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .pc-card {
@@ -7648,7 +7649,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pc-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
@@ -7822,7 +7823,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .neurology-evaluator-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 0.75rem;
 }
 .neurology-check-item {
@@ -7976,7 +7977,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .neurology-caine-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.25rem;
 }
 .neurology-caine-card {
@@ -8010,7 +8011,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .neurology-directives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .neurology-directive-card {
@@ -8245,7 +8246,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .metabolic-evaluator-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 0.75rem;
 }
 .metabolic-check-item {
@@ -8372,7 +8373,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .metabolic-directives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .metabolic-directive-card {
@@ -8607,7 +8608,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .gi-evaluator-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 0.75rem;
 }
 .gi-check-item {
@@ -8734,7 +8735,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .gi-directives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .gi-directive-card {
@@ -8931,7 +8932,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .hematology-syndromes-list,
 .hematology-directives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .hematology-syndrome-card,
@@ -8960,7 +8961,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .hematology-evaluator-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 0.75rem;
 }
 .hematology-check-item {
@@ -9124,7 +9125,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .orthopedic-syndromes-list,
 .orthopedic-directives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .orthopedic-syndrome-card,
@@ -9153,7 +9154,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .orthopedic-evaluator-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 0.75rem;
 }
 .orthopedic-check-item {
@@ -9317,7 +9318,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .ocular-syndromes-list,
 .ocular-directives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 .ocular-syndrome-card,
@@ -9346,7 +9347,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .ocular-evaluator-checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 0.75rem;
 }
 .ocular-check-item {
@@ -9437,7 +9438,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .urology-syndrome-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
@@ -9467,7 +9468,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .urology-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 0.75rem;
 }
@@ -9534,7 +9535,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .ent-syndrome-grid,
 .dermatology-syndrome-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
@@ -9568,7 +9569,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .ent-rules-grid,
 .dermatology-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 0.75rem;
 }
@@ -9685,7 +9686,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .cardiology-syndrome-grid,
 .oncology-syndrome-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
@@ -9719,7 +9720,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .cardiology-rules-grid,
 .oncology-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 0.75rem;
 }
@@ -9784,7 +9785,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .obstetric-syndrome-grid,
 .icu-syndrome-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
@@ -9818,7 +9819,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .obstetric-rules-grid,
 .icu-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
   margin-top: 0.75rem;
 }
@@ -9848,13 +9849,13 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .pediatric-screener-section .screener-grid,
 .geriatric-screener-section .screener-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 0.75rem;
   margin: 1rem 0;
 }
 .acb-table-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -10074,7 +10075,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -10679,7 +10680,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 @media (min-width: 768px) {
   .outreach-cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
   }
 }
 .printable-pocket-card {
@@ -10695,6 +10696,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
 }
 .pocket-card-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.5rem;
@@ -10716,7 +10718,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   text-transform: uppercase;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  white-space: nowrap;
+  white-space: normal;
 }
 .pocket-steps-list {
   display: flex;
@@ -12165,3 +12167,15 @@ body.sensory-mode-active [tabindex]:focus-visible {
 .disaster-supply-list li,.movement-supply-list li,.fungal-supply-list li{display:flex;align-items:center;gap:0.5rem;font-size:0.9rem;color:var(--text)}
 .disaster-sbar-textarea,.movement-sbar-textarea,.fungal-sbar-textarea{width:100%;padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-mono,monospace);font-size:0.85rem;line-height:1.45;resize:vertical;margin-bottom:0.75rem}
 .movement-pheno-details,.fungal-path-details{background:var(--surface-2);padding:0.75rem;border-radius:var(--radius-sm);font-size:0.88rem;line-height:1.45;margin-top:0.65rem}
+
+/* Global 320px mobile overflow guards */
+main{overflow-wrap:anywhere}
+main table{overflow-wrap:normal}
+main :is(pre,.summary-text-box,.encampment-sbar-block,.trauma-sbar-block,.toxic-sbar-block,.mci-sbar-block,.moud-sbar-block,.burn-sbar-block,.fhir-code-block){white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;overflow-x:auto}
+main select,main input:not([type=checkbox]):not([type=radio]),main textarea{max-width:100%;min-width:0}
+.input-select,.form-select,.input-field,.trauma-select{width:100%}
+main :is(.view-section,.checkbox-row>*,.nsti-col,.encampment-col,.trauma-col,.fhir-col,.disaster-col,.movement-col,.fungal-col,.decon-col,.carceral-col,.card,.form-group,.table-scroll,.table-wrap){min-width:0;max-width:100%}
+.table-scroll{overflow-x:auto}
+.outreach-view .printable-pocket-card,.form-group,.button{max-width:100%}
+main :is(button,.btn,.button){white-space:normal;overflow-wrap:anywhere}
+@media(max-width:420px){.nsti-lab-row{grid-template-columns:1fr auto}.nsti-lab-row .nsti-lab-label{grid-column:1 / -1}.carceral-countdown-row{flex-wrap:wrap}}

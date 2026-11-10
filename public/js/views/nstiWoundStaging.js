@@ -425,11 +425,209 @@ export function subscribeNstiState(fn) {
 
 export function nstiWoundStagingView() {
   const container = h('div', { class: 'nsti-staging-view', role: 'region', 'aria-label': 'Complex Wound & NSTI LRINEC / POCUS Navigator' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header
+  container.append(
+    pageHeader(
+      isEs ? 'Navegador de Infecciones Graves de Partes Blandas, Fascitis Necrosante (LRINEC), POCUS y Xilacina' : 'Complex Wound & Necrotizing Soft Tissue Infection (NSTI) LRINEC & POCUS Navigator',
+      isEs ? 'Herramienta clínica de estratificación para diferenciar celulitis, absceso drenable y fascitis necrosante mediante signos duros, criterios ecográficos STAFF, puntuación LRINEC y protocolo de preservación tendinosa en úlceras por xilacina.' : 'Clinical decision support to differentiate cellulitis, drainable abscess, and emergent necrotizing fasciitis using hard physical signs, STAFF ultrasound criteria, LRINEC laboratory scoring, and tendon-sparing xylazine ulcer staging.'
+    )
+  );
 
+  const emergentBannerSlot = h('div');
+  const grid = h('div', { class: 'nsti-grid' });
+  const leftCol = h('div', { class: 'nsti-col' });
+  const rightCol = h('div', { class: 'nsti-col' });
+  grid.append(leftCol, rightCol);
+  container.append(emergentBannerSlot, grid);
+
+  // Left Col: Hard signs, Soft signs, POCUS (persistent checkboxes/select)
+  const hardCard = h('div', { class: 'card nsti-card' },
+    h('h2', { class: 'nsti-card-title text-danger' },
+      icon('alert-octagon'),
+      isEs ? '1. Signos Duros de Necrosis (Quirófano Inmediato)' : '1. Hard Signs of Necrosis (Immediate OR)'
+    ),
+    h('p', { class: 'text-sm text-muted' },
+      isEs ? 'La presencia de UN SOLO signo duro exige traslado quirúrgico inmediato sin esperar analíticas.' : 'Presence of ANY SINGLE hard sign mandates emergent surgical consultation without waiting for labs.'
+    )
+  );
+  const hardCheckRows = HARD_SIGNS_NSTI.map((sign) => {
+    const isChecked = woundState.hardSigns.includes(sign.id);
+    const checkbox = h('input', {
+      type: 'checkbox',
+      id: `hard-${sign.id}`,
+      checked: isChecked,
+      'aria-label': isEs ? sign.nameEs : sign.nameEn,
+    });
+    checkbox.addEventListener('change', (e) => {
+      const next = new Set(woundState.hardSigns);
+      if (e.target.checked) next.add(sign.id);
+      else next.delete(sign.id);
+      setNstiState({ hardSigns: Array.from(next) });
+    });
+    const row = h('div', { class: `nsti-check-row ${isChecked ? 'active-hard' : ''}` },
+      checkbox,
+      h('label', { for: `hard-${sign.id}`, class: 'nsti-check-label' },
+        h('strong', null, isEs ? sign.nameEs : sign.nameEn),
+        h('span', { class: 'nsti-check-desc' }, isEs ? sign.descEs : sign.descEn)
+      )
+    );
+    hardCard.append(row);
+    return { id: sign.id, checkbox, row };
+  });
+  leftCol.append(hardCard);
+
+  const softCard = h('div', { class: 'card nsti-card' },
+    h('h2', { class: 'nsti-card-title text-warning' },
+      icon('alert-circle'),
+      isEs ? '2. Signos Blandos de Alerta Temprana' : '2. Soft Signs of Early Deep Tissue Threat'
+    ),
+    h('p', { class: 'text-sm text-muted' },
+      isEs ? 'Signos clínicos de alta sospecha que exigen vigilancia intensiva y cálculo de LRINEC.' : 'High-suspicion signs requiring intensive monitoring and laboratory LRINEC calculation.'
+    )
+  );
+  const softCheckRows = SOFT_SIGNS_NSTI.map((sign) => {
+    const isChecked = woundState.softSigns.includes(sign.id);
+    const checkbox = h('input', {
+      type: 'checkbox',
+      id: `soft-${sign.id}`,
+      checked: isChecked,
+      'aria-label': isEs ? sign.nameEs : sign.nameEn,
+    });
+    checkbox.addEventListener('change', (e) => {
+      const next = new Set(woundState.softSigns);
+      if (e.target.checked) next.add(sign.id);
+      else next.delete(sign.id);
+      setNstiState({ softSigns: Array.from(next) });
+    });
+    const row = h('div', { class: `nsti-check-row ${isChecked ? 'active-soft' : ''}` },
+      checkbox,
+      h('label', { for: `soft-${sign.id}`, class: 'nsti-check-label' },
+        h('strong', null, isEs ? sign.nameEs : sign.nameEn),
+        h('span', { class: 'nsti-check-desc' }, isEs ? sign.descEs : sign.descEn)
+      )
+    );
+    softCard.append(row);
+    return { id: sign.id, checkbox, row };
+  });
+  leftCol.append(softCard);
+
+  const pocusSelect = h('select', { class: 'nsti-select', 'aria-label': isEs ? 'Hallazgo POCUS' : 'POCUS Finding' },
+    Object.keys(POCUS_DIFFERENTIALS).map((k) =>
+      h('option', { value: k, selected: woundState.pocusCategory === k }, isEs ? POCUS_DIFFERENTIALS[k].nameEs : POCUS_DIFFERENTIALS[k].nameEn)
+    )
+  );
+  pocusSelect.addEventListener('change', (e) => setNstiState({ pocusCategory: e.target.value }));
+  const pocusDescSlot = h('div', { class: 'nsti-pocus-details' });
+  leftCol.append(
+    h('div', { class: 'card nsti-card' },
+      h('h2', { class: 'nsti-card-title' },
+        icon('activity'),
+        isEs ? '3. Ecografía a Pie de Cama (POCUS / STAFF)' : '3. Point-of-Care Ultrasound (POCUS / STAFF)'
+      ),
+      h('p', { class: 'text-sm text-muted' },
+        isEs ? 'Seleccione los hallazgos con sonda lineal de alta frecuencia (7.5-15 MHz):' : 'Select bedside high-frequency linear transducer ultrasound findings:'
+      ),
+      pocusSelect,
+      pocusDescSlot
+    )
+  );
+
+  // Right Col: LRINEC Calculator (persistent 6 numeric inputs + dynamic pts badges)
+  const lrinecBadgeEl = h('span', { class: 'nsti-badge' });
+  const lrinecActionEl = h('p', { class: 'text-sm text-muted' });
+
+  function makeLabRow(key, labelTxt, val, min, max, ptsKey) {
+    const input = h('input', {
+      type: 'number',
+      class: 'nsti-num-input',
+      value: String(val),
+      min: String(min),
+      max: String(max),
+      step: 'any',
+      'aria-label': labelTxt,
+    });
+    input.addEventListener('input', (e) => {
+      setNstiState({ [key]: Number(e.target.value) || 0 });
+    });
+    const ptsBadge = h('span', { class: 'nsti-pts-badge' }, '+0 pts');
+    const row = h('div', { class: 'nsti-lab-row' },
+      h('label', { class: 'nsti-lab-label' }, labelTxt),
+      input,
+      ptsBadge
+    );
+    return { key, ptsKey, input, ptsBadge, row };
+  }
+
+  const labRows = [
+    makeLabRow('crp', isEs ? 'Proteína C Reactiva (mg/L):' : 'C-Reactive Protein (CRP, mg/L):', woundState.crp, 0, 500, 'crpPts'),
+    makeLabRow('wbc', isEs ? 'Leucocitos (x10³/µL):' : 'WBC Count (x10³/µL):', woundState.wbc, 0, 100, 'wbcPts'),
+    makeLabRow('hemoglobin', isEs ? 'Hemoglobina (g/dL):' : 'Hemoglobin (g/dL):', woundState.hemoglobin, 0, 25, 'hbPts'),
+    makeLabRow('sodium', isEs ? 'Sodio Sérico (mmol/L):' : 'Serum Sodium (mmol/L):', woundState.sodium, 100, 180, 'naPts'),
+    makeLabRow('creatinine', isEs ? 'Creatinina Sérica (mg/dL):' : 'Serum Creatinine (mg/dL):', woundState.creatinine, 0, 15, 'crPts'),
+    makeLabRow('glucose', isEs ? 'Glucemia (mg/dL):' : 'Blood Glucose (mg/dL):', woundState.glucose, 0, 1000, 'gluPts'),
+  ];
+
+  const lrinecCard = h('div', { class: 'card nsti-card' },
+    h('div', { class: 'nsti-card-header-flex' },
+      h('h2', { class: 'nsti-card-title' },
+        icon('clipboard'),
+        isEs ? '4. Calculadora de Puntuación LRINEC' : '4. LRINEC Score Calculator'
+      ),
+      lrinecBadgeEl
+    ),
+    lrinecActionEl,
+    h('div', { class: 'nsti-lab-inputs' }, ...labRows.map((r) => r.row))
+  );
+
+  // Xylazine card (checkbox persistent, stage selector/info dynamic)
+  const xylCheck = h('input', {
+    type: 'checkbox',
+    id: 'is-xylazine',
+    checked: woundState.isXylazineWound,
+    'aria-label': isEs ? 'Herida por consumo de xilacina' : 'Xylazine-associated wound',
+  });
+  xylCheck.addEventListener('change', (e) => setNstiState({ isXylazineWound: e.target.checked }));
+  const xylDynamicSlot = h('div');
+  const xylazineCard = h('div', { class: 'card nsti-card' },
+    h('h2', { class: 'nsti-card-title' },
+      icon('shield'),
+      isEs ? '5. Úlcera por Xilacina («Tranq») y Preservación Tendinosa' : '5. Xylazine ("Tranq") Ulcer Staging & Tendon Protection'
+    ),
+    h('div', { class: 'nsti-check-row' },
+      xylCheck,
+      h('label', { for: 'is-xylazine' },
+        h('strong', null, isEs ? '¿Úlcera inducida o complicada por xilacina?' : 'Xylazine-associated necrotic wound present?')
+      )
+    ),
+    xylDynamicSlot
+  );
+
+  const sbarCardSlot = h('div');
+  rightCol.append(lrinecCard, xylazineCard, sbarCardSlot);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    hardCheckRows.forEach(({ id, checkbox, row }) => {
+      const checked = woundState.hardSigns.includes(id);
+      if (active !== checkbox) checkbox.checked = checked;
+      row.className = `nsti-check-row ${checked ? 'active-hard' : ''}`;
+    });
+    softCheckRows.forEach(({ id, checkbox, row }) => {
+      const checked = woundState.softSigns.includes(id);
+      if (active !== checkbox) checkbox.checked = checked;
+      row.className = `nsti-check-row ${checked ? 'active-soft' : ''}`;
+    });
+    if (active !== pocusSelect) pocusSelect.value = woundState.pocusCategory;
+    labRows.forEach(({ key, input }) => {
+      if (active !== input) input.value = String(woundState[key]);
+    });
+    if (active !== xylCheck) xylCheck.checked = Boolean(woundState.isXylazineWound);
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evaluation = evaluateNstiWoundRisk({
       hardSigns: woundState.hardSigns,
       softSigns: woundState.softSigns,
@@ -446,242 +644,63 @@ export function nstiWoundStagingView() {
       xylazineStage: woundState.xylazineStage,
     });
 
-    // Page Header
-    container.append(
-      pageHeader(
-        isEs ? 'Navegador de Infecciones Graves de Partes Blandas, Fascitis Necrosante (LRINEC), POCUS y Xilacina' : 'Complex Wound & Necrotizing Soft Tissue Infection (NSTI) LRINEC & POCUS Navigator',
-        isEs ? 'Herramienta clínica de estratificación para diferenciar celulitis, absceso drenable y fascitis necrosante mediante signos duros, criterios ecográficos STAFF, puntuación LRINEC y protocolo de preservación tendinosa en úlceras por xilacina.' : 'Clinical decision support to differentiate cellulitis, drainable abscess, and emergent necrotizing fasciitis using hard physical signs, STAFF ultrasound criteria, LRINEC laboratory scoring, and tendon-sparing xylazine ulcer staging.'
-      )
-    );
-
-    // Critical Alert Banner if Emergent
+    clear(emergentBannerSlot);
     if (evaluation.isEmergentSurge) {
-      const banner = h('div', { class: 'nsti-emergent-banner', role: 'alert' },
-        h('div', { class: 'nsti-banner-header' },
-          icon('alert-triangle'),
-          h('strong', null, isEs ? '¡ALERTA QUIRÚRGICA INMEDIATA: FASCITIS NECROSANTE DETECTADA!' : 'CRITICAL SURGICAL ALERT: NECROTIZING SOFT TISSUE INFECTION SUSPECTED!')
-        ),
-        h('p', null, isEs ? 'Se han identificado signos patognomónicos (signos duros o ecografía STAFF positiva). TRASLADE DE INMEDIATO A QUIRÓFANO. Está formalmente contraindicado retrasar la cirugía para obtener analíticas adicionales o TC.' : 'Pathognomonic hard signs or STAFF ultrasound criteria are present. MOBILIZE OPERATING ROOM FOR IMMEDIATE SURGICAL DEBRIDEMENT. Do not delay surgery for further laboratory or CT imaging.')
+      emergentBannerSlot.append(
+        h('div', { class: 'nsti-emergent-banner', role: 'alert' },
+          h('div', { class: 'nsti-banner-header' },
+            icon('alert-triangle'),
+            h('strong', null, isEs ? '¡ALERTA QUIRÚRGICA INMEDIATA: FASCITIS NECROSANTE DETECTADA!' : 'CRITICAL SURGICAL ALERT: NECROTIZING SOFT TISSUE INFECTION SUSPECTED!')
+          ),
+          h('p', null, isEs ? 'Se han identificado signos patognomónicos (signos duros o ecografía STAFF positiva). TRASLADE DE INMEDIATO A QUIRÓFANO. Está formalmente contraindicado retrasar la cirugía para obtener analíticas adicionales o TC.' : 'Pathognomonic hard signs or STAFF ultrasound criteria are present. MOBILIZE OPERATING ROOM FOR IMMEDIATE SURGICAL DEBRIDEMENT. Do not delay surgery for further laboratory or CT imaging.')
+        )
       );
-      container.append(banner);
     }
 
-    // Main Interactive Grid
-    const grid = h('div', { class: 'nsti-grid' });
-
-    // Left Column: Physical Exam & Hard/Soft Signs + POCUS
-    const leftCol = h('div', { class: 'nsti-col' });
-
-    // Section 1: Hard Signs (Checkboxes)
-    const hardCard = h('div', { class: 'card nsti-card' },
-      h('h2', { class: 'nsti-card-title text-danger' },
-        icon('alert-octagon'),
-        isEs ? '1. Signos Duros de Necrosis (Quirófano Inmediato)' : '1. Hard Signs of Necrosis (Immediate OR)'
-      ),
-      h('p', { class: 'text-sm text-muted' },
-        isEs ? 'La presencia de UN SOLO signo duro exige traslado quirúrgico inmediato sin esperar analíticas.' : 'Presence of ANY SINGLE hard sign mandates emergent surgical consultation without waiting for labs.'
-      )
-    );
-
-    HARD_SIGNS_NSTI.forEach((sign) => {
-      const isChecked = woundState.hardSigns.includes(sign.id);
-      const checkbox = h('input', {
-        type: 'checkbox',
-        id: `hard-${sign.id}`,
-        checked: isChecked,
-        'aria-label': isEs ? sign.nameEs : sign.nameEn,
-      });
-      checkbox.addEventListener('change', (e) => {
-        const next = new Set(woundState.hardSigns);
-        if (e.target.checked) next.add(sign.id);
-        else next.delete(sign.id);
-        setNstiState({ hardSigns: Array.from(next) });
-      });
-
-      const label = h('label', { for: `hard-${sign.id}`, class: 'nsti-check-label' },
-        h('strong', null, isEs ? sign.nameEs : sign.nameEn),
-        h('span', { class: 'nsti-check-desc' }, isEs ? sign.descEs : sign.descEn)
-      );
-
-      hardCard.append(h('div', { class: `nsti-check-row ${isChecked ? 'active-hard' : ''}` }, checkbox, label));
-    });
-    leftCol.append(hardCard);
-
-    // Section 2: Soft Signs (Checkboxes)
-    const softCard = h('div', { class: 'card nsti-card' },
-      h('h2', { class: 'nsti-card-title text-warning' },
-        icon('alert-circle'),
-        isEs ? '2. Signos Blandos de Alerta Temprana' : '2. Soft Signs of Early Deep Tissue Threat'
-      ),
-      h('p', { class: 'text-sm text-muted' },
-        isEs ? 'Signos clínicos de alta sospecha que exigen vigilancia intensiva y cálculo de LRINEC.' : 'High-suspicion signs requiring intensive monitoring and laboratory LRINEC calculation.'
-      )
-    );
-
-    SOFT_SIGNS_NSTI.forEach((sign) => {
-      const isChecked = woundState.softSigns.includes(sign.id);
-      const checkbox = h('input', {
-        type: 'checkbox',
-        id: `soft-${sign.id}`,
-        checked: isChecked,
-        'aria-label': isEs ? sign.nameEs : sign.nameEn,
-      });
-      checkbox.addEventListener('change', (e) => {
-        const next = new Set(woundState.softSigns);
-        if (e.target.checked) next.add(sign.id);
-        else next.delete(sign.id);
-        setNstiState({ softSigns: Array.from(next) });
-      });
-
-      const label = h('label', { for: `soft-${sign.id}`, class: 'nsti-check-label' },
-        h('strong', null, isEs ? sign.nameEs : sign.nameEn),
-        h('span', { class: 'nsti-check-desc' }, isEs ? sign.descEs : sign.descEn)
-      );
-
-      softCard.append(h('div', { class: `nsti-check-row ${isChecked ? 'active-soft' : ''}` }, checkbox, label));
-    });
-    leftCol.append(softCard);
-
-    // Section 3: POCUS Differential Selector
-    const pocusCard = h('div', { class: 'card nsti-card' },
-      h('h2', { class: 'nsti-card-title' },
-        icon('activity'),
-        isEs ? '3. Ecografía a Pie de Cama (POCUS / STAFF)' : '3. Point-of-Care Ultrasound (POCUS / STAFF)'
-      ),
-      h('p', { class: 'text-sm text-muted' },
-        isEs ? 'Seleccione los hallazgos con sonda lineal de alta frecuencia (7.5-15 MHz):' : 'Select bedside high-frequency linear transducer ultrasound findings:'
-      )
-    );
-
-    const pocusSelect = h('select', { class: 'nsti-select', 'aria-label': isEs ? 'Hallazgo POCUS' : 'POCUS Finding' },
-      Object.keys(POCUS_DIFFERENTIALS).map((k) => {
-        const opt = h('option', { value: k }, isEs ? POCUS_DIFFERENTIALS[k].nameEs : POCUS_DIFFERENTIALS[k].nameEn);
-        if (woundState.pocusCategory === k) opt.selected = true;
-        return opt;
-      })
-    );
-    pocusSelect.addEventListener('change', (e) => {
-      setNstiState({ pocusCategory: e.target.value });
-    });
-
-    const pocusDesc = h('div', { class: 'nsti-pocus-details' },
+    clear(pocusDescSlot);
+    pocusDescSlot.append(
       h('p', null, h('strong', null, isEs ? 'Hallazgos Sonográficos: ' : 'Sonographic Findings: '), isEs ? evaluation.pocus.findingsEs : evaluation.pocus.findingsEn),
       h('p', null, h('strong', null, isEs ? 'Conducta Clínica: ' : 'Clinical Action: '), isEs ? evaluation.pocus.managementEs : evaluation.pocus.managementEn)
     );
 
-    pocusCard.append(pocusSelect, pocusDesc);
-    leftCol.append(pocusCard);
-
-    grid.append(leftCol);
-
-    // Right Column: LRINEC Calculator, Xylazine Staging & Handoff
-    const rightCol = h('div', { class: 'nsti-col' });
-
-    // Section 4: LRINEC Score Calculator
-    const lrinecCard = h('div', { class: 'card nsti-card' },
-      h('div', { class: 'nsti-card-header-flex' },
-        h('h2', { class: 'nsti-card-title' },
-          icon('clipboard'),
-          isEs ? '4. Calculadora de Puntuación LRINEC' : '4. LRINEC Score Calculator'
-        ),
-        h('span', { class: `nsti-badge badge-${evaluation.lrinec.riskTier}` },
-          `${evaluation.lrinec.totalScore} / 13 pts (${isEs ? evaluation.lrinec.riskTierEs : evaluation.lrinec.riskTierEn})`
-        )
-      ),
-      h('p', { class: 'text-sm text-muted' },
-        isEs ? evaluation.lrinec.actionEs : evaluation.lrinec.actionEn
-      ),
-      h('div', { class: 'nsti-lab-inputs' },
-        createLabInput(isEs ? 'Proteína C Reactiva (mg/L):' : 'C-Reactive Protein (CRP, mg/L):', woundState.crp, 0, 500, (v) => setNstiState({ crp: v }), evaluation.lrinec.crpPts),
-        createLabInput(isEs ? 'Leucocitos (x10³/µL):' : 'WBC Count (x10³/µL):', woundState.wbc, 0, 100, (v) => setNstiState({ wbc: v }), evaluation.lrinec.wbcPts),
-        createLabInput(isEs ? 'Hemoglobina (g/dL):' : 'Hemoglobin (g/dL):', woundState.hemoglobin, 0, 25, (v) => setNstiState({ hemoglobin: v }), evaluation.lrinec.hbPts),
-        createLabInput(isEs ? 'Sodio Sérico (mmol/L):' : 'Serum Sodium (mmol/L):', woundState.sodium, 100, 180, (v) => setNstiState({ sodium: v }), evaluation.lrinec.naPts),
-        createLabInput(isEs ? 'Creatinina Sérica (mg/dL):' : 'Serum Creatinine (mg/dL):', woundState.creatinine, 0, 15, (v) => setNstiState({ creatinine: v }), evaluation.lrinec.crPts),
-        createLabInput(isEs ? 'Glucemia (mg/dL):' : 'Blood Glucose (mg/dL):', woundState.glucose, 0, 1000, (v) => setNstiState({ glucose: v }), evaluation.lrinec.gluPts)
-      )
-    );
-    rightCol.append(lrinecCard);
-
-    // Section 5: Xylazine Ulcer Staging & Tendon Preservation
-    const xylazineCard = h('div', { class: 'card nsti-card' },
-      h('h2', { class: 'nsti-card-title' },
-        icon('shield'),
-        isEs ? '5. Úlcera por Xilacina («Tranq») y Preservación Tendinosa' : '5. Xylazine ("Tranq") Ulcer Staging & Tendon Protection'
-      ),
-      h('div', { class: 'nsti-check-row' },
-        h('input', {
-          type: 'checkbox',
-          id: 'is-xylazine',
-          checked: woundState.isXylazineWound,
-          'aria-label': isEs ? 'Herida por consumo de xilacina' : 'Xylazine-associated wound',
-        }),
-        h('label', { for: 'is-xylazine' },
-          h('strong', null, isEs ? '¿Úlcera inducida o complicada por xilacina?' : 'Xylazine-associated necrotic wound present?')
-        )
-      )
-    );
-
-    const xylCheck = xylazineCard.querySelector('#is-xylazine');
-    xylCheck.addEventListener('change', (e) => {
-      setNstiState({ isXylazineWound: e.target.checked });
+    lrinecBadgeEl.className = `nsti-badge badge-${evaluation.lrinec.riskTier}`;
+    lrinecBadgeEl.textContent = `${evaluation.lrinec.totalScore} / 13 pts (${isEs ? evaluation.lrinec.riskTierEs : evaluation.lrinec.riskTierEn})`;
+    lrinecActionEl.textContent = isEs ? evaluation.lrinec.actionEs : evaluation.lrinec.actionEn;
+    labRows.forEach(({ ptsKey, ptsBadge }) => {
+      ptsBadge.textContent = `+${evaluation.lrinec[ptsKey]} pts`;
     });
 
+    clear(xylDynamicSlot);
     if (woundState.isXylazineWound) {
       const stageSelect = h('select', { class: 'nsti-select', 'aria-label': isEs ? 'Estadio de xilacina' : 'Xylazine Stage' },
-        XYLAZINE_ULCER_STAGES.map((s) => {
-          const opt = h('option', { value: s.stage }, isEs ? s.nameEs : s.nameEn);
-          if (woundState.xylazineStage === s.stage) opt.selected = true;
-          return opt;
-        })
+        XYLAZINE_ULCER_STAGES.map((s) =>
+          h('option', { value: s.stage, selected: woundState.xylazineStage === s.stage }, isEs ? s.nameEs : s.nameEn)
+        )
       );
-      stageSelect.addEventListener('change', (e) => {
-        setNstiState({ xylazineStage: Number(e.target.value) });
-      });
+      stageSelect.addEventListener('change', (e) => setNstiState({ xylazineStage: Number(e.target.value) }));
 
       const stageInfo = h('div', { class: 'nsti-stage-info' },
         h('p', null, h('strong', null, isEs ? 'Características: ' : 'Characteristics: '), isEs ? evaluation.xylazineProfile.characteristicsEs : evaluation.xylazineProfile.characteristicsEn),
         h('p', { class: 'nsti-protocol-text' }, h('strong', null, isEs ? 'Protocolo Recomendado: ' : 'Clinical Protocol: '), isEs ? evaluation.xylazineProfile.protocolEs : evaluation.xylazineProfile.protocolEn)
       );
-
-      xylazineCard.append(stageSelect, stageInfo);
+      xylDynamicSlot.append(stageSelect, stageInfo);
 
       if (evaluation.tendonAdvisoryEn) {
-        const tendonAlert = h('div', { class: 'nsti-tendon-alert', role: 'alert' },
-          icon('alert-octagon'),
-          h('span', null, isEs ? evaluation.tendonAdvisoryEs : evaluation.tendonAdvisoryEn)
+        xylDynamicSlot.append(
+          h('div', { class: 'nsti-tendon-alert', role: 'alert' },
+            icon('alert-octagon'),
+            h('span', null, isEs ? evaluation.tendonAdvisoryEs : evaluation.tendonAdvisoryEn)
+          )
         );
-        xylazineCard.append(tendonAlert);
       }
     }
-    rightCol.append(xylazineCard);
 
-    // Section 6: SBAR Clinical Consultation & Copy
-    const sbarCard = h('div', { class: 'card nsti-card' },
-      h('h2', { class: 'nsti-card-title' },
-        icon('file-text'),
-        isEs ? '6. Nota de Interconsulta SBAR para Cirugía / Urgencias' : '6. SBAR Surgical Consultation & Handoff Note'
-      ),
-      h('textarea', {
-        class: 'nsti-sbar-textarea',
-        readonly: true,
-        rows: 9,
-        'aria-label': isEs ? 'Nota SBAR' : 'SBAR Note',
-      }, isEs ? evaluation.sbarEs : evaluation.sbarEn),
-      h('div', { class: 'nsti-btn-row' },
-        h('button', {
-          type: 'button',
-          class: 'btn btn-primary',
-          'aria-label': isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
-        }, icon('copy'), isEs ? (woundState.copied ? '¡Copiado!' : 'Copiar Nota SBAR') : (woundState.copied ? 'Copied!' : 'Copy SBAR Note')),
-        h('button', {
-          type: 'button',
-          class: 'btn btn-secondary',
-          'aria-label': isEs ? 'Restablecer Valores' : 'Reset Form',
-        }, icon('rotate-ccw'), isEs ? 'Restablecer' : 'Reset')
-      )
-    );
-
-    const copyBtn = sbarCard.querySelector('.btn-primary');
+    clear(sbarCardSlot);
+    const copyBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-primary',
+      'aria-label': isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
+    }, icon('copy'), isEs ? (woundState.copied ? '¡Copiado!' : 'Copiar Nota SBAR') : (woundState.copied ? 'Copied!' : 'Copy SBAR Note'));
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(isEs ? evaluation.sbarEs : evaluation.sbarEn);
@@ -693,40 +712,44 @@ export function nstiWoundStagingView() {
       }
     });
 
-    const resetBtn = sbarCard.querySelector('.btn-secondary');
+    const resetBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      'aria-label': isEs ? 'Restablecer Valores' : 'Reset Form',
+    }, icon('rotate-ccw'), isEs ? 'Restablecer' : 'Reset');
     resetBtn.addEventListener('click', () => {
       resetNstiState();
       announce(isEs ? 'Valores restablecidos' : 'State reset');
     });
 
-    rightCol.append(sbarCard);
-
-    grid.append(rightCol);
-    container.append(grid);
+    sbarCardSlot.append(
+      h('div', { class: 'card nsti-card' },
+        h('h2', { class: 'nsti-card-title' },
+          icon('file-text'),
+          isEs ? '6. Nota de Interconsulta SBAR para Cirugía / Urgencias' : '6. SBAR Surgical Consultation & Handoff Note'
+        ),
+        h('textarea', {
+          class: 'nsti-sbar-textarea',
+          readonly: true,
+          rows: 9,
+          'aria-label': isEs ? 'Nota SBAR' : 'SBAR Note',
+        }, isEs ? evaluation.sbarEs : evaluation.sbarEn),
+        h('div', { class: 'nsti-btn-row' }, copyBtn, resetBtn)
+      )
+    );
   }
 
-  function createLabInput(labelTxt, val, min, max, onChange, pts) {
-    const row = h('div', { class: 'nsti-lab-row' });
-    const label = h('label', { class: 'nsti-lab-label' }, labelTxt);
-    const input = h('input', {
-      type: 'number',
-      class: 'nsti-num-input',
-      value: String(val),
-      min: String(min),
-      max: String(max),
-      step: 'any',
-      'aria-label': labelTxt,
-    });
-    input.addEventListener('input', (e) => {
-      onChange(Number(e.target.value) || 0);
-    });
-    const ptsBadge = h('span', { class: 'nsti-pts-badge' }, `+${pts} pts`);
-    row.append(label, input, ptsBadge);
-    return row;
-  }
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  };
 
-  const unsubscribe = subscribeNstiState(render);
-  render();
-
+  const unsubscribe = subscribeNstiState(onStateChange);
+  renderDynamic();
   return container;
 }

@@ -224,10 +224,99 @@ export function subscribeStreetTraumaState(fn) {
 
 export function streetTraumaView() {
   const container = h('div', { class: 'street-trauma-view', role: 'region', 'aria-label': 'Street Trauma and Hemorrhage Control Navigator' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header
+  container.appendChild(
+    pageHeader(
+      isEs ? 'Trauma Callejero, Torniquetes y Control de Hemorragias' : 'Street Trauma, Tourniquets & Life-Threatening Hemorrhage Control',
+      isEs
+        ? 'Guía clínica Stop the Bleed y CoTCCC: aplicación de torniquetes CAT, empaquetamiento hemostático en ingle/axila y prevención de errores anatómicos.'
+        : 'ACS Stop the Bleed & CoTCCC protocols: commercial windlass tourniquet placement, hemostatic junctional packing, and dual-bone entrapment warnings.',
+      'clinical'
+    )
+  );
+
+  const alertBannerSlot = h('div');
+  const tabNavSlot = h('div');
+  const grid = h('div', { class: 'trauma-layout-grid' });
+  const leftCol = h('div', { class: 'trauma-col' });
+  const rightCol = h('div', { class: 'trauma-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(alertBannerSlot);
+  container.appendChild(tabNavSlot);
+  container.appendChild(grid);
+
+  // Persistent controls (never rebuilt on keystroke)
+  const presDescEl = h('p', { class: 'trauma-card-desc' });
+  const spurtingChk = h('input', { type: 'checkbox', id: 'chk-spurting', class: 'trauma-checkbox', checked: traumaState.isSpurting });
+  const shockChk = h('input', { type: 'checkbox', id: 'chk-shock', class: 'trauma-checkbox', checked: traumaState.hasShock });
+  const locSel = h('select', { id: 'trauma-location', class: 'trauma-select' },
+    h('option', { value: 'arm', selected: traumaState.woundLocation === 'arm' }, isEs ? 'Brazo Superior (Húmero - Oclusión Eficaz)' : 'Upper Arm (Humerus - Single Bone)'),
+    h('option', { value: 'leg', selected: traumaState.woundLocation === 'leg' }, isEs ? 'Muslo (Fémur - Oclusión Eficaz)' : 'Upper Leg / Thigh (Femur - Single Bone)'),
+    h('option', { value: 'forearm_calf', selected: traumaState.woundLocation === 'forearm_calf' }, isEs ? 'Antebrazo / Pantorrilla (¡Trampa de Doble Hueso!)' : 'Forearm / Calf (Dual-Bone Shielding Trap!)'),
+    h('option', { value: 'groin_axilla', selected: traumaState.woundLocation === 'groin_axilla' }, isEs ? 'Ingle / Axila (Zona de Unión - Empaquetar Gasa)' : 'Groin / Axilla (Junctional - Hemostatic Packing)'),
+    h('option', { value: 'neck', selected: traumaState.woundLocation === 'neck' }, isEs ? 'Cuello (Empaquetar sin comprimir vía aérea)' : 'Neck (Pack directly; do not wrap circumferentially)'),
+    h('option', { value: 'chest_abdomen', selected: traumaState.woundLocation === 'chest_abdomen' }, isEs ? 'Tórax / Abdomen (¡Prohibido Empaquetar! Sello Valvulado)' : 'Chest / Abdomen (DO NOT Pack! Sucking Chest Seal)')
+  );
+  const timeInput = h('input', {
+    type: 'number',
+    id: 'trauma-time',
+    min: '0',
+    max: '360',
+    value: String(traumaState.tourniquetMinutes),
+    class: 'trauma-input-number',
+  });
+
+  spurtingChk.addEventListener('change', (e) => { traumaState.isSpurting = e.target.checked; renderDynamic(); });
+  shockChk.addEventListener('change', (e) => { traumaState.hasShock = e.target.checked; renderDynamic(); });
+  locSel.addEventListener('change', (e) => { traumaState.woundLocation = e.target.value; renderDynamic(); });
+  timeInput.addEventListener('input', (e) => {
+    const val = Number(e.target.value);
+    if (!Number.isNaN(val) && val >= 0) {
+      traumaState.tourniquetMinutes = val;
+      renderDynamic();
+    }
+  });
+
+  const presCard = h('section', { class: 'trauma-card' },
+    h('h2', { class: 'trauma-card-title' },
+      icon('activity'),
+      h('span', {}, isEs ? '1. Características del Sangrado' : '1. Bleeding Characteristics')
+    ),
+    presDescEl,
+    h('div', { class: 'trauma-field-group' },
+      h('label', { for: 'chk-spurting', class: 'trauma-checkbox-label' },
+        spurtingChk,
+        h('span', {}, isEs ? 'Sangre en chorro pulsátil o acumulación rápida' : 'Pulsatile arterial jet or rapid pooling blood')
+      ),
+      h('label', { for: 'chk-shock', class: 'trauma-checkbox-label' },
+        shockChk,
+        h('span', {}, isEs ? 'Signos de shock (piel fría/pálida, pulso ausente, confusión)' : 'Signs of shock (cold/pale skin, absent pulse, confusion)')
+      )
+    ),
+    h('div', { class: 'trauma-field-group' },
+      h('label', { for: 'trauma-location', class: 'trauma-label' }, isEs ? 'Ubicación Anatómica de la Herida:' : 'Anatomical Wound Location:'),
+      locSel
+    ),
+    h('div', { class: 'trauma-field-group' },
+      h('label', { for: 'trauma-time', class: 'trauma-label' }, isEs ? 'Minutos desde la Colocación del Torniquete:' : 'Minutes Since Tourniquet Applied:'),
+      timeInput
+    )
+  );
+  leftCol.appendChild(presCard);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== spurtingChk) spurtingChk.checked = traumaState.isSpurting;
+    if (active !== shockChk) shockChk.checked = traumaState.hasShock;
+    if (active !== locSel) locSel.value = traumaState.woundLocation;
+    if (active !== timeInput) timeInput.value = String(traumaState.tourniquetMinutes);
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evalResult = evaluateStreetTrauma({
       protocolId: traumaState.protocolId,
       isSpurting: traumaState.isSpurting,
@@ -236,153 +325,45 @@ export function streetTraumaView() {
       hasShock: traumaState.hasShock,
     });
 
-    // Page Header
-    container.appendChild(
-      pageHeader(
-        isEs ? 'Trauma Callejero, Torniquetes y Control de Hemorragias' : 'Street Trauma, Tourniquets & Life-Threatening Hemorrhage Control',
-        isEs
-          ? 'Guía clínica Stop the Bleed y CoTCCC: aplicación de torniquetes CAT, empaquetamiento hemostático en ingle/axila y prevención de errores anatómicos.'
-          : 'ACS Stop the Bleed & CoTCCC protocols: commercial windlass tourniquet placement, hemostatic junctional packing, and dual-bone entrapment warnings.',
-        'clinical'
-      )
-    );
+    presDescEl.textContent = isEs ? evalResult.protocol.presentationEs : evalResult.protocol.presentationEn;
 
-    // Emergency 911 Callout Banner if critical
+    clear(alertBannerSlot);
     if (evalResult.isEmergency911) {
-      container.appendChild(
+      alertBannerSlot.appendChild(
         h('aside', { class: 'trauma-alert-urgent', role: 'alert' },
           h('div', { class: 'trauma-alert-title' },
             icon('alert-triangle'),
             h('strong', {}, isEs ? 'HEMORRAGIA CON RIESGO VITAL: LLAME AL 911 DE INMEDIATO' : 'LIFE-THREATENING HEMORRHAGE: CALL 911 IMMEDIATELY')
           ),
           h('ul', { class: 'trauma-alert-list' },
-            (isEs ? evalResult.emergencyFlagsEs : evalResult.emergencyFlagsEn).map((msg) =>
-              h('li', {}, msg)
-            )
+            (isEs ? evalResult.emergencyFlagsEs : evalResult.emergencyFlagsEn).map((msg) => h('li', {}, msg))
           )
         )
       );
     }
 
-    // Protocol Selector Tabs
-    const tabNav = h('div', { class: 'tabs', role: 'tablist', 'aria-label': isEs ? 'Escenarios de Hemorragia' : 'Hemorrhage Scenarios' },
-      Object.values(TRAUMA_HEMORRHAGE_PROTOCOLS).map((p) => {
-        const isSelected = p.id === traumaState.protocolId;
-        const btn = h('button', {
-          type: 'button',
-          role: 'tab',
-          class: `tab ${isSelected ? 'active' : ''}`,
-          'aria-selected': isSelected ? 'true' : 'false',
-        }, isEs ? p.nameEs : p.nameEn);
-        btn.addEventListener('click', () => {
-          traumaState.protocolId = p.id;
-          render();
-        });
-        return btn;
-      })
-    );
-    container.appendChild(tabNav);
-
-    // Two Column Layout
-    const grid = h('div', { class: 'trauma-layout-grid' });
-
-    // LEFT COLUMN: Triage Controls & Anatomy
-    const leftCol = h('div', { class: 'trauma-col' });
-
-    // Card 1: Clinical Presentation
-    const presCard = h('section', { class: 'trauma-card' },
-      h('h2', { class: 'trauma-card-title' },
-        icon('activity'),
-        h('span', {}, isEs ? '1. Características del Sangrado' : '1. Bleeding Characteristics')
-      ),
-      h('p', { class: 'trauma-card-desc' },
-        isEs ? evalResult.protocol.presentationEs : evalResult.protocol.presentationEn
-      ),
-      // Spurting Toggle
-      h('div', { class: 'trauma-field-group' },
-        (() => {
-          const chk = h('input', {
-            type: 'checkbox',
-            id: 'chk-spurting',
-            class: 'trauma-checkbox',
-            checked: traumaState.isSpurting,
+    clear(tabNavSlot);
+    tabNavSlot.appendChild(
+      h('div', { class: 'tabs', role: 'tablist', 'aria-label': isEs ? 'Escenarios de Hemorragia' : 'Hemorrhage Scenarios' },
+        Object.values(TRAUMA_HEMORRHAGE_PROTOCOLS).map((p) => {
+          const isSelected = p.id === traumaState.protocolId;
+          const btn = h('button', {
+            type: 'button',
+            role: 'tab',
+            class: `tab ${isSelected ? 'active' : ''}`,
+            'aria-selected': isSelected ? 'true' : 'false',
+          }, isEs ? p.nameEs : p.nameEn);
+          btn.addEventListener('click', () => {
+            traumaState.protocolId = p.id;
+            renderDynamic();
           });
-          chk.addEventListener('change', (e) => {
-            traumaState.isSpurting = e.target.checked;
-            render();
-          });
-          return h('label', { for: 'chk-spurting', class: 'trauma-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? 'Sangre en chorro pulsátil o acumulación rápida' : 'Pulsatile arterial jet or rapid pooling blood')
-          );
-        })(),
-        (() => {
-          const chk = h('input', {
-            type: 'checkbox',
-            id: 'chk-shock',
-            class: 'trauma-checkbox',
-            checked: traumaState.hasShock,
-          });
-          chk.addEventListener('change', (e) => {
-            traumaState.hasShock = e.target.checked;
-            render();
-          });
-          return h('label', { for: 'chk-shock', class: 'trauma-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? 'Signos de shock (piel fría/pálida, pulso ausente, confusión)' : 'Signs of shock (cold/pale skin, absent pulse, confusion)')
-          );
-        })()
-      ),
-      // Wound Location Selector
-      h('div', { class: 'trauma-field-group' },
-        h('label', { for: 'trauma-location', class: 'trauma-label' }, isEs ? 'Ubicación Anatómica de la Herida:' : 'Anatomical Wound Location:'),
-        (() => {
-          const sel = h('select', { id: 'trauma-location', class: 'trauma-select' },
-            h('option', { value: 'arm', selected: traumaState.woundLocation === 'arm' }, isEs ? 'Brazo Superior (Húmero - Oclusión Eficaz)' : 'Upper Arm (Humerus - Single Bone)'),
-            h('option', { value: 'leg', selected: traumaState.woundLocation === 'leg' }, isEs ? 'Muslo (Fémur - Oclusión Eficaz)' : 'Upper Leg / Thigh (Femur - Single Bone)'),
-            h('option', { value: 'forearm_calf', selected: traumaState.woundLocation === 'forearm_calf' }, isEs ? 'Antebrazo / Pantorrilla (¡Trampa de Doble Hueso!)' : 'Forearm / Calf (Dual-Bone Shielding Trap!)'),
-            h('option', { value: 'groin_axilla', selected: traumaState.woundLocation === 'groin_axilla' }, isEs ? 'Ingle / Axila (Zona de Unión - Empaquetar Gasa)' : 'Groin / Axilla (Junctional - Hemostatic Packing)'),
-            h('option', { value: 'neck', selected: traumaState.woundLocation === 'neck' }, isEs ? 'Cuello (Empaquetar sin comprimir vía aérea)' : 'Neck (Pack directly; do not wrap circumferentially)'),
-            h('option', { value: 'chest_abdomen', selected: traumaState.woundLocation === 'chest_abdomen' }, isEs ? 'Tórax / Abdomen (¡Prohibido Empaquetar! Sello Valvulado)' : 'Chest / Abdomen (DO NOT Pack! Sucking Chest Seal)')
-          );
-          sel.addEventListener('change', (e) => {
-            traumaState.woundLocation = e.target.value;
-            render();
-          });
-          return sel;
-        })()
-      ),
-      // Tourniquet Time Elapsed Input
-      h('div', { class: 'trauma-field-group' },
-        h('label', { for: 'trauma-time', class: 'trauma-label' }, isEs ? 'Minutos desde la Colocación del Torniquete:' : 'Minutes Since Tourniquet Applied:'),
-        (() => {
-          const inp = h('input', {
-            type: 'number',
-            id: 'trauma-time',
-            min: '0',
-            max: '360',
-            value: String(traumaState.tourniquetMinutes),
-            class: 'trauma-input-number',
-          });
-          inp.addEventListener('input', (e) => {
-            const val = Number(e.target.value);
-            if (val >= 0) {
-              traumaState.tourniquetMinutes = val;
-              render();
-            }
-          });
-          return inp;
-        })()
+          return btn;
+        })
       )
     );
-    leftCol.appendChild(presCard);
 
-    grid.appendChild(leftCol);
+    clear(rightCol);
 
-    // RIGHT COLUMN: Protocol Directives, Invariants & SBAR Trauma Handoff
-    const rightCol = h('div', { class: 'trauma-col' });
-
-    // Card 2: Action Protocol Directives
     const actionCard = h('section', { class: 'trauma-card trauma-action-card' },
       h('h2', { class: 'trauma-card-title' },
         icon('check-circle'),
@@ -398,7 +379,6 @@ export function streetTraumaView() {
     );
     rightCol.appendChild(actionCard);
 
-    // Card 3: SBAR Trauma Transfer Handoff
     const sbarCard = h('section', { class: 'trauma-card' },
       h('h2', { class: 'trauma-card-title' },
         icon('file-text'),
@@ -409,10 +389,7 @@ export function streetTraumaView() {
       ),
       h('div', { class: 'trauma-actions' },
         (() => {
-          const copyBtn = h('button', {
-            type: 'button',
-            class: 'btn btn-primary',
-          },
+          const copyBtn = h('button', { type: 'button', class: 'btn btn-primary' },
             icon('copy'),
             h('span', {}, traumaState.copied ? (isEs ? '¡Copiado!' : 'Copied!') : (isEs ? 'Copiar SBAR' : 'Copy SBAR Note'))
           );
@@ -422,10 +399,10 @@ export function streetTraumaView() {
               navigator.clipboard.writeText(text).then(() => {
                 traumaState.copied = true;
                 announce(isEs ? 'Nota SBAR copiada al portapapeles' : 'SBAR note copied to clipboard');
-                render();
+                renderDynamic();
                 setTimeout(() => {
                   traumaState.copied = false;
-                  render();
+                  renderDynamic();
                 }, 3000);
               });
             }
@@ -433,10 +410,7 @@ export function streetTraumaView() {
           return copyBtn;
         })(),
         (() => {
-          const resetBtn = h('button', {
-            type: 'button',
-            class: 'btn btn-ghost',
-          }, isEs ? 'Restablecer' : 'Reset Form');
+          const resetBtn = h('button', { type: 'button', class: 'btn btn-ghost' }, isEs ? 'Restablecer' : 'Reset Form');
           resetBtn.addEventListener('click', () => {
             resetStreetTraumaState();
           });
@@ -445,12 +419,19 @@ export function streetTraumaView() {
       )
     );
     rightCol.appendChild(sbarCard);
-
-    grid.appendChild(rightCol);
-    container.appendChild(grid);
   }
 
-  listeners.add(render);
-  render();
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      listeners.delete(onStateChange);
+      return;
+    }
+    renderDynamic();
+  };
+
+  renderDynamic();
+  listeners.add(onStateChange);
   return container;
 }

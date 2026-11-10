@@ -287,81 +287,97 @@ export function formatPostOverdoseSummaryText(state, lang = 'en') {
 }
 
 /**
- * Mounts the Post-Overdose Response view.
+ * Mounts the Post-Overdose Response view (supports both route return and container mount).
  */
-export function postOverdoseView(container) {
+export function postOverdoseView(containerOrOptions = {}) {
+  const hasDomContainer = Boolean(
+    containerOrOptions &&
+    (typeof containerOrOptions.append === 'function' ||
+      typeof containerOrOptions.appendChild === 'function' ||
+      containerOrOptions.nodeType ||
+      containerOrOptions.tagName)
+  );
+  const container = hasDomContainer ? containerOrOptions : null;
   const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
-  container.textContent = '';
-
   const wrapper = h('div', { class: 'post-overdose-view clinical-view-wrapper' });
 
-  // Header
-  const header = h('header', { class: 'clinical-header' }, [
-    h('div', { class: 'clinical-badge' }, [
-      icon('heart', { class: 'badge-icon', 'aria-hidden': 'true' }),
-      h('span', { class: 'badge-text' }, isEs ? 'Respuesta Post-Sobredosis' : 'Post-Overdose Response & Support')
-    ]),
-    h('h1', { class: 'clinical-title' }, isEs ? 'Supervivencia, Cuidados Post-Naloxona y Enlace MOUD' : 'Post-Overdose Care, Naloxone Reversal & MOUD Bridges'),
-    h('p', { class: 'clinical-subtitle' }, isEs
-      ? 'Orientación clínica durante las primeras 48 horas a 30 días posteriores a una sobredosis. Manejo de abstinencia precipitada, prevención de sedación de rebote y puentes de buprenorfina de 72 horas.'
-      : 'Clinical guidance for the critical 48-hour to 30-day window following an overdose reversal. Managing precipitated withdrawal, rebound sedation risks, and emergency MOUD bridges.'
-    ),
-    h('div', { class: 'privacy-notice' }, [
-      icon('lock', { class: 'privacy-icon', 'aria-hidden': 'true' }),
-      h('span', {}, isEs
-        ? 'Herramienta en memoria RAM. Ninguna respuesta se registra ni se comparte.'
-        : 'In-RAM ephemeral tool. Zero data stored or shared.'
-      )
-    ])
-  ]);
-  wrapper.appendChild(header);
+  function draw() {
+    wrapper.textContent = '';
 
-  // Tab navigation
-  const tabNav = h('nav', { class: 'clinical-tabs-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de navegación' : 'View tabs' });
-  const tabs = [
-    { id: 'overview', labelEn: 'Post-Overdose Standards', labelEs: 'Estándares Post-Sobredosis' },
-    { id: 'triage', labelEn: 'Triage & Safety Plan', labelEs: 'Triaje y Plan de Seguridad' },
-    { id: 'responder-support', labelEn: 'Responder & Bystander Support', labelEs: 'Apoyo a Respondedores' }
-  ];
+    // Header
+    const header = h('header', { class: 'clinical-header' }, [
+      h('div', { class: 'clinical-badge' }, [
+        icon('heart', { class: 'badge-icon', 'aria-hidden': 'true' }),
+        h('span', { class: 'badge-text' }, isEs ? 'Respuesta Post-Sobredosis' : 'Post-Overdose Response & Support')
+      ]),
+      h('h1', { id: 'page-title', tabindex: '-1', class: 'clinical-title' }, isEs ? 'Supervivencia, Cuidados Post-Naloxona y Enlace MOUD' : 'Post-Overdose Care, Naloxone Reversal & MOUD Bridges'),
+      h('p', { class: 'clinical-subtitle' }, isEs
+        ? 'Orientación clínica durante las primeras 48 horas a 30 días posteriores a una sobredosis. Manejo de abstinencia precipitada, prevención de sedación de rebote y puentes de buprenorfina de 72 horas.'
+        : 'Clinical guidance for the critical 48-hour to 30-day window following an overdose reversal. Managing precipitated withdrawal, rebound sedation risks, and emergency MOUD bridges.'
+      ),
+      h('div', { class: 'privacy-notice' }, [
+        icon('lock', { class: 'privacy-icon', 'aria-hidden': 'true' }),
+        h('span', {}, isEs
+          ? 'Herramienta en memoria RAM. Ninguna respuesta se registra ni se comparte.'
+          : 'In-RAM ephemeral tool. Zero data stored or shared.'
+        )
+      ])
+    ]);
+    wrapper.appendChild(header);
 
-  tabs.forEach(tab => {
-    const btn = h('button', {
-      type: 'button',
-      role: 'tab',
-      class: `tab-button ${postOverdoseState.activeTab === tab.id ? 'active' : ''}`,
-      'aria-selected': String(postOverdoseState.activeTab === tab.id),
-      'aria-controls': `tab-content-${tab.id}`,
-      id: `tab-${tab.id}`
-    }, isEs ? tab.labelEs : tab.labelEn);
+    // Tab navigation
+    const tabNav = h('nav', { class: 'clinical-tabs-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de navegación' : 'View tabs' });
+    const tabs = [
+      { id: 'overview', labelEn: 'Post-Overdose Standards', labelEs: 'Estándares Post-Sobredosis' },
+      { id: 'triage', labelEn: 'Triage & Safety Plan', labelEs: 'Triaje y Plan de Seguridad' },
+      { id: 'responder-support', labelEn: 'Responder & Bystander Support', labelEs: 'Apoyo a Respondedores' }
+    ];
 
-    btn.addEventListener('click', () => {
-      postOverdoseState.activeTab = tab.id;
-      postOverdoseView(container);
+    tabs.forEach(tab => {
+      const btn = h('button', {
+        type: 'button',
+        role: 'tab',
+        class: `tab-button ${postOverdoseState.activeTab === tab.id ? 'active' : ''}`,
+        'aria-selected': String(postOverdoseState.activeTab === tab.id),
+        'aria-controls': `tab-content-${tab.id}`,
+        id: `tab-${tab.id}`
+      }, isEs ? tab.labelEs : tab.labelEn);
+
+      btn.addEventListener('click', () => {
+        postOverdoseState.activeTab = tab.id;
+        draw();
+      });
+      tabNav.appendChild(btn);
     });
-    tabNav.appendChild(btn);
-  });
-  wrapper.appendChild(tabNav);
+    wrapper.appendChild(tabNav);
 
-  // Content Area
-  const contentArea = h('div', {
-    class: 'tab-content-area',
-    id: `tab-content-${postOverdoseState.activeTab}`,
-    role: 'tabpanel',
-    'aria-labelledby': `tab-${postOverdoseState.activeTab}`
-  });
+    // Content Area
+    const contentArea = h('div', {
+      class: 'tab-content-area',
+      id: `tab-content-${postOverdoseState.activeTab}`,
+      role: 'tabpanel',
+      'aria-labelledby': `tab-${postOverdoseState.activeTab}`
+    });
 
-  if (postOverdoseState.activeTab === 'overview') {
-    renderOverviewTab(contentArea, isEs);
-  } else if (postOverdoseState.activeTab === 'triage') {
-    renderTriageTab(contentArea, isEs, container);
-  } else if (postOverdoseState.activeTab === 'responder-support') {
-    renderResponderSupportTab(contentArea, isEs);
+    if (postOverdoseState.activeTab === 'overview') {
+      renderOverviewTab(contentArea, isEs);
+    } else if (postOverdoseState.activeTab === 'triage') {
+      renderTriageTab(contentArea, isEs, draw);
+    } else if (postOverdoseState.activeTab === 'responder-support') {
+      renderResponderSupportTab(contentArea, isEs);
+    }
+
+    wrapper.appendChild(contentArea);
   }
 
-  wrapper.appendChild(contentArea);
-  container.appendChild(wrapper);
+  draw();
+  if (container) {
+    container.textContent = '';
+    container.appendChild(wrapper);
+  }
+  return wrapper;
 }
 
 function renderOverviewTab(container, isEs) {
@@ -380,7 +396,7 @@ function renderOverviewTab(container, isEs) {
   container.appendChild(grid);
 }
 
-function renderTriageTab(container, isEs, rootContainer) {
+function renderTriageTab(container, isEs, onRerender) {
   const formCard = h('div', { class: 'triage-card card' });
   formCard.appendChild(h('h2', {}, isEs ? 'Evaluación de Seguridad Post-Sobredosis' : 'Post-Overdose Safety & Survivorship Evaluator'));
   formCard.appendChild(h('p', { class: 'triage-description' }, isEs
@@ -406,7 +422,7 @@ function renderTriageTab(container, isEs, rootContainer) {
   });
   timeSelect.addEventListener('change', (e) => {
     postOverdoseState.hoursSinceEvent = e.target.value;
-    postOverdoseView(rootContainer);
+    onRerender();
   });
   timeGroup.appendChild(timeLabel);
   timeGroup.appendChild(timeSelect);
@@ -438,7 +454,7 @@ function renderTriageTab(container, isEs, rootContainer) {
       } else {
         postOverdoseState.symptoms = postOverdoseState.symptoms.filter(s => s !== item.id);
       }
-      postOverdoseView(rootContainer);
+      onRerender();
     });
     label.appendChild(checkbox);
     label.appendChild(h('span', { class: 'checkbox-text' }, isEs ? item.labelEs : item.labelEn));
@@ -455,7 +471,7 @@ function renderTriageTab(container, isEs, rootContainer) {
   });
   supportCheckbox.addEventListener('change', (e) => {
     postOverdoseState.supportPresent = e.target.checked;
-    postOverdoseView(rootContainer);
+    onRerender();
   });
   supportLabel.appendChild(supportCheckbox);
   supportLabel.appendChild(h('span', { class: 'checkbox-text' }, isEs
@@ -474,7 +490,7 @@ function renderTriageTab(container, isEs, rootContainer) {
   });
   moudCheckbox.addEventListener('change', (e) => {
     postOverdoseState.hasMoudBridge = e.target.checked;
-    postOverdoseView(rootContainer);
+    onRerender();
   });
   moudLabel.appendChild(moudCheckbox);
   moudLabel.appendChild(h('span', { class: 'checkbox-text' }, isEs

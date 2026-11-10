@@ -271,81 +271,97 @@ export function formatStimulantSummaryText(state, lang = 'en') {
 }
 
 /**
- * Mounts the Stimulant Care view.
+ * Mounts the Stimulant Care view (supports both route return and container mount).
  */
-export function stimulantCareView(container) {
+export function stimulantCareView(containerOrOptions = {}) {
+  const hasDomContainer = Boolean(
+    containerOrOptions &&
+    (typeof containerOrOptions.append === 'function' ||
+      typeof containerOrOptions.appendChild === 'function' ||
+      containerOrOptions.nodeType ||
+      containerOrOptions.tagName)
+  );
+  const container = hasDomContainer ? containerOrOptions : null;
   const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
-  container.textContent = '';
-
   const wrapper = h('div', { class: 'stimulant-care-view clinical-view-wrapper' });
 
-  // Header
-  const header = h('header', { class: 'clinical-header' }, [
-    h('div', { class: 'clinical-badge' }, [
-      icon('activity', { class: 'badge-icon', 'aria-hidden': 'true' }),
-      h('span', { class: 'badge-text' }, isEs ? 'Atención de Estimulantes' : 'Stimulant Care & Overamping')
-    ]),
-    h('h1', { class: 'clinical-title' }, isEs ? 'Manejo de Sobredosis por Estimulantes, Desescalada y CMI' : 'Stimulant Overamping, De-Escalation & Contingency Management'),
-    h('p', { class: 'clinical-subtitle' }, isEs
-      ? 'Diferenciación entre sobredosis física y psicológica por estimulantes (metanfetamina, cocaína). Protocolos de enfriamiento activo, prohibición de sujeciones físicas, dilución 10:1 para tiras FTS y tratamiento conductual CMI.'
-      : 'Differentiating physical and psychological overamping on stimulants (methamphetamine, cocaine). Active cooling protocols, strict physical restraint avoidance, FTS 10:1 dilution rules, and evidence-based Contingency Management.'
-    ),
-    h('div', { class: 'privacy-notice' }, [
-      icon('lock', { class: 'privacy-icon', 'aria-hidden': 'true' }),
-      h('span', {}, isEs
-        ? 'Herramienta en memoria RAM. Ninguna respuesta se registra ni se comparte.'
-        : 'In-RAM ephemeral tool. Zero tracking or storage.'
-      )
-    ])
-  ]);
-  wrapper.appendChild(header);
+  function draw() {
+    wrapper.textContent = '';
 
-  // Tab navigation
-  const tabNav = h('nav', { class: 'clinical-tabs-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de navegación' : 'View tabs' });
-  const tabs = [
-    { id: 'overview', labelEn: 'Overamping Guide', labelEs: 'Guía de Sobredosis' },
-    { id: 'assessment', labelEn: 'Overamping Triage', labelEs: 'Triaje de Sobredosis' },
-    { id: 'safer-use', labelEn: 'Safer Inhalation & FTS', labelEs: 'Inhalación Segura y FTS' }
-  ];
+    // Header
+    const header = h('header', { class: 'clinical-header' }, [
+      h('div', { class: 'clinical-badge' }, [
+        icon('activity', { class: 'badge-icon', 'aria-hidden': 'true' }),
+        h('span', { class: 'badge-text' }, isEs ? 'Atención de Estimulantes' : 'Stimulant Care & Overamping')
+      ]),
+      h('h1', { id: 'page-title', tabindex: '-1', class: 'clinical-title' }, isEs ? 'Manejo de Sobredosis por Estimulantes, Desescalada y CMI' : 'Stimulant Overamping, De-Escalation & Contingency Management'),
+      h('p', { class: 'clinical-subtitle' }, isEs
+        ? 'Diferenciación entre sobredosis física y psicológica por estimulantes (metanfetamina, cocaína). Protocolos de enfriamiento activo, prohibición de sujeciones físicas, dilución 10:1 para tiras FTS y tratamiento conductual CMI.'
+        : 'Differentiating physical and psychological overamping on stimulants (methamphetamine, cocaine). Active cooling protocols, strict physical restraint avoidance, FTS 10:1 dilution rules, and evidence-based Contingency Management.'
+      ),
+      h('div', { class: 'privacy-notice' }, [
+        icon('lock', { class: 'privacy-icon', 'aria-hidden': 'true' }),
+        h('span', {}, isEs
+          ? 'Herramienta en memoria RAM. Ninguna respuesta se registra ni se comparte.'
+          : 'In-RAM ephemeral tool. Zero tracking or storage.'
+        )
+      ])
+    ]);
+    wrapper.appendChild(header);
 
-  tabs.forEach(tab => {
-    const btn = h('button', {
-      type: 'button',
-      role: 'tab',
-      class: `tab-button ${stimulantCareState.activeTab === tab.id ? 'active' : ''}`,
-      'aria-selected': String(stimulantCareState.activeTab === tab.id),
-      'aria-controls': `tab-content-${tab.id}`,
-      id: `tab-${tab.id}`
-    }, isEs ? tab.labelEs : tab.labelEn);
+    // Tab navigation
+    const tabNav = h('nav', { class: 'clinical-tabs-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de navegación' : 'View tabs' });
+    const tabs = [
+      { id: 'overview', labelEn: 'Overamping Guide', labelEs: 'Guía de Sobredosis' },
+      { id: 'assessment', labelEn: 'Overamping Triage', labelEs: 'Triaje de Sobredosis' },
+      { id: 'safer-use', labelEn: 'Safer Inhalation & FTS', labelEs: 'Inhalación Segura y FTS' }
+    ];
 
-    btn.addEventListener('click', () => {
-      stimulantCareState.activeTab = tab.id;
-      stimulantCareView(container);
+    tabs.forEach(tab => {
+      const btn = h('button', {
+        type: 'button',
+        role: 'tab',
+        class: `tab-button ${stimulantCareState.activeTab === tab.id ? 'active' : ''}`,
+        'aria-selected': String(stimulantCareState.activeTab === tab.id),
+        'aria-controls': `tab-content-${tab.id}`,
+        id: `tab-${tab.id}`
+      }, isEs ? tab.labelEs : tab.labelEn);
+
+      btn.addEventListener('click', () => {
+        stimulantCareState.activeTab = tab.id;
+        draw();
+      });
+      tabNav.appendChild(btn);
     });
-    tabNav.appendChild(btn);
-  });
-  wrapper.appendChild(tabNav);
+    wrapper.appendChild(tabNav);
 
-  // Content Area
-  const contentArea = h('div', {
-    class: 'tab-content-area',
-    id: `tab-content-${stimulantCareState.activeTab}`,
-    role: 'tabpanel',
-    'aria-labelledby': `tab-${stimulantCareState.activeTab}`
-  });
+    // Content Area
+    const contentArea = h('div', {
+      class: 'tab-content-area',
+      id: `tab-content-${stimulantCareState.activeTab}`,
+      role: 'tabpanel',
+      'aria-labelledby': `tab-${stimulantCareState.activeTab}`
+    });
 
-  if (stimulantCareState.activeTab === 'overview') {
-    renderOverviewTab(contentArea, isEs);
-  } else if (stimulantCareState.activeTab === 'assessment') {
-    renderAssessmentTab(contentArea, isEs, container);
-  } else if (stimulantCareState.activeTab === 'safer-use') {
-    renderSaferUseTab(contentArea, isEs);
+    if (stimulantCareState.activeTab === 'overview') {
+      renderOverviewTab(contentArea, isEs);
+    } else if (stimulantCareState.activeTab === 'assessment') {
+      renderAssessmentTab(contentArea, isEs, draw);
+    } else if (stimulantCareState.activeTab === 'safer-use') {
+      renderSaferUseTab(contentArea, isEs);
+    }
+
+    wrapper.appendChild(contentArea);
   }
 
-  wrapper.appendChild(contentArea);
-  container.appendChild(wrapper);
+  draw();
+  if (container) {
+    container.textContent = '';
+    container.appendChild(wrapper);
+  }
+  return wrapper;
 }
 
 function renderOverviewTab(container, isEs) {
@@ -386,7 +402,7 @@ function renderOverviewTab(container, isEs) {
   container.appendChild(grid);
 }
 
-function renderAssessmentTab(container, isEs, rootContainer) {
+function renderAssessmentTab(container, isEs, onRerender) {
   const formCard = h('div', { class: 'assessment-card card' });
   formCard.appendChild(h('h2', {}, isEs ? 'Evaluador de Sobredosis y Riesgo por Estimulantes' : 'Overamping & Stimulant Harm Evaluator'));
   formCard.appendChild(h('p', { class: 'aid-description' }, isEs
@@ -410,7 +426,7 @@ function renderAssessmentTab(container, isEs, rootContainer) {
   });
   subSelect.addEventListener('change', (e) => {
     stimulantCareState.primaryStimulant = e.target.value;
-    stimulantCareView(rootContainer);
+    onRerender();
   });
   subGroup.appendChild(subLabel);
   subGroup.appendChild(subSelect);
@@ -425,7 +441,7 @@ function renderAssessmentTab(container, isEs, rootContainer) {
   });
   hyperCheckbox.addEventListener('change', (e) => {
     stimulantCareState.hyperthermiaSymptoms = e.target.checked;
-    stimulantCareView(rootContainer);
+    onRerender();
   });
   hyperLabel.appendChild(hyperCheckbox);
   hyperLabel.appendChild(h('span', { class: 'checkbox-text' }, isEs
@@ -444,7 +460,7 @@ function renderAssessmentTab(container, isEs, rootContainer) {
   });
   chestCheckbox.addEventListener('change', (e) => {
     stimulantCareState.chestPainSymptoms = e.target.checked;
-    stimulantCareView(rootContainer);
+    onRerender();
   });
   chestLabel.appendChild(chestCheckbox);
   chestLabel.appendChild(h('span', { class: 'checkbox-text' }, isEs
@@ -470,7 +486,7 @@ function renderAssessmentTab(container, isEs, rootContainer) {
   });
   sleepSelect.addEventListener('change', (e) => {
     stimulantCareState.sleepDeprivedDays = parseInt(e.target.value, 10);
-    stimulantCareView(rootContainer);
+    onRerender();
   });
   sleepGroup.appendChild(sleepLabel);
   sleepGroup.appendChild(sleepSelect);
@@ -485,7 +501,7 @@ function renderAssessmentTab(container, isEs, rootContainer) {
   });
   ftsCheckbox.addEventListener('change', (e) => {
     stimulantCareState.fentanylTested = e.target.checked;
-    stimulantCareView(rootContainer);
+    onRerender();
   });
   ftsLabel.appendChild(ftsCheckbox);
   ftsLabel.appendChild(h('span', { class: 'checkbox-text' }, isEs

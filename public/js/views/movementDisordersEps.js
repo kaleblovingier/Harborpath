@@ -378,14 +378,14 @@ export function movementDisordersEpsView() {
   const container = h('div', { class: 'movement-disorders-view' });
 
   // Header
-  const header = pageHeader({
-    title: isEs
+  const header = pageHeader(
+    isEs
       ? 'Trastornos del Movimiento por Estimulantes y Triaje de SEP / Distonía Aguda'
       : 'Stimulant Movement Disorders & Acute Dystonia / EPS Decision Engine',
-    subtitle: isEs
+    isEs
       ? 'Coreoatetosis («meth dance»), distonía laríngea, acatisia, SNM, criterios de Hunter y prohibición estricta de haloperidol'
       : 'Choreoathetosis ("meth dance"), acute dystonia, akathisia, NMS, Hunter serotonin criteria & strict haloperidol prohibition',
-  });
+  );
   container.appendChild(header);
 
   // Black-Box Prohibition Banner
@@ -419,12 +419,12 @@ export function movementDisordersEpsView() {
   const phenoCard = h('div', { class: 'movement-card' });
   leftCol.appendChild(phenoCard);
 
-  const phenoTitle = h('h2', { class: 'movement-card-title' });
+  const phenoTitle = h('h2', { id: 'pheno-select-label', class: 'movement-card-title' });
   phenoTitle.appendChild(icon('activity'));
   phenoTitle.appendChild(h('span', null, isEs ? '1. Fenotipo Clínico del Trastorno Motor' : '1. Motor Disorder Clinical Phenotype'));
   phenoCard.appendChild(phenoTitle);
 
-  const phenoSelect = h('select', { id: 'pheno-select', class: 'movement-select' });
+  const phenoSelect = h('select', { id: 'pheno-select', class: 'movement-select', 'aria-labelledby': 'pheno-select-label' });
   Object.keys(MOVEMENT_PHENOTYPES).forEach((k) => {
     const p = MOVEMENT_PHENOTYPES[k];
     const opt = h('option', { value: k }, isEs ? p.nameEs : p.nameEn);
@@ -617,10 +617,10 @@ export function movementDisordersEpsView() {
     const sbarCard = h('div', { class: 'movement-card' });
     resultsContainer.appendChild(sbarCard);
 
-    const sbarTitle = h('h3', { class: 'movement-card-title' }, isEs ? 'Transferencia Clínica SBAR (Cero PII)' : 'Zero-PII SBAR Handoff Report');
+    const sbarTitle = h('h3', { id: 'movement-sbar-label', class: 'movement-card-title' }, isEs ? 'Transferencia Clínica SBAR (Cero PII)' : 'Zero-PII SBAR Handoff Report');
     sbarCard.appendChild(sbarTitle);
 
-    const sbarArea = h('textarea', { class: 'movement-sbar-textarea', rows: 7, readonly: true });
+    const sbarArea = h('textarea', { class: 'movement-sbar-textarea', rows: 7, readonly: true, 'aria-labelledby': 'movement-sbar-label' });
     sbarArea.value = generateMovementSbar(state, lang);
     sbarCard.appendChild(sbarArea);
 

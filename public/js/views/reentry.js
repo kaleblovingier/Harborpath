@@ -55,7 +55,7 @@ export const REENTRY_MEDICAID_WAIVERS = [
     status: 'approved',
     coverageWindowDays: 90,
     effectiveDate: '2023-01-26',
-    cmsApprovalUrl: 'https://www.medicaid.gov/medicaid/section-1115-demonstrations/approved-demonstrations/index.html',
+    cmsApprovalUrl: 'https://www.medicaid.gov/medicaid/section-1115-demonstrations/reentry-section-1115-demonstrations',
     keyServices: {
       en: [
         'Full MOUD access (Buprenorphine, Methadone, Naltrexone) starting 90 days before release',
@@ -109,7 +109,7 @@ export const REENTRY_MEDICAID_WAIVERS = [
     status: 'approved',
     coverageWindowDays: 90,
     effectiveDate: '2022-09-28',
-    cmsApprovalUrl: 'https://www.mass.gov/service-details/masshealth-1115-demonstration',
+    cmsApprovalUrl: 'https://www.mass.gov/info-details/masshealth-section-1115-demonstration-waiver',
     keyServices: {
       en: [
         'Targeted transitional case management 90 days pre-release',
@@ -135,7 +135,7 @@ export const REENTRY_MEDICAID_WAIVERS = [
     status: 'approved',
     coverageWindowDays: 90,
     effectiveDate: '2024-04-15',
-    cmsApprovalUrl: 'https://hfs.illinois.gov/medicalproviders/cc/1115waiver.html',
+    cmsApprovalUrl: 'https://hfs.illinois.gov/medicalproviders/cc/1115transformation.html',
     keyServices: {
       en: [
         'Pre-release SUD clinical consultation and MOUD induction or maintenance',
@@ -161,7 +161,7 @@ export const REENTRY_MEDICAID_WAIVERS = [
     status: 'approved',
     coverageWindowDays: 90,
     effectiveDate: '2024-02-01',
-    cmsApprovalUrl: 'https://www.oregon.gov/oha/hsd/ohp/pages/1115-waiver.aspx',
+    cmsApprovalUrl: 'https://www.oregon.gov/oha/hsd/medicaid-policy/pages/ohp-waiver.aspx',
     keyServices: {
       en: [
         'Coordinated Care Organization (CCO) reach-in services 90 days pre-release',
@@ -187,7 +187,7 @@ export const REENTRY_MEDICAID_WAIVERS = [
     status: 'approved',
     coverageWindowDays: 60,
     effectiveDate: '2024-06-01',
-    cmsApprovalUrl: 'https://chfs.ky.gov/agencies/dms/member/Pages/1115-waiver.aspx',
+    cmsApprovalUrl: 'https://www.chfs.ky.gov/agencies/dms/dpqo/Pages/Medicaid-SUD-1115-Waiver.aspx',
     keyServices: {
       en: [
         '60-day pre-release screening, MOUD continuation, and medical assessments',
@@ -263,7 +263,7 @@ export const REENTRY_MEDICAID_WAIVERS = [
     status: 'approved',
     coverageWindowDays: 30,
     effectiveDate: '2024-03-01',
-    cmsApprovalUrl: 'https://www.hsd.state.nm.us/centennial-care-1115-waiver/',
+    cmsApprovalUrl: 'https://www.hca.nm.gov/medicaid-1115-waiver-renewal/',
     keyServices: {
       en: [
         'Pre-release MOUD continuity across county detention facilities',

@@ -407,10 +407,10 @@ export function adminMetricsView({ query } = {}) {
   const container = h('div', { class: 'admin-metrics-view' });
 
   container.append(
-    pageHeader({
-      title: 'Operator Analytics & Platform Telemetry',
-      lead: 'Private, zero-PII aggregate metrics for the platform owner. Monitor real-time care navigator engagement, emergency lifeline interactions, and system reach.',
-    })
+    pageHeader(
+      'Operator Analytics & Platform Telemetry',
+      'Private, zero-PII aggregate metrics for the platform owner. Monitor real-time care navigator engagement, emergency lifeline interactions, and system reach.',
+    )
   );
 
   const mainPanel = h('div', { class: 'admin-main-panel' });

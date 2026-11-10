@@ -301,7 +301,7 @@ export const MEDICATIONS = [
     ],
     sources: [
       ['ASAM/AAAP Clinical Practice Guideline on Stimulant Use Disorders', 'https://www.asam.org/quality-care/clinical-guidelines/stimulant-use-disorders'],
-      ['NIDA Methamphetamine Combination Treatment (ADAPT-2)', 'https://nida.nih.gov/news-events/news-releases/2021/01/combination-treatment-methamphetamine-use-disorder-shows-promise-in-nih-study'],
+      ['NIDA Methamphetamine Combination Treatment (ADAPT-2)', 'https://nida.nih.gov/about-nida/organization/cctn/ctn/research-studies/accelerated-development-additive-pharmacotherapy-treatment-adapt-2-methamphetamine-use-disorder'],
     ],
   },
   {
@@ -356,7 +356,7 @@ export const INTERACTIONS = [
     summary: 'Synergistic respiratory depression: combining opioids with GABA-A sedatives dramatically multiplies the risk of fatal breathing arrest.',
     mechanism: 'Opioids suppress brainstem respiratory drive (mu receptors in the pre-Bötzinger complex) while benzodiazepines potentiate inhibitory GABA-A chloride channels, reducing upper airway muscle tone and hypoxic/hypercapnic arousal.',
     action: 'Avoid combining whenever possible, especially with street pressed pills (which frequently mix fentanyl and novel designer benzodiazepines like bromazolam). Importantly, the FDA and SAMHSA emphasize that having a benzodiazepine prescription or dependence is NOT a reason to withhold buprenorphine or methadone—stopping MOUD is far more dangerous than careful co-management.',
-    source: ['FDA Boxed Warning & MOUD Guidance', 'https://www.fda.gov/drugs/drug-safety-and-availability/fda-urges-caution-about-withholding-opioid-addiction-medications-patients-taking-benzodiazepines-or'],
+    source: ['FDA Boxed Warning & MOUD Guidance', 'https://www.fda.gov/drugs/food-and-drug-administration-overdose-prevention-framework/medications-opioid-use-disorder'],
   },
   {
     id: 'opioids-xylazine',
@@ -2066,7 +2066,7 @@ export function medicationsView({ query } = {}) {
         ),
       ),
       fine('Clinical note: Every person’s tolerance and supply differ. This table is an educational example from peer-reviewed addiction medicine protocols—work with a prescriber, telehealth bridge clinic, or pharmacist to tailor your exact schedule and get non-opioid comfort medications (clonidine, lofexidine, ondansetron, hydroxyzine, trazodone).'),
-      p({ class: 'actions no-print' },
+      h('p', { class: 'actions no-print' },
         h('button', {
           type: 'button',
           id: 'print-bernese-handout-btn',

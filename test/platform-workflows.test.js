@@ -450,6 +450,8 @@ test('a loading lazy view marks main busy with a localized status', () => {
   const app = readPublic('/js/app.js');
   assert.match(app, /showViewLoading\(main\);\s*const loadedView = await preloadRoute/);
   assert.match(app, /if \(token !== renderSeq\) return;\s*main\.removeAttribute\('aria-busy'\);/);
+  // A view that throws while rendering falls back to the in-memory help, not a stuck "Loading…".
+  assert.match(app, /content = buildView\(\);\s*\} catch \(err\) \{[\s\S]*?content = viewLoadFailed\(/);
 });
 
 // ------------------------------------------------------------ Offline cache version
@@ -463,7 +465,7 @@ test('the offline cache name carries the current content hash of every shell fil
   const duplicated = sw.replace(/(const ELECTIVE_SHELL = \[[\s\S]*?)\];/, "$1  '/js/dom.js',\n];");
   assert.notEqual(duplicated, sw);
   assert.equal(computeShellHash(duplicated), computeShellHash(sw), 'a file listed twice counts once');
-  const fewer = sw.replace(/(const ELECTIVE_SHELL = \[\n)\s*'[^']+',\n/, '$1');
+  const fewer = sw.replace(/(const ELECTIVE_SHELL = \[\r?\n)\s*'[^']+',\r?\n/, '$1');
   assert.notEqual(fewer, sw);
   assert.notEqual(computeShellHash(fewer), computeShellHash(sw), 'the file list is part of the hash');
 });

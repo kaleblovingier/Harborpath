@@ -938,7 +938,15 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
     else buildView = () => notFoundView({ query });
   }
 
-  main.replaceChildren(buildView());
+  let content;
+  try {
+    content = buildView();
+  } catch (err) {
+    // A view that throws would leave "Loading…" up for good; show the built-in help instead.
+    console.error(err);
+    content = viewLoadFailed(resolved.title, () => render(), { overdoseSteps: path === 'overdose' });
+  }
+  main.replaceChildren(content);
   if (!routeHash) {
     if (isInitial) focusInPageTarget(location.hash.slice(1));
     return;

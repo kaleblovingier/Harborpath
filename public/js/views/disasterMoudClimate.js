@@ -421,14 +421,14 @@ export function disasterMoudClimateView() {
   const container = h('div', { class: 'disaster-moud-view' });
 
   // Header
-  const header = pageHeader({
-    title: isEs
+  const header = pageHeader(
+    isEs
       ? 'Continuidad de MOUD en Desastres y Resiliencia Climática'
       : 'Disaster MOUD Continuity & Climate Resilience Navigator',
-    subtitle: isEs
+    isEs
       ? 'Flexibilidades SAMHSA 42 CFR Parte 8, dosificación de invitado, protección contra humo PM2,5 y triaje ambiental de infecciones'
       : 'SAMHSA 42 CFR Part 8 emergency take-homes, guest dosing, PM2.5 wildfire harm reduction & floodwater exposure triage',
-  });
+  );
   container.appendChild(header);
 
   // Layout Grid
@@ -657,10 +657,10 @@ export function disasterMoudClimateView() {
     const sbarCard = h('div', { class: 'disaster-card' });
     resultsContainer.appendChild(sbarCard);
 
-    const sbarTitle = h('h3', { class: 'disaster-card-title' }, isEs ? 'Transferencia Clínica SBAR (Cero PII)' : 'Zero-PII SBAR Handoff Report');
+    const sbarTitle = h('h3', { id: 'disaster-sbar-label', class: 'disaster-card-title' }, isEs ? 'Transferencia Clínica SBAR (Cero PII)' : 'Zero-PII SBAR Handoff Report');
     sbarCard.appendChild(sbarTitle);
 
-    const sbarArea = h('textarea', { class: 'disaster-sbar-textarea', rows: 7, readonly: true });
+    const sbarArea = h('textarea', { class: 'disaster-sbar-textarea', rows: 7, readonly: true, 'aria-labelledby': 'disaster-sbar-label' });
     sbarArea.value = generateDisasterSbar(state, lang);
     sbarCard.appendChild(sbarArea);
 

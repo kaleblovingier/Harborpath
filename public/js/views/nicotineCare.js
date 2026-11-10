@@ -493,9 +493,11 @@ function renderFagerstromTab(localState, isEs) {
 
   for (const q of FAGERSTROM_QUESTIONS) {
     const selectedPoints = localState.fagerstromAnswers[q.id] || 0;
+    const selectId = `fagerstrom-${q.id}`;
     const qBox = h('div', { class: 'question-box' }, [
-      h('label', { class: 'question-prompt' }, isEs ? q.promptEs : q.promptEn),
+      h('label', { class: 'question-prompt', for: selectId }, isEs ? q.promptEs : q.promptEn),
       h('select', {
+        id: selectId,
         class: 'form-select',
         value: selectedPoints,
         onchange: (e) => {

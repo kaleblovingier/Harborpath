@@ -274,10 +274,113 @@ export function subscribeMassOverdoseMciState(fn) {
 
 export function massOverdoseMciView() {
   const container = h('div', { class: 'mass-mci-view', role: 'region', 'aria-label': 'Mass Overdose Cluster & SALT Triage Navigator' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header
+  container.appendChild(
+    pageHeader(
+      isEs ? 'Brote Masivo de Sobredosis, Adulterantes y Triaje SALT' : 'Mass Overdose Cluster, Contaminated Supply & SALT Triage',
+      isEs
+        ? 'Protocolos de respuesta rápida ante conglomerados de sobredosis por superagonistas (carfentanilo, nitazenos), xilacina/medetomidina, síndrome de tórax de madera y triaje masivo.'
+        : 'Rapid incident command protocols for synthetic opioid super-agonists, non-opioid sedatives, wooden chest syndrome, and ventilation-first SALT mass casualty triage.',
+      'emergency'
+    )
+  );
+
+  const alertBannerSlot = h('div');
+  const tabNavSlot = h('div');
+  const grid = h('div', { class: 'mci-layout-grid' });
+  const leftCol = h('div', { class: 'mci-col' });
+  const rightCol = h('div', { class: 'mci-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(alertBannerSlot);
+  container.appendChild(tabNavSlot);
+  container.appendChild(grid);
+
+  // Persistent Left Column Elements
+  const triageDescEl = h('p', { class: 'mci-card-desc' });
+  const redValEl = h('span', { class: 'mci-counter-val' }, String(mciState.redCount));
+  const yellowValEl = h('span', { class: 'mci-counter-val' }, String(mciState.yellowCount));
+  const greenValEl = h('span', { class: 'mci-counter-val' }, String(mciState.greenCount));
+  const blackValEl = h('span', { class: 'mci-counter-val' }, String(mciState.blackCount));
+
+  function makeCounter(cls, badgeText, labelText, valEl, decAria, incAria, onDec, onInc) {
+    const decBtn = h('button', { type: 'button', class: 'btn btn-ghost counter-btn', 'aria-label': decAria }, '-');
+    const incBtn = h('button', { type: 'button', class: 'btn btn-ghost counter-btn', 'aria-label': incAria }, '+');
+    decBtn.addEventListener('click', () => { onDec(); renderDynamic(); });
+    incBtn.addEventListener('click', () => { onInc(); renderDynamic(); });
+    return h('div', { class: `mci-counter-item ${cls}` },
+      h('div', { class: 'mci-counter-header' },
+        h('span', { class: `mci-badge ${cls}` }, badgeText),
+        h('span', { class: 'mci-counter-label' }, labelText)
+      ),
+      h('div', { class: 'mci-counter-controls' }, decBtn, valEl, incBtn)
+    );
+  }
+
+  const triageCard = h('section', { class: 'mci-card' },
+    h('h2', { class: 'mci-card-title' },
+      icon('users'),
+      h('span', {}, isEs ? '1. Conteo de Triaje SALT en Escena' : '1. On-Scene SALT Triage Counters')
+    ),
+    triageDescEl,
+    h('div', { class: 'mci-counter-grid' },
+      makeCounter('red', 'RED / ROJO', isEs ? 'Inmediato (Apnea)' : 'Immediate (Apnea)', redValEl, 'Decrease Red', 'Increase Red',
+        () => { if (mciState.redCount > 0) mciState.redCount--; }, () => { mciState.redCount++; }),
+      makeCounter('yellow', 'YELLOW / AMARILLO', isEs ? 'Diferido (Ventila)' : 'Delayed (Breathing)', yellowValEl, 'Decrease Yellow', 'Increase Yellow',
+        () => { if (mciState.yellowCount > 0) mciState.yellowCount--; }, () => { mciState.yellowCount++; }),
+      makeCounter('green', 'GREEN / VERDE', isEs ? 'Leve (Camina)' : 'Minimal (Walking)', greenValEl, 'Decrease Green', 'Increase Green',
+        () => { if (mciState.greenCount > 0) mciState.greenCount--; }, () => { mciState.greenCount++; }),
+      makeCounter('black', 'BLACK / NEGRO', isEs ? 'Expectante / Fallecido' : 'Expectant / Deceased', blackValEl, 'Decrease Black', 'Increase Black',
+        () => { if (mciState.blackCount > 0) mciState.blackCount--; }, () => { mciState.blackCount++; })
+    )
+  );
+  leftCol.appendChild(triageCard);
+
+  const woodenChestChk = h('input', { id: 'chk-wooden-chest', type: 'checkbox', checked: mciState.hasWoodenChest });
+  const bradyChk = h('input', { id: 'chk-bradycardia', type: 'checkbox', checked: mciState.hasSevereBradycardia });
+  const naloxoneInp = h('input', { id: 'inp-naloxone-doses', type: 'number', class: 'mci-input', value: String(mciState.availableNaloxoneDoses) });
+  const helpTextEl = h('p', { class: 'mci-help-text' });
+
+  woodenChestChk.addEventListener('change', (e) => { mciState.hasWoodenChest = e.target.checked; renderDynamic(); });
+  bradyChk.addEventListener('change', (e) => { mciState.hasSevereBradycardia = e.target.checked; renderDynamic(); });
+  naloxoneInp.addEventListener('input', (e) => { mciState.availableNaloxoneDoses = Math.max(0, Number(e.target.value) || 0); renderDynamic(); });
+
+  const sceneCard = h('section', { class: 'mci-card' },
+    h('h2', { class: 'mci-card-title' },
+      icon('shield'),
+      h('span', {}, isEs ? '2. Complicaciones Clínicas y Logística de Naloxona' : '2. Scene Complications & Naloxone Supply')
+    ),
+    h('div', { class: 'mci-checkbox-list' },
+      h('label', { class: 'mci-checkbox-label' },
+        woodenChestChk,
+        h('span', {}, isEs ? 'Presencia de «Tórax de Madera» (Rigidez muscular por superagonistas sintéticos)' : 'Presence of "Wooden Chest Syndrome" (Chest wall rigidity from synthetic super-agonists)')
+      ),
+      h('label', { class: 'mci-checkbox-label' },
+        bradyChk,
+        h('span', {}, isEs ? 'Bradicardia extrema (< 45 lpm) o hipotensión por xilacina/medetomidina' : 'Extreme bradycardia (< 45 bpm) or hypotension from xylazine/medetomidine')
+      )
+    ),
+    h('div', { class: 'mci-supply-group' },
+      h('label', { for: 'inp-naloxone-doses', class: 'mci-form-label' },
+        isEs ? 'Dosis de Naloxona Disponibles en Escena:' : 'Available Naloxone Doses On Scene:'
+      ),
+      naloxoneInp,
+      helpTextEl
+    )
+  );
+  leftCol.appendChild(sceneCard);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== woodenChestChk) woodenChestChk.checked = mciState.hasWoodenChest;
+    if (active !== bradyChk) bradyChk.checked = mciState.hasSevereBradycardia;
+    if (active !== naloxoneInp) naloxoneInp.value = String(mciState.availableNaloxoneDoses);
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evalResult = evaluateMassOverdoseMci({
       contaminantId: mciState.contaminantId,
       redCount: mciState.redCount,
@@ -289,232 +392,54 @@ export function massOverdoseMciView() {
       availableNaloxoneDoses: mciState.availableNaloxoneDoses,
     });
 
-    // Page Header
-    container.appendChild(
-      pageHeader(
-        isEs ? 'Brote Masivo de Sobredosis, Adulterantes y Triaje SALT' : 'Mass Overdose Cluster, Contaminated Supply & SALT Triage',
-        isEs
-          ? 'Protocolos de respuesta rápida ante conglomerados de sobredosis por superagonistas (carfentanilo, nitazenos), xilacina/medetomidina, síndrome de tórax de madera y triaje masivo.'
-          : 'Rapid incident command protocols for synthetic opioid super-agonists, non-opioid sedatives, wooden chest syndrome, and ventilation-first SALT mass casualty triage.',
-        'emergency'
-      )
-    );
+    triageDescEl.textContent = isEs
+      ? `Clasifique a los pacientes según la evaluación SALT adaptada a sobredosis. Total de víctimas: ${evalResult.totalCasualties}`
+      : `Categorize patients using overdose-adapted SALT criteria. Total casualties: ${evalResult.totalCasualties}`;
+    redValEl.textContent = String(mciState.redCount);
+    yellowValEl.textContent = String(mciState.yellowCount);
+    greenValEl.textContent = String(mciState.greenCount);
+    blackValEl.textContent = String(mciState.blackCount);
+    helpTextEl.textContent = isEs
+      ? `Demanda proyectada: ~${evalResult.estimatedNaloxoneNeeded} dosis (${evalResult.redCount} rojos x 3 + ${evalResult.yellowCount} amarillos x 1).`
+      : `Projected demand: ~${evalResult.estimatedNaloxoneNeeded} doses (${evalResult.redCount} red x 3 + ${evalResult.yellowCount} yellow x 1).`;
 
-    // Critical Emergency Callout Banner if Spike
+    clear(alertBannerSlot);
     if (evalResult.emergencyFlagsEn.length > 0) {
-      container.appendChild(
+      alertBannerSlot.appendChild(
         h('aside', { class: 'mci-alert-urgent', role: 'alert' },
           h('div', { class: 'mci-alert-title' },
             icon('alert-triangle'),
             h('strong', {}, isEs ? 'ALERTA DE INCIDENTE CON MÚLTIPLES VÍCTIMAS / BROTE CRÍTICO' : 'MASS CASUALTY OVERDOSE ALERT: MUNICIPAL INCIDENT COMMAND ACTIVE')
           ),
           h('ul', { class: 'mci-alert-list' },
-            (isEs ? evalResult.emergencyFlagsEs : evalResult.emergencyFlagsEn).map((msg) =>
-              h('li', {}, msg)
-            )
+            (isEs ? evalResult.emergencyFlagsEs : evalResult.emergencyFlagsEn).map((msg) => h('li', {}, msg))
           )
         )
       );
     }
 
-    // Contaminant Selector Tabs
-    const tabNav = h('div', { class: 'tabs', role: 'tablist', 'aria-label': isEs ? 'Adulterantes Sospechosos' : 'Suspected Adulterants' },
-      Object.values(CONTAMINANT_PROFILES).map((c) => {
-        const isSelected = c.id === mciState.contaminantId;
-        const btn = h('button', {
-          role: 'tab',
-          class: `tab ${isSelected ? 'active' : ''}`,
-          'aria-selected': isSelected ? 'true' : 'false',
-        }, isEs ? c.nameEs : c.nameEn);
-        btn.addEventListener('click', () => {
-          mciState.contaminantId = c.id;
-          render();
-        });
-        return btn;
-      })
-    );
-    container.appendChild(tabNav);
-
-    // Two Column Layout
-    const grid = h('div', { class: 'mci-layout-grid' });
-
-    // LEFT COLUMN: SALT Triage Counter & Scene Metrics
-    const leftCol = h('div', { class: 'mci-col' });
-
-    // Card 1: SALT Triage Patient Counters
-    const triageCard = h('section', { class: 'mci-card' },
-      h('h2', { class: 'mci-card-title' },
-        icon('users'),
-        h('span', {}, isEs ? '1. Conteo de Triaje SALT en Escena' : '1. On-Scene SALT Triage Counters')
-      ),
-      h('p', { class: 'mci-card-desc' },
-        isEs
-          ? 'Clasifique a los pacientes según la evaluación SALT adaptada a sobredosis. Total de víctimas: ' + evalResult.totalCasualties
-          : 'Categorize patients using overdose-adapted SALT criteria. Total casualties: ' + evalResult.totalCasualties
-      ),
-      h('div', { class: 'mci-counter-grid' },
-        // RED
-        h('div', { class: 'mci-counter-item red' },
-          h('div', { class: 'mci-counter-header' },
-            h('span', { class: 'mci-badge red' }, 'RED / ROJO'),
-            h('span', { class: 'mci-counter-label' }, isEs ? 'Inmediato (Apnea)' : 'Immediate (Apnea)')
-          ),
-          h('div', { class: 'mci-counter-controls' },
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Decrease Red' }, '-');
-              btn.addEventListener('click', () => {
-                if (mciState.redCount > 0) { mciState.redCount--; render(); }
-              });
-              return btn;
-            })(),
-            h('span', { class: 'mci-counter-val' }, String(mciState.redCount)),
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Increase Red' }, '+');
-              btn.addEventListener('click', () => { mciState.redCount++; render(); });
-              return btn;
-            })()
-          )
-        ),
-        // YELLOW
-        h('div', { class: 'mci-counter-item yellow' },
-          h('div', { class: 'mci-counter-header' },
-            h('span', { class: 'mci-badge yellow' }, 'YELLOW / AMARILLO'),
-            h('span', { class: 'mci-counter-label' }, isEs ? 'Diferido (Ventila)' : 'Delayed (Breathing)')
-          ),
-          h('div', { class: 'mci-counter-controls' },
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Decrease Yellow' }, '-');
-              btn.addEventListener('click', () => {
-                if (mciState.yellowCount > 0) { mciState.yellowCount--; render(); }
-              });
-              return btn;
-            })(),
-            h('span', { class: 'mci-counter-val' }, String(mciState.yellowCount)),
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Increase Yellow' }, '+');
-              btn.addEventListener('click', () => { mciState.yellowCount++; render(); });
-              return btn;
-            })()
-          )
-        ),
-        // GREEN
-        h('div', { class: 'mci-counter-item green' },
-          h('div', { class: 'mci-counter-header' },
-            h('span', { class: 'mci-badge green' }, 'GREEN / VERDE'),
-            h('span', { class: 'mci-counter-label' }, isEs ? 'Leve (Camina)' : 'Minimal (Walking)')
-          ),
-          h('div', { class: 'mci-counter-controls' },
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Decrease Green' }, '-');
-              btn.addEventListener('click', () => {
-                if (mciState.greenCount > 0) { mciState.greenCount--; render(); }
-              });
-              return btn;
-            })(),
-            h('span', { class: 'mci-counter-val' }, String(mciState.greenCount)),
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Increase Green' }, '+');
-              btn.addEventListener('click', () => { mciState.greenCount++; render(); });
-              return btn;
-            })()
-          )
-        ),
-        // BLACK
-        h('div', { class: 'mci-counter-item black' },
-          h('div', { class: 'mci-counter-header' },
-            h('span', { class: 'mci-badge black' }, 'BLACK / NEGRO'),
-            h('span', { class: 'mci-counter-label' }, isEs ? 'Expectante / Fallecido' : 'Expectant / Deceased')
-          ),
-          h('div', { class: 'mci-counter-controls' },
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Decrease Black' }, '-');
-              btn.addEventListener('click', () => {
-                if (mciState.blackCount > 0) { mciState.blackCount--; render(); }
-              });
-              return btn;
-            })(),
-            h('span', { class: 'mci-counter-val' }, String(mciState.blackCount)),
-            (() => {
-              const btn = h('button', { class: 'btn btn-ghost counter-btn', 'aria-label': 'Increase Black' }, '+');
-              btn.addEventListener('click', () => { mciState.blackCount++; render(); });
-              return btn;
-            })()
-          )
-        )
+    clear(tabNavSlot);
+    tabNavSlot.appendChild(
+      h('div', { class: 'tabs', role: 'tablist', 'aria-label': isEs ? 'Adulterantes Sospechosos' : 'Suspected Adulterants' },
+        Object.values(CONTAMINANT_PROFILES).map((c) => {
+          const isSelected = c.id === mciState.contaminantId;
+          const btn = h('button', {
+            type: 'button',
+            role: 'tab',
+            class: `tab ${isSelected ? 'active' : ''}`,
+            'aria-selected': isSelected ? 'true' : 'false',
+          }, isEs ? c.nameEs : c.nameEn);
+          btn.addEventListener('click', () => {
+            mciState.contaminantId = c.id;
+            renderDynamic();
+          });
+          return btn;
+        })
       )
     );
-    leftCol.appendChild(triageCard);
 
-    // Card 2: Scene Complications & Naloxone Supply Tracking
-    const sceneCard = h('section', { class: 'mci-card' },
-      h('h2', { class: 'mci-card-title' },
-        icon('shield'),
-        h('span', {}, isEs ? '2. Complicaciones Clínicas y Logística de Naloxona' : '2. Scene Complications & Naloxone Supply')
-      ),
-      h('div', { class: 'mci-checkbox-list' },
-        h('label', { class: 'mci-checkbox-label' },
-          (() => {
-            const chk = h('input', {
-              id: 'chk-wooden-chest',
-              type: 'checkbox',
-              checked: mciState.hasWoodenChest,
-            });
-            chk.addEventListener('change', (e) => {
-              mciState.hasWoodenChest = e.target.checked;
-              render();
-            });
-            return chk;
-          })(),
-          h('span', {}, isEs ? 'Presencia de «Tórax de Madera» (Rigidez muscular por superagonistas sintéticos)' : 'Presence of "Wooden Chest Syndrome" (Chest wall rigidity from synthetic super-agonists)')
-        ),
-        h('label', { class: 'mci-checkbox-label' },
-          (() => {
-            const chk = h('input', {
-              id: 'chk-bradycardia',
-              type: 'checkbox',
-              checked: mciState.hasSevereBradycardia,
-            });
-            chk.addEventListener('change', (e) => {
-              mciState.hasSevereBradycardia = e.target.checked;
-              render();
-            });
-            return chk;
-          })(),
-          h('span', {}, isEs ? 'Bradicardia extrema (< 45 lpm) o hipotensión por xilacina/medetomidina' : 'Extreme bradycardia (< 45 bpm) or hypotension from xylazine/medetomidine')
-        )
-      ),
-      h('div', { class: 'mci-supply-group' },
-        h('label', { for: 'inp-naloxone-doses', class: 'mci-form-label' },
-          isEs ? 'Dosis de Naloxona Disponibles en Escena:' : 'Available Naloxone Doses On Scene:'
-        ),
-        (() => {
-          const inp = h('input', {
-            id: 'inp-naloxone-doses',
-            type: 'number',
-            class: 'mci-input',
-            value: String(mciState.availableNaloxoneDoses),
-          });
-          inp.addEventListener('input', (e) => {
-            mciState.availableNaloxoneDoses = Math.max(0, Number(e.target.value) || 0);
-            render();
-          });
-          return inp;
-        })(),
-        h('p', { class: 'mci-help-text' },
-          isEs
-            ? `Demanda proyectada: ~${evalResult.estimatedNaloxoneNeeded} dosis (${evalResult.redCount} rojos x 3 + ${evalResult.yellowCount} amarillos x 1).`
-            : `Projected demand: ~${evalResult.estimatedNaloxoneNeeded} doses (${evalResult.redCount} red x 3 + ${evalResult.yellowCount} yellow x 1).`
-        )
-      )
-    );
-    leftCol.appendChild(sceneCard);
+    clear(rightCol);
 
-    grid.appendChild(leftCol);
-
-    // RIGHT COLUMN: Protocols, SBAR Handoff & Incident Declaration
-    const rightCol = h('div', { class: 'mci-col' });
-
-    // Card 3: Priority Resuscitation Protocol
     const resusCard = h('section', { class: 'mci-card' },
       h('h2', { class: 'mci-card-title' },
         icon('activity'),
@@ -541,7 +466,6 @@ export function massOverdoseMciView() {
     );
     rightCol.appendChild(resusCard);
 
-    // Card 4: SBAR Clinical Incident Handoff Note
     const sbarCard = h('section', { class: 'mci-card' },
       h('h2', { class: 'mci-card-title' },
         icon('file-text'),
@@ -552,14 +476,9 @@ export function massOverdoseMciView() {
       ),
       h('div', { class: 'mci-actions' },
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-primary',
-          },
+          const btn = h('button', { type: 'button', class: 'btn btn-primary' },
             icon('copy'),
-            h('span', {}, mciState.copied
-              ? (isEs ? '¡Copiado!' : 'Copied!')
-              : (isEs ? 'Copiar Resumen SBAR' : 'Copy SBAR Note'))
+            h('span', {}, mciState.copied ? (isEs ? '¡Copiado!' : 'Copied!') : (isEs ? 'Copiar Resumen SBAR' : 'Copy SBAR Note'))
           );
           btn.addEventListener('click', async () => {
             const text = isEs ? evalResult.sbarEs : evalResult.sbarEn;
@@ -569,10 +488,10 @@ export function massOverdoseMciView() {
               }
               mciState.copied = true;
               announce(isEs ? 'Resumen copiado al portapapeles' : 'SBAR note copied to clipboard');
-              render();
+              renderDynamic();
               setTimeout(() => {
                 mciState.copied = false;
-                render();
+                renderDynamic();
               }, 2500);
             } catch {
               announce(isEs ? 'Error al copiar' : 'Failed to copy');
@@ -581,10 +500,9 @@ export function massOverdoseMciView() {
           return btn;
         })(),
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-ghost',
-          }, isEs ? 'Restablecer Contadores' : 'Reset Counters');
+          const btn = h('button', { type: 'button', class: 'btn btn-ghost' },
+            isEs ? 'Restablecer Contadores' : 'Reset Counters'
+          );
           btn.addEventListener('click', () => {
             resetMassOverdoseMciState();
           });
@@ -594,12 +512,19 @@ export function massOverdoseMciView() {
       )
     );
     rightCol.appendChild(sbarCard);
-
-    grid.appendChild(rightCol);
-    container.appendChild(grid);
   }
 
-  render();
-  const unsubscribe = subscribeMassOverdoseMciState(render);
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  };
+
+  renderDynamic();
+  const unsubscribe = subscribeMassOverdoseMciState(onStateChange);
   return container;
 }

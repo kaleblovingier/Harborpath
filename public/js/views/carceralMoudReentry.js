@@ -339,11 +339,153 @@ export function subscribeCarceralReentryState(fn) {
 
 export function carceralMoudReentryView() {
   const container = h('div', { class: 'carceral-reentry-view', role: 'region', 'aria-label': 'Carceral Intake & Reentry MOUD Continuity Navigator' });
+  const isEs = getLang() === 'es';
+  const initialEval = evaluateCarceralReentryPlan({
+    regimenId: carceralState.regimenId,
+    currentStage: carceralState.currentStage,
+    daysUntilRelease: carceralState.daysUntilRelease,
+    medicaidReactivated: carceralState.medicaidReactivated,
+    communityAppointmentConfirmed: carceralState.communityAppointmentConfirmed,
+    bridgeMedicationSupplied: carceralState.bridgeMedicationSupplied,
+    naloxoneKitDispensed: carceralState.naloxoneKitDispensed,
+    anonymousId: carceralState.anonymousId,
+  });
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header & Banners
+  container.append(
+    pageHeader(
+      isEs ? 'Continuidad de MOUD en Prisión y Navegador de Reingreso Comunitario Seguro' : 'Carceral Intake & Reentry MOUD Continuity & Overdose Prevention Directives',
+      isEs ? 'Guía estatutaria y clínica para proteger la continuidad de MOUD desde el ingreso en prisión hasta la salida comunitaria: decretos del Título II de la Ley ADA, exención de Medicaid Sección 1115 y prevención del pico de sobredosis mortal (40x-129x en días 1-14).' : 'Statutory and clinical workflow protecting MOUD continuation from carceral booking to community reentry: DOJ Title II ADA settlements, Section 1115 Medicaid waivers, and prevention of the lethal 40x–129x post-release overdose spike.'
+    ),
+    h('div', { class: 'carceral-legal-banner', role: 'note' },
+      h('div', { class: 'carceral-banner-header' },
+        icon('shield'),
+        h('strong', null, isEs ? 'Marco Legal Obligatorio: Título II de la Ley ADA y Decretos del DOJ (2022–2024)' : 'Statutory Mandate: Title II Americans with Disabilities Act & DOJ Enforcement (2022–2024)')
+      ),
+      h('p', null, isEs ? initialEval.legalClauseEs : initialEval.legalClauseEn)
+    ),
+    h('div', { class: 'carceral-spike-banner', role: 'alert' },
+      h('div', { class: 'carceral-banner-header' },
+        icon('alert-triangle'),
+        h('strong', null, isEs ? '¡ALERTA EPIDEMIOLÓGICA CRÍTICA: PICO DE SOBREDOSIS TRAS LA EXCARCELACIÓN!' : 'CRITICAL EPIDEMIOLOGICAL ALERT: POST-RELEASE OVERDOSE SPIKE!')
+      ),
+      h('p', null, isEs
+        ? 'En las primeras 2 semanas tras salir de prisión, el riesgo de sobredosis mortal es entre 40 y 129 veces mayor que en la población general debido a la pérdida de tolerancia. Mantener MOUD reduce la mortalidad en un 85%.'
+        : 'In the first 2 weeks post-release, formerly incarcerated individuals experience a 40x to 129x higher fatal overdose rate than the general population due to rapid loss of tolerance. Maintaining MOUD in custody reduces post-release fatal overdose by 85%.')
+    )
+  );
 
+  const grid = h('div', { class: 'carceral-grid' });
+  const leftCol = h('div', { class: 'carceral-col' });
+  const rightCol = h('div', { class: 'carceral-col' });
+  grid.append(leftCol, rightCol);
+  container.append(grid);
+
+  // Persistent controls (never rebuilt on keystroke)
+  const stageSelect = h('select', { id: 'stage-select', class: 'carceral-select' },
+    Object.keys(CARCERAL_STAGES).map((k) => {
+      const item = CARCERAL_STAGES[k];
+      return h('option', { value: k, selected: carceralState.currentStage === k }, isEs ? item.nameEs : item.nameEn);
+    })
+  );
+  stageSelect.addEventListener('change', (e) => setCarceralReentryState({ currentStage: e.target.value }));
+  const stageTaskList = h('ul', { class: 'carceral-task-list' });
+  leftCol.append(
+    h('div', { class: 'card carceral-card' },
+      h('h2', { class: 'carceral-card-title' },
+        icon('git-commit'),
+        isEs ? '1. Etapa en el Circuito Penitenciario' : '1. Correctional Facility State Machine Stage'
+      ),
+      h('label', { for: 'stage-select', class: 'carceral-label' },
+        isEs ? 'Seleccione la fase actual de la persona:' : 'Select current stage of incarceration:'
+      ),
+      stageSelect,
+      stageTaskList
+    )
+  );
+
+  const regSelect = h('select', { id: 'regimen-select', class: 'carceral-select' },
+    Object.keys(CARCERAL_MOUD_REGIMENS).map((k) => {
+      const item = CARCERAL_MOUD_REGIMENS[k];
+      return h('option', { value: k, selected: carceralState.regimenId === k }, isEs ? item.nameEs : item.nameEn);
+    })
+  );
+  regSelect.addEventListener('change', (e) => setCarceralReentryState({ regimenId: e.target.value }));
+  const regDetailsSlot = h('div', { class: 'carceral-reg-details' });
+  leftCol.append(
+    h('div', { class: 'card carceral-card' },
+      h('h2', { class: 'carceral-card-title' },
+        icon('activity'),
+        isEs ? '2. Régimen MOUD Establecido' : '2. Established MOUD Regimen'
+      ),
+      h('label', { for: 'regimen-select', class: 'carceral-label' },
+        isEs ? 'Seleccione el medicamento para el TUDO:' : 'Select FDA-approved MOUD formulation:'
+      ),
+      regSelect,
+      regDetailsSlot
+    )
+  );
+
+  // Right column: Pillar Card with persistent #days-input & checkboxes + dynamic SBAR card
+  const readinessBadge = h('span', { class: 'carceral-badge' });
+  const daysInput = h('input', {
+    id: 'days-input',
+    type: 'number',
+    class: 'carceral-days-input',
+    value: String(carceralState.daysUntilRelease),
+    min: '0',
+    max: '365',
+    'aria-label': isEs ? 'Días para la salida' : 'Days until release',
+  });
+  daysInput.addEventListener('input', (e) => setCarceralReentryState({ daysUntilRelease: Number(e.target.value) || 0 }));
+
+  const pillarConfigs = [
+    { id: 'p1-medicaid', key: 'medicaidReactivated', label: isEs ? 'Pilar 1: Exención Medicaid Sección 1115 (Reactivación activa el día de salida)' : 'Pillar 1: Section 1115 Medicaid Waiver (Active coverage restored on release day)' },
+    { id: 'p2-appt', key: 'communityAppointmentConfirmed', label: isEs ? 'Pilar 2: Cita comunitaria en clínica OTP o FQHC agendada en 24-48 horas' : 'Pillar 2: Community OTP or FQHC/OBOT appointment scheduled within 24–48 hours' },
+    { id: 'p3-bridge', key: 'bridgeMedicationSupplied', label: isEs ? 'Pilar 3: Suministro puente de 30 días de MOUD en mano o receta electrónica asegurada' : 'Pillar 3: 30-day bridge medication-in-hand or confirmed e-prescription' },
+    { id: 'p4-naloxone', key: 'naloxoneKitDispensed', label: isEs ? 'Pilar 4: Kit de Naloxona contra sobredosis (mínimo 2 dosis y tiras reactivas) entregado en mano' : 'Pillar 4: Overdose Prevention Naloxone Kit (minimum 2 doses & test strips) handed at gate' },
+  ];
+  const pillarRows = pillarConfigs.map((cfg) => {
+    const chk = h('input', { type: 'checkbox', id: cfg.id, checked: carceralState[cfg.key], 'aria-label': cfg.label });
+    const row = h('div', { class: `carceral-pillar-row ${carceralState[cfg.key] ? 'pillar-complete' : 'pillar-pending'}` },
+      chk,
+      h('label', { for: cfg.id }, cfg.label)
+    );
+    chk.addEventListener('change', (e) => setCarceralReentryState({ [cfg.key]: e.target.checked }));
+    return { cfg, chk, row };
+  });
+
+  const pillarCard = h('div', { class: 'card carceral-card' },
+    h('div', { class: 'carceral-card-header-flex' },
+      h('h2', { class: 'carceral-card-title' },
+        icon('clipboard-check'),
+        isEs ? '3. Los 4 Pilares de Salida Segura' : '3. The 4 Safe Reentry Pillars'
+      ),
+      readinessBadge
+    ),
+    h('div', { class: 'carceral-countdown-row' },
+      h('label', { for: 'days-input', class: 'carceral-label' }, isEs ? 'Días Restantes para la Salida por Puerta:' : 'Days Until Projected Release Gate:'),
+      daysInput
+    ),
+    h('div', { class: 'carceral-pillars-list' }, ...pillarRows.map((p) => p.row))
+  );
+  const sbarCardSlot = h('div');
+  rightCol.append(pillarCard, sbarCardSlot);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== stageSelect) stageSelect.value = carceralState.currentStage;
+    if (active !== regSelect) regSelect.value = carceralState.regimenId;
+    if (active !== daysInput) daysInput.value = String(carceralState.daysUntilRelease);
+    pillarRows.forEach(({ cfg, chk, row }) => {
+      const checked = Boolean(carceralState[cfg.key]);
+      if (active !== chk) chk.checked = checked;
+      row.className = `carceral-pillar-row ${checked ? 'pillar-complete' : 'pillar-pending'}`;
+    });
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evaluation = evaluateCarceralReentryPlan({
       regimenId: carceralState.regimenId,
       currentStage: carceralState.currentStage,
@@ -355,172 +497,25 @@ export function carceralMoudReentryView() {
       anonymousId: carceralState.anonymousId,
     });
 
-    // Page Header
-    container.append(
-      pageHeader(
-        isEs ? 'Continuidad de MOUD en Prisión y Navegador de Reingreso Comunitario Seguro' : 'Carceral Intake & Reentry MOUD Continuity & Overdose Prevention Directives',
-        isEs ? 'Guía estatutaria y clínica para proteger la continuidad de MOUD desde el ingreso en prisión hasta la salida comunitaria: decretos del Título II de la Ley ADA, exención de Medicaid Sección 1115 y prevención del pico de sobredosis mortal (40x-129x en días 1-14).' : 'Statutory and clinical workflow protecting MOUD continuation from carceral booking to community reentry: DOJ Title II ADA settlements, Section 1115 Medicaid waivers, and prevention of the lethal 40x–129x post-release overdose spike.'
-      )
-    );
+    clear(stageTaskList);
+    stageTaskList.append(...(isEs ? evaluation.stage.tasksEs : evaluation.stage.tasksEn).map((task) => h('li', null, icon('check'), task)));
 
-    // Title II ADA Legal Mandate Callout
-    const legalBanner = h('div', { class: 'carceral-legal-banner', role: 'note' },
-      h('div', { class: 'carceral-banner-header' },
-        icon('shield'),
-        h('strong', null, isEs ? 'Marco Legal Obligatorio: Título II de la Ley ADA y Decretos del DOJ (2022–2024)' : 'Statutory Mandate: Title II Americans with Disabilities Act & DOJ Enforcement (2022–2024)')
-      ),
-      h('p', null, isEs ? evaluation.legalClauseEs : evaluation.legalClauseEn)
-    );
-    container.append(legalBanner);
-
-    // 40x-129x Overdose Risk Spike Warning
-    const spikeBanner = h('div', { class: 'carceral-spike-banner', role: 'alert' },
-      h('div', { class: 'carceral-banner-header' },
-        icon('alert-triangle'),
-        h('strong', null, isEs ? '¡ALERTA EPIDEMIOLÓGICA CRÍTICA: PICO DE SOBREDOSIS TRAS LA EXCARCELACIÓN!' : 'CRITICAL EPIDEMIOLOGICAL ALERT: POST-RELEASE OVERDOSE SPIKE!')
-      ),
-      h('p', null, isEs
-        ? 'En las primeras 2 semanas tras salir de prisión, el riesgo de sobredosis mortal es entre 40 y 129 veces mayor que en la población general debido a la pérdida de tolerancia. Mantener MOUD reduce la mortalidad en un 85%.'
-        : 'In the first 2 weeks post-release, formerly incarcerated individuals experience a 40x to 129x higher fatal overdose rate than the general population due to rapid loss of tolerance. Maintaining MOUD in custody reduces post-release fatal overdose by 85%.')
-    );
-    container.append(spikeBanner);
-
-    // Main Interactive Grid
-    const grid = h('div', { class: 'carceral-grid' });
-
-    // Left Column: Stage Selector & Regimen Selection
-    const leftCol = h('div', { class: 'carceral-col' });
-
-    // Section 1: Facility Stage Tracker
-    const stageCard = h('div', { class: 'card carceral-card' },
-      h('h2', { class: 'carceral-card-title' },
-        icon('git-commit'),
-        isEs ? '1. Etapa en el Circuito Penitenciario' : '1. Correctional Facility State Machine Stage'
-      ),
-      h('label', { for: 'stage-select', class: 'carceral-label' },
-        isEs ? 'Seleccione la fase actual de la persona:' : 'Select current stage of incarceration:'
-      )
-    );
-
-    const stageSelect = h('select', { id: 'stage-select', class: 'carceral-select' },
-      Object.keys(CARCERAL_STAGES).map((k) => {
-        const item = CARCERAL_STAGES[k];
-        const opt = h('option', { value: k }, isEs ? item.nameEs : item.nameEn);
-        if (carceralState.currentStage === k) opt.selected = true;
-        return opt;
-      })
-    );
-    stageSelect.addEventListener('change', (e) => {
-      setCarceralReentryState({ currentStage: e.target.value });
-    });
-
-    const stageTaskList = h('ul', { class: 'carceral-task-list' },
-      (isEs ? evaluation.stage.tasksEs : evaluation.stage.tasksEn).map((task) => h('li', null, icon('check'), task))
-    );
-
-    stageCard.append(stageSelect, stageTaskList);
-    leftCol.append(stageCard);
-
-    // Section 2: MOUD Regimen Selection
-    const regCard = h('div', { class: 'card carceral-card' },
-      h('h2', { class: 'carceral-card-title' },
-        icon('activity'),
-        isEs ? '2. Régimen MOUD Establecido' : '2. Established MOUD Regimen'
-      ),
-      h('label', { for: 'regimen-select', class: 'carceral-label' },
-        isEs ? 'Seleccione el medicamento para el TUDO:' : 'Select FDA-approved MOUD formulation:'
-      )
-    );
-
-    const regSelect = h('select', { id: 'regimen-select', class: 'carceral-select' },
-      Object.keys(CARCERAL_MOUD_REGIMENS).map((k) => {
-        const item = CARCERAL_MOUD_REGIMENS[k];
-        const opt = h('option', { value: k }, isEs ? item.nameEs : item.nameEn);
-        if (carceralState.regimenId === k) opt.selected = true;
-        return opt;
-      })
-    );
-    regSelect.addEventListener('change', (e) => {
-      setCarceralReentryState({ regimenId: e.target.value });
-    });
-
-    const regDetails = h('div', { class: 'carceral-reg-details' },
+    clear(regDetailsSlot);
+    regDetailsSlot.append(
       h('p', null, h('strong', null, isEs ? 'Dosis Estándar: ' : 'Standard Dosing: '), evaluation.regimen.defaultDose),
       h('p', null, h('strong', null, isEs ? 'Verificación al Ingreso: ' : 'Booking Verification: '), isEs ? evaluation.regimen.verificationMethodEs : evaluation.regimen.verificationMethodEn),
       h('p', { class: 'carceral-bridge-tip' }, h('strong', null, isEs ? 'Estrategia de Salida: ' : 'Reentry Strategy: '), isEs ? evaluation.regimen.bridgeStrategyEs : evaluation.regimen.bridgeStrategyEn)
     );
 
-    regCard.append(regSelect, regDetails);
-    leftCol.append(regCard);
+    readinessBadge.className = `carceral-badge badge-${evaluation.readinessScore === 4 ? 'success' : 'warning'}`;
+    readinessBadge.textContent = `${evaluation.readinessScore} / 4 ${isEs ? 'Pilares Verificados' : 'Pillars Verified'}`;
 
-    grid.append(leftCol);
-
-    // Right Column: 4 Reentry Pillars Checklist, Days Countdown & Handoff Note
-    const rightCol = h('div', { class: 'carceral-col' });
-
-    // Section 3: Reentry Countdown & 4 Pillars Checklist
-    const pillarCard = h('div', { class: 'card carceral-card' },
-      h('div', { class: 'carceral-card-header-flex' },
-        h('h2', { class: 'carceral-card-title' },
-          icon('clipboard-check'),
-          isEs ? '3. Los 4 Pilares de Salida Segura' : '3. The 4 Safe Reentry Pillars'
-        ),
-        h('span', { class: `carceral-badge badge-${evaluation.readinessScore === 4 ? 'success' : 'warning'}` },
-          `${evaluation.readinessScore} / 4 ${isEs ? 'Pilares Verificados' : 'Pillars Verified'}`
-        )
-      ),
-      h('div', { class: 'carceral-countdown-row' },
-        h('label', { for: 'days-input', class: 'carceral-label' }, isEs ? 'Días Restantes para la Salida por Puerta:' : 'Days Until Projected Release Gate:'),
-        h('input', {
-          id: 'days-input',
-          type: 'number',
-          class: 'carceral-days-input',
-          value: String(carceralState.daysUntilRelease),
-          min: '0',
-          max: '365',
-          'aria-label': isEs ? 'Días para la salida' : 'Days until release',
-        })
-      ),
-      h('div', { class: 'carceral-pillars-list' },
-        createPillarRow('p1-medicaid', carceralState.medicaidReactivated, isEs ? 'Pilar 1: Exención Medicaid Sección 1115 (Reactivación activa el día de salida)' : 'Pillar 1: Section 1115 Medicaid Waiver (Active coverage restored on release day)', (c) => setCarceralReentryState({ medicaidReactivated: c })),
-        createPillarRow('p2-appt', carceralState.communityAppointmentConfirmed, isEs ? 'Pilar 2: Cita comunitaria en clínica OTP o FQHC agendada en 24-48 horas' : 'Pillar 2: Community OTP or FQHC/OBOT appointment scheduled within 24–48 hours', (c) => setCarceralReentryState({ communityAppointmentConfirmed: c })),
-        createPillarRow('p3-bridge', carceralState.bridgeMedicationSupplied, isEs ? 'Pilar 3: Suministro puente de 30 días de MOUD en mano o receta electrónica asegurada' : 'Pillar 3: 30-day bridge medication-in-hand or confirmed e-prescription', (c) => setCarceralReentryState({ bridgeMedicationSupplied: c })),
-        createPillarRow('p4-naloxone', carceralState.naloxoneKitDispensed, isEs ? 'Pilar 4: Kit de Naloxona contra sobredosis (mínimo 2 dosis y tiras reactivas) entregado en mano' : 'Pillar 4: Overdose Prevention Naloxone Kit (minimum 2 doses & test strips) handed at gate', (c) => setCarceralReentryState({ naloxoneKitDispensed: c }))
-      )
-    );
-
-    const daysInput = pillarCard.querySelector('#days-input');
-    daysInput.addEventListener('input', (e) => setCarceralReentryState({ daysUntilRelease: Number(e.target.value) || 0 }));
-
-    rightCol.append(pillarCard);
-
-    // Section 4: SBAR Reentry Handoff Note
-    const sbarCard = h('div', { class: 'card carceral-card' },
-      h('h2', { class: 'carceral-card-title' },
-        icon('file-text'),
-        isEs ? '4. Nota de Continuidad SBAR para la Clínica Comunitaria' : '4. SBAR Continuity of Care & Reentry Handoff Note'
-      ),
-      h('textarea', {
-        class: 'carceral-sbar-textarea',
-        readonly: true,
-        rows: 9,
-        'aria-label': isEs ? 'Nota SBAR de Reingreso' : 'Reentry SBAR Note',
-      }, isEs ? evaluation.sbarEs : evaluation.sbarEn),
-      h('div', { class: 'carceral-btn-row' },
-        h('button', {
-          type: 'button',
-          class: 'btn btn-primary',
-          'aria-label': isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
-        }, icon('copy'), isEs ? (carceralState.copied ? '¡Copiado!' : 'Copiar Nota SBAR') : (carceralState.copied ? 'Copied!' : 'Copy SBAR Note')),
-        h('button', {
-          type: 'button',
-          class: 'btn btn-secondary',
-          'aria-label': isEs ? 'Restablecer' : 'Reset Form',
-        }, icon('rotate-ccw'), isEs ? 'Restablecer' : 'Reset')
-      )
-    );
-
-    const copyBtn = sbarCard.querySelector('.btn-primary');
+    clear(sbarCardSlot);
+    const copyBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-primary',
+      'aria-label': isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',
+    }, icon('copy'), isEs ? (carceralState.copied ? '¡Copiado!' : 'Copiar Nota SBAR') : (carceralState.copied ? 'Copied!' : 'Copy SBAR Note'));
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(isEs ? evaluation.sbarEs : evaluation.sbarEn);
@@ -532,29 +527,44 @@ export function carceralMoudReentryView() {
       }
     });
 
-    const resetBtn = sbarCard.querySelector('.btn-secondary');
+    const resetBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      'aria-label': isEs ? 'Restablecer' : 'Reset Form',
+    }, icon('rotate-ccw'), isEs ? 'Restablecer' : 'Reset');
     resetBtn.addEventListener('click', () => {
       resetCarceralReentryState();
       announce(isEs ? 'Valores restablecidos' : 'State reset');
     });
 
-    rightCol.append(sbarCard);
-
-    grid.append(rightCol);
-    container.append(grid);
+    sbarCardSlot.append(
+      h('div', { class: 'card carceral-card' },
+        h('h2', { class: 'carceral-card-title' },
+          icon('file-text'),
+          isEs ? '4. Nota de Continuidad SBAR para la Clínica Comunitaria' : '4. SBAR Continuity of Care & Reentry Handoff Note'
+        ),
+        h('textarea', {
+          class: 'carceral-sbar-textarea',
+          readonly: true,
+          rows: 9,
+          'aria-label': isEs ? 'Nota SBAR de Reingreso' : 'Reentry SBAR Note',
+        }, isEs ? evaluation.sbarEs : evaluation.sbarEn),
+        h('div', { class: 'carceral-btn-row' }, copyBtn, resetBtn)
+      )
+    );
   }
 
-  function createPillarRow(id, checked, labelTxt, onChange) {
-    const row = h('div', { class: `carceral-pillar-row ${checked ? 'pillar-complete' : 'pillar-pending'}` });
-    const chk = h('input', { type: 'checkbox', id, checked, 'aria-label': labelTxt });
-    chk.addEventListener('change', (e) => onChange(e.target.checked));
-    const label = h('label', { for: id }, labelTxt);
-    row.append(chk, label);
-    return row;
-  }
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  };
 
-  const unsubscribe = subscribeCarceralReentryState(render);
-  render();
-
+  const unsubscribe = subscribeCarceralReentryState(onStateChange);
+  renderDynamic();
   return container;
 }

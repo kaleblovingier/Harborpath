@@ -405,10 +405,160 @@ export function resetBurnToxicologyState() {
 
 export function burnToxicologyView() {
   const container = h('div', { class: 'burn-toxicology-view', role: 'region', 'aria-label': 'Burn and Toxicology Clinical Decision Support' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header
+  container.appendChild(
+    pageHeader(
+      isEs ? 'Reanimación de Quemaduras, Químicos Tóxicos y Lesión Inhalatoria' : 'Burn Resuscitation, Toxic Chemical Exposure & Inhalation Navigator',
+      isEs
+        ? 'Consenso ABA 2024 para cálculo de líquidos de reanimación (2 mL/kg/% SCTQ), antídotos específicos (gluconato de calcio, Cyanokit) y triaje de vía aérea.'
+        : 'American Burn Association (ABA) fluid formula (2 mL/kg/% TBSA), chemical countermeasures (Calcium Gluconate, Cyanokit), and early intubation triggers.',
+      'clinical'
+    )
+  );
+
+  const grid = h('div', { class: 'burn-layout-grid' });
+  const leftCol = h('div', { class: 'burn-input-column' });
+  const rightCol = h('div', { class: 'burn-output-column' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(grid);
+
+  // Persistent controls (never rebuilt on keystroke)
+  const patientSel = h('select', { id: 'burn-patient-type', class: 'burn-select' },
+    h('option', { value: 'adult', selected: burnState.patientType === 'adult' }, isEs ? 'Adulto (Térmico / Químico - 2 mL/kg/%)' : 'Adult (Thermal / Chemical - 2 mL/kg/%)'),
+    h('option', { value: 'pediatric', selected: burnState.patientType === 'pediatric' }, isEs ? 'Pediátrico (< 14 años - 3 mL/kg/% + D5 1/2 SS)' : 'Pediatric (< 14 yrs - 3 mL/kg/% + D5 1/2 NS)'),
+    h('option', { value: 'electrical', selected: burnState.patientType === 'electrical' }, isEs ? 'Eléctrico Alto Voltaje / Rabdomiólisis (4 mL/kg/%)' : 'High-Voltage Electrical / Rhabdomyolysis (4 mL/kg/%)')
+  );
+  const weightInp = h('input', { id: 'burn-weight', type: 'number', min: '1', max: '300', value: String(burnState.weightKg), class: 'burn-input-number' });
+  const tbsaInp = h('input', { id: 'burn-tbsa', type: 'number', min: '0', max: '100', value: String(burnState.tbsaPct), class: 'burn-input-number' });
+  const hoursInp = h('input', { id: 'burn-hours', type: 'number', min: '0', max: '24', value: String(burnState.hoursPostInjury), class: 'burn-input-number' });
+  const exposureSel = h('select', { id: 'burn-exposure-type', class: 'burn-select' },
+    Object.values(BURN_EXPOSURE_PROTOCOLS).map((proto) =>
+      h('option', { value: proto.id, selected: burnState.exposureType === proto.id }, isEs ? proto.nameEs : proto.nameEn)
+    )
+  );
+  const toxProtocolSlot = h('div', { class: 'burn-protocol-box' });
+
+  const inhalationItems = [
+    { id: 'stridor', en: 'Audible stridor (critical airway compromise)', es: 'Estridor audible (compromiso crítico de vía aérea)' },
+    { id: 'hoarseness', en: 'Hoarseness or progressive voice change', es: 'Disfonía o cambio de voz progresivo' },
+    { id: 'soot', en: 'Carbonaceous sputum / pharyngeal soot', es: 'Esputo carbonáceo u hollín en orofaringe' },
+    { id: 'facial_burns', en: 'Facial / perioral / nasal 2nd or 3rd degree burns', es: 'Quemaduras faciales o peribucales profundas' },
+    { id: 'neck_burns', en: 'Circumferential / deep anterior neck burns', es: 'Quemadura de cuello circunferencial o anterior' },
+    { id: 'enclosed_smoke', en: 'Enclosed space fire smoke exposure', es: 'Exposición a humo en espacio cerrado' },
+    { id: 'lactic_acidosis', en: 'Severe lactic acidosis (>= 8-10 mmol/L)', es: 'Acidosis láctica grave (>= 8-10 mmol/L)' },
+  ];
+  const inhalationCheckboxes = inhalationItems.map((item) => {
+    const chk = h('input', { type: 'checkbox', id: `chk-${item.id}`, class: 'burn-checkbox', checked: burnState.inhalationSigns.has(item.id) });
+    chk.addEventListener('change', (e) => {
+      if (e.target.checked) burnState.inhalationSigns.add(item.id);
+      else burnState.inhalationSigns.delete(item.id);
+      renderDynamic();
+    });
+    return { id: item.id, chk, item };
+  });
+
+  const coChk = h('input', { type: 'checkbox', id: 'chk-co', class: 'burn-checkbox', checked: burnState.coSuspected });
+  const syncopeChk = h('input', { type: 'checkbox', id: 'chk-syncope', class: 'burn-checkbox', checked: burnState.syncope });
+  const pregChk = h('input', { type: 'checkbox', id: 'chk-pregnancy', class: 'burn-checkbox', checked: burnState.pregnancy });
+  const cohbInp = h('input', { id: 'burn-cohb', type: 'number', min: '0', max: '100', placeholder: 'e.g. 28', value: burnState.coHbLevel, class: 'burn-input-number' });
+
+  patientSel.addEventListener('change', (e) => { burnState.patientType = e.target.value; renderDynamic(); });
+  weightInp.addEventListener('input', (e) => { const val = Number(e.target.value); if (val > 0) { burnState.weightKg = val; renderDynamic(); } });
+  tbsaInp.addEventListener('input', (e) => { const val = Number(e.target.value); if (!Number.isNaN(val) && val >= 0 && val <= 100) { burnState.tbsaPct = val; renderDynamic(); } });
+  hoursInp.addEventListener('input', (e) => { const val = Number(e.target.value); if (!Number.isNaN(val) && val >= 0 && val <= 24) { burnState.hoursPostInjury = val; renderDynamic(); } });
+  exposureSel.addEventListener('change', (e) => { burnState.exposureType = e.target.value; renderDynamic(); });
+  coChk.addEventListener('change', (e) => { burnState.coSuspected = e.target.checked; renderDynamic(); });
+  syncopeChk.addEventListener('change', (e) => { burnState.syncope = e.target.checked; renderDynamic(); });
+  pregChk.addEventListener('change', (e) => { burnState.pregnancy = e.target.checked; renderDynamic(); });
+  cohbInp.addEventListener('input', (e) => { burnState.coHbLevel = e.target.value; renderDynamic(); });
+
+  const paramCard = h('section', { class: 'burn-card' },
+    h('h2', { class: 'burn-card-title' },
+      icon('alert-triangle'),
+      h('span', {}, isEs ? '1. Parámetros de Reanimación y Paciente' : '1. Patient & Resuscitation Parameters')
+    ),
+    h('p', { class: 'burn-card-desc' },
+      isEs
+        ? 'La reanimación inicia desde la HORA DE LA LESIÓN, no desde la llegada a urgencias. Excluya estrictamente el eritema de 1.er grado.'
+        : 'Resuscitation starts from the TIME OF INJURY, not hospital arrival. Strictly EXCLUDE 1st-degree erythema from % TBSA.'
+    ),
+    h('div', { class: 'burn-field-group' },
+      h('label', { for: 'burn-patient-type', class: 'burn-label' }, isEs ? 'Tipo de Paciente / Mecanismo:' : 'Patient Category / Mechanism:'),
+      patientSel
+    ),
+    h('div', { class: 'burn-inputs-row' },
+      h('div', { class: 'burn-field-group' },
+        h('label', { for: 'burn-weight', class: 'burn-label' }, isEs ? 'Peso del Paciente (kg):' : 'Patient Weight (kg):'),
+        weightInp
+      ),
+      h('div', { class: 'burn-field-group' },
+        h('label', { for: 'burn-tbsa', class: 'burn-label' }, isEs ? '% SCTQ Quemada (2.º y 3.er grado):' : '% TBSA (2nd & 3rd Degree):'),
+        tbsaInp
+      )
+    ),
+    h('div', { class: 'burn-field-group' },
+      h('label', { for: 'burn-hours', class: 'burn-label' }, isEs ? 'Horas Transcurridas desde la Quemadura:' : 'Hours Elapsed Since Injury:'),
+      hoursInp
+    )
+  );
+  leftCol.appendChild(paramCard);
+
+  const toxCard = h('section', { class: 'burn-card' },
+    h('h2', { class: 'burn-card-title' },
+      icon('shield'),
+      h('span', {}, isEs ? '2. Sustancia o Mecanismo Toxicológico' : '2. Chemical or Toxic Mechanism')
+    ),
+    h('div', { class: 'burn-field-group' },
+      h('label', { for: 'burn-exposure-type', class: 'burn-label' }, isEs ? 'Seleccionar Agente Causal:' : 'Select Etiological Hazard:'),
+      exposureSel
+    ),
+    toxProtocolSlot
+  );
+  leftCol.appendChild(toxCard);
+
+  const airwayCard = h('section', { class: 'burn-card' },
+    h('h2', { class: 'burn-card-title' },
+      icon('activity'),
+      h('span', {}, isEs ? '3. Evaluación de Vía Aérea y Gases Tóxicos' : '3. Airway & Toxic Gas Triage')
+    ),
+    h('div', { class: 'burn-checkbox-grid' },
+      inhalationCheckboxes.map(({ id, chk, item }) =>
+        h('label', { for: `chk-${id}`, class: 'burn-checkbox-label' }, chk, h('span', {}, isEs ? item.es : item.en))
+      )
+    ),
+    h('div', { class: 'burn-checkbox-grid burn-mt-sm' },
+      h('label', { for: 'chk-co', class: 'burn-checkbox-label' }, coChk, h('span', {}, isEs ? 'Sospecha de Monóxido de Carbono (CO)' : 'Suspected Carbon Monoxide (CO)')),
+      h('label', { for: 'chk-syncope', class: 'burn-checkbox-label' }, syncopeChk, h('span', {}, isEs ? 'Síncope o Alteración Neurológica' : 'Syncope or Neurologic Deficit')),
+      h('label', { for: 'chk-pregnancy', class: 'burn-checkbox-label' }, pregChk, h('span', {}, isEs ? 'Paciente Embarazada (Umbral OHB > 15%)' : 'Patient Pregnant (HBO Threshold > 15%)'))
+    ),
+    h('div', { class: 'burn-field-group burn-mt-sm' },
+      h('label', { for: 'burn-cohb', class: 'burn-label' }, isEs ? 'Nivel de Carboxihemoglobina (% COHb por Co-Oximetría):' : 'Measured Carboxyhemoglobin (% COHb via Co-Oximetry):'),
+      cohbInp
+    )
+  );
+  leftCol.appendChild(airwayCard);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== patientSel) patientSel.value = burnState.patientType;
+    if (active !== weightInp) weightInp.value = String(burnState.weightKg);
+    if (active !== tbsaInp) tbsaInp.value = String(burnState.tbsaPct);
+    if (active !== hoursInp) hoursInp.value = String(burnState.hoursPostInjury);
+    if (active !== exposureSel) exposureSel.value = burnState.exposureType;
+    inhalationCheckboxes.forEach(({ id, chk }) => {
+      if (active !== chk) chk.checked = burnState.inhalationSigns.has(id);
+    });
+    if (active !== coChk) coChk.checked = burnState.coSuspected;
+    if (active !== syncopeChk) syncopeChk.checked = burnState.syncope;
+    if (active !== pregChk) pregChk.checked = burnState.pregnancy;
+    if (active !== cohbInp) cohbInp.value = String(burnState.coHbLevel);
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evalResult = evaluateBurnToxicology({
       weightKg: burnState.weightKg,
       tbsaPct: burnState.tbsaPct,
@@ -422,271 +572,20 @@ export function burnToxicologyView() {
       syncope: burnState.syncope,
     });
 
-    // Page Header
-    container.appendChild(
-      pageHeader(
-        isEs ? 'Reanimación de Quemaduras, Químicos Tóxicos y Lesión Inhalatoria' : 'Burn Resuscitation, Toxic Chemical Exposure & Inhalation Navigator',
-        isEs
-          ? 'Consenso ABA 2024 para cálculo de líquidos de reanimación (2 mL/kg/% SCTQ), antídotos específicos (gluconato de calcio, Cyanokit) y triaje de vía aérea.'
-          : 'American Burn Association (ABA) fluid formula (2 mL/kg/% TBSA), chemical countermeasures (Calcium Gluconate, Cyanokit), and early intubation triggers.',
-        'clinical'
+    clear(toxProtocolSlot);
+    toxProtocolSlot.append(
+      h('h3', { class: 'burn-protocol-heading' }, isEs ? 'Primeros Auxilios e Intervención Inmediata:' : 'First Aid & Immediate Countermeasures:'),
+      h('p', { class: 'burn-protocol-text' }, isEs ? evalResult.exposure.firstAidEs : evalResult.exposure.firstAidEn),
+      h('h3', { class: 'burn-protocol-heading' }, isEs ? 'Antídoto y Tratamiento Específico:' : 'Antidote & Targeted Therapy:'),
+      h('p', { class: 'burn-protocol-text' }, isEs ? evalResult.exposure.antidoteEs : evalResult.exposure.antidoteEn),
+      h('div', { class: 'burn-pearl-badge' },
+        h('strong', {}, isEs ? 'Perla Clínica: ' : 'Clinical Pearl: '),
+        h('span', {}, isEs ? evalResult.exposure.pearlEs : evalResult.exposure.pearlEn)
       )
     );
 
-    // Main Layout: Two Column Responsive Grid
-    const grid = h('div', { class: 'burn-layout-grid' });
+    clear(rightCol);
 
-    // LEFT COLUMN: Interactive Clinical Inputs
-    const leftCol = h('div', { class: 'burn-input-column' });
-
-    // Card 1: Patient & Resuscitation Parameters
-    const paramCard = h('section', { class: 'burn-card' },
-      h('h2', { class: 'burn-card-title' },
-        icon('alert-triangle'),
-        h('span', {}, isEs ? '1. Parámetros de Reanimación y Paciente' : '1. Patient & Resuscitation Parameters')
-      ),
-      h('p', { class: 'burn-card-desc' },
-        isEs
-          ? 'La reanimación inicia desde la HORA DE LA LESIÓN, no desde la llegada a urgencias. Excluya estrictamente el eritema de 1.er grado.'
-          : 'Resuscitation starts from the TIME OF INJURY, not hospital arrival. Strictly EXCLUDE 1st-degree erythema from % TBSA.'
-      ),
-      // Patient Type Selector
-      h('div', { class: 'burn-field-group' },
-        h('label', { for: 'burn-patient-type', class: 'burn-label' }, isEs ? 'Tipo de Paciente / Mecanismo:' : 'Patient Category / Mechanism:'),
-        (() => {
-          const sel = h('select', { id: 'burn-patient-type', class: 'burn-select' },
-            h('option', { value: 'adult', selected: burnState.patientType === 'adult' }, isEs ? 'Adulto (Térmico / Químico - 2 mL/kg/%)' : 'Adult (Thermal / Chemical - 2 mL/kg/%)'),
-            h('option', { value: 'pediatric', selected: burnState.patientType === 'pediatric' }, isEs ? 'Pediátrico (< 14 años - 3 mL/kg/% + D5 1/2 SS)' : 'Pediatric (< 14 yrs - 3 mL/kg/% + D5 1/2 NS)'),
-            h('option', { value: 'electrical', selected: burnState.patientType === 'electrical' }, isEs ? 'Eléctrico Alto Voltaje / Rabdomiólisis (4 mL/kg/%)' : 'High-Voltage Electrical / Rhabdomyolysis (4 mL/kg/%)')
-          );
-          sel.addEventListener('change', (e) => {
-            burnState.patientType = e.target.value;
-            render();
-          });
-          return sel;
-        })()
-      ),
-      // Weight & TBSA Inputs
-      h('div', { class: 'burn-inputs-row' },
-        h('div', { class: 'burn-field-group' },
-          h('label', { for: 'burn-weight', class: 'burn-label' }, isEs ? 'Peso del Paciente (kg):' : 'Patient Weight (kg):'),
-          (() => {
-            const inp = h('input', {
-              id: 'burn-weight',
-              type: 'number',
-              min: '1',
-              max: '300',
-              value: String(burnState.weightKg),
-              class: 'burn-input-number',
-            });
-            inp.addEventListener('input', (e) => {
-              const val = Number(e.target.value);
-              if (val > 0) {
-                burnState.weightKg = val;
-                render();
-              }
-            });
-            return inp;
-          })()
-        ),
-        h('div', { class: 'burn-field-group' },
-          h('label', { for: 'burn-tbsa', class: 'burn-label' }, isEs ? '% SCTQ Quemada (2.º y 3.er grado):' : '% TBSA (2nd & 3rd Degree):'),
-          (() => {
-            const inp = h('input', {
-              id: 'burn-tbsa',
-              type: 'number',
-              min: '0',
-              max: '100',
-              value: String(burnState.tbsaPct),
-              class: 'burn-input-number',
-            });
-            inp.addEventListener('input', (e) => {
-              const val = Number(e.target.value);
-              if (val >= 0 && val <= 100) {
-                burnState.tbsaPct = val;
-                render();
-              }
-            });
-            return inp;
-          })()
-        )
-      ),
-      // Hours Post-Injury
-      h('div', { class: 'burn-field-group' },
-        h('label', { for: 'burn-hours', class: 'burn-label' }, isEs ? 'Horas Transcurridas desde la Quemadura:' : 'Hours Elapsed Since Injury:'),
-        (() => {
-          const inp = h('input', {
-            id: 'burn-hours',
-            type: 'number',
-            min: '0',
-            max: '24',
-            value: String(burnState.hoursPostInjury),
-            class: 'burn-input-number',
-          });
-          inp.addEventListener('input', (e) => {
-            const val = Number(e.target.value);
-            if (val >= 0 && val <= 24) {
-              burnState.hoursPostInjury = val;
-              render();
-            }
-          });
-          return inp;
-        })()
-      )
-    );
-    leftCol.appendChild(paramCard);
-
-    // Card 2: Exposure Mechanism & Specialized Toxicology
-    const toxCard = h('section', { class: 'burn-card' },
-      h('h2', { class: 'burn-card-title' },
-        icon('shield'),
-        h('span', {}, isEs ? '2. Sustancia o Mecanismo Toxicológico' : '2. Chemical or Toxic Mechanism')
-      ),
-      h('div', { class: 'burn-field-group' },
-        h('label', { for: 'burn-exposure-type', class: 'burn-label' }, isEs ? 'Seleccionar Agente Causal:' : 'Select Etiological Hazard:'),
-        (() => {
-          const sel = h('select', { id: 'burn-exposure-type', class: 'burn-select' },
-            Object.values(BURN_EXPOSURE_PROTOCOLS).map((proto) =>
-              h('option', { value: proto.id, selected: burnState.exposureType === proto.id },
-                isEs ? proto.nameEs : proto.nameEn
-              )
-            )
-          );
-          sel.addEventListener('change', (e) => {
-            burnState.exposureType = e.target.value;
-            render();
-          });
-          return sel;
-        })()
-      ),
-      // Detailed Clinical Protocol Box
-      h('div', { class: 'burn-protocol-box' },
-        h('h3', { class: 'burn-protocol-heading' }, isEs ? 'Primeros Auxilios e Intervención Inmediata:' : 'First Aid & Immediate Countermeasures:'),
-        h('p', { class: 'burn-protocol-text' }, isEs ? evalResult.exposure.firstAidEs : evalResult.exposure.firstAidEn),
-        h('h3', { class: 'burn-protocol-heading' }, isEs ? 'Antídoto y Tratamiento Específico:' : 'Antidote & Targeted Therapy:'),
-        h('p', { class: 'burn-protocol-text' }, isEs ? evalResult.exposure.antidoteEs : evalResult.exposure.antidoteEn),
-        h('div', { class: 'burn-pearl-badge' },
-          h('strong', {}, isEs ? 'Perla Clínica: ' : 'Clinical Pearl: '),
-          h('span', {}, isEs ? evalResult.exposure.pearlEs : evalResult.exposure.pearlEn)
-        )
-      )
-    );
-    leftCol.appendChild(toxCard);
-
-    // Card 3: Airway & Inhalation Assessment
-    const airwayCard = h('section', { class: 'burn-card' },
-      h('h2', { class: 'burn-card-title' },
-        icon('activity'),
-        h('span', {}, isEs ? '3. Evaluación de Vía Aérea y Gases Tóxicos' : '3. Airway & Toxic Gas Triage')
-      ),
-      h('div', { class: 'burn-checkbox-grid' },
-        [
-          { id: 'stridor', en: 'Audible stridor (critical airway compromise)', es: 'Estridor audible (compromiso crítico de vía aérea)' },
-          { id: 'hoarseness', en: 'Hoarseness or progressive voice change', es: 'Disfonía o cambio de voz progresivo' },
-          { id: 'soot', en: 'Carbonaceous sputum / pharyngeal soot', es: 'Esputo carbonáceo u hollín en orofaringe' },
-          { id: 'facial_burns', en: 'Facial / perioral / nasal 2nd or 3rd degree burns', es: 'Quemaduras faciales o peribucales profundas' },
-          { id: 'neck_burns', en: 'Circumferential / deep anterior neck burns', es: 'Quemadura de cuello circunferencial o anterior' },
-          { id: 'enclosed_smoke', en: 'Enclosed space fire smoke exposure', es: 'Exposición a humo en espacio cerrado' },
-          { id: 'lactic_acidosis', en: 'Severe lactic acidosis (>= 8-10 mmol/L)', es: 'Acidosis láctica grave (>= 8-10 mmol/L)' },
-        ].map((item) => {
-          const checked = burnState.inhalationSigns.has(item.id);
-          const chk = h('input', {
-            type: 'checkbox',
-            id: `chk-${item.id}`,
-            class: 'burn-checkbox',
-            checked,
-          });
-          chk.addEventListener('change', (e) => {
-            if (e.target.checked) burnState.inhalationSigns.add(item.id);
-            else burnState.inhalationSigns.delete(item.id);
-            render();
-          });
-          return h('label', { for: `chk-${item.id}`, class: 'burn-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? item.es : item.en)
-          );
-        })
-      ),
-      // Additional triggers row: CO, Syncope, Pregnancy
-      h('div', { class: 'burn-checkbox-grid burn-mt-sm' },
-        (() => {
-          const chk = h('input', {
-            type: 'checkbox',
-            id: 'chk-co',
-            class: 'burn-checkbox',
-            checked: burnState.coSuspected,
-          });
-          chk.addEventListener('change', (e) => {
-            burnState.coSuspected = e.target.checked;
-            render();
-          });
-          return h('label', { for: 'chk-co', class: 'burn-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? 'Sospecha de Monóxido de Carbono (CO)' : 'Suspected Carbon Monoxide (CO)')
-          );
-        })(),
-        (() => {
-          const chk = h('input', {
-            type: 'checkbox',
-            id: 'chk-syncope',
-            class: 'burn-checkbox',
-            checked: burnState.syncope,
-          });
-          chk.addEventListener('change', (e) => {
-            burnState.syncope = e.target.checked;
-            render();
-          });
-          return h('label', { for: 'chk-syncope', class: 'burn-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? 'Síncope o Alteración Neurológica' : 'Syncope or Neurologic Deficit')
-          );
-        })(),
-        (() => {
-          const chk = h('input', {
-            type: 'checkbox',
-            id: 'chk-pregnancy',
-            class: 'burn-checkbox',
-            checked: burnState.pregnancy,
-          });
-          chk.addEventListener('change', (e) => {
-            burnState.pregnancy = e.target.checked;
-            render();
-          });
-          return h('label', { for: 'chk-pregnancy', class: 'burn-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? 'Paciente Embarazada (Umbral OHB > 15%)' : 'Patient Pregnant (HBO Threshold > 15%)')
-          );
-        })()
-      ),
-      // Co-oximetry COHb level input
-      h('div', { class: 'burn-field-group burn-mt-sm' },
-        h('label', { for: 'burn-cohb', class: 'burn-label' }, isEs ? 'Nivel de Carboxihemoglobina (% COHb por Co-Oximetría):' : 'Measured Carboxyhemoglobin (% COHb via Co-Oximetry):'),
-        (() => {
-          const inp = h('input', {
-            id: 'burn-cohb',
-            type: 'number',
-            min: '0',
-            max: '100',
-            placeholder: 'e.g. 28',
-            value: burnState.coHbLevel,
-            class: 'burn-input-number',
-          });
-          inp.addEventListener('input', (e) => {
-            burnState.coHbLevel = e.target.value;
-            render();
-          });
-          return inp;
-        })()
-      )
-    );
-    leftCol.appendChild(airwayCard);
-
-    grid.appendChild(leftCol);
-
-    // RIGHT COLUMN: Clinical Decision Support, Resuscitation Plan & SBAR
-    const rightCol = h('div', { class: 'burn-output-column' });
-
-    // Urgent Airway Callout (if intubation triggers met)
     if (evalResult.intubationUrgent) {
       rightCol.appendChild(
         h('aside', { class: 'burn-alert-urgent', role: 'alert' },
@@ -700,15 +599,12 @@ export function burnToxicologyView() {
               : 'Supraglottic airway edema peaks at 12-24 hours as resuscitation fluids are infused. Secure the airway before total supraglottic closure occurs.'
           ),
           h('ul', { class: 'burn-alert-list' },
-            (isEs ? evalResult.airwayRedFlagsEs : evalResult.airwayRedFlagsEn).map((flag) =>
-              h('li', {}, flag)
-            )
+            (isEs ? evalResult.airwayRedFlagsEs : evalResult.airwayRedFlagsEn).map((flag) => h('li', {}, flag))
           )
         )
       );
     }
 
-    // Toxic Gas Callout (if HBO or Cyanokit indicated)
     if (evalResult.cyanideIndicated || evalResult.hboIndicated) {
       rightCol.appendChild(
         h('aside', { class: 'burn-alert-toxicology', role: 'alert' },
@@ -717,15 +613,12 @@ export function burnToxicologyView() {
             h('strong', {}, isEs ? 'ALERTA DE TOXICOLOGÍA DE GASES INHALADOS' : 'INHALATION TOXICOLOGY PROTOCOL ACTIVATED')
           ),
           h('ul', { class: 'burn-alert-list' },
-            (isEs ? evalResult.toxicGasAlertsEs : evalResult.toxicGasAlertsEn).map((msg) =>
-              h('li', {}, msg)
-            )
+            (isEs ? evalResult.toxicGasAlertsEs : evalResult.toxicGasAlertsEn).map((msg) => h('li', {}, msg))
           )
         )
       );
     }
 
-    // Fluid Creep Warning
     if (evalResult.fluidCreepRisk) {
       rightCol.appendChild(
         h('aside', { class: 'burn-alert-warning', role: 'alert' },
@@ -742,7 +635,6 @@ export function burnToxicologyView() {
       );
     }
 
-    // ABA Fluid Resuscitation Plan Card
     const fluidCard = h('section', { class: 'burn-card burn-plan-card' },
       h('h2', { class: 'burn-card-title' },
         icon('activity'),
@@ -781,7 +673,6 @@ export function burnToxicologyView() {
     );
     rightCol.appendChild(fluidCard);
 
-    // Burn Center Referral Card
     const transferCard = h('section', { class: 'burn-card' },
       h('h2', { class: 'burn-card-title' },
         icon('external-link'),
@@ -793,9 +684,7 @@ export function burnToxicologyView() {
               isEs ? 'PACIENTE CUMPLE CRITERIOS DE TRASLADO A CENTRO ESPECIALIZADO DE QUEMADOS:' : 'PATIENT MEETS ABA CRITERIA FOR BURN CENTER REFERRAL:'
             ),
             h('ul', { class: 'burn-transfer-list' },
-              (isEs ? evalResult.transferCriteriaMetEs : evalResult.transferCriteriaMetEn).map((item) =>
-                h('li', {}, item)
-              )
+              (isEs ? evalResult.transferCriteriaMetEs : evalResult.transferCriteriaMetEn).map((item) => h('li', {}, item))
             )
           )
         : h('div', { class: 'burn-transfer-box-ok' },
@@ -809,7 +698,6 @@ export function burnToxicologyView() {
     );
     rightCol.appendChild(transferCard);
 
-    // SBAR Plain-Text Handoff Generator
     const sbarCard = h('section', { class: 'burn-card' },
       h('h2', { class: 'burn-card-title' },
         icon('file-text'),
@@ -825,10 +713,7 @@ export function burnToxicologyView() {
       ),
       h('div', { class: 'burn-sbar-actions' },
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'burn-btn-copy',
-          },
+          const btn = h('button', { type: 'button', class: 'burn-btn-copy' },
             icon('copy'),
             h('span', {}, burnState.copied ? (isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!') : (isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Report'))
           );
@@ -838,10 +723,10 @@ export function burnToxicologyView() {
               navigator.clipboard.writeText(textToCopy).then(() => {
                 burnState.copied = true;
                 announce(isEs ? 'Nota SBAR copiada al portapapeles' : 'SBAR report copied to clipboard');
-                render();
+                renderDynamic();
                 setTimeout(() => {
                   burnState.copied = false;
-                  render();
+                  renderDynamic();
                 }, 3000);
               });
             }
@@ -849,10 +734,7 @@ export function burnToxicologyView() {
           return btn;
         })(),
         (() => {
-          const resetBtn = h('button', {
-            type: 'button',
-            class: 'burn-btn-reset',
-          }, isEs ? 'Restablecer Calculadora' : 'Reset Calculator');
+          const resetBtn = h('button', { type: 'button', class: 'burn-btn-reset' }, isEs ? 'Restablecer Calculadora' : 'Reset Calculator');
           resetBtn.addEventListener('click', () => {
             resetBurnToxicologyState();
           });
@@ -861,12 +743,19 @@ export function burnToxicologyView() {
       )
     );
     rightCol.appendChild(sbarCard);
-
-    grid.appendChild(rightCol);
-    container.appendChild(grid);
   }
 
-  listeners.add(render);
-  render();
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      listeners.delete(onStateChange);
+      return;
+    }
+    renderDynamic();
+  };
+
+  renderDynamic();
+  listeners.add(onStateChange);
   return container;
 }

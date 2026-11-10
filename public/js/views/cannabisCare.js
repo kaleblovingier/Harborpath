@@ -539,8 +539,9 @@ function renderScreenerTab(localState, isEs) {
 
   // Question 1: Duration
   const qDuration = h('div', { class: 'form-group' }, [
-    h('label', { class: 'form-label' }, isEs ? '1. Duración y frecuencia de consumo de cannabis:' : '1. Cannabis use duration & frequency:'),
+    h('label', { class: 'form-label', for: 'cannabis-duration-select' }, isEs ? '1. Duración y frecuencia de consumo de cannabis:' : '1. Cannabis use duration & frequency:'),
     h('select', {
+      id: 'cannabis-duration-select',
       class: 'form-select',
       value: localState.cannabisDuration,
       onchange: (e) => {
@@ -560,8 +561,9 @@ function renderScreenerTab(localState, isEs) {
 
   // Question 2: Product Type
   const qType = h('div', { class: 'form-group' }, [
-    h('label', { class: 'form-label' }, isEs ? '2. Tipo principal de producto consumido:' : '2. Primary cannabinoid product format:'),
+    h('label', { class: 'form-label', for: 'cannabis-type-select' }, isEs ? '2. Tipo principal de producto consumido:' : '2. Primary cannabinoid product format:'),
     h('select', {
+      id: 'cannabis-type-select',
       class: 'form-select',
       value: localState.concentrateType,
       onchange: (e) => {

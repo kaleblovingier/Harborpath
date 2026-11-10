@@ -393,10 +393,155 @@ export function subscribeToxicAlcoholState(fn) {
 
 export function toxicAlcoholView() {
   const container = h('div', { class: 'toxic-alcohol-view', role: 'region', 'aria-label': 'Toxic Alcohol Poisoning Navigator' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Static Header
+  container.appendChild(
+    pageHeader(
+      isEs ? 'Navegador de Alcoholes Tóxicos, Fomepizol y Brecha Osmolal' : 'Toxic Alcohol Poisoning, Fomepizole & Osmolal Gap Navigator',
+      isEs
+        ? 'Consenso clínico AACT, EAPCCT y EXTRIP para metanol (ceguera por formiato), etilenglicol (oxalato cálcico), dietilenglicol e isopropanol (seudoinsuficiencia renal sin acidosis).'
+        : 'AACT, EAPCCT, and EXTRIP clinical consensus for methanol (formate blindness), ethylene glycol (oxalate crystals), diethylene glycol, and isopropanol differentiation.',
+      'clinical'
+    )
+  );
+
+  const alertBannerSlot = h('div');
+  const tabNavSlot = h('div');
+  const grid = h('div', { class: 'toxic-layout-grid' });
+  const leftCol = h('div', { class: 'toxic-col' });
+  const rightCol = h('div', { class: 'toxic-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(alertBannerSlot);
+  container.appendChild(tabNavSlot);
+  container.appendChild(grid);
+
+  // Persistent controls (never rebuilt on keystroke)
+  const measuredOsmInp = h('input', { id: 'inp-measured-osm', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.measuredOsm) });
+  const osmMethodSel = h('select', { id: 'sel-osm-method', class: 'toxic-select' },
+    h('option', { value: 'freezing_point', selected: toxicAlcoholState.osmMethod === 'freezing_point' }, isEs ? 'Descenso Crioscópico (Válido)' : 'Freezing Point Depression (Valid)'),
+    h('option', { value: 'vapor_pressure', selected: toxicAlcoholState.osmMethod === 'vapor_pressure' }, isEs ? 'Presión de Vapor (Inválido: evapora alcoholes)' : 'Vapor Pressure (Invalid: vaporizes alcohols)')
+  );
+  const naInp = h('input', { id: 'inp-na', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.sodium) });
+  const gluInp = h('input', { id: 'inp-glu', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.glucose) });
+  const bunInp = h('input', { id: 'inp-bun', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.bun) });
+  const etohInp = h('input', { id: 'inp-etoh', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.ethanol) });
+  const clInp = h('input', { id: 'inp-cl', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.chloride) });
+  const hco3Inp = h('input', { id: 'inp-hco3', type: 'number', class: 'toxic-input', value: String(toxicAlcoholState.bicarbonate) });
+  const phInp = h('input', { id: 'inp-ph', type: 'number', step: '0.01', class: 'toxic-input', value: String(toxicAlcoholState.ph) });
+  const statsBarSlot = h('div', { class: 'toxic-stats-bar' });
+
+  measuredOsmInp.addEventListener('input', (e) => { toxicAlcoholState.measuredOsm = Number(e.target.value) || 0; renderDynamic(); });
+  osmMethodSel.addEventListener('change', (e) => { toxicAlcoholState.osmMethod = e.target.value; renderDynamic(); });
+  naInp.addEventListener('input', (e) => { toxicAlcoholState.sodium = Number(e.target.value) || 0; renderDynamic(); });
+  gluInp.addEventListener('input', (e) => { toxicAlcoholState.glucose = Number(e.target.value) || 0; renderDynamic(); });
+  bunInp.addEventListener('input', (e) => { toxicAlcoholState.bun = Number(e.target.value) || 0; renderDynamic(); });
+  etohInp.addEventListener('input', (e) => { toxicAlcoholState.ethanol = Number(e.target.value) || 0; renderDynamic(); });
+  clInp.addEventListener('input', (e) => { toxicAlcoholState.chloride = Number(e.target.value) || 0; renderDynamic(); });
+  hco3Inp.addEventListener('input', (e) => { toxicAlcoholState.bicarbonate = Number(e.target.value) || 0; renderDynamic(); });
+  phInp.addEventListener('input', (e) => { toxicAlcoholState.ph = Number(e.target.value) || 7.4; renderDynamic(); });
+
+  const visualChk = h('input', { id: 'chk-visual', type: 'checkbox', checked: toxicAlcoholState.hasVisualSymptoms });
+  const renalChk = h('input', { id: 'chk-renal', type: 'checkbox', checked: toxicAlcoholState.hasRenalFailure });
+  const dialysisChk = h('input', { id: 'chk-dialysis', type: 'checkbox', checked: toxicAlcoholState.hasHemodialysis });
+
+  visualChk.addEventListener('change', (e) => { toxicAlcoholState.hasVisualSymptoms = e.target.checked; renderDynamic(); });
+  renalChk.addEventListener('change', (e) => { toxicAlcoholState.hasRenalFailure = e.target.checked; renderDynamic(); });
+  dialysisChk.addEventListener('change', (e) => { toxicAlcoholState.hasHemodialysis = e.target.checked; renderDynamic(); });
+
+  const calcCard = h('section', { class: 'toxic-card' },
+    h('h2', { class: 'toxic-card-title' },
+      icon('activity'),
+      h('span', {}, isEs ? '1. Cálculo de Brecha Osmolal y Aniónica' : '1. Osmolal Gap & Anion Gap Calculator')
+    ),
+    h('p', { class: 'toxic-card-desc' },
+      isEs
+        ? 'Introduzca los valores de laboratorio para calcular la brecha osmolal por descenso crioscópico y la brecha aniónica.'
+        : 'Enter serum laboratory values to calculate freezing-point osmolal gap and anion gap metabolic acidosis.'
+    ),
+    h('div', { class: 'toxic-form-grid' },
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-measured-osm', class: 'toxic-form-label' }, isEs ? 'Osmolalidad Medida (mOsm/kg)' : 'Measured Osmolality (mOsm/kg)'),
+        measuredOsmInp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'sel-osm-method', class: 'toxic-form-label' }, isEs ? 'Método de Osmometría' : 'Osmometry Method'),
+        osmMethodSel
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-na', class: 'toxic-form-label' }, 'Na+ (mEq/L)'),
+        naInp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-glu', class: 'toxic-form-label' }, isEs ? 'Glucosa (mg/dL)' : 'Glucose (mg/dL)'),
+        gluInp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-bun', class: 'toxic-form-label' }, 'BUN (mg/dL)'),
+        bunInp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-etoh', class: 'toxic-form-label' }, isEs ? 'Etanol Sérico (mg/dL)' : 'Serum Ethanol (mg/dL)'),
+        etohInp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-cl', class: 'toxic-form-label' }, 'Cl- (mEq/L)'),
+        clInp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-hco3', class: 'toxic-form-label' }, 'HCO3- (mEq/L)'),
+        hco3Inp
+      ),
+      h('div', { class: 'toxic-form-group' },
+        h('label', { for: 'inp-ph', class: 'toxic-form-label' }, isEs ? 'pH Arterial' : 'Arterial pH'),
+        phInp
+      )
+    ),
+    statsBarSlot
+  );
+  leftCol.appendChild(calcCard);
+
+  const modCard = h('section', { class: 'toxic-card' },
+    h('h2', { class: 'toxic-card-title' },
+      icon('alert-circle'),
+      h('span', {}, isEs ? '2. Signos Críticos y Modificadores de Diálisis' : '2. Critical Signs & Dialysis Modifiers')
+    ),
+    h('div', { class: 'toxic-checkbox-list' },
+      h('label', { for: 'chk-visual', class: 'toxic-checkbox-label' },
+        visualChk,
+        h('span', {}, isEs ? 'Alteración visual / «Visión en tormenta de nieve» / Edema papilar (Metanol)' : 'Visual impairment / "Snowstorm vision" / Optic disc edema (Methanol)')
+      ),
+      h('label', { for: 'chk-renal', class: 'toxic-checkbox-label' },
+        renalChk,
+        h('span', {}, isEs ? 'Insuficiencia renal aguda / Oliguria / Cristales de oxalato (Etilenglicol)' : 'Acute renal failure / Oliguria / Calcium oxalate crystals (Ethylene Glycol)')
+      ),
+      h('label', { for: 'chk-dialysis', class: 'toxic-checkbox-label' },
+        dialysisChk,
+        h('span', {}, isEs ? 'Paciente en hemodiálisis activa (Requiere aumento de dosis de fomepizol/etanol)' : 'Patient currently on active hemodialysis (Requires fomepizole/ethanol dose adjustment)')
+      )
+    )
+  );
+  leftCol.appendChild(modCard);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== measuredOsmInp) measuredOsmInp.value = String(toxicAlcoholState.measuredOsm);
+    if (active !== osmMethodSel) osmMethodSel.value = toxicAlcoholState.osmMethod;
+    if (active !== naInp) naInp.value = String(toxicAlcoholState.sodium);
+    if (active !== gluInp) gluInp.value = String(toxicAlcoholState.glucose);
+    if (active !== bunInp) bunInp.value = String(toxicAlcoholState.bun);
+    if (active !== etohInp) etohInp.value = String(toxicAlcoholState.ethanol);
+    if (active !== clInp) clInp.value = String(toxicAlcoholState.chloride);
+    if (active !== hco3Inp) hco3Inp.value = String(toxicAlcoholState.bicarbonate);
+    if (active !== phInp) phInp.value = String(toxicAlcoholState.ph);
+    if (active !== visualChk) visualChk.checked = toxicAlcoholState.hasVisualSymptoms;
+    if (active !== renalChk) renalChk.checked = toxicAlcoholState.hasRenalFailure;
+    if (active !== dialysisChk) dialysisChk.checked = toxicAlcoholState.hasHemodialysis;
+  }
+
+  function renderDynamic() {
+    syncControls();
     const evalResult = evaluateToxicAlcoholRisk({
       agentId: toxicAlcoholState.agentId,
       sodium: toxicAlcoholState.sodium,
@@ -413,312 +558,59 @@ export function toxicAlcoholView() {
       hasHemodialysis: toxicAlcoholState.hasHemodialysis,
     });
 
-    // Page Header
-    container.appendChild(
-      pageHeader(
-        isEs ? 'Navegador de Alcoholes Tóxicos, Fomepizol y Brecha Osmolal' : 'Toxic Alcohol Poisoning, Fomepizole & Osmolal Gap Navigator',
-        isEs
-          ? 'Consenso clínico AACT, EAPCCT y EXTRIP para metanol (ceguera por formiato), etilenglicol (oxalato cálcico), dietilenglicol e isopropanol (seudoinsuficiencia renal sin acidosis).'
-          : 'AACT, EAPCCT, and EXTRIP clinical consensus for methanol (formate blindness), ethylene glycol (oxalate crystals), diethylene glycol, and isopropanol differentiation.',
-        'clinical'
-      )
-    );
-
-    // Emergency 911 / Dialysis Alert Banner if critical
+    clear(alertBannerSlot);
     if (evalResult.isEmergency911) {
-      container.appendChild(
+      alertBannerSlot.appendChild(
         h('aside', { class: 'toxic-alert-urgent', role: 'alert' },
           h('div', { class: 'toxic-alert-title' },
             icon('alert-triangle'),
             h('strong', {}, isEs ? 'ALERTA TOXICOLÓGICA CRÍTICA: RIESGO DE CEGUERA O FALLO MULTIORGÁNICO' : 'CRITICAL TOXICOLOGY ALERT: HIGH RISK OF BLINDNESS OR ORGAN FAILURE')
           ),
           h('ul', { class: 'toxic-alert-list' },
-            (isEs ? evalResult.emergencyFlagsEs : evalResult.emergencyFlagsEn).map((msg) =>
-              h('li', {}, msg)
-            )
+            (isEs ? evalResult.emergencyFlagsEs : evalResult.emergencyFlagsEn).map((msg) => h('li', {}, msg))
           )
         )
       );
     }
 
-    // Protocol Selector Tabs
-    const tabNav = h('div', { class: 'tabs', role: 'tablist', 'aria-label': isEs ? 'Alcoholes Tóxicos' : 'Toxic Alcohol Agents' },
-      Object.values(TOXIC_ALCOHOL_PROFILES).map((p) => {
-        const isSelected = p.id === toxicAlcoholState.agentId;
-        const btn = h('button', {
-          role: 'tab',
-          class: `tab ${isSelected ? 'active' : ''}`,
-          'aria-selected': isSelected ? 'true' : 'false',
-        }, isEs ? p.nameEs : p.nameEn);
-        btn.addEventListener('click', () => {
-          toxicAlcoholState.agentId = p.id;
-          render();
-        });
-        return btn;
-      })
-    );
-    container.appendChild(tabNav);
-
-    // Two Column Layout
-    const grid = h('div', { class: 'toxic-layout-grid' });
-
-    // LEFT COLUMN: Lab Inputs & Diagnostic Calculator
-    const leftCol = h('div', { class: 'toxic-col' });
-
-    // Card 1: Diagnostic Calculations
-    const calcCard = h('section', { class: 'toxic-card' },
-      h('h2', { class: 'toxic-card-title' },
-        icon('activity'),
-        h('span', {}, isEs ? '1. Cálculo de Brecha Osmolal y Aniónica' : '1. Osmolal Gap & Anion Gap Calculator')
-      ),
-      h('p', { class: 'toxic-card-desc' },
-        isEs
-          ? 'Introduzca los valores de laboratorio para calcular la brecha osmolal por descenso crioscópico y la brecha aniónica.'
-          : 'Enter serum laboratory values to calculate freezing-point osmolal gap and anion gap metabolic acidosis.'
-      ),
-      h('div', { class: 'toxic-form-grid' },
-        // Measured Osmolality
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-measured-osm', class: 'toxic-form-label' },
-            isEs ? 'Osmolalidad Medida (mOsm/kg)' : 'Measured Osmolality (mOsm/kg)'
-          ),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-measured-osm',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.measuredOsm),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.measuredOsm = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // Osmometry Method
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'sel-osm-method', class: 'toxic-form-label' },
-            isEs ? 'Método de Osmometría' : 'Osmometry Method'
-          ),
-          (() => {
-            const sel = h('select', { id: 'sel-osm-method', class: 'toxic-select' },
-              h('option', { value: 'freezing_point', selected: toxicAlcoholState.osmMethod === 'freezing_point' },
-                isEs ? 'Descenso Crioscópico (Válido)' : 'Freezing Point Depression (Valid)'
-              ),
-              h('option', { value: 'vapor_pressure', selected: toxicAlcoholState.osmMethod === 'vapor_pressure' },
-                isEs ? 'Presión de Vapor (Inválido: evapora alcoholes)' : 'Vapor Pressure (Invalid: vaporizes alcohols)'
-              )
-            );
-            sel.addEventListener('change', (e) => {
-              toxicAlcoholState.osmMethod = e.target.value;
-              render();
-            });
-            return sel;
-          })()
-        ),
-        // Sodium
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-na', class: 'toxic-form-label' }, 'Na+ (mEq/L)'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-na',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.sodium),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.sodium = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // Glucose
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-glu', class: 'toxic-form-label' }, isEs ? 'Glucosa (mg/dL)' : 'Glucose (mg/dL)'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-glu',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.glucose),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.glucose = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // BUN
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-bun', class: 'toxic-form-label' }, 'BUN (mg/dL)'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-bun',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.bun),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.bun = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // Ethanol
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-etoh', class: 'toxic-form-label' }, isEs ? 'Etanol Sérico (mg/dL)' : 'Serum Ethanol (mg/dL)'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-etoh',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.ethanol),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.ethanol = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // Chloride
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-cl', class: 'toxic-form-label' }, 'Cl- (mEq/L)'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-cl',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.chloride),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.chloride = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // Bicarbonate
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-hco3', class: 'toxic-form-label' }, 'HCO3- (mEq/L)'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-hco3',
-              type: 'number',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.bicarbonate),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.bicarbonate = Number(e.target.value) || 0;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        // pH
-        h('div', { class: 'toxic-form-group' },
-          h('label', { for: 'inp-ph', class: 'toxic-form-label' }, isEs ? 'pH Arterial' : 'Arterial pH'),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-ph',
-              type: 'number',
-              step: '0.01',
-              class: 'toxic-input',
-              value: String(toxicAlcoholState.ph),
-            });
-            inp.addEventListener('input', (e) => {
-              toxicAlcoholState.ph = Number(e.target.value) || 7.4;
-              render();
-            });
-            return inp;
-          })()
-        )
-      ),
-
-      // Diagnostic Metrics Badges
-      h('div', { class: 'toxic-stats-bar' },
-        h('div', { class: 'toxic-stat-chip' },
-          h('span', { class: 'toxic-stat-label' }, isEs ? 'Osm Calculada:' : 'Calc Osm:'),
-          h('strong', {}, ` ${evalResult.calculatedOsm} mOsm/kg`)
-        ),
-        h('div', { class: `toxic-stat-chip ${evalResult.osmolalGap > 10 ? 'urgent' : ''}` },
-          h('span', { class: 'toxic-stat-label' }, isEs ? 'Brecha Osmolal:' : 'Osmolal Gap:'),
-          h('strong', {}, ` ${evalResult.osmolalGap} mOsm/kg`)
-        ),
-        h('div', { class: `toxic-stat-chip ${evalResult.anionGap > 14 ? 'urgent' : ''}` },
-          h('span', { class: 'toxic-stat-label' }, isEs ? 'Brecha Aniónica:' : 'Anion Gap:'),
-          h('strong', {}, ` ${evalResult.anionGap} mEq/L`)
-        )
+    clear(tabNavSlot);
+    tabNavSlot.appendChild(
+      h('div', { class: 'tabs', role: 'tablist', 'aria-label': isEs ? 'Alcoholes Tóxicos' : 'Toxic Alcohol Agents' },
+        Object.values(TOXIC_ALCOHOL_PROFILES).map((p) => {
+          const isSelected = p.id === toxicAlcoholState.agentId;
+          const btn = h('button', {
+            type: 'button',
+            role: 'tab',
+            class: `tab ${isSelected ? 'active' : ''}`,
+            'aria-selected': isSelected ? 'true' : 'false',
+          }, isEs ? p.nameEs : p.nameEn);
+          btn.addEventListener('click', () => {
+            toxicAlcoholState.agentId = p.id;
+            renderDynamic();
+          });
+          return btn;
+        })
       )
     );
-    leftCol.appendChild(calcCard);
 
-    // Card 2: Clinical Severity & Dialysis Modifiers
-    const modCard = h('section', { class: 'toxic-card' },
-      h('h2', { class: 'toxic-card-title' },
-        icon('alert-circle'),
-        h('span', {}, isEs ? '2. Signos Críticos y Modificadores de Diálisis' : '2. Critical Signs & Dialysis Modifiers')
+    clear(statsBarSlot);
+    statsBarSlot.append(
+      h('div', { class: 'toxic-stat-chip' },
+        h('span', { class: 'toxic-stat-label' }, isEs ? 'Osm Calculada:' : 'Calc Osm:'),
+        h('strong', {}, ` ${evalResult.calculatedOsm} mOsm/kg`)
       ),
-      h('div', { class: 'toxic-checkbox-list' },
-        h('label', { class: 'toxic-checkbox-label' },
-          (() => {
-            const chk = h('input', {
-              id: 'chk-visual',
-              type: 'checkbox',
-              checked: toxicAlcoholState.hasVisualSymptoms,
-            });
-            chk.addEventListener('change', (e) => {
-              toxicAlcoholState.hasVisualSymptoms = e.target.checked;
-              render();
-            });
-            return chk;
-          })(),
-          h('span', {}, isEs ? 'Alteración visual / «Visión en tormenta de nieve» / Edema papilar (Metanol)' : 'Visual impairment / "Snowstorm vision" / Optic disc edema (Methanol)')
-        ),
-        h('label', { class: 'toxic-checkbox-label' },
-          (() => {
-            const chk = h('input', {
-              id: 'chk-renal',
-              type: 'checkbox',
-              checked: toxicAlcoholState.hasRenalFailure,
-            });
-            chk.addEventListener('change', (e) => {
-              toxicAlcoholState.hasRenalFailure = e.target.checked;
-              render();
-            });
-            return chk;
-          })(),
-          h('span', {}, isEs ? 'Insuficiencia renal aguda / Oliguria / Cristales de oxalato (Etilenglicol)' : 'Acute renal failure / Oliguria / Calcium oxalate crystals (Ethylene Glycol)')
-        ),
-        h('label', { class: 'toxic-checkbox-label' },
-          (() => {
-            const chk = h('input', {
-              id: 'chk-dialysis',
-              type: 'checkbox',
-              checked: toxicAlcoholState.hasHemodialysis,
-            });
-            chk.addEventListener('change', (e) => {
-              toxicAlcoholState.hasHemodialysis = e.target.checked;
-              render();
-            });
-            return chk;
-          })(),
-          h('span', {}, isEs ? 'Paciente en hemodiálisis activa (Requiere aumento de dosis de fomepizol/etanol)' : 'Patient currently on active hemodialysis (Requires fomepizole/ethanol dose adjustment)')
-        )
+      h('div', { class: `toxic-stat-chip ${evalResult.osmolalGap > 10 ? 'urgent' : ''}` },
+        h('span', { class: 'toxic-stat-label' }, isEs ? 'Brecha Osmolal:' : 'Osmolal Gap:'),
+        h('strong', {}, ` ${evalResult.osmolalGap} mOsm/kg`)
+      ),
+      h('div', { class: `toxic-stat-chip ${evalResult.anionGap > 14 ? 'urgent' : ''}` },
+        h('span', { class: 'toxic-stat-label' }, isEs ? 'Brecha Aniónica:' : 'Anion Gap:'),
+        h('strong', {}, ` ${evalResult.anionGap} mEq/L`)
       )
     );
-    leftCol.appendChild(modCard);
 
-    grid.appendChild(leftCol);
+    clear(rightCol);
 
-    // RIGHT COLUMN: Protocols, Regimens, Cofactors & SBAR Handoff
-    const rightCol = h('div', { class: 'toxic-col' });
-
-    // Card 3: Antidote & Cofactors Orders
     const txCard = h('section', { class: 'toxic-card' },
       h('h2', { class: 'toxic-card-title' },
         icon('check-circle'),
@@ -743,7 +635,6 @@ export function toxicAlcoholView() {
     );
     rightCol.appendChild(txCard);
 
-    // Card 4: SBAR Clinical Toxicology Handoff
     const sbarCard = h('section', { class: 'toxic-card' },
       h('h2', { class: 'toxic-card-title' },
         icon('file-text'),
@@ -754,10 +645,7 @@ export function toxicAlcoholView() {
       ),
       h('div', { class: 'toxic-actions' },
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-primary',
-          },
+          const btn = h('button', { type: 'button', class: 'btn btn-primary' },
             icon('copy'),
             h('span', {}, toxicAlcoholState.copied
               ? (isEs ? '¡Copiado!' : 'Copied!')
@@ -771,10 +659,10 @@ export function toxicAlcoholView() {
               }
               toxicAlcoholState.copied = true;
               announce(isEs ? 'Resumen copiado al portapapeles' : 'SBAR note copied to clipboard');
-              render();
+              renderDynamic();
               setTimeout(() => {
                 toxicAlcoholState.copied = false;
-                render();
+                renderDynamic();
               }, 2500);
             } catch {
               announce(isEs ? 'Error al copiar' : 'Failed to copy');
@@ -783,10 +671,7 @@ export function toxicAlcoholView() {
           return btn;
         })(),
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-ghost',
-          }, isEs ? 'Restablecer Valores' : 'Reset Values');
+          const btn = h('button', { type: 'button', class: 'btn btn-ghost' }, isEs ? 'Restablecer Valores' : 'Reset Values');
           btn.addEventListener('click', () => {
             resetToxicAlcoholState();
           });
@@ -796,12 +681,19 @@ export function toxicAlcoholView() {
       )
     );
     rightCol.appendChild(sbarCard);
-
-    grid.appendChild(rightCol);
-    container.appendChild(grid);
   }
 
-  render();
-  const unsubscribe = subscribeToxicAlcoholState(render);
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      unsubscribe();
+      return;
+    }
+    renderDynamic();
+  };
+
+  renderDynamic();
+  const unsubscribe = subscribeToxicAlcoholState(onStateChange);
   return container;
 }

@@ -416,23 +416,145 @@ export function buildGabapentinoidSbarText(state, evaluation, lang = 'en') {
 export function gabapentinoidCareView() {
   const container = h('div', { class: 'gabapentinoid-care-view' });
 
+  // Static Header
+  const header = h('header', { class: 'gc-header' }, [
+    h('div', { class: 'gc-header-badge' }, [
+      icon('alert'),
+      h('span', {}, t('gc.header.badge', 'Clinical Pharmacology & Deprescribing Navigator')),
+    ]),
+    h('h1', { id: 'page-title', tabindex: '-1', class: 'gc-header-title' }, t('gc.header.title', 'Gabapentinoid Safety, Respiratory Synergy & Deprescribing')),
+    h('p', { class: 'gc-header-desc' }, t('gc.header.desc', 'Evidence-based clinical decision support under FDA Drug Safety Communications and the Horowitz-Taylor hyperbolic deprescribing framework: managing Gabapentin (Neurontin) and Pregabalin (Lyrica) opioid respiratory synergy, renal dose limits, and withdrawal prevention.')),
+  ]);
+
+  const modeSlot = h('div');
+  const tabsSlot = h('div');
+  const contentSlot = h('div');
+  container.append(header, modeSlot, tabsSlot, contentSlot);
+
+  // Persistent calculator inputs (built once so typing never loses focus)
+  const initial = getGabapentinoidState();
+  const substanceSel = h('select', {
+    id: 'gc-select-substance',
+    class: 'gc-select',
+    onchange: (e) => setGabapentinoidState({
+      selectedSubstance: e.target.value,
+      currentDailyDoseMg: e.target.value === 'pregabalin' ? 300 : 1800,
+    }),
+  }, [
+    h('option', { value: 'gabapentin', selected: initial.selectedSubstance === 'gabapentin' }, t('gc.opt.gabapentin', 'Gabapentin (Neurontin, Gralise)')),
+    h('option', { value: 'pregabalin', selected: initial.selectedSubstance === 'pregabalin' }, t('gc.opt.pregabalin', 'Pregabalin (Lyrica)')),
+  ]);
+  const doseInp = h('input', {
+    id: 'gc-input-dose',
+    type: 'number',
+    min: '25',
+    max: '7200',
+    step: '25',
+    class: 'gc-input-number',
+    value: initial.currentDailyDoseMg,
+    oninput: (e) => setGabapentinoidState({ currentDailyDoseMg: Math.max(0, Number(e.target.value) || 0) }),
+  });
+  const ageInp = h('input', {
+    id: 'gc-input-age',
+    type: 'number',
+    min: '18',
+    max: '105',
+    class: 'gc-input-number',
+    value: initial.patientAgeYears,
+    oninput: (e) => setGabapentinoidState({ patientAgeYears: Math.max(18, Number(e.target.value) || 45) }),
+  });
+  const scrInp = h('input', {
+    id: 'gc-input-scr',
+    type: 'number',
+    min: '0.2',
+    max: '15.0',
+    step: '0.1',
+    class: 'gc-input-number',
+    value: initial.serumCreatinineMgDl,
+    oninput: (e) => setGabapentinoidState({ serumCreatinineMgDl: Math.max(0.1, Number(e.target.value) || 1.0) }),
+  });
+  const opioidChk = h('input', {
+    type: 'checkbox',
+    checked: initial.hasOpioidCoPrescription,
+    onchange: (e) => setGabapentinoidState({ hasOpioidCoPrescription: e.target.checked }),
+  });
+  const pulmChk = h('input', {
+    type: 'checkbox',
+    checked: initial.hasPulmonaryDisease,
+    onchange: (e) => setGabapentinoidState({ hasPulmonaryDisease: e.target.checked }),
+  });
+  const sedativeChk = h('input', {
+    type: 'checkbox',
+    checked: initial.hasSedativeCoIngestion,
+    onchange: (e) => setGabapentinoidState({ hasSedativeCoIngestion: e.target.checked }),
+  });
+
+  const calcInputsGrid = h('div', { class: 'gc-inputs-grid' }, [
+    h('div', { class: 'input-card' }, [
+      h('label', { for: 'gc-select-substance', class: 'input-label' }, t('gc.label.substance', '1. Gabapentinoid Agent')),
+      substanceSel,
+    ]),
+    h('div', { class: 'input-card' }, [
+      h('label', { for: 'gc-input-dose', class: 'input-label' }, t('gc.label.dose', '2. Current Total Daily Dose (mg/day)')),
+      doseInp,
+    ]),
+    h('div', { class: 'input-card' }, [
+      h('label', { for: 'gc-input-age', class: 'input-label' }, t('gc.label.age', '3. Patient Age (Years)')),
+      ageInp,
+    ]),
+    h('div', { class: 'input-card' }, [
+      h('label', { for: 'gc-input-scr', class: 'input-label' }, t('gc.label.scr', '4. Serum Creatinine (mg/dL)')),
+      scrInp,
+    ]),
+    h('div', { class: 'input-card checkbox-card' }, [
+      h('label', { class: 'checkbox-label' }, [
+        opioidChk,
+        h('span', {}, [
+          h('strong', {}, t('gc.check.opioidStrong', 'Taking with ANY Opioid? ')),
+          t('gc.check.opioidDetail', '(Methadone, Buprenorphine, Oxycodone, Fentanyl, Tramadol)'),
+        ]),
+      ]),
+    ]),
+    h('div', { class: 'input-card checkbox-card' }, [
+      h('label', { class: 'checkbox-label' }, [
+        pulmChk,
+        h('span', {}, [
+          h('strong', {}, t('gc.check.pulmStrong', 'Respiratory Disease? ')),
+          t('gc.check.pulmDetail', '(COPD, Sleep Apnea / OSA, Asthma, Hypoventilation)'),
+        ]),
+      ]),
+    ]),
+    h('div', { class: 'input-card checkbox-card' }, [
+      h('label', { class: 'checkbox-label' }, [
+        sedativeChk,
+        h('span', {}, [
+          h('strong', {}, t('gc.check.sedativeStrong', 'Other Sedatives or Alcohol? ')),
+          t('gc.check.sedativeDetail', '(Benzodiazepines, Z-drugs, Alcohol, Hydroxyzine)'),
+        ]),
+      ]),
+    ]),
+  ]);
+  const calcResultsSlot = h('div');
+  const calcSection = h('section', { class: 'gc-calculator-section', role: 'tabpanel' }, calcInputsGrid, calcResultsSlot);
+  let lastRenderedTab = null;
+
+  function syncCalcInputs(state) {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== substanceSel) substanceSel.value = state.selectedSubstance;
+    if (active !== doseInp) doseInp.value = String(state.currentDailyDoseMg);
+    if (active !== ageInp) ageInp.value = String(state.patientAgeYears);
+    if (active !== scrInp) scrInp.value = String(state.serumCreatinineMgDl);
+    if (active !== opioidChk) opioidChk.checked = state.hasOpioidCoPrescription;
+    if (active !== pulmChk) pulmChk.checked = state.hasPulmonaryDisease;
+    if (active !== sedativeChk) sedativeChk.checked = state.hasSedativeCoIngestion;
+  }
+
   function render() {
-    clear(container);
     const state = getGabapentinoidState();
     const evaluation = evaluateGabapentinoidSafety(state);
 
-    // Header Banner
-    const header = h('header', { class: 'gc-header' }, [
-      h('div', { class: 'gc-header-badge' }, [
-        icon('alert'),
-        h('span', {}, t('gc.header.badge', 'Clinical Pharmacology & Deprescribing Navigator')),
-      ]),
-      h('h1', { class: 'gc-header-title' }, t('gc.header.title', 'Gabapentinoid Safety, Respiratory Synergy & Deprescribing')),
-      h('p', { class: 'gc-header-desc' }, t('gc.header.desc', 'Evidence-based clinical decision support under FDA Drug Safety Communications and the Horowitz-Taylor hyperbolic deprescribing framework: managing Gabapentin (Neurontin) and Pregabalin (Lyrica) opioid respiratory synergy, renal dose limits, and withdrawal prevention.')),
-    ]);
-
-    // Mode Switcher
-    const modeSwitcher = h('div', { class: 'gc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
+    clear(modeSlot);
+    modeSlot.appendChild(h('div', { class: 'gc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
         class: `gc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
@@ -449,10 +571,10 @@ export function gabapentinoidCareView() {
         icon('alert'),
         h('span', {}, t('gc.mode.clinical', 'Clinician & Prescriber Mode (Cockcroft-Gault CrCl, Pharmacokinetics & SBAR)')),
       ]),
-    ]);
+    ]));
 
-    // Navigation Tabs
-    const tabsList = h('div', { class: 'gc-tabs-nav', role: 'tablist', 'aria-label': 'Gabapentinoid Navigation Tabs' }, [
+    clear(tabsSlot);
+    tabsSlot.appendChild(h('div', { class: 'gc-tabs-nav', role: 'tablist', 'aria-label': 'Gabapentinoid Navigation Tabs' }, [
       h('button', {
         class: `gc-tab-btn ${state.activeTab === 'calculator' ? 'active' : ''}`,
         role: 'tab',
@@ -483,148 +605,42 @@ export function gabapentinoidCareView() {
         'aria-selected': state.activeTab === 'renal' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ activeTab: 'renal' }),
       }, t('gc.tabs.renal', 'Renal Impairment & Dialysis')),
-    ]);
+    ]));
 
-    let tabContent;
-    switch (state.activeTab) {
-      case 'deprescribing':
-        tabContent = renderDeprescribingTab(state);
-        break;
-      case 'pharmacology':
-        tabContent = renderPharmacologyTab();
-        break;
-      case 'synergy':
-        tabContent = renderSynergyTab();
-        break;
-      case 'renal':
-        tabContent = renderRenalTab(state, evaluation);
-        break;
-      case 'calculator':
-      default:
-        tabContent = renderCalculatorTab(state, evaluation);
-        break;
+    if (state.activeTab === 'calculator') {
+      syncCalcInputs(state);
+      if (lastRenderedTab !== 'calculator') {
+        clear(contentSlot);
+        contentSlot.appendChild(calcSection);
+        lastRenderedTab = 'calculator';
+      }
+      renderCalculatorOutputs(state, evaluation);
+      return;
     }
 
-    container.appendChild(header);
-    container.appendChild(modeSwitcher);
-    container.appendChild(tabsList);
-    container.appendChild(tabContent);
+    lastRenderedTab = state.activeTab;
+    clear(contentSlot);
+    switch (state.activeTab) {
+      case 'deprescribing':
+        contentSlot.appendChild(renderDeprescribingTab(state));
+        break;
+      case 'pharmacology':
+        contentSlot.appendChild(renderPharmacologyTab());
+        break;
+      case 'synergy':
+        contentSlot.appendChild(renderSynergyTab());
+        break;
+      case 'renal':
+        contentSlot.appendChild(renderRenalTab(state, evaluation));
+        break;
+    }
   }
 
   // --- SUB-RENDERERS ---
 
-  function renderCalculatorTab(state, evaluation) {
-    const section = h('section', { class: 'gc-calculator-section', role: 'tabpanel' });
+  function renderCalculatorOutputs(state, evaluation) {
+    clear(calcResultsSlot);
 
-    // Inputs Grid
-    const inputsGrid = h('div', { class: 'gc-inputs-grid' }, [
-      // 1. Substance Selector
-      h('div', { class: 'input-card' }, [
-        h('label', { for: 'gc-select-substance', class: 'input-label' }, t('gc.label.substance', '1. Gabapentinoid Agent')),
-        h('select', {
-          id: 'gc-select-substance',
-          class: 'gc-select',
-          onchange: (e) => setGabapentinoidState({
-            selectedSubstance: e.target.value,
-            currentDailyDoseMg: e.target.value === 'pregabalin' ? 300 : 1800,
-          }),
-        }, [
-          h('option', { value: 'gabapentin', selected: state.selectedSubstance === 'gabapentin' }, t('gc.opt.gabapentin', 'Gabapentin (Neurontin, Gralise)')),
-          h('option', { value: 'pregabalin', selected: state.selectedSubstance === 'pregabalin' }, t('gc.opt.pregabalin', 'Pregabalin (Lyrica)')),
-        ]),
-      ]),
-
-      // 2. Current Daily Dose
-      h('div', { class: 'input-card' }, [
-        h('label', { for: 'gc-input-dose', class: 'input-label' }, t('gc.label.dose', '2. Current Total Daily Dose (mg/day)')),
-        h('input', {
-          id: 'gc-input-dose',
-          type: 'number',
-          min: '25',
-          max: '7200',
-          step: '25',
-          class: 'gc-input-number',
-          value: state.currentDailyDoseMg,
-          oninput: (e) => setGabapentinoidState({ currentDailyDoseMg: Math.max(0, Number(e.target.value) || 0) }),
-        }),
-      ]),
-
-      // 3. Patient Age
-      h('div', { class: 'input-card' }, [
-        h('label', { for: 'gc-input-age', class: 'input-label' }, t('gc.label.age', '3. Patient Age (Years)')),
-        h('input', {
-          id: 'gc-input-age',
-          type: 'number',
-          min: '18',
-          max: '105',
-          class: 'gc-input-number',
-          value: state.patientAgeYears,
-          oninput: (e) => setGabapentinoidState({ patientAgeYears: Math.max(18, Number(e.target.value) || 45) }),
-        }),
-      ]),
-
-      // 4. Serum Creatinine
-      h('div', { class: 'input-card' }, [
-        h('label', { for: 'gc-input-scr', class: 'input-label' }, t('gc.label.scr', '4. Serum Creatinine (mg/dL)')),
-        h('input', {
-          id: 'gc-input-scr',
-          type: 'number',
-          min: '0.2',
-          max: '15.0',
-          step: '0.1',
-          class: 'gc-input-number',
-          value: state.serumCreatinineMgDl,
-          oninput: (e) => setGabapentinoidState({ serumCreatinineMgDl: Math.max(0.1, Number(e.target.value) || 1.0) }),
-        }),
-      ]),
-
-      // 5. Co-Prescriptions (Opioids Checkbox)
-      h('div', { class: 'input-card checkbox-card' }, [
-        h('label', { class: 'checkbox-label' }, [
-          h('input', {
-            type: 'checkbox',
-            checked: state.hasOpioidCoPrescription,
-            onchange: (e) => setGabapentinoidState({ hasOpioidCoPrescription: e.target.checked }),
-          }),
-          h('span', {}, [
-            h('strong', {}, t('gc.check.opioidStrong', 'Taking with ANY Opioid? ')),
-            t('gc.check.opioidDetail', '(Methadone, Buprenorphine, Oxycodone, Fentanyl, Tramadol)'),
-          ]),
-        ]),
-      ]),
-
-      // 6. Pulmonary Disease Checkbox
-      h('div', { class: 'input-card checkbox-card' }, [
-        h('label', { class: 'checkbox-label' }, [
-          h('input', {
-            type: 'checkbox',
-            checked: state.hasPulmonaryDisease,
-            onchange: (e) => setGabapentinoidState({ hasPulmonaryDisease: e.target.checked }),
-          }),
-          h('span', {}, [
-            h('strong', {}, t('gc.check.pulmStrong', 'Respiratory Disease? ')),
-            t('gc.check.pulmDetail', '(COPD, Sleep Apnea / OSA, Asthma, Hypoventilation)'),
-          ]),
-        ]),
-      ]),
-
-      // 7. Sedatives Checkbox
-      h('div', { class: 'input-card checkbox-card' }, [
-        h('label', { class: 'checkbox-label' }, [
-          h('input', {
-            type: 'checkbox',
-            checked: state.hasSedativeCoIngestion,
-            onchange: (e) => setGabapentinoidState({ hasSedativeCoIngestion: e.target.checked }),
-          }),
-          h('span', {}, [
-            h('strong', {}, t('gc.check.sedativeStrong', 'Other Sedatives or Alcohol? ')),
-            t('gc.check.sedativeDetail', '(Benzodiazepines, Z-drugs, Alcohol, Hydroxyzine)'),
-          ]),
-        ]),
-      ]),
-    ]);
-
-    // Results Box
     const resultBox = h('div', { class: `gc-result-card ${evaluation.isHighRisk ? 'emergency' : 'standard'}` }, [
       h('div', { class: 'gc-result-header' }, [
         icon(evaluation.isHighRisk ? 'alert' : 'check'),
@@ -646,7 +662,6 @@ export function gabapentinoidCareView() {
       ]),
     ]);
 
-    // SBAR Action Card
     const sbarCard = h('div', { class: 'sbar-export-container' }, [
       h('div', { class: 'sbar-header' }, [
         h('h4', {}, t('gc.sbar.title', 'Zero-PII Clinical Handoff & Physician Note Generator')),
@@ -678,10 +693,8 @@ export function gabapentinoidCareView() {
       ]),
     ]);
 
-    section.appendChild(inputsGrid);
-    section.appendChild(resultBox);
-    section.appendChild(sbarCard);
-    return section;
+    calcResultsSlot.appendChild(resultBox);
+    calcResultsSlot.appendChild(sbarCard);
   }
 
   function renderDeprescribingTab(state) {
@@ -859,8 +872,15 @@ export function gabapentinoidCareView() {
     return section;
   }
 
-  // Subscribe to state changes and initial render
-  const unsubscribe = subscribeGabapentinoidState(() => render());
+  let wasConnected = false;
+  const unsubscribe = subscribeGabapentinoidState(() => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      unsubscribe();
+      return;
+    }
+    render();
+  });
   render();
 
   return container;

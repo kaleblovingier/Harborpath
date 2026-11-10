@@ -428,10 +428,121 @@ export function subscribeFhirExportState(fn) {
 
 export function fhirExportView() {
   const container = h('div', { class: 'fhir-export-view', role: 'region', 'aria-label': 'FHIR R4 Referral Syndication Generator' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Page Header (static)
+  container.appendChild(
+    pageHeader(
+      isEs ? 'Exportador de Derivación e Interoperabilidad FHIR R4' : 'FHIR R4 Referral & EHR Interoperability Generator',
+      isEs
+        ? 'Genere paquetes de derivación clínica HL7 FHIR R4 estandarizados (ServiceRequest, Consent y HealthcareService) con estricto cumplimiento de 42 CFR Parte 2 y cero datos personales persistentes.'
+        : 'Generate standardized HL7 FHIR R4 US Core bundles (ServiceRequest, Consent, HealthcareService) with strict 42 CFR Part 2 compliance and zero persistent PII.',
+      'clinical'
+    )
+  );
+
+  const grid = h('div', { class: 'fhir-layout-grid' });
+  const leftCol = h('div', { class: 'fhir-col' });
+  const rightCol = h('div', { class: 'fhir-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(grid);
+
+  // Persistent controls (never rebuilt on keystroke)
+  const pseudonymInput = h('input', { type: 'text', id: 'fhir-pseudonym', class: 'fhir-input', value: fhirState.patientPseudonym });
+  const asamSelect = h('select', { id: 'fhir-asam-select', class: 'fhir-select' },
+    ASAM_LEVEL_DEFINITIONS.map((def) =>
+      h('option', { value: def.code, selected: fhirState.asamLevel === def.code }, isEs ? def.nameEs : def.nameEn)
+    )
+  );
+  const prioritySelect = h('select', { id: 'fhir-priority-select', class: 'fhir-select' },
+    h('option', { value: 'routine', selected: fhirState.priority === 'routine' }, isEs ? 'Rutina (Cita ambulatoria programada)' : 'Routine (Scheduled outpatient intake)'),
+    h('option', { value: 'urgent', selected: fhirState.priority === 'urgent' }, isEs ? 'Urgente (Evaluación dentro de 24 horas)' : 'Urgent (Same-day / within 24h intake)'),
+    h('option', { value: 'stat', selected: fhirState.priority === 'stat' }, isEs ? 'Inmediata / STAT (Ingreso de emergencia)' : 'Immediate / STAT (Emergency bed admission)')
+  );
+  const withdrawalCheck = h('input', { type: 'checkbox', id: 'chk-withdrawal', class: 'fhir-checkbox', checked: fhirState.withdrawalNeeded });
+  const facilityNameInput = h('input', { type: 'text', id: 'fhir-facility-name', class: 'fhir-input', value: fhirState.facilityName });
+  const facilityIdInput = h('input', { type: 'text', id: 'fhir-facility-id', class: 'fhir-input', value: fhirState.facilityId });
+  const facilityPhoneInput = h('input', { type: 'text', id: 'fhir-facility-phone', class: 'fhir-input', value: fhirState.facilityPhone });
+
+  pseudonymInput.addEventListener('input', (e) => { fhirState.patientPseudonym = e.target.value.trim() || 'ANON-HP-CLIENT'; renderDynamic(); });
+  asamSelect.addEventListener('change', (e) => { fhirState.asamLevel = e.target.value; renderDynamic(); });
+  prioritySelect.addEventListener('change', (e) => { fhirState.priority = e.target.value; renderDynamic(); });
+  withdrawalCheck.addEventListener('change', (e) => { fhirState.withdrawalNeeded = e.target.checked; renderDynamic(); });
+  facilityNameInput.addEventListener('input', (e) => { fhirState.facilityName = e.target.value; renderDynamic(); });
+  facilityIdInput.addEventListener('input', (e) => { fhirState.facilityId = e.target.value; renderDynamic(); });
+  facilityPhoneInput.addEventListener('input', (e) => { fhirState.facilityPhone = e.target.value; renderDynamic(); });
+
+  const configCard = h('section', { class: 'fhir-card' },
+    h('h2', { class: 'fhir-card-title' },
+      icon('activity'),
+      h('span', {}, isEs ? '1. Configuración Clínica de la Derivación' : '1. Clinical Referral Configuration')
+    ),
+    h('div', { class: 'fhir-field-group' },
+      h('label', { for: 'fhir-pseudonym', class: 'fhir-label' }, isEs ? 'Token Criptográfico Anónimo del Paciente (Cero PII):' : 'Anonymous Cryptographic Patient Token (Zero PII):'),
+      pseudonymInput
+    ),
+    h('div', { class: 'fhir-field-group' },
+      h('label', { for: 'fhir-asam-select', class: 'fhir-label' }, isEs ? 'Nivel de Atención Recomendado (Criterios ASAM):' : 'Recommended ASAM Level of Care:'),
+      asamSelect
+    ),
+    h('div', { class: 'fhir-field-group' },
+      h('label', { for: 'fhir-priority-select', class: 'fhir-label' }, isEs ? 'Prioridad de la Derivación:' : 'Referral Urgency / Priority:'),
+      prioritySelect
+    ),
+    h('div', { class: 'fhir-field-group' },
+      h('label', { for: 'chk-withdrawal', class: 'fhir-checkbox-label' },
+        withdrawalCheck,
+        h('span', {}, isEs ? 'Requiere Manejo Médico de Abstinencia / Desintoxicación' : 'Requires Medical Withdrawal Management (Detox)')
+      )
+    )
+  );
+  leftCol.appendChild(configCard);
+
+  const facCard = h('section', { class: 'fhir-card' },
+    h('h2', { class: 'fhir-card-title' },
+      icon('shield'),
+      h('span', {}, isEs ? '2. Entidad Receptora y Consentimiento 42 CFR Parte 2' : '2. Recipient Facility & 42 CFR Part 2 Consent')
+    ),
+    h('div', { class: 'fhir-field-group' },
+      h('label', { for: 'fhir-facility-name', class: 'fhir-label' }, isEs ? 'Nombre del Centro u Hospital Receptor:' : 'Authorized Recipient Facility Name:'),
+      facilityNameInput
+    ),
+    h('div', { class: 'fhir-inputs-row' },
+      h('div', { class: 'fhir-field-group' },
+        h('label', { for: 'fhir-facility-id', class: 'fhir-label' }, isEs ? 'ID del Centro:' : 'Facility Directory ID:'),
+        facilityIdInput
+      ),
+      h('div', { class: 'fhir-field-group' },
+        h('label', { for: 'fhir-facility-phone', class: 'fhir-label' }, isEs ? 'Teléfono:' : 'Contact Phone:'),
+        facilityPhoneInput
+      )
+    ),
+    h('div', { class: 'fhir-consent-notice' },
+      h('strong', {}, isEs ? 'Garantía Federal 42 CFR Parte 2: ' : 'Federal 42 CFR Part 2 Statutory Clause: '),
+      h('span', {},
+        isEs
+          ? 'La información transmitida lleva la etiqueta de seguridad «ETH» y cláusula expresa que prohíbe la redifusión sin consentimiento escrito adicional.'
+          : 'Transmitted records carry explicit "ETH" security tagging and statutory notices prohibiting redisclosure without additional written authorization.'
+      )
+    )
+  );
+  leftCol.appendChild(facCard);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== pseudonymInput) pseudonymInput.value = fhirState.patientPseudonym;
+    if (active !== asamSelect) asamSelect.value = fhirState.asamLevel;
+    if (active !== prioritySelect) prioritySelect.value = fhirState.priority;
+    if (active !== withdrawalCheck) withdrawalCheck.checked = fhirState.withdrawalNeeded;
+    if (active !== facilityNameInput) facilityNameInput.value = fhirState.facilityName;
+    if (active !== facilityIdInput) facilityIdInput.value = fhirState.facilityId;
+    if (active !== facilityPhoneInput) facilityPhoneInput.value = fhirState.facilityPhone;
+  }
+
+  function renderDynamic() {
+    syncControls();
+    clear(rightCol);
     const bundle = generateFhirReferralBundle({
       patientPseudonym: fhirState.patientPseudonym,
       asamLevel: fhirState.asamLevel,
@@ -444,175 +555,6 @@ export function fhirExportView() {
       clinicalNotes: fhirState.clinicalNotes,
     });
     const jsonText = JSON.stringify(bundle, null, 2);
-
-    // Page Header
-    container.appendChild(
-      pageHeader(
-        isEs ? 'Exportador de Derivación e Interoperabilidad FHIR R4' : 'FHIR R4 Referral & EHR Interoperability Generator',
-        isEs
-          ? 'Genere paquetes de derivación clínica HL7 FHIR R4 estandarizados (ServiceRequest, Consent y HealthcareService) con estricto cumplimiento de 42 CFR Parte 2 y cero datos personales persistentes.'
-          : 'Generate standardized HL7 FHIR R4 US Core bundles (ServiceRequest, Consent, HealthcareService) with strict 42 CFR Part 2 compliance and zero persistent PII.',
-        'clinical'
-      )
-    );
-
-    // Main Grid
-    const grid = h('div', { class: 'fhir-layout-grid' });
-
-    // LEFT COLUMN: Referral Configuration Form
-    const leftCol = h('div', { class: 'fhir-col' });
-
-    // Card 1: ASAM & Priority Configuration
-    const configCard = h('section', { class: 'fhir-card' },
-      h('h2', { class: 'fhir-card-title' },
-        icon('activity'),
-        h('span', {}, isEs ? '1. Configuración Clínica de la Derivación' : '1. Clinical Referral Configuration')
-      ),
-      // Patient Pseudonym Token Input
-      h('div', { class: 'fhir-field-group' },
-        h('label', { for: 'fhir-pseudonym', class: 'fhir-label' }, isEs ? 'Token Criptográfico Anónimo del Paciente (Cero PII):' : 'Anonymous Cryptographic Patient Token (Zero PII):'),
-        (() => {
-          const inp = h('input', {
-            type: 'text',
-            id: 'fhir-pseudonym',
-            class: 'fhir-input',
-            value: fhirState.patientPseudonym,
-          });
-          inp.addEventListener('input', (e) => {
-            fhirState.patientPseudonym = e.target.value.trim() || 'ANON-HP-CLIENT';
-            render();
-          });
-          return inp;
-        })()
-      ),
-      // ASAM Care Level Dropdown
-      h('div', { class: 'fhir-field-group' },
-        h('label', { for: 'fhir-asam-select', class: 'fhir-label' }, isEs ? 'Nivel de Atención Recomendado (Criterios ASAM):' : 'Recommended ASAM Level of Care:'),
-        (() => {
-          const sel = h('select', { id: 'fhir-asam-select', class: 'fhir-select' },
-            ASAM_LEVEL_DEFINITIONS.map((def) =>
-              h('option', { value: def.code, selected: fhirState.asamLevel === def.code },
-                isEs ? def.nameEs : def.nameEn
-              )
-            )
-          );
-          sel.addEventListener('change', (e) => {
-            fhirState.asamLevel = e.target.value;
-            render();
-          });
-          return sel;
-        })()
-      ),
-      // Priority Dropdown
-      h('div', { class: 'fhir-field-group' },
-        h('label', { for: 'fhir-priority-select', class: 'fhir-label' }, isEs ? 'Prioridad de la Derivación:' : 'Referral Urgency / Priority:'),
-        (() => {
-          const sel = h('select', { id: 'fhir-priority-select', class: 'fhir-select' },
-            h('option', { value: 'routine', selected: fhirState.priority === 'routine' }, isEs ? 'Rutina (Cita ambulatoria programada)' : 'Routine (Scheduled outpatient intake)'),
-            h('option', { value: 'urgent', selected: fhirState.priority === 'urgent' }, isEs ? 'Urgente (Evaluación dentro de 24 horas)' : 'Urgent (Same-day / within 24h intake)'),
-            h('option', { value: 'stat', selected: fhirState.priority === 'stat' }, isEs ? 'Inmediata / STAT (Ingreso de emergencia)' : 'Immediate / STAT (Emergency bed admission)')
-          );
-          sel.addEventListener('change', (e) => {
-            fhirState.priority = e.target.value;
-            render();
-          });
-          return sel;
-        })()
-      ),
-      // Medical Withdrawal Needed Checkbox
-      h('div', { class: 'fhir-field-group' },
-        (() => {
-          const chk = h('input', {
-            type: 'checkbox',
-            id: 'chk-withdrawal',
-            class: 'fhir-checkbox',
-            checked: fhirState.withdrawalNeeded,
-          });
-          chk.addEventListener('change', (e) => {
-            fhirState.withdrawalNeeded = e.target.checked;
-            render();
-          });
-          return h('label', { for: 'chk-withdrawal', class: 'fhir-checkbox-label' },
-            chk,
-            h('span', {}, isEs ? 'Requiere Manejo Médico de Abstinencia / Desintoxicación' : 'Requires Medical Withdrawal Management (Detox)')
-          );
-        })()
-      )
-    );
-    leftCol.appendChild(configCard);
-
-    // Card 2: Receiving Facility & Consent
-    const facCard = h('section', { class: 'fhir-card' },
-      h('h2', { class: 'fhir-card-title' },
-        icon('shield'),
-        h('span', {}, isEs ? '2. Entidad Receptora y Consentimiento 42 CFR Parte 2' : '2. Recipient Facility & 42 CFR Part 2 Consent')
-      ),
-      h('div', { class: 'fhir-field-group' },
-        h('label', { for: 'fhir-facility-name', class: 'fhir-label' }, isEs ? 'Nombre del Centro u Hospital Receptor:' : 'Authorized Recipient Facility Name:'),
-        (() => {
-          const inp = h('input', {
-            type: 'text',
-            id: 'fhir-facility-name',
-            class: 'fhir-input',
-            value: fhirState.facilityName,
-          });
-          inp.addEventListener('input', (e) => {
-            fhirState.facilityName = e.target.value;
-            render();
-          });
-          return inp;
-        })()
-      ),
-      h('div', { class: 'fhir-inputs-row' },
-        h('div', { class: 'fhir-field-group' },
-          h('label', { for: 'fhir-facility-id', class: 'fhir-label' }, isEs ? 'ID del Centro:' : 'Facility Directory ID:'),
-          (() => {
-            const inp = h('input', {
-              type: 'text',
-              id: 'fhir-facility-id',
-              class: 'fhir-input',
-              value: fhirState.facilityId,
-            });
-            inp.addEventListener('input', (e) => {
-              fhirState.facilityId = e.target.value;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        h('div', { class: 'fhir-field-group' },
-          h('label', { for: 'fhir-facility-phone', class: 'fhir-label' }, isEs ? 'Teléfono:' : 'Contact Phone:'),
-          (() => {
-            const inp = h('input', {
-              type: 'text',
-              id: 'fhir-facility-phone',
-              class: 'fhir-input',
-              value: fhirState.facilityPhone,
-            });
-            inp.addEventListener('input', (e) => {
-              fhirState.facilityPhone = e.target.value;
-              render();
-            });
-            return inp;
-          })()
-        )
-      ),
-      // 42 CFR Part 2 Guarantee Notice
-      h('div', { class: 'fhir-consent-notice' },
-        h('strong', {}, isEs ? 'Garantía Federal 42 CFR Parte 2: ' : 'Federal 42 CFR Part 2 Statutory Clause: '),
-        h('span', {},
-          isEs
-            ? 'La información transmitida lleva la etiqueta de seguridad «ETH» y cláusula expresa que prohíbe la redifusión sin consentimiento escrito adicional.'
-            : 'Transmitted records carry explicit "ETH" security tagging and statutory notices prohibiting redisclosure without additional written authorization.'
-        )
-      )
-    );
-    leftCol.appendChild(facCard);
-
-    grid.appendChild(leftCol);
-
-    // RIGHT COLUMN: Live FHIR JSON Output & Actions
-    const rightCol = h('div', { class: 'fhir-col' });
 
     const bundleCard = h('section', { class: 'fhir-card' },
       h('div', { class: 'fhir-card-head' },
@@ -627,10 +569,7 @@ export function fhirExportView() {
       ),
       h('div', { class: 'fhir-actions' },
         (() => {
-          const copyBtn = h('button', {
-            type: 'button',
-            class: 'btn btn-primary',
-          },
+          const copyBtn = h('button', { type: 'button', class: 'btn btn-primary' },
             icon('copy'),
             h('span', {}, fhirState.copied ? (isEs ? '¡Copiado!' : 'Copied!') : (isEs ? 'Copiar JSON FHIR' : 'Copy FHIR JSON'))
           );
@@ -639,10 +578,10 @@ export function fhirExportView() {
               navigator.clipboard.writeText(jsonText).then(() => {
                 fhirState.copied = true;
                 announce(isEs ? 'JSON FHIR copiado al portapapeles' : 'FHIR JSON copied to clipboard');
-                render();
+                renderDynamic();
                 setTimeout(() => {
                   fhirState.copied = false;
-                  render();
+                  renderDynamic();
                 }, 3000);
               });
             }
@@ -650,10 +589,7 @@ export function fhirExportView() {
           return copyBtn;
         })(),
         (() => {
-          const downloadBtn = h('button', {
-            type: 'button',
-            class: 'btn btn-secondary',
-          },
+          const downloadBtn = h('button', { type: 'button', class: 'btn btn-secondary' },
             icon('download'),
             h('span', {}, isEs ? 'Descargar Bundle (.json)' : 'Download Bundle (.json)')
           );
@@ -672,10 +608,7 @@ export function fhirExportView() {
           return downloadBtn;
         })(),
         (() => {
-          const ndjsonBtn = h('button', {
-            type: 'button',
-            class: 'btn btn-secondary',
-          },
+          const ndjsonBtn = h('button', { type: 'button', class: 'btn btn-secondary' },
             icon('download'),
             h('span', {}, isEs ? 'Descargar NDJSON (Bulk)' : 'Download NDJSON (Bulk)')
           );
@@ -695,10 +628,7 @@ export function fhirExportView() {
           return ndjsonBtn;
         })(),
         (() => {
-          const resetBtn = h('button', {
-            type: 'button',
-            class: 'btn btn-ghost',
-          }, isEs ? 'Restablecer' : 'Reset Form');
+          const resetBtn = h('button', { type: 'button', class: 'btn btn-ghost' }, isEs ? 'Restablecer' : 'Reset Form');
           resetBtn.addEventListener('click', () => {
             resetFhirExportState();
           });
@@ -707,12 +637,19 @@ export function fhirExportView() {
       )
     );
     rightCol.appendChild(bundleCard);
-
-    grid.appendChild(rightCol);
-    container.appendChild(grid);
   }
 
-  listeners.add(render);
-  render();
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      listeners.delete(onStateChange);
+      return;
+    }
+    renderDynamic();
+  };
+
+  renderDynamic();
+  listeners.add(onStateChange);
   return container;
 }

@@ -315,14 +315,14 @@ export function fungalOpportunisticCareView() {
   const container = h('div', { class: 'fungal-care-view' });
 
   // Header
-  const header = pageHeader({
-    title: isEs
+  const header = pageHeader(
+    isEs
       ? 'Micosis Fúngicas Profundas, Infecciones Oportunistas y MOUD'
       : 'Opportunistic Deep Fungal Infections & MOUD Interoperability',
-    subtitle: isEs
+    isEs
       ? 'Diagnóstico diferencial de blastomicosis, coccidioidomicosis, mucorales, inhibición de CYP3A4 y ajuste de dosis de metadona'
       : 'Differential diagnosis of blastomycosis, valley fever, mucormycosis, azole CYP3A4 inhibition & proactive methadone dosing',
-  });
+  );
   container.appendChild(header);
 
   // Layout Grid
@@ -337,12 +337,12 @@ export function fungalOpportunisticCareView() {
   const pathCard = h('div', { class: 'fungal-card' });
   leftCol.appendChild(pathCard);
 
-  const pathTitle = h('h2', { class: 'fungal-card-title' });
+  const pathTitle = h('h2', { id: 'pathogen-select-label', class: 'fungal-card-title' });
   pathTitle.appendChild(icon('activity'));
   pathTitle.appendChild(h('span', null, isEs ? '1. Micosis u Hongo Oportunista Sospechado' : '1. Suspected Fungal or Opportunistic Pathogen'));
   pathCard.appendChild(pathTitle);
 
-  const pathSelect = h('select', { id: 'pathogen-select', class: 'fungal-select' });
+  const pathSelect = h('select', { id: 'pathogen-select', class: 'fungal-select', 'aria-labelledby': 'pathogen-select-label' });
   Object.keys(FUNGAL_PATHOGENS).forEach((k) => {
     const p = FUNGAL_PATHOGENS[k];
     const opt = h('option', { value: k }, isEs ? p.nameEs : p.nameEn);
@@ -533,10 +533,10 @@ export function fungalOpportunisticCareView() {
     const sbarCard = h('div', { class: 'fungal-card' });
     resultsContainer.appendChild(sbarCard);
 
-    const sbarTitle = h('h3', { class: 'fungal-card-title' }, isEs ? 'Transferencia Clínica SBAR (Cero PII)' : 'Zero-PII SBAR Handoff Report');
+    const sbarTitle = h('h3', { id: 'fungal-sbar-label', class: 'fungal-card-title' }, isEs ? 'Transferencia Clínica SBAR (Cero PII)' : 'Zero-PII SBAR Handoff Report');
     sbarCard.appendChild(sbarTitle);
 
-    const sbarArea = h('textarea', { class: 'fungal-sbar-textarea', rows: 7, readonly: true });
+    const sbarArea = h('textarea', { class: 'fungal-sbar-textarea', rows: 7, readonly: true, 'aria-labelledby': 'fungal-sbar-label' });
     sbarArea.value = generateFungalSbar(state, lang);
     sbarCard.appendChild(sbarArea);
 

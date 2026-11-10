@@ -140,7 +140,7 @@ const TERRITORY_LIST = [
     crisisLabel: 'American Samoa DHSS Behavioral Health: 684-633-0315 / LBJ Tropical Medical Center: 684-633-1222 (or dial 988)',
     url: 'https://www.americansamoa.gov/',
     medicaidName: 'American Samoa Medicaid State Agency',
-    medicaidUrl: 'https://medicaid.as.gov/',
+    medicaidUrl: 'https://www.medicaid.gov/state-overviews/american-samoa.html',
     maxRadiusMiles: 250,
     frontierReachMiles: '200–250 miles South Pacific & Manuʻa Islands reach',
     networks: ['clinics', 'va', 'er', 'rhc', 'ihs', 'telehealth'],
@@ -379,7 +379,7 @@ export function buildRuralTerritoryReachCard({ stateCode, onSelectNetwork, plain
 // ---------------------------------------------------------------- States & Territories Directory (#/states and #/state/:code)
 export function statesView() {
   const body = h('div', { 'aria-live': 'polite' },
-    p({ class: 'help' }, t('reach.loading', 'Loading…')));
+    h('p', { class: 'help' }, t('reach.loading', 'Loading…')));
 
   const equityContainer = h('div', { id: 'states-equity-container' });
   const filterInput = h('input', {

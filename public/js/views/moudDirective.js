@@ -264,10 +264,137 @@ export function subscribeMoudDirectiveState(fn) {
 
 export function moudDirectiveView() {
   const container = h('div', { class: 'moud-directive-view', role: 'region', 'aria-label': 'Offline Emergency MOUD Directive & Verifiable Rights Pass' });
+  const isEs = getLang() === 'es';
 
-  function render() {
-    clear(container);
-    const isEs = getLang() === 'es';
+  // Page Header (static)
+  container.appendChild(
+    pageHeader(
+      isEs ? 'Pase de Derechos MOUD y Directiva de Continuación Hospitalaria' : 'Offline Emergency MOUD Directive & Inpatient Rights Pass',
+      isEs
+        ? 'Protecciones legales verificables sin conexión bajo el Título II de la Ley ADA, directivas DEA 21 CFR § 1306.07(c) y pautas hospitalarias para evitar la suspensión arbitraria de metadona o buprenorfina.'
+        : 'Zero-PII, offline-verifiable treatment directive and wallet card enforcing Title II ADA disability protections, DEA 21 CFR § 1306.07(c), and hospital MOUD continuation mandates.',
+      'planning'
+    )
+  );
+
+  // Two Column Layout
+  const grid = h('div', { class: 'moud-layout-grid' });
+  const leftCol = h('div', { class: 'moud-col' });
+  const rightCol = h('div', { class: 'moud-col' });
+  grid.appendChild(leftCol);
+  grid.appendChild(rightCol);
+  container.appendChild(grid);
+
+  // Persistent form controls (never rebuilt on keystroke)
+  const regimenSel = h('select', { id: 'sel-regimen', class: 'moud-select' },
+    MOUD_REGIMEN_OPTIONS.map((r) =>
+      h('option', { value: r.id, selected: r.id === directiveState.regimenId },
+        isEs ? r.nameEs : r.nameEn
+      )
+    )
+  );
+  const doseInput = h('input', { id: 'inp-dose', type: 'text', class: 'moud-input', value: directiveState.dailyDose });
+  const anonIdInput = h('input', { id: 'inp-anon-id', type: 'text', class: 'moud-input', value: directiveState.anonymousId });
+  const initialsInput = h('input', { id: 'inp-initials', type: 'text', class: 'moud-input', value: directiveState.clientInitials });
+  const clinicInput = h('input', { id: 'inp-otp-clinic', type: 'text', class: 'moud-input', value: directiveState.otpClinic });
+  const phoneInput = h('input', { id: 'inp-emergency-phone', type: 'text', class: 'moud-input', value: directiveState.emergencyPhone });
+
+  regimenSel.addEventListener('change', (e) => {
+    directiveState.regimenId = e.target.value;
+    const match = MOUD_REGIMEN_OPTIONS.find((r) => r.id === e.target.value);
+    if (match) {
+      directiveState.dailyDose = match.defaultDose;
+      doseInput.value = match.defaultDose;
+    }
+    renderDynamic();
+  });
+  doseInput.addEventListener('input', (e) => { directiveState.dailyDose = e.target.value; renderDynamic(); });
+  anonIdInput.addEventListener('input', (e) => { directiveState.anonymousId = e.target.value; renderDynamic(); });
+  initialsInput.addEventListener('input', (e) => { directiveState.clientInitials = e.target.value; renderDynamic(); });
+  clinicInput.addEventListener('input', (e) => { directiveState.otpClinic = e.target.value; renderDynamic(); });
+  phoneInput.addEventListener('input', (e) => { directiveState.emergencyPhone = e.target.value; renderDynamic(); });
+
+  const formCard = h('section', { class: 'moud-card' },
+    h('h2', { class: 'moud-card-title' },
+      icon('clipboard'),
+      h('span', {}, isEs ? '1. Configuración de Medicación y Clínica OTP' : '1. MOUD Regimen & Clinic Verification')
+    ),
+    h('p', { class: 'moud-card-desc' },
+      isEs
+        ? 'Configure el tratamiento y la clínica para generar la credencial de derechos verificable sin conexión (cero-PII).'
+        : 'Configure active treatment details and treating facility to generate the offline-verifiable treatment rights pass.'
+    ),
+    h('div', { class: 'moud-form-group' },
+      h('label', { for: 'sel-regimen', class: 'moud-form-label' }, isEs ? 'Medicamento MOUD Activo:' : 'Active MOUD Medication:'),
+      regimenSel
+    ),
+    h('div', { class: 'moud-form-group' },
+      h('label', { for: 'inp-dose', class: 'moud-form-label' }, isEs ? 'Dosis Diaria Mantenimiento:' : 'Daily Maintenance Dose:'),
+      doseInput
+    ),
+    h('div', { class: 'moud-form-row' },
+      h('div', { class: 'moud-form-group' },
+        h('label', { for: 'inp-anon-id', class: 'moud-form-label' }, isEs ? 'Token Anónimo:' : 'Anonymous Ref Token:'),
+        anonIdInput
+      ),
+      h('div', { class: 'moud-form-group' },
+        h('label', { for: 'inp-initials', class: 'moud-form-label' }, isEs ? 'Iniciales:' : 'Patient Initials:'),
+        initialsInput
+      )
+    ),
+    h('div', { class: 'moud-form-group' },
+      h('label', { for: 'inp-otp-clinic', class: 'moud-form-label' }, isEs ? 'Clínica OTP / Programa de Tratamiento:' : 'Treating OTP Clinic / Program Name:'),
+      clinicInput
+    ),
+    h('div', { class: 'moud-form-group' },
+      h('label', { for: 'inp-emergency-phone', class: 'moud-form-label' }, isEs ? 'Teléfono de Verificación 24/7 de la Clínica:' : 'Clinic 24/7 Verification Hotline:'),
+      phoneInput
+    )
+  );
+  leftCol.appendChild(formCard);
+
+  const legalCard = h('section', { class: 'moud-card' },
+    h('h2', { class: 'moud-card-title' },
+      icon('shield'),
+      h('span', {}, isEs ? '2. Fundamentos Legales y Estatutarios' : '2. Legal Statutes & Regulatory Directives')
+    ),
+    h('div', { class: 'moud-statute-box' },
+      h('strong', {}, isEs ? 'Título II de la Ley ADA (42 U.S.C. § 12131): ' : 'Title II ADA (42 U.S.C. § 12131): '),
+      h('span', {}, isEs
+        ? 'El trastorno por uso de opioides es una discapacidad amparada. La suspensión arbitraria de MOUD en hospitales o cárceles constituye discriminación ilegal.'
+        : 'Opioid Use Disorder is a protected disability. Involuntary cessation of prescribed MOUD in hospital or correctional care is illegal discrimination.'
+      )
+    ),
+    h('div', { class: 'moud-statute-box' },
+      h('strong', {}, isEs ? 'Excepción Hospitalaria DEA 21 CFR § 1306.07(c): ' : 'DEA 21 CFR § 1306.07(c): '),
+      h('span', {}, isEs
+        ? 'Los médicos hospitalarios están facultados por ley federal para continuar la administración de metadona o buprenorfina en pacientes ingresados por motivos médicos o quirúrgicos.'
+        : 'Hospital physicians are legally authorized under federal law to order and administer scheduled MOUD to maintain established therapy during medical/surgical admissions.'
+      )
+    ),
+    h('div', { class: 'moud-statute-box' },
+      h('strong', {}, isEs ? 'Aviso 42 CFR Parte 2: ' : '42 CFR Part 2 Confidentiality: '),
+      h('span', {}, isEs
+        ? 'La ley federal prohíbe terminantemente la redivulgación de información de adicciones sin el consentimiento previo por escrito del paciente.'
+        : 'Federal law strictly prohibits redisclosure of substance use disorder records without express written patient consent.'
+      )
+    )
+  );
+  leftCol.appendChild(legalCard);
+
+  function syncControls() {
+    const active = typeof document !== 'undefined' ? document.activeElement : null;
+    if (active !== regimenSel) regimenSel.value = directiveState.regimenId;
+    if (active !== doseInput) doseInput.value = directiveState.dailyDose;
+    if (active !== anonIdInput) anonIdInput.value = directiveState.anonymousId;
+    if (active !== initialsInput) initialsInput.value = directiveState.clientInitials;
+    if (active !== clinicInput) clinicInput.value = directiveState.otpClinic;
+    if (active !== phoneInput) phoneInput.value = directiveState.emergencyPhone;
+  }
+
+  function renderDynamic() {
+    syncControls();
+    clear(rightCol);
     const evalResult = generateMoudDirective({
       regimenId: directiveState.regimenId,
       dailyDose: directiveState.dailyDose,
@@ -278,189 +405,6 @@ export function moudDirectiveView() {
       emergencyPhone: directiveState.emergencyPhone,
       deaRegistration: directiveState.deaRegistration,
     });
-
-    // Page Header
-    container.appendChild(
-      pageHeader(
-        isEs ? 'Pase de Derechos MOUD y Directiva de Continuación Hospitalaria' : 'Offline Emergency MOUD Directive & Inpatient Rights Pass',
-        isEs
-          ? 'Protecciones legales verificables sin conexión bajo el Título II de la Ley ADA, directivas DEA 21 CFR § 1306.07(c) y pautas hospitalarias para evitar la suspensión arbitraria de metadona o buprenorfina.'
-          : 'Zero-PII, offline-verifiable treatment directive and wallet card enforcing Title II ADA disability protections, DEA 21 CFR § 1306.07(c), and hospital MOUD continuation mandates.',
-        'planning'
-      )
-    );
-
-    // Two Column Layout
-    const grid = h('div', { class: 'moud-layout-grid' });
-
-    // LEFT COLUMN: Parameters & Form Controls
-    const leftCol = h('div', { class: 'moud-col' });
-
-    // Card 1: Regimen & Patient Configuration
-    const formCard = h('section', { class: 'moud-card' },
-      h('h2', { class: 'moud-card-title' },
-        icon('clipboard'),
-        h('span', {}, isEs ? '1. Configuración de Medicación y Clínica OTP' : '1. MOUD Regimen & Clinic Verification')
-      ),
-      h('p', { class: 'moud-card-desc' },
-        isEs
-          ? 'Configure el tratamiento y la clínica para generar la credencial de derechos verificable sin conexión (cero-PII).'
-          : 'Configure active treatment details and treating facility to generate the offline-verifiable treatment rights pass.'
-      ),
-      // Select Regimen
-      h('div', { class: 'moud-form-group' },
-        h('label', { for: 'sel-regimen', class: 'moud-form-label' },
-          isEs ? 'Medicamento MOUD Activo:' : 'Active MOUD Medication:'
-        ),
-        (() => {
-          const sel = h('select', { id: 'sel-regimen', class: 'moud-select' },
-            MOUD_REGIMEN_OPTIONS.map((r) =>
-              h('option', { value: r.id, selected: r.id === directiveState.regimenId },
-                isEs ? r.nameEs : r.nameEn
-              )
-            )
-          );
-          sel.addEventListener('change', (e) => {
-            directiveState.regimenId = e.target.value;
-            const match = MOUD_REGIMEN_OPTIONS.find((r) => r.id === e.target.value);
-            if (match) directiveState.dailyDose = match.defaultDose;
-            render();
-          });
-          return sel;
-        })()
-      ),
-      // Daily Dose
-      h('div', { class: 'moud-form-group' },
-        h('label', { for: 'inp-dose', class: 'moud-form-label' },
-          isEs ? 'Dosis Diaria Mantenimiento:' : 'Daily Maintenance Dose:'
-        ),
-        (() => {
-          const inp = h('input', {
-            id: 'inp-dose',
-            type: 'text',
-            class: 'moud-input',
-            value: directiveState.dailyDose,
-          });
-          inp.addEventListener('input', (e) => {
-            directiveState.dailyDose = e.target.value;
-            render();
-          });
-          return inp;
-        })()
-      ),
-      // Anonymous ID & Initials
-      h('div', { class: 'moud-form-row' },
-        h('div', { class: 'moud-form-group' },
-          h('label', { for: 'inp-anon-id', class: 'moud-form-label' },
-            isEs ? 'Token Anónimo:' : 'Anonymous Ref Token:'
-          ),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-anon-id',
-              type: 'text',
-              class: 'moud-input',
-              value: directiveState.anonymousId,
-            });
-            inp.addEventListener('input', (e) => {
-              directiveState.anonymousId = e.target.value;
-              render();
-            });
-            return inp;
-          })()
-        ),
-        h('div', { class: 'moud-form-group' },
-          h('label', { for: 'inp-initials', class: 'moud-form-label' },
-            isEs ? 'Iniciales:' : 'Patient Initials:'
-          ),
-          (() => {
-            const inp = h('input', {
-              id: 'inp-initials',
-              type: 'text',
-              class: 'moud-input',
-              value: directiveState.clientInitials,
-            });
-            inp.addEventListener('input', (e) => {
-              directiveState.clientInitials = e.target.value;
-              render();
-            });
-            return inp;
-          })()
-        )
-      ),
-      // OTP Clinic & Phone
-      h('div', { class: 'moud-form-group' },
-        h('label', { for: 'inp-otp-clinic', class: 'moud-form-label' },
-          isEs ? 'Clínica OTP / Programa de Tratamiento:' : 'Treating OTP Clinic / Program Name:'
-        ),
-        (() => {
-          const inp = h('input', {
-            id: 'inp-otp-clinic',
-            type: 'text',
-            class: 'moud-input',
-            value: directiveState.otpClinic,
-          });
-          inp.addEventListener('input', (e) => {
-            directiveState.otpClinic = e.target.value;
-            render();
-          });
-          return inp;
-        })()
-      ),
-      h('div', { class: 'moud-form-group' },
-        h('label', { for: 'inp-emergency-phone', class: 'moud-form-label' },
-          isEs ? 'Teléfono de Verificación 24/7 de la Clínica:' : 'Clinic 24/7 Verification Hotline:'
-        ),
-        (() => {
-          const inp = h('input', {
-            id: 'inp-emergency-phone',
-            type: 'text',
-            class: 'moud-input',
-            value: directiveState.emergencyPhone,
-          });
-          inp.addEventListener('input', (e) => {
-            directiveState.emergencyPhone = e.target.value;
-            render();
-          });
-          return inp;
-        })()
-      )
-    );
-    leftCol.appendChild(formCard);
-
-    // Card 2: Legal Statutes Callout
-    const legalCard = h('section', { class: 'moud-card' },
-      h('h2', { class: 'moud-card-title' },
-        icon('shield'),
-        h('span', {}, isEs ? '2. Fundamentos Legales y Estatutarios' : '2. Legal Statutes & Regulatory Directives')
-      ),
-      h('div', { class: 'moud-statute-box' },
-        h('strong', {}, isEs ? 'Título II de la Ley ADA (42 U.S.C. § 12131): ' : 'Title II ADA (42 U.S.C. § 12131): '),
-        h('span', {}, isEs
-          ? 'El trastorno por uso de opioides es una discapacidad amparada. La suspensión arbitraria de MOUD en hospitales o cárceles constituye discriminación ilegal.'
-          : 'Opioid Use Disorder is a protected disability. Involuntary cessation of prescribed MOUD in hospital or correctional care is illegal discrimination.'
-        )
-      ),
-      h('div', { class: 'moud-statute-box' },
-        h('strong', {}, isEs ? 'Excepción Hospitalaria DEA 21 CFR § 1306.07(c): ' : 'DEA 21 CFR § 1306.07(c): '),
-        h('span', {}, isEs
-          ? 'Los médicos hospitalarios están facultados por ley federal para continuar la administración de metadona o buprenorfina en pacientes ingresados por motivos médicos o quirúrgicos.'
-          : 'Hospital physicians are legally authorized under federal law to order and administer scheduled MOUD to maintain established therapy during medical/surgical admissions.'
-        )
-      ),
-      h('div', { class: 'moud-statute-box' },
-        h('strong', {}, isEs ? 'Aviso 42 CFR Parte 2: ' : '42 CFR Part 2 Confidentiality: '),
-        h('span', {}, isEs
-          ? 'La ley federal prohíbe terminantemente la redivulgación de información de adicciones sin el consentimiento previo por escrito del paciente.'
-          : 'Federal law strictly prohibits redisclosure of substance use disorder records without express written patient consent.'
-        )
-      )
-    );
-    leftCol.appendChild(legalCard);
-
-    grid.appendChild(leftCol);
-
-    // RIGHT COLUMN: Printable Wallet Card & SBAR Handoff
-    const rightCol = h('div', { class: 'moud-col' });
 
     // Card 3: Printable Wallet Card Layout
     const walletCard = h('section', { class: 'moud-card' },
@@ -473,7 +417,6 @@ export function moudDirectiveView() {
           ? 'Formato estándar tamaño billetera (3,37 × 2,125 pulgadas). Diseñada para presentación inmediata ante el médico de guardia o triaje de urgencias.'
           : 'Standard wallet card layout (3.37 x 2.125 inches). Designed for immediate presentation to emergency triage and hospital admitting teams.'
       ),
-      // Front Surface
       h('div', { class: 'moud-wallet-surface front' },
         h('div', { class: 'wallet-header' },
           h('span', { class: 'wallet-brand' }, 'HARBORPATH MOUD TREATMENT RIGHTS PASS'),
@@ -498,7 +441,6 @@ export function moudDirectiveView() {
           h('span', {}, evalResult.deaRegistration)
         )
       ),
-      // Reverse Surface (Hospital Directives)
       h('div', { class: 'moud-wallet-surface reverse' },
         h('div', { class: 'wallet-header reverse' },
           h('span', { class: 'wallet-brand reverse' }, 'HOSPITAL CLINICIAN INPATIENT ORDERS'),
@@ -528,10 +470,7 @@ export function moudDirectiveView() {
       ),
       h('div', { class: 'moud-actions' },
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-primary',
-          },
+          const btn = h('button', { type: 'button', class: 'btn btn-primary' },
             icon('copy'),
             h('span', {}, directiveState.copied
               ? (isEs ? '¡Copiado!' : 'Copied!')
@@ -545,10 +484,10 @@ export function moudDirectiveView() {
               }
               directiveState.copied = true;
               announce(isEs ? 'Resumen copiado al portapapeles' : 'SBAR note copied to clipboard');
-              render();
+              renderDynamic();
               setTimeout(() => {
                 directiveState.copied = false;
-                render();
+                renderDynamic();
               }, 2500);
             } catch {
               announce(isEs ? 'Error al copiar' : 'Failed to copy');
@@ -557,10 +496,7 @@ export function moudDirectiveView() {
           return btn;
         })(),
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-secondary',
-          },
+          const btn = h('button', { type: 'button', class: 'btn btn-secondary' },
             icon('printer'),
             h('span', {}, isEs ? 'Imprimir Tarjeta' : 'Print Wallet Card')
           );
@@ -572,10 +508,9 @@ export function moudDirectiveView() {
           return btn;
         })(),
         (() => {
-          const btn = h('button', {
-            type: 'button',
-            class: 'btn btn-ghost',
-          }, isEs ? 'Restablecer Formulario' : 'Reset Form');
+          const btn = h('button', { type: 'button', class: 'btn btn-ghost' },
+            isEs ? 'Restablecer Formulario' : 'Reset Form'
+          );
           btn.addEventListener('click', () => {
             resetMoudDirectiveState();
           });
@@ -584,12 +519,19 @@ export function moudDirectiveView() {
       )
     );
     rightCol.appendChild(sbarCard);
-
-    grid.appendChild(rightCol);
-    container.appendChild(grid);
   }
 
-  render();
-  const unsubscribe = subscribeMoudDirectiveState(render);
+  let wasConnected = false;
+  const onStateChange = () => {
+    wasConnected = wasConnected || Boolean(container.isConnected);
+    if (wasConnected && container.isConnected === false) {
+      listeners.delete(onStateChange);
+      return;
+    }
+    renderDynamic();
+  };
+
+  renderDynamic();
+  listeners.add(onStateChange);
   return container;
 }
