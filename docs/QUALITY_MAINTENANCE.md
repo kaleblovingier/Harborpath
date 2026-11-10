@@ -10,7 +10,7 @@ SDKs, full-session replay, or external RUM without a separate privacy review.
 
 - Existing CI: Node 20/22 syntax and built-in unit/integration suites, build and lint.
 - Browser and performance quality: Chromium renders five routes on mobile and desktop;
-  axe-core reports WCAG-tagged violations and fails on serious/critical findings.
+  axe-core reports WCAG-tagged violations and fails on *new* serious/critical findings\n  above the documented baseline; pre-existing violations still require remediation.
 - Lighthouse CI collects local-only audits of home, matching, and treatment. Initial
   budgets are **warnings** until a measured baseline is reviewed. Reports are stored
   as a short-lived Actions artifact, not uploaded to public Lighthouse storage.
