@@ -64,27 +64,31 @@ test('haptics.js degrades gracefully in headless Node and functions with vibrati
   assert.equal(hapticCancel(), false);
   assert.equal(hapticOverdoseBeat(), false);
 
-  // 2. Mock vibration API on existing navigator
+  // 2. Node 20 does not define global navigator; newer Node versions may.
+  // Restore the original global descriptor even when an assertion throws.
+  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
   const calls = [];
-  globalThis.navigator.vibrate = (pattern) => {
-    calls.push(pattern);
-    return true;
-  };
+  Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    value: { vibrate(pattern) { calls.push(pattern); return true; } },
+  });
+  try {
+    assert.equal(isHapticsSupported(), true);
+    assert.equal(hapticPulse(75), true);
+    assert.equal(calls[0], 75);
 
-  assert.equal(isHapticsSupported(), true);
-  assert.equal(hapticPulse(75), true);
-  assert.equal(calls[0], 75);
+    assert.equal(hapticPattern([100, 50, 100]), true);
+    assert.deepEqual(calls[1], [100, 50, 100]);
 
-  assert.equal(hapticPattern([100, 50, 100]), true);
-  assert.deepEqual(calls[1], [100, 50, 100]);
+    assert.equal(hapticOverdoseBeat(), true);
+    assert.deepEqual(calls[2], [50, 70, 50]);
 
-  assert.equal(hapticOverdoseBeat(), true);
-  assert.deepEqual(calls[2], [50, 70, 50]);
-
-  assert.equal(hapticCancel(), true);
-  assert.equal(calls[3], 0);
-
-  delete globalThis.navigator.vibrate;
+    assert.equal(hapticCancel(), true);
+    assert.equal(calls[3], 0);
+  } finally {
+    if (originalNavigator) Object.defineProperty(globalThis, 'navigator', originalNavigator);
+    else delete globalThis.navigator;
+  }
 });
 
 test('capacitor.config.json defines secure appId and points to public webDir', () => {

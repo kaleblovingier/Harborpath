@@ -1,0 +1,61 @@
+name: Browser and performance quality
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    name: Chromium smoke and axe-core
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # CI-only tooling preserves HarborPath's zero-runtime-dependency design.
+      - name: Install isolated browser tools
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright@1.62.0 axe-core@4.14.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test key routes at phone and desktop sizes
+        run: node scripts/qa-browser.mjs
+
+  lighthouse:
+    name: Lighthouse CI (local-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --global @lhci/cli@0.15.1
+      - name: Start app and collect Lighthouse reports
+        run: |
+          set -euo pipefail
+          npm start > harborpath-local.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for _ in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000/api/health > /dev/null; then ready=1; break; fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then cat harborpath-local.log; exit 1; fi
+            sleep 2
+          done
+          if [ "$ready" -ne 1 ]; then cat harborpath-local.log; exit 1; fi
+          lhci collect --config=./lighthouserc.json
+          lhci assert --config=./lighthouserc.json
+          lhci upload --config=./lighthouserc.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: harborpath-lighthouse
+          path: lhci-reports/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -10,7 +10,7 @@
 import { timingSafeEqual, createHmac } from 'node:crypto';
 
 // Default admin passkey for development/operator access if not set in environment.
-const DEFAULT_ADMIN_KEY = process.env.HARBORPATH_ADMIN_KEY || 'harborpath-admin-secret-2026';
+// No default operator credential: missing configuration must fail closed.
 
 /** Sanitize an identifier/path to prevent injection or unexpected characters. */
 function sanitizeKey(str, maxLen = 60) {
@@ -19,7 +19,7 @@ function sanitizeKey(str, maxLen = 60) {
 }
 
 export function createAnalyticsStore(options = {}) {
-  const secretKey = options.adminKey || DEFAULT_ADMIN_KEY;
+  const secretKey = options.adminKey !== undefined ? options.adminKey : process.env.HARBORPATH_ADMIN_KEY;
   const startTime = new Date().toISOString();
 
   // Aggregate counters
@@ -74,7 +74,7 @@ export function createAnalyticsStore(options = {}) {
   }
 
   function verifyAdminKey(candidateKey) {
-    if (typeof candidateKey !== 'string' || !candidateKey) return false;
+    if (typeof secretKey !== 'string' || !secretKey || typeof candidateKey !== 'string' || !candidateKey) return false;
     try {
       const a = Buffer.from(candidateKey);
       const b = Buffer.from(secretKey);
