@@ -1,0 +1,53 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://127.0.0.1:3000/",
+        "http://127.0.0.1:3000/#/match",
+        "http://127.0.0.1:3000/#/treatment"
+      ],
+      "numberOfRuns": 1,
+      "settings": {
+        "chromeFlags": "--no-sandbox --headless=new",
+        "onlyCategories": [
+          "performance",
+          "accessibility",
+          "best-practices",
+          "seo"
+        ]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          "warn",
+          {
+            "minScore": 0.55
+          }
+        ],
+        "categories:accessibility": [
+          "warn",
+          {
+            "minScore": 0.85
+          }
+        ],
+        "categories:best-practices": [
+          "warn",
+          {
+            "minScore": 0.8
+          }
+        ],
+        "categories:seo": [
+          "warn",
+          {
+            "minScore": 0.8
+          }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "./lhci-reports"
+    }
+  }
+}

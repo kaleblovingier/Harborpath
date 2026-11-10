@@ -18,6 +18,14 @@ describe('Analytics & Operator Telemetry Suite', () => {
       assert.equal(metrics.recentEvents.length, 0);
     });
 
+    it('disables admin metrics when no operator secret is configured', () => {
+      const store = createAnalyticsStore({ adminKey: '' });
+      assert.equal(store.verifyAdminKey('harborpath-admin-secret-2026'), false);
+      assert.equal(store.getMetrics('harborpath-admin-secret-2026').authorized, false);
+      assert.equal(store.resetMetrics('harborpath-admin-secret-2026').authorized, false);
+      assert.equal(store.recordEvent({ type: 'pageview', path: 'home' }).ok, true);
+    });
+
     it('rejects invalid or missing admin keys', () => {
       const store = createAnalyticsStore({ adminKey: 'test-secret-key-123' });
       assert.equal(store.verifyAdminKey('wrong-key'), false);
