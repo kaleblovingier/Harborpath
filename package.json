@@ -12,7 +12,11 @@
     "dev": "node --watch server.js",
     "build": "node -e \"import('node:fs').then(fs => fs.existsSync('scripts/build-check.mjs') && import('./scripts/build-check.mjs').then(m => m.runBuildCheck().then(r => !r.ok && process.exit(1))))\"",
     "lint": "node scripts/build-check.mjs --lint",
+    "stamp:sw": "node scripts/build-check.mjs --fix",
     "test": "node --test",
-    "data:build": "node scripts/build-data.mjs"
+    "test:backend": "python -m unittest discover -s backend/tests",
+    "data:build": "node scripts/build-data.mjs",
+    "mobile:sync": "node scripts/mobile-sync.mjs",
+    "mobile:clean": "node -e \"import('node:fs').then(fs => { fs.rmSync('android/app/src/main/assets/public', { recursive: true, force: true }); fs.rmSync('ios/App/App/public', { recursive: true, force: true }); console.log('Cleaned native mobile assets.'); })\""
   }
 }

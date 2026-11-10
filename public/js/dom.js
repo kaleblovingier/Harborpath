@@ -2,6 +2,18 @@
 // never be interpreted as markup.
 import { t, isLocalizedUrl } from './i18n.js';
 
+// Attributes that navigate or load. Their values go through safeHref (plus
+// same-site paths such as /icons.svg), so a javascript:, data: or
+// protocol-relative URL from data can never reach the page; it is dropped.
+const URL_ATTRIBUTES = new Set(['href', 'src', 'action', 'formaction']);
+
+function safeUrlAttribute(value) {
+  const s = String(value).trim();
+  // "/path" stays on this site; "//host" and "/\host" would leave it.
+  if (/^\/(?![/\\])/.test(s)) return s;
+  return safeHref(s);
+}
+
 export function h(tag, props, ...children) {
   const el = document.createElement(tag);
   if (props) {
@@ -11,8 +23,14 @@ export function h(tag, props, ...children) {
       else if (key === 'dataset') Object.assign(el.dataset, value);
       else if (key === 'style') throw new Error('Inline styles are blocked by CSP; use a class');
       else if (key.startsWith('on') && typeof value === 'function') el.addEventListener(key.slice(2).toLowerCase(), value);
-      else if (value === true) el.setAttribute(key, '');
-      else el.setAttribute(key, String(value));
+      else if (URL_ATTRIBUTES.has(key.toLowerCase())) {
+        const url = safeUrlAttribute(value);
+        if (url !== null) el.setAttribute(key, url);
+      } else if (value === true) el.setAttribute(key, '');
+      else if (key === 'value') {
+        el.value = String(value);
+        el.setAttribute(key, String(value));
+      } else el.setAttribute(key, String(value));
     }
   }
   append(el, children);
@@ -60,13 +78,35 @@ export function digits(phone) {
   return String(phone ?? '').replace(/[^\d+]/g, '');
 }
 
+// True for a plain `{ ... }` props object (not a Node, array, string or number).
+// Lets tel()/sms() tolerate a props object passed where display text was expected,
+// so a call like tel('988', { class: 'x' }) never renders "[object Object]".
+function isPlainProps(value) {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false;
+  if (typeof Node !== 'undefined' && value instanceof Node) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
 /** Phone link. `display` defaults to the number itself. */
 export function tel(number, display, props = {}) {
+  if (isPlainProps(display)) {
+    props = { ...display, ...props };
+    display = undefined;
+  }
   return h('a', { href: `tel:${digits(number)}`, class: 'tel', ...props }, display ?? number);
 }
 
 /** SMS link. "?&body=" is the form that pre-fills the message on both iOS and Android. */
 export function sms(number, body, display, props = {}) {
+  if (isPlainProps(body)) {
+    props = { ...body, ...props };
+    body = undefined;
+  }
+  if (isPlainProps(display)) {
+    props = { ...display, ...props };
+    display = undefined;
+  }
   const href = body ? `sms:${digits(number)}?&body=${encodeURIComponent(body)}` : `sms:${digits(number)}`;
   return h('a', { href, class: 'tel', ...props }, display ?? number);
 }

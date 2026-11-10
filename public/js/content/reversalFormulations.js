@@ -8,7 +8,7 @@
  * - SAMHSA Overdose Prevention and Response Toolkit (2023)
  * - American College of Medical Toxicology (ACMT) & AACT Clinical Guidance
  * - CDC Overdose Prevention & Clinical Guidelines on Xylazine and Stimulants (2024)
- * - FDA Product Labels (Narcan, Kloxxado, Opvee, Naloxone Injection USP)
+ * - FDA Product Labels (Narcan, Kloxxado, Opvee, Zurnai, Naloxone Injection USP)
  * - American Heart Association (AHA) CPR & ECC Opioid Guidelines
  */
 
@@ -227,7 +227,7 @@ export const REVERSAL_FORMULATIONS = {
       affinityKiNm: 0.3,
       receptorSelectivity: 'Mu (~4–5x higher binding affinity than naloxone), Kappa partial agonist/antagonist, Delta antagonist (FDA Opvee label)',
       intrinsicAgonistActivity: 0,
-      mechanismDetails: '6-methylene analog of naltrexone with slow receptor dissociation kinetics and high mu-receptor affinity, maintaining competitive blockade for over 8–12 hours (FDA Opvee label).',
+      mechanismDetails: '6-methylene analog of naltrexone with slow receptor dissociation kinetics and high mu-receptor affinity, maintaining competitive blockade far longer than naloxone (FDA Opvee label: terminal half-life 11.4 hours; duration of action as long as most opioids).',
     },
     bioavailabilityPct: {
       min: 70,
@@ -241,25 +241,25 @@ export const REVERSAL_FORMULATIONS = {
     },
     precipitatedWithdrawal: {
       riskLevel: 'severe_prolonged',
-      severity: 'Extreme, refractory, prolonged precipitated withdrawal lasting 12–24+ hours',
-      durationHours: '12–24+ hours',
+      severity: 'Potentially severe precipitated withdrawal that can last much longer than after naloxone, because nalmefene has a terminal half-life of about 11 hours (FDA Opvee label: 11.4 h)',
+      durationHours: 'Can persist for many hours (terminal half-life ~11 h)',
       clinicalFeatures: [
-        'Protracted nausea, projectile vomiting, intractable diarrhea, and severe abdominal cramping lasting 12–24+ hours',
+        'Protracted nausea, projectile vomiting, diarrhea, and severe abdominal cramping that may persist for many hours',
         'Severe neuropsychiatric dysphoria, panic, terror, and heightened suicidality mediated by kappa-receptor modulation',
         'Prolonged hyperadrenergic storm: sustained tachycardia, severe hypertension, tremors, diaphoresis, and dehydration',
         'Complete refractory resistance to conventional opioid analgesics or buprenorphine palliation',
         'High risk of lethal delayed overdose if patient attempts repeated large-dose street opioid consumption after discharge',
       ],
-      mitigationStrategy: 'Requires immediate emergency EMS transport and 12–24 hour hospital observation. Provide aggressive supportive medical care (IV antiemetics, clonidine/alpha-2 agonists for sympathetic tone, IV fluid rehydration). Emphatically counsel patient that taking opioids will not relieve withdrawal and will cause delayed fatal toxicity.',
+      mitigationStrategy: 'Requires immediate emergency EMS transport and extended emergency department observation (nalmefene half-life ~11 h). Provide aggressive supportive medical care (IV antiemetics, clonidine/alpha-2 agonists for sympathetic tone, IV fluid rehydration). Emphatically counsel patient that taking opioids will not relieve withdrawal and will cause delayed fatal toxicity.',
     },
     targetIndications: [
       'Emergency reversal of known or suspected opioid overdose caused by natural or synthetic opioids in adults and adolescents aged 12 and older',
       'Specialized emergency medical services (EMS) and emergency department environments where prolonged opioid antagonism is desired',
     ],
     clinicalPearls: [
-      'Critical clinical caveat: Because nalmefene has an 11.4-hour half-life, precipitated withdrawal cannot be quickly reversed and persists for 12–24+ hours, creating severe clinical distress.',
+      'Critical clinical caveat: Because nalmefene has a terminal half-life of about 11 hours (FDA Opvee label: 11.4 h), precipitated withdrawal cannot be quickly reversed and may persist for many hours, creating severe clinical distress.',
       'Toxicology consensus (ACMT/AACT): Harm reduction specialists caution against routine community bystander deployment because prolonged agonizing withdrawal triggers severe medical refusal and trauma.',
-      'Unlike naloxone (which wears off in 60–90 minutes, enabling buprenorphine induction), nalmefene blocks opioid receptors for over 12–24 hours, completely delaying initiation of life-saving MOUD.',
+      'Unlike naloxone (which wears off in 30–90 minutes, enabling buprenorphine induction), nalmefene keeps blocking opioid receptors for many hours (half-life ~11 h), which can delay starting life-saving MOUD.',
     ],
     sources: [
       { organization: 'DailyMed / FDA', title: 'DailyMed - OPVEE- nalmefene hydrochloride spray (FDA Prescribing Information)', year: 2023, url: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6b7d27e9-6f77-44f2-9086-4fbf9ebae88f' },
@@ -365,6 +365,87 @@ export const REVERSAL_FORMULATIONS = {
       { organization: 'CDC', title: 'Syringe Services Programs and Overdose Prevention Guidance', year: 2023, url: 'https://www.cdc.gov/ssp/' },
     ],
   },
+  nalmefene_autoinjector_1_5mg: {
+    id: 'nalmefene_autoinjector_1_5mg',
+    brandName: 'Zurnai',
+    genericName: 'Nalmefene Hydrochloride',
+    deliveryRoute: 'Intramuscular (IM) / Subcutaneous (SC) auto-injector',
+    routeCategory: 'injectable',
+    dose: '1.5 mg nalmefene (base)',
+    doseValueMg: 1.5,
+    volume: '0.5 mL',
+    concentration: '1.5 mg in 0.5 mL per auto-injector',
+    deviceType: 'Single-dose prefilled auto-injector; outer thigh, through clothing if necessary (FDA Zurnai label)',
+    accessStatus: 'rx_only',
+    accessLabel: 'Prescription-Only (FDA Approved Aug 2024)',
+    onsetMinutes: {
+      min: 2.5,
+      max: 5,
+      text: '2.5–5 minutes in a clinical opioid-induced respiratory depression study (median Tmax 0.25 hours) (FDA Zurnai label)',
+    },
+    eliminationHalfLifeMinutes: {
+      min: 420,
+      max: 690,
+      text: '~9.1 hours (FDA Zurnai label: 9.07 h, %CV 26.2)',
+      terminalHours: 9.07,
+    },
+    durationOfActionMinutes: {
+      min: 420,
+      max: 720,
+      text: 'Many hours; longer than naloxone injection at fully reversing doses (FDA Zurnai label)',
+    },
+    receptorPharmacology: {
+      targetReceptor: 'Mu-opioid receptor (MOR)',
+      action: 'Long-acting competitive antagonist',
+      affinityKiNm: 0.3,
+      receptorSelectivity: 'Mu (higher binding affinity than naloxone), Kappa and Delta activity as for intranasal nalmefene',
+      intrinsicAgonistActivity: 0,
+      mechanismDetails: 'Same long-acting nalmefene molecule as Opvee, delivered by needle auto-injector. Per the FDA Zurnai label, a 1 mg nalmefene dose blocked over 80% of brain opioid receptors within 5 minutes, and its duration of action is as long as most opioids.',
+    },
+    bioavailabilityPct: {
+      min: 100,
+      max: 100,
+      text: 'Essentially complete after IM injection (FDA Zurnai label: exposure at or above 1 mg IV nalmefene)',
+    },
+    standardRedosingIntervalMinutes: {
+      min: 2,
+      max: 5,
+      text: 'Every 2–5 minutes with a new auto-injector if no response or breathing remains inadequate (FDA Zurnai label)',
+    },
+    precipitatedWithdrawal: {
+      riskLevel: 'severe_prolonged',
+      severity: 'Potentially severe precipitated withdrawal that can last much longer than after naloxone, because nalmefene has a terminal half-life of about 9 hours (FDA Zurnai label)',
+      durationHours: 'Can persist for many hours (terminal half-life ~9 h)',
+      clinicalFeatures: [
+        'Nausea, vomiting, diarrhea, body aches, fever, sweating, and abdominal cramping (FDA label warning) that may persist for many hours',
+        'Agitation, anxiety, and dysphoria on emergence',
+        'Tachycardia, hypertension, and other sympathetic surge signs',
+        'Opioids taken to relieve withdrawal may not work, raising the risk of delayed overdose once nalmefene wears off',
+      ],
+      mitigationStrategy: 'Call 911, place the person in the recovery position, and stay with them. Expect extended emergency observation; treat symptoms with supportive care (antiemetics, alpha-2 agonists, fluids) rather than more opioids.',
+    },
+    targetIndications: [
+      'Emergency treatment of known or suspected opioid overdose induced by natural or synthetic opioids in adults and pediatric patients aged 12 and older (FDA Zurnai label)',
+      'Prescription option for people or responders who prefer a needle auto-injector over a nasal spray',
+    ],
+    clinicalPearls: [
+      'FDA approved Zurnai on Aug. 7, 2024 as the first nalmefene hydrochloride auto-injector; it is available only by prescription.',
+      'Like Opvee, its long half-life means precipitated withdrawal can be prolonged; standard naloxone plus rescue breathing remains the preferred community first-line option (ACMT/AACT).',
+      'Still call 911: a long-acting opioid such as methadone can outlast even nalmefene, so continued observation is needed.',
+    ],
+    sources: [
+      { organization: 'FDA', title: 'FDA Approves First Nalmefene Hydrochloride Auto-Injector to Reverse Opioid Overdose', year: 2024, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-first-nalmefene-hydrochloride-auto-injector-reverse-opioid-overdose' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'ACMT', title: 'ACMT & AACT Position Statement on Nalmefene vs Naloxone in the Opioid Overdose Epidemic', year: 2023, url: 'https://www.acmt.net/guidance/position-statements/' },
+    ],
+    evidenceSources: [
+      { organization: 'FDA', title: 'FDA Approves First Nalmefene Hydrochloride Auto-Injector to Reverse Opioid Overdose', year: 2024, url: 'https://www.fda.gov/news-events/press-announcements/fda-approves-first-nalmefene-hydrochloride-auto-injector-reverse-opioid-overdose' },
+      { organization: 'SAMHSA', title: 'TIP 63: Medications for Opioid Use Disorder', year: 2021, url: 'https://store.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002' },
+      { organization: 'ASAM', title: 'The ASAM National Practice Guideline for the Treatment of Opioid Use Disorder', year: 2020, url: 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline' },
+      { organization: 'ACMT', title: 'ACMT & AACT Position Statement on Nalmefene vs Naloxone in the Opioid Overdose Epidemic', year: 2023, url: 'https://www.acmt.net/guidance/position-statements/' },
+    ],
+  },
 };
 
 // Enable iteration over formulations via for..of or spread syntax
@@ -377,6 +458,11 @@ Object.defineProperty(REVERSAL_FORMULATIONS, Symbol.iterator, {
 
 /**
  * Clinical Scenario Guide: Wooden Chest Syndrome (Fentanyl-Induced Muscle Rigidity)
+ * Bystander instructions follow the FDA NARCAN label (2–3 minute repeat doses)
+ * and SAMHSA/AHA breathing-support guidance, not a separate rigidity dose protocol:
+ * https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/208411Orig1s002lbl.pdf
+ * https://library.samhsa.gov/sites/default/files/overdose-prevention-response-kit-pep23-03-00-001.pdf
+ * Difficulty ventilating is an emergency observation, not a diagnosis by this tool.
  */
 export const WOODEN_CHEST_SYNDROME = {
   id: 'wooden_chest_syndrome',
@@ -385,7 +471,7 @@ export const WOODEN_CHEST_SYNDROME = {
   pathophysiology: {
     mechanism: 'Central mu-opioid receptor-mediated hypertonicity originating in the striatum/basal ganglia, locus coeruleus, and spinal cord interneurons, triggering massive sustained contraction of chest wall, intercostal, and abdominal musculature.',
     glotticInvolvement: 'Simultaneous acute vocal cord closure (laryngospasm/glottic adduction) that mechanically seals the upper airway.',
-    ventilationImpact: 'Bag-valve-mask (BVM) and rescue breathing become physically impossible due to insurmountable thoracic impedance and vocal cord closure, producing rapid fatal anoxia within minutes.',
+    ventilationImpact: 'Chest wall rigidity can make bag-valve-mask (BVM) ventilation and rescue breathing difficult. Difficulty ventilating can have other causes and needs immediate emergency assessment.',
     triggers: [
       'Rapid intravenous injection or concentrated inhalation of illicit synthetic fentanyl or potent analogues (e.g., alfentanil, sufentanil, carfentanil)',
       'High dose or high rate of administration overwhelming central inhibitory interneurons',
@@ -402,31 +488,31 @@ export const WOODEN_CHEST_SYNDROME = {
   ],
   emergencyGuidance: [
     '1. Call 911 immediately: Request urgent emergency medical services / Advanced Life Support for severe chest rigidity and suspected synthetic opioid overdose.',
-    '2. Give naloxone: Administer first dose immediately (4 mg nasal or 0.4–2 mg IV/IM); if chest wall remains rigid and airflow is blocked after 60–90 seconds, give an immediate repeat naloxone dose.',
-    '3. Rescue breathing (1 breath every 5s): Perform vigorous two-handed jaw thrust and attempt rescue breathing (1 breath every 5 seconds) as chest wall rigidity relents.',
+    '2. Give naloxone for a suspected opioid overdose, following the product label. For naloxone nasal spray, repeat with a new device every 2–3 minutes if breathing is slow, shallow, or absent, or becomes abnormal again. Alternate nostrils.',
+    '3. Rescue breathing (1 breath every 5s) only as trained or directed by 911. If the person is unresponsive and not breathing normally, follow the dispatcher’s CPR instructions and use an AED if available. Never delay CPR to use a timer.',
     '4. Left recovery position: Place into left recovery position once breathing resumes to protect airway and prevent aspiration.',
     '5. Stay with them: Stay with the person continuously until emergency medical personnel arrive.',
-    'Emergency Medical Services (EMS) / Hospital ED Procedure: In refractory prehospital or emergency department settings, definitive hospital management requires rapid sequence endotracheal intubation (RSI) and neuromuscular blockade (e.g., succinylcholine or rocuronium) to relax the chest wall.',
+    'Emergency Medical Services (EMS) / Hospital ED Procedure: Trained clinicians assess the cause of breathing difficulty and select airway treatment using their clinical protocols. Bystanders should report observed signs and follow dispatcher instructions.',
   ],
   immediateClinicalResponse: {
     priorityOrder: [
       '1. Call 911 immediately: Request Advanced Life Support (ALS) for rigid airway and anoxia.',
-      '2. Give naloxone immediately: Administer high-dose naloxone (repeat immediately if chest wall remains rigid).',
-      '3. Rescue breathing (1 breath every 5s): Two-handed jaw thrust, prepare for rescue breaths.',
+      '2. Give naloxone immediately for a suspected opioid overdose. Follow the product’s repeat-dose instructions; nasal spray doses are repeated every 2–3 minutes if breathing remains abnormal.',
+      '3. Support breathing as trained or directed by 911; follow CPR instructions for an unresponsive person who is not breathing normally.',
       '4. Left recovery position: Roll onto left side once breathing resumes to protect airway against aspiration.',
       '5. Stay with them: Monitor continuously until emergency personnel arrive.',
-      'EMS / Hospital ED Procedure: In refractory cases, ALS/hospital personnel perform neuromuscular blockade (succinylcholine or rocuronium) with rapid sequence intubation (RSI).',
+      'EMS / Hospital ED Procedure: Trained emergency clinicians assess breathing difficulty and provide airway treatment using clinical protocols.',
     ],
-    naloxoneDosing: 'Administer high-dose naloxone: give 4 mg intranasal or 0.4–2 mg IV/IM naloxone immediately. If chest wall remains rigid and rescue breaths cannot be delivered after 60–90 seconds, IMMEDIATELY repeat naloxone dose. High central opioid receptor occupancy requires prompt, aggressive displacement.',
-    airwayManagement: 'Perform vigorous two-handed jaw thrust to open the supraglottic space. Attempt rescue breathing (1 breath every 5 seconds) with bag-valve-mask or pocket mask. Place in left recovery position once breathing resumes; stay with them continuously. Do not delay repeat naloxone while struggling with airway.',
-    emsRole: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Paramedics and ALS/hospital medical teams manage acute refractory wooden chest syndrome. In prehospital/ED refractory cases, definitive hospital management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
-    hospitalEmsProcedure: 'Emergency Medical Services (EMS) / Hospital ED Procedure: In prehospital/ED refractory cases, definitive hospital management requires neuromuscular blockade (e.g., succinylcholine or rocuronium) with rapid sequence endotracheal intubation (RSI) to relax the chest wall.',
-    contraindications: 'Do not rely solely on rescue breathing without naloxone, as physical chest wall rigidity and closed vocal cords prevent air from entering lungs.',
+    naloxoneDosing: 'Give naloxone for a suspected opioid overdose, following the product label. Repeat nasal spray every 2–3 minutes with a new device in the other nostril if breathing remains slow, shallow, or absent, or becomes abnormal again. Stiffness alone is not a reason to shorten the labeled interval.',
+    airwayManagement: 'Tell 911 immediately if breaths are not going in. Follow dispatcher instructions for CPR and breathing support; use airway techniques only as trained. Place in the recovery position once normal breathing returns and stay until emergency help takes over.',
+    emsRole: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Trained emergency clinicians assess the cause of breathing difficulty and select airway management using clinical protocols. This tool does not diagnose chest wall rigidity or prescribe a procedure.',
+    hospitalEmsProcedure: 'Emergency Medical Services (EMS) / Hospital ED Procedure: Advanced airway treatment is provided by trained clinicians according to their protocols and assessment.',
+    contraindications: 'Do not delay emergency help, CPR, or breathing support while waiting for naloxone to work. Difficulty ventilating alone does not establish its cause.',
   },
   evidenceBase: [
-    { organization: 'AHA', title: 'Cardiac Arrest in Opioid Overdose and Chest Wall Rigidity Guidelines', year: 2023 },
-    { organization: 'ACMT', title: 'Fentanyl-Induced Chest Wall Rigidity: Clinical Toxicologic Mechanisms', year: 2022 },
-    { organization: 'SAMHSA', title: 'Overdose Prevention and Response Toolkit', year: 2023 },
+    { organization: 'FDA', title: 'NARCAN Nasal Spray: Dosage and Administration / Instructions for Use', year: 2019, url: 'https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/208411Orig1s002lbl.pdf' },
+    { organization: 'AHA', title: 'Opioid-Associated Emergency for Lay Responders Algorithm', year: 2020, url: 'https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2024-Algorithms/Algorithm-Opioid-Lay-Responder-200615.pdf' },
+    { organization: 'SAMHSA', title: 'Overdose Prevention and Response Toolkit (updated May 2026)', year: 2026, url: 'https://library.samhsa.gov/sites/default/files/overdose-prevention-response-kit-pep23-03-00-001.pdf' },
   ],
 };
 
@@ -637,10 +723,14 @@ export const XYLAZINE_SEDATION_MANAGEMENT = {
  */
 function generateClinicalComparisonRecommendation(formA, formB) {
   // Nalmefene vs Naloxone
-  if (formA.id === 'nalmefene_nasal_3mg' || formB.id === 'nalmefene_nasal_3mg') {
-    const nalmefene = formA.id === 'nalmefene_nasal_3mg' ? formA : formB;
-    const other = formA.id === 'nalmefene_nasal_3mg' ? formB : formA;
-    return `Clinical Guidance: Standard naloxone (${other.dose}) is strongly preferred for community bystander reversal over nalmefene (${nalmefene.dose}). While nalmefene offers extended terminal half-life (~11.4h), it causes severe, intractable precipitated withdrawal lasting 12–24+ hours that cannot be relieved with opioids, drastically increasing medical distress and trauma. Reserve nalmefene for specialized clinical settings with confirmed continuous inpatient monitoring.`;
+  const isNalmefene = (f) => f.genericName === 'Nalmefene Hydrochloride';
+  if (isNalmefene(formA) && isNalmefene(formB)) {
+    return `Clinical Guidance: ${formA.brandName} and ${formB.brandName} are both long-acting nalmefene products (terminal half-life ${formA.eliminationHalfLifeMinutes.text} vs ${formB.eliminationHalfLifeMinutes.text}). Precipitated withdrawal after either can last many hours; standard naloxone plus rescue breathing remains the preferred community first-line option.`;
+  }
+  if (isNalmefene(formA) || isNalmefene(formB)) {
+    const nalmefene = isNalmefene(formA) ? formA : formB;
+    const other = isNalmefene(formA) ? formB : formA;
+    return `Clinical Guidance: Standard naloxone (${other.dose}) is strongly preferred for community bystander reversal over nalmefene (${nalmefene.brandName}, ${nalmefene.dose}). Nalmefene has a much longer terminal half-life (${nalmefene.eliminationHalfLifeMinutes.text}), so precipitated withdrawal can persist for many hours and cannot be relieved with opioids, increasing medical distress and trauma. Reserve nalmefene for settings that can provide extended monitoring.`;
   }
 
   // 8mg vs 4mg Naloxone
@@ -792,7 +882,7 @@ export function evaluateOverdoseRiskScenario(scenario) {
     ? { type: scenario.toLowerCase().trim() }
     : (scenario && typeof scenario === 'object' ? scenario : {});
 
-  // Detect Wooden Chest Syndrome
+  // Route observations to urgent help without treating them as a diagnosis.
   if (
     norm.type === 'wooden_chest' ||
     norm.type === 'wooden_chest_syndrome' ||
@@ -803,17 +893,17 @@ export function evaluateOverdoseRiskScenario(scenario) {
   ) {
     return {
       scenarioId: 'wooden_chest_syndrome',
-      scenarioTitle: 'Wooden Chest Syndrome (Fentanyl-Induced Muscle Rigidity)',
+      scenarioTitle: 'Breathing Difficulty / Possible Chest Wall Rigidity',
       severity: 'critical',
       emergencyEMSRequired: true,
-      primaryAction: 'Call 911 immediately, give naloxone, rescue breathing (1 breath every 5s), left recovery position, stay with them. Request Advanced Life Support for severe chest wall rigidity. If chest wall remains rigid and positive-pressure airflow is blocked, repeat naloxone within 60–90 seconds.',
-      naloxoneGuidance: 'High-dose naloxone: give 4 mg intranasal or 0.4–2 mg IV/IM immediately. Repeat immediately if rigidity persists and positive-pressure ventilation remains blocked.',
-      airwayGuidance: 'Perform vigorous jaw thrust. Attempt rescue breathing (1 breath every 5 seconds). Place in left recovery position once breathing resumes; stay with them continuously. Note: EMS/ED hospital procedure for refractory rigidity includes advanced neuromuscular blockade (succinylcholine/rocuronium) and endotracheal intubation.',
+      primaryAction: 'Call 911 immediately, give naloxone for a suspected opioid overdose, support breathing with rescue breathing or CPR as directed by 911, use the recovery position once breathing normally, and stay with them. Tell the dispatcher if breaths are not going in. Repeat nasal naloxone every 2–3 minutes with a new device if breathing remains slow, shallow, or absent, following the product label.',
+      naloxoneGuidance: WOODEN_CHEST_SYNDROME.immediateClinicalResponse.naloxoneDosing,
+      airwayGuidance: WOODEN_CHEST_SYNDROME.immediateClinicalResponse.airwayManagement,
       warnings: [
-        'Do not delay repeat naloxone to struggle with rescue breathing alone: vocal cord closure and rigid intercostals physically block positive pressure airflow.',
-        'Typically triggered by rapid IV injection or high-concentration inhalation of synthetic fentanyl.',
+        'Difficulty ventilating can have several causes. This tool cannot diagnose fentanyl-related chest rigidity; report the signs to 911.',
+        'Do not delay CPR or emergency help to use a timer or wait for naloxone to work.',
       ],
-      monitoringProtocol: 'Continuous intensive care monitoring post-resuscitation. High risk of immediate hypoxic brain injury if rigidity is not reversed in <3 minutes.',
+      monitoringProtocol: 'Keep watching breathing and stay with the person until emergency help takes over, even if they wake up.',
       recommendedFormulation: 'naloxone_nasal_4mg',
       referenceGuide: WOODEN_CHEST_SYNDROME,
     };

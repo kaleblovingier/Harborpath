@@ -11,7 +11,14 @@ import {
   recommendForOlderAdults,
   recommendForStimulants,
   recommendForCoOccurring,
+  buildCareRoutes,
+  REENTRY_TRANSITION_INPUT,
 } from './populationHelpers.js';
+import { NEVER_USE_ALONE, hotlinesById } from '../content/hotlines.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetNavigatorState);
 
 // Valid SAMHSA filter codes for Dimension 6 validation and chip display
 const PAYMENT_OPTIONS = [
@@ -842,7 +849,7 @@ export function evaluateAsamCare(answers = {}) {
     redFlags.push(
       t(
         'nav.redflag.acute_infection',
-        'Urgent Biomedical Warning (Fever, Severe Wound, or Systemic Infection Risk): Fever, chills, spreading redness, black/necrotic tissue, chest pain, or shortness of breath can signal life-threatening endocarditis, osteomyelitis, sepsis, or deep tissue infection. Seek immediate hospital evaluation (HI) or urgent medical/wound care (#/health). Under EMTALA, hospital emergency rooms must evaluate and stabilize you regardless of insurance or ability to pay.',
+        'Urgent Biomedical Warning (Fever, Severe Wound, or Systemic Infection Risk): Fever, chills, spreading redness, black/necrotic tissue, chest pain, or shortness of breath can signal life-threatening endocarditis, osteomyelitis, sepsis, or deep tissue infection. Seek immediate hospital evaluation, including hospital inpatient care (HI), or urgent medical/wound care (#/health). Under EMTALA, hospital emergency rooms must evaluate and stabilize you regardless of insurance or ability to pay.',
       ),
     );
     clinicalNotes.push(
@@ -1039,7 +1046,7 @@ export function evaluateAsamCare(answers = {}) {
     clinicalNotes.push(
       t(
         'nav.note.telehealth',
-        'Telehealth Access (SAMHSA / DEA Telemedicine Flexibilities): Under federal rules, clinicians can initiate buprenorphine (BU) and provide outpatient counseling via audio-video or audio-only telehealth visits (code TELE) without requiring an in-person exam first.',
+        'Telehealth Access (DEA rules, as of late 2026; code TELE): Outpatient counseling can be offered by video or phone, and buprenorphine for opioid use disorder can be started by telehealth without an in-person visit. Temporary DEA/HHS telemedicine flexibilities run through Dec. 31, 2026. Separately, a permanent DEA rule (21 CFR § 1306.51, in effect since the end of 2025) allows starting it by video or audio-only phone visit for an initial supply of up to 6 months after a state prescription-monitoring (PDMP) check; after that, continued prescribing needs an in-person exam or another permitted form of telemedicine, such as a video visit. State rules and individual prescribers may be stricter, and federal rules may change after 2026.',
       ),
     );
   }
@@ -1143,6 +1150,82 @@ export function evaluateAsamCare(answers = {}) {
     whyFit: summary,
     whatNext: clinicalNotes,
   };
+}
+
+/**
+ * Pure function returning the Phase 1 population care routes (pregnancy /
+ * postpartum, teens & young adults, re-entry after incarceration, xylazine /
+ * medetomidine) that apply to the navigator's answers. The re-entry route is
+ * built on evaluateTransitionRisk() so its codes match the transition engine.
+ * Runs entirely in memory; links carry SAMHSA codes only.
+ *
+ * @param {object} [answers]
+ * @returns {ReturnType<typeof buildCareRoutes>}
+ */
+export function getPopulationCareRoutes(answers = {}) {
+  // Same normalization as evaluateAsamCare(), so each route lines up with the
+  // pathway card evaluatePopulationPathways() shows for these answers.
+  const substances = normalizeSubstances(answers?.substances);
+  if (answers?.xylazine) substances.add('xylazine');
+  const population = VALID_POPULATIONS.has(answers?.population) ? answers.population : '';
+  const withdrawalRisk = ['none', 'mild', 'moderate', 'severe'].includes(answers?.withdrawalRisk)
+    ? answers.withdrawalRisk
+    : 'none';
+  const biomedical = ['none', 'pregnant', 'chronic', 'acute_infection'].includes(answers?.biomedical)
+    ? answers.biomedical
+    : answers?.pregnant || answers?.pregnancy
+      ? 'pregnant'
+      : 'none';
+  const transition = population === 'CJ' ? evaluateTransitionRisk(REENTRY_TRANSITION_INPUT) : undefined;
+  return buildCareRoutes(
+    { ...answers, substances: [...substances], population, withdrawalRisk, biomedical },
+    { transition },
+  );
+}
+
+/** The answer-specific part of a pathway card: urgent note, notes, narrower searches. */
+function careRouteAddition(route) {
+  if (!route) return null;
+  const [first, ...rest] = route.notes;
+  const urgentNote = route.urgent && first
+    ? h('div', { class: 'callout callout-warn' }, h('p', { class: 'callout-title' }, icon('alert'), first))
+    : null;
+  const notes = urgentNote ? rest : route.notes;
+  return h(
+    'div',
+    { class: 'care-route', dataset: { route: route.id } },
+    urgentNote,
+    h('p', { class: 'label' }, t('nav.route.for_you', 'For your answers:')),
+    notes.length ? ul(notes) : null,
+    route.neverUseAlone
+      ? p(
+          t('nav.route.nua', 'If no one can be with you, call Never Use Alone: '),
+          tel(NEVER_USE_ALONE.number, NEVER_USE_ALONE.label),
+        )
+      : null,
+    h(
+      'p',
+      { class: 'actions' },
+      route.links.map((l) =>
+        h('a', { class: 'btn btn-secondary btn-small', href: l.href }, icon('search'), `${l.label} (${l.codes.join(', ')})`),
+      ),
+      route.extraLinks.map((l) => h('a', { class: 'btn btn-ghost btn-small', href: l.href }, l.label)),
+    ),
+    fine(t('nav.route.sources', 'Sources: {sources}', { sources: route.sources })),
+  );
+}
+
+/** SAMHSA helpline and 988, read from the shared hotline list. */
+function careRouteHelpLine() {
+  const [samhsa, lifeline] = hotlinesById('samhsa', '988');
+  if (!samhsa || !lifeline) return null;
+  return fine(
+    t('nav.route.help', 'Questions about any route? Call the free, confidential SAMHSA National Helpline (24/7, English and Spanish): '),
+    tel(samhsa.call.number, samhsa.call.label),
+    t('nav.route.help_988', '. In a mental health crisis, call or text '),
+    tel(lifeline.call.number, '988'),
+    '.',
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -1367,6 +1450,12 @@ export function careNavigatorView({ query } = {}) {
         )
       : null;
 
+    // Answer-specific additions (narrower searches, urgent callouts) shown
+    // inside the matching pathway card. Links carry SAMHSA codes only.
+    const careRoutesByPathway = new Map(
+      getPopulationCareRoutes(answers).map((route) => [route.pathwayId, route]),
+    );
+
     const populationPathwaysBlock = result.populationPathways?.length
       ? h(
           'div',
@@ -1399,6 +1488,7 @@ export function careNavigatorView({ query } = {}) {
                 Array.isArray(pathway.clinicalActions) && pathway.clinicalActions.length
                   ? ul(pathway.clinicalActions)
                   : null,
+                careRouteAddition(careRoutesByPathway.get(pathway.id)),
                 h(
                   'ul',
                   { class: 'chips' },
@@ -1460,6 +1550,7 @@ export function careNavigatorView({ query } = {}) {
               ),
             ),
           ),
+          careRouteHelpLine(),
         )
       : null;
 

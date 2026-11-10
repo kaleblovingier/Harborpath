@@ -245,7 +245,7 @@ describe('Deterministic Triage & Crisis / Overdose Red-Flag Interception', () =>
     assert.doesNotMatch(stripped, /\blocalStorage\b|\bsessionStorage\b/, 'guidedNavigator.js must never use web storage');
     assert.match(guidedSrc, /988/);
     assert.match(guidedSrc, /911/);
-    assert.match(guidedSrc, /877-696-1996|800-484-3731/);
+    assert.match(guidedSrc, /NEVER_USE_ALONE/);
     assert.match(guidedSrc, /800-972-0590/);
     assert.match(guidedSrc, /#\/overdose/);
 

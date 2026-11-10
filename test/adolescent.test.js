@@ -496,7 +496,7 @@ test('formatAdolescentSummaryText generates complete clinical report in English 
   assert.match(enReport, /Crisis Text Line: Text HOME to 741741/);
   assert.match(enReport, /Suicide & Crisis Lifeline: Call or Text 988/);
   assert.match(enReport, /The Trevor Project.*866-488-7386/);
-  assert.match(enReport, /Never Use Alone.*1-877-696-1996/);
+  assert.match(enReport, /Never Use Alone.*1-800-484-3731/);
   assert.match(enReport, /\[X\] Verify your state’s minor consent/);
   assert.match(enReport, /Inquire about Title X sliding scale discount\./);
 
@@ -632,7 +632,7 @@ test('adolescentCareView renders accessible WCAG 2.2 AA compliant structure and 
     assert.match(fullText, /Text HOME to 741741/);
     assert.match(fullText, /Call\/Text 988/);
     assert.match(fullText, /1-866-488-7386/); // Trevor Project
-    assert.match(fullText, /1-877-696-1996/); // Never Use Alone
+    assert.match(fullText, /1-800-484-3731/); // Never Use Alone (hotlines.js primary)
 
     // Test tab headers exist
     assert.match(fullText, /Overview/);

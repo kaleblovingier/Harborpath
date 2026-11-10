@@ -5,7 +5,7 @@ Run date: 2026-10-27, on Node 22.22. Run with `npm test`; the browser walkthroug
 ## Results (round 2)
 
 | Suite | Tests | Result |
-|---|---|---|
+| --- | --- | --- |
 | Existing suites (API, privacy headers, geocoding, providers, regions, clinical modules, i18n, SW) | 93 | ✅ pass |
 | `test/match.test.js`: matching-engine scenarios, Medicaid state rules, hostile input | 21 | ✅ pass |
 | `test/virtualProviders.test.js`: registry validation, review gate, public fields, endpoint | 7 | ✅ pass |
@@ -32,7 +32,7 @@ Run date: 2026-10-27, on Node 22.22. Run with `npm test`; the browser walkthroug
 ## Scenario coverage (from the brief)
 
 | Scenario | Covered by |
-|---|---|
+| --- | --- |
 | WA, Medicaid, stimulant use, outpatient, telehealth, limited transportation, evening hours | `match.test.js` "WA Medicaid stimulant scenario" |
 | Uninsured | "uninsured: free and sliding-scale programs rank above cash-only" |
 | Opioid use | "facilities stating they do not treat OUD are excluded", "requested medication … reported as missing" |

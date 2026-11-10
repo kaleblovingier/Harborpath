@@ -9,16 +9,22 @@
 export const ROUTE_PARAM_ALLOWLIST = Object.freeze({
   '/api/health': Object.freeze([]),
   '/api/meta': Object.freeze([]),
+  '/api/freshness': Object.freeze([]),
   '/api/geocode': Object.freeze(['q']),
   '/api/region': Object.freeze(['zip', 'lat', 'lng']),
   '/api/states': Object.freeze([]),
   '/api/state': Object.freeze(['code']),
   '/api/telehealth': Object.freeze(['state', 'kind', 'codes', 'page', 'lat', 'lng']),
-  '/api/treatment': Object.freeze(['lat', 'lng', 'radius', 'kind', 'codes', 'page', 'payer']),
+  // No `payer`: the browser matches coverage against each listing's payment
+  // codes, so the server never receives what coverage a visitor has.
+  '/api/treatment': Object.freeze(['lat', 'lng', 'radius', 'kind', 'codes', 'page']),
   '/api/health-centers': Object.freeze(['lat', 'lng', 'radius']),
   '/api/virtual-providers': Object.freeze(['state']),
   '/api/providers': Object.freeze(['type', 'lat', 'lng', 'radius', 'filter']),
   '/api/nearby-summary': Object.freeze(['lat', 'lng', 'radius']),
+  '/api/telemetry/event': Object.freeze([]),
+  '/api/admin/metrics': Object.freeze(['key']),
+  '/api/admin/metrics/reset': Object.freeze(['key']),
 });
 
 export const FORBIDDEN_PII_PARAM_NAMES = new Set([

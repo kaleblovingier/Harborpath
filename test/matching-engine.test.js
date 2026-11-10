@@ -157,8 +157,9 @@ describe('Search payload schemas (LocationSchema, TreatmentSearchSchema, Provide
     assert.equal(withOptional.radiusMiles, 25);
     assert.equal(withOptional.kind, 'sa');
     assert.equal(withOptional.page, 1);
-    assert.equal(withOptional.payer, 'Apple Health');
-    assert.deepEqual(withOptional.payerCodes.primary, ['MD']);
+    // Coverage is matched in the browser; a search never carries it.
+    assert.equal(withOptional.payer, undefined);
+    assert.equal(withOptional.payerCodes, undefined);
     assert.deepEqual(withOptional.accreditation, ['CARF', 'JC']);
     assert.deepEqual(withOptional.levelOfCare, ['IOP', 'OTP']);
 
@@ -332,13 +333,14 @@ describe('Insurance & In-Network Compatibility Engine', () => {
     assert.deepEqual(synthetic.paymentCodes, ['MD', 'PA', 'PI', 'SF']);
     assert.deepEqual(synthetic.accreditationCodes, ['CARF', 'SOTP']);
 
-    // parseTreatmentQuery supports optional payer parameter while keeping existing behavior intact
+    // parseTreatmentQuery ignores a payer parameter: coverage stays on the device
     const queryWithPayer = parseTreatmentQuery(
       q('lat=48.7519&lng=-122.4787&radius=25&codes=BU&payer=BCBS'),
       taxonomy,
     );
-    assert.equal(queryWithPayer.payer, 'BCBS');
-    assert.deepEqual(queryWithPayer.payerCodes.primary, ['PI']);
+    assert.equal(queryWithPayer.payer, undefined);
+    assert.equal(queryWithPayer.payerCodes, undefined);
+    assert.deepEqual(queryWithPayer.codes, ['BU']);
   });
 });
 

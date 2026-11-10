@@ -8,7 +8,12 @@
 // - American College of Emergency Physicians (ACEP) Post-Arrest & Overdose Care Consensus
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPostOverdoseState);
 
 /**
  * Clinical post-overdose response and survivorship framework.
@@ -191,8 +196,8 @@ export function evaluatePostOverdoseCare({
       level: 'HIGH',
       titleEn: 'Never Be Alone Post-Overdose',
       titleEs: 'Nunca se quede a solas tras una sobredosis',
-      textEn: 'Surviving an overdose leaves individuals at extreme vulnerability. If no companion can stay with you, call the Never Use Alone hotline (877-696-1996) or SafeSpot (800-972-0590).',
-      textEs: 'Sobrevivir a una sobredosis deja a la persona en extrema vulnerabilidad. Si no hay un acompañante disponible, llame a la línea Never Use Alone (877-696-1996) o a SafeSpot (800-972-0590).'
+      textEn: 'Surviving an overdose leaves individuals at extreme vulnerability. If no companion can stay with you, call the Never Use Alone hotline (' + NEVER_USE_ALONE.label + ') or SafeSpot (800-972-0590).',
+      textEs: 'Sobrevivir a una sobredosis deja a la persona en extrema vulnerabilidad. Si no hay un acompañante disponible, llame a la línea Never Use Alone (' + NEVER_USE_ALONE.label + ') o a SafeSpot (800-972-0590).'
     });
   }
 
@@ -285,7 +290,7 @@ export function formatPostOverdoseSummaryText(state, lang = 'en') {
  * Mounts the Post-Overdose Response view.
  */
 export function postOverdoseView(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';
@@ -575,5 +580,69 @@ function renderResponderSupportTab(container, isEs) {
     ])
   ]);
   container.appendChild(card);
+  const rhabdoCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Tiempo Inmóvil en Sobredosis, Rabdomiólisis y Síndrome Compartimental: ' : 'Overdose Down Time, Rhabdomyolysis & Compartment Syndrome: '),
+    h('span', {}, isEs
+      ? 'Permanecer inmóvil tras una sobredosis causa compresión muscular, orina color té/cola e insuficiencia renal aguda: '
+      : 'Prolonged immobilization on hard surfaces causes muscle compression, cola-colored urine, and acute kidney injury: '),
+    h('a', { href: '#/renal-care' }, isEs
+      ? 'Abrir Navegador de Rabdomiólisis y Salud Renal →'
+      : 'Open Rhabdomyolysis, Compartment Syndrome & Renal Care Navigator →')
+  ]);
+  container.appendChild(rhabdoCard);
+  const pulmonaryCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Edema Pulmonar Post-Naloxona y Broncoaspiración Química: ' : 'Post-Naloxone Pulmonary Edema (NCPE) & Aspiration Pneumonitis: '),
+    h('span', {}, isEs
+      ? 'El esputo rosado espumoso tras revertir una sobredosis indica edema pulmonar (requiere CPAP, NO más naloxona). Conozca la regla de 48h de aspiración: '
+      : 'Pink frothy sputum post-reversal indicates non-cardiogenic pulmonary edema (requires CPAP/O2, NOT more naloxone). Learn the 48h aspiration rule: '),
+    h('a', { href: '#/pulmonary-care' }, isEs
+      ? 'Abrir Navegador de Salud Pulmonar Post-Sobredosis →'
+      : 'Open Post-Overdose Pulmonary Care & NCPE Navigator →')
+  ]);
+  container.appendChild(pulmonaryCard);
+  const neurologyCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Lesión Cerebral Anóxica (EHI) y Recaída Tardía (LPHT): ' : 'Anoxic Brain Injury (HIE) & Delayed Relapse (DPHL): '),
+    h('span', {}, isEs
+      ? 'La apnea prolongada daña la corteza y los ganglios basales. Alerte a familiares sobre la recaída tardía (LPHT) de 2 a 40 días post-sobredosis: '
+      : 'Prolonged hypoxia causes cortical and basal ganglia injury. Alert survivors to delayed post-hypoxic leukoencephalopathy (DPHL) 2 to 40 days post-overdose: '),
+    h('a', { href: '#/neurology-care' }, isEs
+      ? 'Abrir Navegador de Salud Neurológica y Lesión Cerebral →'
+      : 'Open Neurological Health & Brain Injury Navigator →')
+  ]);
+  container.appendChild(neurologyCard);
+  const metabolicCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Descarte de Hipoglucemia (< 50 mg/dL) y Crisis Suprarrenal: ' : 'Rule-Out Hypoglycemia (< 50 mg/dL) & Adrenal Crisis: '),
+    h('span', {}, isEs
+      ? 'La hipoglucemia grave simula coma por sobredosis de opioides. Mida siempre la glucemia capilar y evalúe insuficiencia suprarrenal inducida por opioides (ISIO): '
+      : 'Severe hypoglycemia mimics opioid overdose coma. Always check capillary glucose immediately and evaluate for opioid-induced adrenal insufficiency (OIAI): '),
+    h('a', { href: '#/metabolic-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Metabólicas y Endocrinas →'
+      : 'Open Metabolic Emergencies & Adrenal Crisis Navigator →')
+  ]);
+  container.appendChild(metabolicCard);
+  const giCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Estreñimiento por Opioides (PAMORA), Body Packing e Isquemia Mesentérica: ' : 'Opioid Constipation (PAMORAs), Body Packing & Mesenteric Ischemia: '),
+    h('span', {}, isEs
+      ? 'El intestino nunca desarrolla tolerancia a los opioides (usar Senósidos + PEG 3350, evitar docusato solo). Evalúe filtración de paquetes ingeridos e isquemia mesentérica: '
+      : 'The gut never develops opioid tolerance (use Senna + PEG 3350, skip docusate alone). Evaluate internal drug packet concealment and mesenteric ischemia: '),
+    h('a', { href: '#/gi-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Gastrointestinales y EIO →'
+      : 'Open GI Emergencies, Pancreatitis & OIC Navigator →')
+  ]);
+  container.appendChild(giCard);
+  const icuCardioCard = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Intubación Post-Sobredosis (Sin Succinilcolina en Rabdomiólisis), Sedación UCI y Arritmias: ' : 'Post-Overdose Intubation (No Succinylcholine in Rhabdo), ICU Sedation & Arrhythmias: '),
+    h('span', {}, isEs
+      ? 'Evite paro hiperpotasémico por Succinilcolina tras inmovilización prolongada (usar Rocuronio), trate abstinencia ventilatoria por xilacina con Dexmedetomidina/Clonidina y evalúe QRS ancho o Torsades: '
+      : 'Prevent hyperkalemic arrest from Succinylcholine after prolonged down-time (use Rocuronium), treat xylazine ventilator withdrawal with Dexmedetomidine/Clonidine, and evaluate wide-QRS or Torsades: '),
+    h('a', { href: '#/icu-perioperative' }, isEs
+      ? 'Abrir Navegador de UCI, Intubación y Anestesia →'
+      : 'Open ICU, Safe RSI Intubation & Perioperative Navigator →'),
+    h('span', {}, ' · '),
+    h('a', { href: '#/cardiology-care' }, isEs
+      ? 'Abrir Navegador de Cardiología y Arritmias →'
+      : 'Open Cardiology & Arrhythmia Navigator →')
+  ]);
+  container.appendChild(icuCardioCard);
 }
 

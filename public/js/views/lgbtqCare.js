@@ -37,6 +37,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetLgbtqState);
 
 // ============================================================================
 // 1. Clinical Standards & Hormone Therapy Compatibility
@@ -835,18 +839,40 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
   root.append(tabPanel);
 
   // Footer Helplines
+  const doxyPrEpCard = h('div', { class: 'info-callout', role: 'note' },
+    h('strong', {}, isEs ? '¿Salud sexual afirmativa, Doxy-PEP o PrEP para VIH? ' : 'Affirming sexual health, Doxy-PEP or HIV PrEP? '),
+    h('span', {}, isEs
+      ? 'Explore las guías de Doxy-PEP de los CDC 2024, modalidades de PrEP (Truvada, Descovy, Apretude) y anticoncepción de emergencia: '
+      : 'Explore CDC 2024 Doxy-PEP guidelines, PrEP modalities (Truvada, Descovy, Apretude), and emergency contraception: '),
+    h('a', { href: '#/sexual-health' }, isEs
+      ? 'Abrir Navegador de Salud Sexual y Doxy-PEP →'
+      : 'Open Sexual Health & Doxy-PEP Navigator →')
+  );
+  root.append(doxyPrEpCard);
+
+  const ghbCallout = h('div', { class: 'info-callout mt-2', role: 'note' },
+    h('strong', {}, isEs ? '¿Uso de GHB/GBL en contextos de chemsex o fiestas? ' : 'GHB/GBL harm reduction in chemsex or party spaces? '),
+    h('span', {}, isEs
+      ? 'Explore el protocolo de triaje de coma por G-out, posición lateral de seguridad, dependencia física 24/7 y desintoxicación con baclofeno: '
+      : 'Explore G-out coma airway triage, lateral recovery position, 24/7 physical dependence, and BAP Baclofen detox protocols: '),
+    h('a', { href: '#/ghb-care' }, isEs
+      ? 'Abrir Navegador de GHB/GBL, Triaje de Coma y Abstinencia →'
+      : 'Open GHB, GBL & 1,4-BDO Harm Reduction, Coma Triage & Withdrawal Navigator →')
+  );
+  root.append(ghbCallout);
+
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'The Trevor Project (LGBTQ+ 24/7):' : 'The Trevor Project:'),
       h('span', {}, ' '),
-      tel('1-866-488-7386', { class: 'hotline-link' }),
+      tel('1-866-488-7386', null, { class: 'hotline-link' }),
       h('span', {}, ' | '),
-      sms('678678', { class: 'hotline-link' }, isEs ? 'Texto START al 678678' : 'Text START to 678678')
+      sms('678678', 'START', isEs ? 'Envíe START al 678678' : 'Text START to 678678', { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Trans Lifeline (Pares trans 24/7):' : 'Trans Lifeline:'),
       h('span', {}, ' '),
-      tel('1-877-565-8860', { class: 'hotline-link' })
+      tel('1-877-565-8860', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);

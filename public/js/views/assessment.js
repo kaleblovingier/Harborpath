@@ -1,6 +1,11 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+import { NEVER_USE_ALONE } from '../content/hotlines.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetAssessmentState);
 
 // ============================================================================
 // Clinical Constants & Validated Dimension Taxonomies
@@ -742,7 +747,7 @@ export function formatAssessmentReportText(state = inMemoryAssessmentState) {
     '24/7 IMMEDIATE CRISIS & OVERDOSE RESOURCES:',
     '• 988 Suicide & Crisis Lifeline: Call or text 988 (free, confidential, 24/7)',
     '• SAMHSA National Helpline: 1-800-662-4357 (treatment locator & referral, 24/7)',
-    '• Never Use Alone: 1-877-696-1996 (overdose prevention call while using)',
+    '• Never Use Alone: ' + NEVER_USE_ALONE.label + ' (overdose prevention call while using)',
     '• Overdose Emergency: If person is unresponsive, administer Naloxone (Narcan) and call 911.',
     '',
     'PATIENT RIGHTS & LEGAL PROTECTIONS:',
@@ -993,6 +998,7 @@ export function assessmentView({ query } = {}) {
       'Standard Induction Rule: Wait until the patient exhibits clear objective signs of withdrawal with a validated COWS score of >= 12–13 before administering the first sublingual test dose (typically 2–4 mg).',
       'COWS < 12 Management: Do not give standard buprenorphine. Comfort medications (clonidine 0.1–0.2 mg every 6 hours, ondansetron 4–8 mg, loperamide, ibuprofen) can relieve subjective misery while awaiting receptor clearance.',
       'Low-Dose Bernese Micro-Induction: When high-potency synthetic opioids (fentanyl) are present in the supply, lipid storage prolongs clearance. Bernese micro-dosing introduces microgram doses of buprenorphine (e.g. 0.2–0.5 mg daily) while full agonists continue, gradually saturating receptors over 7–10 days without triggering withdrawal.',
+      'CA Bridge High-Dose Protocol & Inpatient Pain: For acute hospital and ED inductions (8-16 mg initial dose) and acute surgical pain management on MOUD, see the Hospital Addiction & Patient Rights Guide (#/hospital-care).',
     ]),
     h('h3', null, '2. CIWA-Ar & Alcohol Withdrawal: Preventing Seizures & Delirium Tremens'),
     p(

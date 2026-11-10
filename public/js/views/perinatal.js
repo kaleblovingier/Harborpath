@@ -14,7 +14,9 @@
  *    - Postpartum Vulnerability Window: Precipitous loss of opioid tolerance postpartum;
  *      fatal overdose risk mitigation; take-home naloxone; early 1–3 week clinical follow-up.
  *    - Lactation Guidance: Breastfeeding encouraged and safe with MOUD (minimal breastmilk
- *      transfer) unless HIV positive or active untreated hepatitis C with cracked/bleeding nipples.
+ *      transfer). HIV: replacement feeding if not virally suppressed on ART; shared decision-making
+ *      for people on ART with sustained viral suppression (HHS Perinatal HIV Guidelines).
+ *      Hepatitis C: avoid only with cracked/bleeding nipples.
  * 2. Neonatal Opioid Withdrawal Syndrome (NOWS / NAS) & Eat, Sleep, Console (ESC) Model:
  *    - Shift from traditional Finnegan scoring to family-centered ESC approach.
  *    - Functional assessment pillars: Eat, Sleep, Console.
@@ -39,6 +41,10 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetPerinatalState);
 
 // ============================================================================
 // 1. Evidence-Based Clinical Guidelines (ACOG & SMFM)
@@ -241,8 +247,8 @@ const GUIDELINES_DATA = [
           es: 'Contraindicaciones médicas específicas',
         },
         detail: {
-          en: 'Breastfeeding is contraindicated ONLY in: 1) Maternal HIV infection; 2) Active untreated tuberculosis; 3) Active untreated Hepatitis C ONLY IF nipples are visibly cracked or bleeding (intact breastmilk does NOT transmit Hep C); or 4) Active illicit street drug use (street fentanyl, methamphetamine, cocaine) due to neonatal toxicity.',
-          es: 'La lactancia se contraindica ÚNICAMENTE en: 1) Infección materna por VIH; 2) Tuberculosis activa no tratada; 3) Hepatitis C activa SOLO si los pezones están agrietados o sangran (la leche intacta NO transmite hepatitis C); o 4) Consumo activo de drogas ilícitas de la calle.',
+          en: 'Breastfeeding is not recommended in: 1) Maternal HIV that is not virally suppressed on antiretroviral therapy (ART), where formula or banked pasteurized donor milk is recommended. Under current HHS Perinatal HIV Guidelines, people with HIV on ART with a sustained undetectable viral load should get patient-centered counseling and shared decision-making about formula, donor milk, or breastfeeding (transmission risk is under 1% but not zero), and those who choose to breastfeed should be supported by their HIV care team; 2) Active untreated tuberculosis; 3) Active untreated Hepatitis C ONLY IF nipples are visibly cracked or bleeding (intact breastmilk does NOT transmit Hep C); or 4) Active illicit street drug use (street fentanyl, methamphetamine, cocaine) due to neonatal toxicity.',
+          es: 'La lactancia no se recomienda en: 1) VIH materno sin supresión viral con tratamiento antirretroviral (TAR), en cuyo caso se recomienda fórmula o leche humana donada pasteurizada. Según las guías perinatales de VIH del HHS vigentes, las personas con VIH en TAR con carga viral indetectable sostenida deben recibir asesoramiento centrado en la persona y una decisión compartida sobre fórmula, leche donada o lactancia (el riesgo de transmisión es menor del 1 %, pero no cero), y quienes elijan amamantar deben recibir apoyo de su equipo de atención del VIH; 2) Tuberculosis activa no tratada; 3) Hepatitis C activa SOLO si los pezones están agrietados o sangran (la leche intacta NO transmite hepatitis C); o 4) Consumo activo de drogas ilícitas de la calle.',
         },
       },
     ],
@@ -959,8 +965,8 @@ export function formatPerinatalSummaryText(state = getPerinatalState()) {
     ? '• Vulnerabilidad Posparto: Pérdida marcada de tolerancia tras el parto; alto riesgo de sobredosis; recetar naloxona y cita temprana (1-3 sem).'
     : '• Postpartum Window: Loss of opioid tolerance postpartum; elevated overdose mortality; co-prescribe naloxone; follow-up at 1–3 weeks.');
   lines.push(isEs
-    ? '• Lactancia Materna: Recomendada y segura; mínima excreción en leche materna. Contraindicada solo en VIH, tuberculosis activa o Hep C con pezones sangrantes.'
-    : '• Lactation: Encouraged and safe; minimal milk transfer. Contraindicated only in HIV, active TB, or active Hep C with cracked/bleeding nipples.');
+    ? '• Lactancia Materna: Recomendada y segura; mínima excreción en leche materna. No se recomienda con VIH sin supresión viral (con VIH suprimido en TAR: decisión compartida), tuberculosis activa no tratada o Hep C con pezones sangrantes.'
+    : '• Lactation: Encouraged and safe; minimal milk transfer. Not recommended with HIV that is not virally suppressed (HIV suppressed on ART: shared decision-making), active untreated TB, or active Hep C with cracked/bleeding nipples.');
   lines.push('');
 
   // 2. ESC Newborn Care Model
@@ -1543,6 +1549,40 @@ export function perinatalView({ query } = {}) {
     );
 
     // Assemble View
+    
+    const ecBanner = h('div', { class: 'info-callout', role: 'note' }, [
+      h('strong', {}, isEs ? '¿Necesita anticoncepción de emergencia o prevención de ITS? ' : 'Need emergency contraception or STI post-exposure care? '),
+      h('span', {}, isEs
+        ? 'Consulte la guía de anticoncepción de emergencia (Plan B vs Ella vs DIU según peso) y Doxy-PEP: '
+        : 'Consult the emergency contraception guide (Plan B vs Ella vs IUD weight thresholds) and Doxy-PEP: '),
+      h('a', { href: '#/sexual-health' }, isEs
+        ? 'Abrir Navegador de Salud Sexual y Anticoncepción de Emergencia →'
+        : 'Open Sexual Health & Emergency Contraception Navigator →')
+    ]);
+    container.append(ecBanner);
+
+    const obEmergBanner = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+      h('strong', {}, isEs ? '¿Urgencia Obstétrica, Dosis Fraccionada en 3.er Trimestre, Cesárea en TMO o Modelo Comer-Dormir-Consolar (ESC)? ' : 'Acute Obstetric Emergency, 3rd-Trimester Split-Dosing, Cesarean Analgesia on MOUD, or Eat-Sleep-Console (ESC)? '),
+      h('span', {}, isEs
+        ? 'Protocolos ACOG/SMFM/ASAM/AAP para preeclampsia/desprendimiento placentario, prohibición de Nalbufina/Butorfanol, hemorragia posparto (sin Metilergonovina en HTA) y cuidados neonatales ESC: '
+        : 'ACOG/SMFM/ASAM/AAP protocols for preeclampsia/placental abruption, Nalbuphine/Butorphanol prohibition, postpartum hemorrhage (no Methergine in HTN/stimulants), and neonatal ESC care: '),
+      h('a', { href: '#/obstetric-emergencies' }, isEs
+        ? 'Abrir Navegador de Emergencias Obstétricas, TMO Periparto y Modelo ESC →'
+        : 'Open Obstetric Emergencies, Peripartum MOUD & Eat-Sleep-Console Navigator →')
+    ]);
+    container.append(obEmergBanner);
+
+    const pedExposureBanner = h('div', { class: 'info-callout mt-2', role: 'note' }, [
+      h('strong', {}, isEs ? '¿Ingestión Accidental Pediátrica, Almacenamiento Seguro o Toxicología Infantil? ' : 'Pediatric Accidental Exposure, Safe Storage or Child Toxicology? '),
+      h('span', {}, isEs
+        ? 'Protocolos de emergencia AAP/ACMT para ingestión de buprenorfina/metadona en niños, naloxona pediátrica, comestibles de cannabis y cajas de seguridad: '
+        : 'AAP/ACMT emergency protocols for toddler buprenorphine/methadone ingestion, pediatric naloxone, cannabis edibles, and lockboxes: '),
+      h('a', { href: '#/pediatric-exposures' }, isEs
+        ? 'Abrir Navegador de Exposiciones Pediátricas y Almacenamiento Seguro →'
+        : 'Open Pediatric Accidental Exposures & Safe Storage Navigator →')
+    ]);
+    container.append(pedExposureBanner);
+
     container.append(
       header,
       controlsBar,

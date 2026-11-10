@@ -38,6 +38,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetWorkplaceState);
 
 // ============================================================================
 // 1. Statutory Frameworks & Legal Standards
@@ -826,16 +830,27 @@ In accordance with ADA Title I and EEOC enforcement guidance, I request verifica
   root.append(tabPanel);
 
   // Crisis / Help Line Footer
+  const oshaSharpsCard = h('div', { class: 'info-callout', role: 'note' },
+    h('strong', {}, isEs ? '¿Lesión por objeto cortopunzante o pinchazo de aguja en el trabajo? ' : 'Workplace needle stick or sharps injury? '),
+    h('span', {}, isEs
+      ? 'La Norma OSHA 29 CFR § 1910.1030 garantiza evaluación médica inmediata y PEP completa sin ningún costo para el trabajador: '
+      : 'OSHA 29 CFR § 1910.1030 mandates immediate medical evaluation and complete 28-day PEP at 100% employer cost: '),
+    h('a', { href: '#/needle-exposure' }, isEs
+      ? 'Abrir Protocolo de Pinchazos y Derechos OSHA →'
+      : 'Open Needle Stick & OSHA PEP Rights →')
+  );
+  root.append(oshaSharpsCard);
+
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Ayuda SAMHSA:' : 'SAMHSA National Helpline:'),
       h('span', {}, ' '),
-      tel('800-662-4357', { class: 'hotline-link' })
+      tel('800-662-4357', null, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Crisis 988:' : '988 Suicide & Crisis Lifeline:'),
       h('span', {}, ' '),
-      tel('988', { class: 'hotline-link' })
+      tel('988', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);

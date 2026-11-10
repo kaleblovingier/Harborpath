@@ -21,6 +21,10 @@ import {
   tocNav,
   emergencyCallout,
 } from './common.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetHarmReductionState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 
@@ -485,6 +489,38 @@ export function buildXylazineActionCard({ plainLanguage = false } = {}) {
         class: 'btn btn-ghost btn-small',
         href: '#/medications?substance=xylazine',
       }, icon('pill'), tr('Xylazine pharmacology & interactions', 'Farmacología e interacciones de la xilacina')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/adulterant-care',
+      }, icon('shield'), tr('Clinical adulterants & sedation triage guide', 'Guía clínica de adulterantes y triaje de sedación')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/polysubstance-care',
+      }, icon('shield'), tr('Polysubstance synergy & airway guide', 'Guía de sinergia de polisustancias y vía aérea')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/nightlife-care',
+      }, icon('shield'), tr('Nightlife, club drugs & reagent testing', 'Ocio nocturno, drogas de club y reactivos')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/cannabis-care',
+      }, icon('shield'), tr('Cannabinoid hyperemesis (CHS) & concentrates', 'Hiperémesis cannabinoide (SHC) y concentrados')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/viral-hepatitis',
+      }, icon('shield'), tr('Hepatitis C cure, DAA & HIV PrEP/PEP', 'Curación VHC, AAD y PrEP/PEP VIH')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/nicotine-care',
+      }, icon('heart'), tr('Tobacco, nicotine & vaping recovery', 'Cesación de tabaco, nicotina y vapeo')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/benzodiazepine-care',
+      }, icon('shield'), tr('Benzodiazepines, Ashton taper & BIND', 'Benzodiazepinas, desescalada Ashton y BIND')),
+      h('a', {
+        class: 'btn btn-secondary btn-small',
+        href: '#/adhd-care',
+      }, icon('activity'), tr('ADHD, neurodiversity & fake pill safety', 'TDAH, neurodiversidad y pastillas falsas')),
     ),
   );
 }

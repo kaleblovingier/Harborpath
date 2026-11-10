@@ -5,7 +5,8 @@
 // and strict CSP / DOM security invariants (zero innerHTML, zero inline style=,
 // and vercel.json header parity with SECURITY_HEADERS).
 
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
@@ -21,6 +22,49 @@ const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const SRC_DIR = path.join(ROOT_DIR, 'src');
+
+const SW_PATH = path.join(PUBLIC_DIR, 'sw.js');
+const BUILD_RE = /const BUILD = '([^']*)';/;
+
+/** URLs listed in `const <name> = [ ... ];` inside the service worker source. */
+export function shellList(swText, name) {
+  const match = swText.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\];`));
+  return match ? [...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1]) : null;
+}
+
+/**
+ * Content hash over every offline shell file (APP_SHELL then ELECTIVE_SHELL,
+ * each URL with its bytes). The worker carries it in its cache name, so any
+ * change to a saved file makes browsers save a fresh, complete copy.
+ */
+export function computeShellHash(swText = readFileSync(SW_PATH, 'utf8')) {
+  const hash = createHash('sha256');
+  const seen = new Set();
+  for (const urlPath of [...(shellList(swText, 'APP_SHELL') ?? []), ...(shellList(swText, 'ELECTIVE_SHELL') ?? [])]) {
+    if (seen.has(urlPath)) continue;
+    seen.add(urlPath);
+    const full = path.join(PUBLIC_DIR, urlPath === '/' ? 'index.html' : urlPath.replace(/^\//, ''));
+    hash.update(`${urlPath}\0`);
+    hash.update(existsSync(full) && statSync(full).isFile() ? readFileSync(full) : Buffer.from('\0missing'));
+    hash.update('\0');
+  }
+  return hash.digest('hex').slice(0, 12);
+}
+
+/** The BUILD value currently written in public/sw.js, or null. */
+export function readSwBuild(swText = readFileSync(SW_PATH, 'utf8')) {
+  return swText.match(BUILD_RE)?.[1] ?? null;
+}
+
+/** Rewrite `const BUILD = '...'` in public/sw.js to the current shell hash. */
+export function stampServiceWorker() {
+  const swText = readFileSync(SW_PATH, 'utf8');
+  if (!BUILD_RE.test(swText)) throw new Error("public/sw.js has no `const BUILD = '...';` line");
+  const build = computeShellHash(swText);
+  const next = swText.replace(BUILD_RE, `const BUILD = '${build}';`);
+  if (next !== swText) writeFileSync(SW_PATH, next);
+  return { build, changed: next !== swText };
+}
 
 function walkFiles(dir, extFilter = null) {
   const out = [];
@@ -176,6 +220,17 @@ export async function runBuildCheck({ silent = false } = {}) {
             : `Missing ELECTIVE_SHELL files: ${missingElective.join(', ')}`,
         );
       }
+
+      // Offline cache version: must match the content of the shell files.
+      const build = readSwBuild(swText);
+      const expected = computeShellHash(swText);
+      record(
+        'app-shell:build-hash',
+        build === expected,
+        build === expected
+          ? `sw.js BUILD ${build} matches the shell content`
+          : `sw.js BUILD is ${build ?? 'missing'} but the shell content hashes to ${expected}; run \`npm run stamp:sw\``,
+      );
     }
   }
 
@@ -204,6 +259,7 @@ export async function runBuildCheck({ silent = false } = {}) {
   const publicSourceFiles = walkFiles(PUBLIC_DIR, /\.(js|html|svg)$/);
   const innerHtmlViolations = [];
   const inlineStyleViolations = [];
+  const textareaPropViolations = [];
 
   for (const file of publicSourceFiles) {
     const rel = path.relative(ROOT_DIR, file).split(path.sep).join('/');
@@ -213,6 +269,9 @@ export async function runBuildCheck({ silent = false } = {}) {
     }
     if (/\bstyle\s*=/i.test(text)) {
       inlineStyleViolations.push(rel);
+    }
+    if (/\.js$/.test(file) && /h\(\s*['"]textarea['"]\s*,\s*\{[^}]*\bvalue\s*:/s.test(text)) {
+      textareaPropViolations.push(rel);
     }
   }
 
@@ -230,6 +289,14 @@ export async function runBuildCheck({ silent = false } = {}) {
     inlineStyleViolations.length === 0
       ? `0 inline style= attributes across ${publicSourceFiles.length} public files`
       : `Violations in: ${inlineStyleViolations.join(', ')}`,
+  );
+
+  record(
+    'security:dom-clean-textarea',
+    textareaPropViolations.length === 0,
+    textareaPropViolations.length === 0
+      ? `0 textarea value prop violations across ${publicSourceFiles.length} public files`
+      : `Violations in: ${textareaPropViolations.join(', ')}`,
   );
 
   const vercelPath = path.join(ROOT_DIR, 'vercel.json');
@@ -281,6 +348,10 @@ export async function runBuildCheck({ silent = false } = {}) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  if (process.argv.includes('--fix')) {
+    const { build, changed } = stampServiceWorker();
+    console.log(`public/sw.js BUILD ${changed ? 'updated to' : 'already'} ${build}`);
+  }
   runBuildCheck({ silent: false })
     .then((res) => {
       if (!res.ok) process.exit(1);

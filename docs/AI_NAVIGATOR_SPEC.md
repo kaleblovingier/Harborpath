@@ -1,9 +1,11 @@
 # Privacy-First Guided & Conversational Navigator Spec for HarborPath
 
 ## Goal
+
 Make HarborPath’s clinical and harm-reduction tools accessible to more individuals through a step-by-step and conversational guided navigator (`public/js/views/guidedNavigator.js`) that routes people to real treatment providers, withdrawal safety guidance, evidence-based medications, and 24/7 crisis lines while preserving every HarborPath privacy guarantee.
 
 ## Non-Negotiable Constraints & Invariants
+
 - **Strict CSP (`default-src 'self'`)**: Zero third-party origins, zero external LLM APIs, and zero network calls from the guided navigator.
 - **100% Client-Side Deterministic Triage**: All free-text keyword analysis, symptom scoring, and ASAM level-of-care synthesis run deterministically in browser RAM by composing existing pure functions.
 - **No Persistent Storage or Transmission of Inputs**: Nothing typed or selected in `guidedNavigator.js` is sent to any server or written to `localStorage`, `sessionStorage`, `indexedDB`, or cookies.
@@ -38,13 +40,13 @@ flowchart TD
    - Deterministic red-flag interceptor that inspects a string or structured input object (`{ text, freeText, flags, overdose, crisis, usingAlone, mentalHealth }`).
    - **Overdose / Unresponsive Emergency** (`category: 'overdose'`, `severity: 'critical'`):
      - Triggered by keywords (`overdose`, `not breathing`, `slow breathing`, `blue lips`, `unresponsive`, `won't wake up`, `fentanyl poisoning`, `narcan now`, `naloxone now`, `sobredosis`, `no respira`) or `flags: ['overdose']`.
-     - Immediately surfaces actions for **Call 911 Immediately** (`tel:911`), **Open Step-by-Step Overdose & 2-Minute Naloxone Timer** (`#/overdose`), **Never Use Alone (`877-696-1996`)**, and **SafeSpot Overdose Prevention Line (`800-972-0590`)**, plus SAMHSA code `['NOE']`.
+     - Immediately surfaces actions for **Call 911 Immediately** (`tel:911`), **Open Step-by-Step Overdose & 2-Minute Naloxone Timer** (`#/overdose`), **Never Use Alone (`1-800-484-3731`)**, and **SafeSpot Overdose Prevention Line (`800-972-0590`)**, plus SAMHSA code `['NOE']`.
    - **Suicide / Self-Harm / Acute Mental Health Crisis** (`category: 'crisis'`, `severity: 'critical'`):
      - Triggered by keywords (`suicide`, `suicidal`, `kill myself`, `end my life`, `self-harm`, `hurt myself`, `want to die`, `unsafe with myself`, `suicidio`, `hacerme daño`) or `mentalHealth: 'severe_crisis'`.
      - Immediately surfaces **Call or Text 988 Suicide & Crisis Lifeline** (`tel:988`), **Call 911** (`tel:911`), **SAMHSA National Helpline (`1-800-662-4357`)**, and **View All 24/7 Crisis & Community Lines** (`#/crisis`), plus SAMHSA codes `['WI', 'PEOFF', 'MHSU']`.
    - **Solo Use / Overdose Prevention** (`category: 'solo_use'`, `severity: 'high'`):
      - Triggered by keywords (`using alone`, `about to use alone`, `spot me`, `solo`, `usar a solas`) or `usingAlone: true`.
-     - Routes to **Never Use Alone (`877-696-1996`)**, **SafeSpot (`800-972-0590`)**, `#/harm-reduction`, and `#/overdose`, plus SAMHSA codes `['NOE', 'BU']`.
+     - Routes to **Never Use Alone (`1-800-484-3731`)**, **SafeSpot (`800-972-0590`)**, `#/harm-reduction`, and `#/overdose`, plus SAMHSA codes `['NOE', 'BU']`.
    - **No Acute Red Flag**:
      - Returns `{ intercepted: false, category: 'none', severity: 'none', actions: [], codes: [] }`.
 
@@ -58,6 +60,7 @@ flowchart TD
      - Population helpers from `public/js/views/populationHelpers.js` (`recommendForPregnancy`, `recommendForYouth`, `recommendForJusticeInvolved`, `recommendForOlderAdults`, `recommendForStimulants`, `recommendForXylazine`, `recommendForCoOccurring`)
      - Medication references from `public/js/views/medications.js` (`MEDICATIONS`)
    - Returns:
+
      ```js
      {
        crisisIntercept,
@@ -93,12 +96,13 @@ flowchart TD
 ## Implementation Options (Ranked by Privacy)
 
 | Rank | Approach | Privacy | Capability | Status |
-|------|----------|---------|------------|--------|
+| ------ | ---------- | --------- | ------------ | -------- |
 | 1 | **Deterministic Client-Side Clinical Composition (`guidedNavigator.js`)** | **Highest** | **High clinical precision, zero hallucination risk** | **Implemented MVP** |
 | 2 | Fully on-device WebLLM / Transformers.js | High | Moderate | Future optional layer; stays inside CSP only if model is bundled/self-hosted |
 | 3 | External Cloud LLM API | Lowest | High | **Rejected** — violates `default-src 'self'` CSP and HarborPath privacy model |
 
 ## Code Touchpoints
+
 - `public/js/views/guidedNavigator.js` — deterministic red-flag interceptor, guided triage engine, RAM state manager, and interactive view
 - `public/js/views/navigator.js` — pure clinical calculators (`scoreOpioidWithdrawal`, `scoreAlcoholSedativeRisk`, `evaluateTransitionRisk`, `evaluateAsamCare`)
 - `public/js/views/populationHelpers.js` — population-specific SAMHSA code recommenders

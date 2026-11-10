@@ -43,6 +43,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetOlderAdultsState);
 
 // ============================================================================
 // 1. Medicare SUD Statutory Rules & Benefit Taxonomy
@@ -1016,17 +1020,43 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
 
   root.append(tabPanel);
 
+  const gabapentinoidRenalNotice = h('div', { class: 'card banner-tip mt-3', role: 'note' },
+    h('p', null,
+      h('strong', null, isEs ? '¿Adulto mayor en tratamiento con Gabapentina o Pregabalina? ' : 'Older adult taking Gabapentin or Pregabalin (Lyrica)? '),
+      h('span', null, isEs
+        ? 'El declive renal fisiológico causa acumulación masiva y neurotoxicidad (mioclonías, ataxia, caídas). '
+        : 'Physiological age-related decline in CrCl causes massive drug accumulation, ataxia, and falls. '),
+      h('a', { href: '#/gabapentinoid-care' }, isEs
+        ? 'Abrir Calculadora de Ajuste Renal CrCl y Desescalada Hiperbólica →'
+        : 'Open Cockcroft-Gault CrCl Renal Dosing & Hyperbolic Deprescribing Calculator →')
+    )
+  );
+  root.append(gabapentinoidRenalNotice);
+
+  const geriatricCareNotice = h('div', { class: 'card banner-tip mt-3', role: 'note' },
+    h('p', null,
+      h('strong', null, isEs ? '¿Polifarmacia, Criterios Beers, Carga Anticolinérgica (ACB) o Prevención de Caídas? ' : 'Polypharmacy, Beers Criteria, Anticholinergic Burden (ACB) or Fall Prevention? '),
+      h('span', null, isEs
+        ? 'Criterios AGS Beers 2023 sobre sedantes y opioides, calculadora de puntaje ACB, farmacocinética del TUDO, prevención de caídas STEADI, OIC severo y apoyo al cuidador: '
+        : 'AGS Beers Criteria 2023 sedative/opioid warnings, ACB score calculator, geriatric MOUD pharmacokinetics, STEADI fall prevention, severe OIC, and caregiver-supported dosing: '),
+      h('a', { href: '#/geriatric-care' }, isEs
+        ? 'Abrir Navegador de Medicina de Adicciones en Geriatría y Criterios Beers →'
+        : 'Open Geriatric Addiction Medicine, Beers Criteria & Fall Navigator →')
+    )
+  );
+  root.append(geriatricCareNotice);
+
   // Crisis line footer
   const hotlineBar = h('div', { class: 'emergency-hotline-bar' },
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Ayuda SAMHSA:' : 'SAMHSA National Helpline:'),
       h('span', {}, ' '),
-      tel('800-662-4357', { class: 'hotline-link' })
+      tel('800-662-4357', null, { class: 'hotline-link' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea de Crisis 988:' : '988 Suicide & Crisis Lifeline:'),
       h('span', {}, ' '),
-      tel('988', { class: 'hotline-link' })
+      tel('988', null, { class: 'hotline-link' })
     )
   );
   root.append(hotlineBar);

@@ -30,6 +30,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetStreetMedicineState);
 
 // ============================================================================
 // 1. Statutory Frameworks & Shelter Rights
@@ -610,6 +614,35 @@ export function streetMedicineView(containerOrOptions = {}, maybeOptions = {}) {
     heatBox.append(p(ENVIRONMENTAL_EXPOSURE_RISKS.extreme_heat.clinicalMechanisms[lang] || ENVIRONMENTAL_EXPOSURE_RISKS.extreme_heat.clinicalMechanisms.en));
     heatBox.append(p(strong(isEs ? 'Consejo de supervivencia: ' : 'Survival Guidance: '), ENVIRONMENTAL_EXPOSURE_RISKS.extreme_heat.actionAdvice[lang] || ENVIRONMENTAL_EXPOSURE_RISKS.extreme_heat.actionAdvice.en));
     weatherCard.append(heatBox);
+
+    const weatherLinkBox = h('div', { class: 'mt-3' }, [
+      h('a', { href: '#/weather-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador Clínico de Hipotermia, Congelación y Golpe de Calor →' : 'Open Hypothermia, Frostbite & Heat Stroke Clinical Navigator →'),
+    ]);
+    weatherCard.append(weatherLinkBox);
+    const endocarditisCard = h('div', { class: 'card p-3 mt-3' }, [
+      h('strong', {}, isEs ? 'Sospecha de Endocarditis y Émbolos Sépticos: ' : 'Suspected Endocarditis & Septic Pulmonary Emboli: '),
+      h('p', {}, isEs
+        ? 'En pacientes que se inyectan con fiebre, dolor pleurítico o tos persistente, sospeche endocarditis tricuspídea con émbolos sépticos pulmonares: '
+        : 'In individuals who inject drugs presenting with fever, pleuritic chest pain, or persistent cough, suspect tricuspid endocarditis with septic pulmonary emboli: '),
+      h('a', { href: '#/endocarditis-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Endocarditis Infecciosa →' : 'Open Infective Endocarditis Navigator →'),
+    ]);
+    weatherCard.append(endocarditisCard);
+    const renalCard = h('div', { class: 'card p-3 mt-3' }, [
+      h('strong', {}, isEs ? 'Tiempo en el Suelo, Rabdomiólisis y Orina Oscura: ' : 'Overdose Down Time, Rhabdomyolysis & Cola-Colored Urine: '),
+      h('p', {}, isEs
+        ? 'Si una persona despierta tras horas de sedación en el suelo con dolor muscular u orina color té/cola, sospeche rabdomiólisis aguda: '
+        : 'If someone wakes up after prolonged sedation on hard ground with limb swelling or tea-colored urine, suspect acute rhabdomyolysis: '),
+      h('a', { href: '#/renal-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Salud Renal y Rabdomiólisis →' : 'Open Renal Health & Rhabdomyolysis Navigator →'),
+    ]);
+    weatherCard.append(renalCard);
+    const pulmonaryCard = h('div', { class: 'card p-3 mt-3' }, [
+      h('strong', {}, isEs ? 'Salud Pulmonar, "Pulmón de Crack" y Materiales de Fumar Seguro: ' : 'Pulmonary Health, "Crack Lung" & Safer Inhalation Kits: '),
+      h('p', {}, isEs
+        ? 'Dificultad para respirar, tos con sangre tras fumar o broncoespasmo severo. Directivas de pipas Pyrex y boquillas de silicona: '
+        : 'Shortness of breath, hemoptysis post-smoking, or severe bronchospasm. Guidance for Pyrex glass stems and silicone tips: '),
+      h('a', { href: '#/pulmonary-care', class: 'btn btn-secondary' }, isEs ? 'Ver Navegador de Salud Pulmonar e Inhalación →' : 'Open Pulmonary Health & Inhalation Navigator →'),
+    ]);
+    weatherCard.append(pulmonaryCard);
 
     tabPanel.append(weatherCard);
   }

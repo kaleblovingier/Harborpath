@@ -36,6 +36,10 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetWoundState);
 
 // ============================================================================
 // 1. Evidence-Based Wound Care Protocols & Cytotoxic Warnings
@@ -691,6 +695,11 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       class: 'btn btn-primary',
     }, icon('map-pin'), isEs ? ' Buscar Centros de Salud FQHC' : ' Find Community Health Centers');
     btnRow.append(treatLink);
+    const hepLink = h('a', {
+      href: '#/viral-hepatitis',
+      class: 'btn btn-secondary',
+    }, icon('shield'), isEs ? ' Guía de Curación VHC y PrEP/PEP' : ' Hepatitis C Cure & PrEP/PEP Guide');
+    btnRow.append(hepLink);
 
     resultsCard.append(btnRow);
     tabPanel.append(resultsCard);
@@ -760,6 +769,17 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       vcCard.append(sec);
     });
 
+    const fullVeinNavCard = h('div', { class: 'callout callout-info mt-2' }, [
+      h('h4', {}, isEs ? 'Navegador Integral de Salud Vascular y Anatomía de Inyección' : 'Dedicated Vascular Health & Injection Anatomy Navigator'),
+      h('p', {}, isEs
+        ? 'Para triaje de punción arterial de emergencia, protocolo de trombosis venosa profunda (TVP), pseudoaneurismas, síndrome compartimental y zonas de riesgo anatómico (brazos vs cuello/ingle): '
+        : 'For emergency arterial puncture management, deep vein thrombosis (DVT), pseudoaneurysms, compartment syndrome, and anatomical risk zones (arms vs neck/groin): '),
+      h('a', { href: '#/vein-care' }, isEs
+        ? 'Abrir Navegador Completo de Cuidado de Venas y Salud Vascular →'
+        : 'Open Complete Vein Care, Vascular Health & Injection Anatomy Navigator →')
+    ]);
+    vcCard.append(fullVeinNavCard);
+
     tabPanel.append(vcCard);
   }
 
@@ -770,14 +790,80 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Emergencias Quirúrgicas / Sepsis:' : 'Emergency Surgical / Sepsis:'),
       h('span', {}, ' '),
-      tel('911', { class: 'hotline-link text-danger' })
+      tel('911', null, { class: 'hotline-link text-danger' })
     ),
     h('div', { class: 'hotline-item' },
       h('strong', {}, isEs ? 'Línea Poison Help (24/7):' : 'Poison Help Line (24/7):'),
       h('span', {}, ' '),
-      tel('1-800-222-1222', { class: 'hotline-link' })
+      tel('1-800-222-1222', null, { class: 'hotline-link' })
     )
   );
+  const hospCard = h('div', { class: 'card mt-3 no-print' },
+    h('h4', {}, isEs ? '¿Hospitalización por Endocarditis, Sepsis o Abscesos Complejos?' : 'Hospital Admission for Endocarditis, Sepsis or Complex Wounds?'),
+    h('p', {}, isEs
+      ? 'Conozca sus derechos en el hospital (EMTALA), el manejo del dolor y abstinencia en MOUD, y el paquete de reducción de daños con antibióticos orales si debe marcharse de alta voluntaria (AMA): '
+      : 'Review your legal rights in the hospital (EMTALA), acute surgical pain on MOUD, and harm reduction bundles with oral step-down antibiotics if leaving against medical advice (AMA): '),
+    h('a', { href: '#/hospital-care' }, isEs
+      ? 'Abrir Guía de Atención Hospitalaria de Adicciones y Derechos del Paciente →'
+      : 'Open Hospital Addiction Care, Pain on MOUD & Patient Rights Navigator →')
+  );
+  root.append(hospCard);
+  const needleCard = h('div', { class: 'info-callout', role: 'note', style: undefined },
+    h('strong', {}, isEs ? '¿Pinchazo accidental de aguja o lesión por objeto cortopunzante? ' : 'Accidental needle stick or sharps injury? '),
+    h('span', {}, isEs
+      ? 'Consulte el protocolo de Profilaxis Post-Exposición (PEP) dentro de las 72 horas, algoritmo de Hepatitis B y derechos laborales OSHA: '
+      : 'Consult the 72-hour Post-Exposure Prophylaxis (PEP) protocol, Hepatitis B algorithm, and OSHA worker rights: '),
+    h('a', { href: '#/needle-exposure' }, isEs
+      ? 'Abrir Protocolo de Pinchazos de Aguja y PEP →'
+      : 'Open Needle Stick & PEP Protocol Navigator →')
+  );
+  root.append(needleCard);
+  const frostbiteCard = h('div', { class: 'info-callout', role: 'note', style: undefined },
+    h('strong', {}, isEs ? '¿Sospecha de congelación (frostbite), ampollas oscuras o pie de trinchera macerado? ' : 'Suspected frostbite, dark blisters, or macerated trench foot? '),
+    h('span', {}, isEs
+      ? 'Consulte los protocolos de estadificación suiza de hipotermia, preservación tisular por congelación y baño de agua templada: '
+      : 'Consult Swiss hypothermia staging, rapid water bath rewarming, and frostbite tissue preservation protocols: '),
+    h('a', { href: '#/weather-care' }, isEs
+      ? 'Abrir Navegador de Hipotermia, Congelación y Clima Extremo →'
+      : 'Open Hypothermia, Frostbite & Weather Care Navigator →')
+  );
+  root.append(frostbiteCard);
+  const endocarditisCard = h(
+    'div',
+    { class: 'info-card mb-4' },
+    h('strong', {}, isEs ? 'Endocarditis Infecciosa y Émbolos Sépticos: ' : 'Infective Endocarditis & Septic Emboli: '),
+    h('span', {}, isEs
+      ? 'Consulte el protocolo de endocarditis tricuspídea vs aórtica, hemocultivos x3 previos a antibióticos, y protocolo POET de paso a vía oral: '
+      : 'Consult right-sided tricuspid septic emboli vs left-sided aortic abscess, 3-blood-culture timing, and POET oral step-down protocol: '),
+    h('a', { href: '#/endocarditis-care' }, isEs
+      ? 'Abrir Navegador de Endocarditis y Protección Valvular →'
+      : 'Open Infective Endocarditis & Valve Care Navigator →')
+  );
+  root.append(endocarditisCard);
+  const orthopedicCard = h(
+    'div',
+    { class: 'info-card mb-4' },
+    h('strong', {}, isEs ? 'Absceso Epidural Espinal, Artritis Séptica y Piomiositis (Ensayo OVIVA): ' : 'Spinal Epidural Abscess, Septic Arthritis & Pyomyositis (OVIVA Trial): '),
+    h('span', {}, isEs
+      ? 'Dolor nuevo de espalda en línea media, hinchazón esternoclavicular/articular o mionecrosis profunda tras "skin popping" (Efecto Eagle: asociar Clindamicina): '
+      : 'New midline back pain, sternoclavicular/joint swelling, or deep muscle myonecrosis after skin-popping (Eagle Effect: pair Clindamycin): '),
+    h('a', { href: '#/orthopedic-care' }, isEs
+      ? 'Abrir Navegador de Columna, Ortopedia e Infecciones Osteoarticulares →'
+      : 'Open Spine, Orthopedic & Bone/Joint Infections Navigator →')
+  );
+  root.append(orthopedicCard);
+  const urologyCard = h(
+    'div',
+    { class: 'info-card mb-4' },
+    h('strong', {}, isEs ? 'Gangrena de Fournier, Trombosis de Vena Dorsal del Pene y Necrosis Genital: ' : 'Fournier Gangrene, Dorsal Penile Vein Thrombosis & Genital Necrosis: '),
+    h('span', {}, isEs
+      ? 'Dolor perineal/escrotal severo, crepitación subcutánea o escaras tras inyección femoral/perineal/peneana (NUNCA usar epinefrina en bloqueos peneanos): '
+      : 'Severe perineal/scrotal pain, subcutaneous crepitus, or eschar after femoral/perineal/penile injection (NEVER use epinephrine in penile blocks): '),
+    h('a', { href: '#/urology-care' }, isEs
+      ? 'Abrir Navegador de Urgencias Urológicas y Genitourinarias →'
+      : 'Open Urologic & Genitourinary Emergencies Navigator →')
+  );
+  root.append(urologyCard);
   root.append(hotlineBar);
 
   if (container) container.append(root);

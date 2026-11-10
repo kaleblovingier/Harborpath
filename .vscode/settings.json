@@ -1,0 +1,23 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.gradle": true,
+    "**/android/app/src/main/assets/public": true,
+    "**/ios/App/App/public": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/android/app/src/main/assets/public": true,
+    "**/ios/App/App/public": true
+  },
+  "markdownlint.config": {
+    "default": true,
+    "MD013": false,
+    "MD024": false,
+    "MD025": false,
+    "MD033": false,
+    "MD040": false,
+    "MD041": false,
+    "MD060": false
+  }
+}

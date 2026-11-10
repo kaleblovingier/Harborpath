@@ -549,7 +549,7 @@ test('formatAssessmentReportText generates comprehensive report with clinical, l
   // 24/7 Crisis lines
   assert.match(text, /988 Suicide & Crisis Lifeline/);
   assert.match(text, /SAMHSA National Helpline: 1-800-662-4357/);
-  assert.match(text, /Never Use Alone: 1-877-696-1996/);
+  assert.match(text, /Never Use Alone: 1-800-484-3731/);
   assert.match(text, /Naloxone/);
 
   // Clinical notes inclusion

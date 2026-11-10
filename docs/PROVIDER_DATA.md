@@ -3,7 +3,7 @@
 ## Sources in use
 
 | Source | What | How | Trust level |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | SAMHSA FindTreatment.gov API | State-licensed SUD and mental health facilities, with services, payment accepted, populations, and languages | Live query per search, cached ≤ 1 hour (`src/findtreatment.js`) | Facility-reported to a federal survey. Shown as "provider-reported", never "confirmed". |
 | HRSA, VA, IHS, CMS, Medicaid.gov | Health centers, VA, tribal facilities, rural clinics, ER hospitals, state Medicaid directories | `npm run data:build` snapshots (`scripts/sources/`) | Official federal datasets |
 | `data/virtual-providers.json` | Online-only treatment programs | Researched from each program's own public pages | Provider-reported; served only after human review |
@@ -15,7 +15,7 @@ HarborPath does not scrape provider websites. Registry entries cite the public p
 The validator (`validateProvider` in `src/virtualProviders.js`) enforces every rule below, both at server start and in CI.
 
 | Field | Rule |
-|---|---|
+| --- | --- |
 | `id`, `name` | Required; `id` is kebab-case and unique |
 | `officialUrl`, `enrollUrl` | https only |
 | `conditions[]`, `services[]` | From a fixed vocabulary |

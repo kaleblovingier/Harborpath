@@ -8,7 +8,11 @@
 // - CDC Stimulant Harm Reduction & Safe Inhalation Protocols
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetStimulantCareState);
 
 /**
  * Clinical and harm reduction standards for stimulant use disorders and overamping.
@@ -270,7 +274,7 @@ export function formatStimulantSummaryText(state, lang = 'en') {
  * Mounts the Stimulant Care view.
  */
 export function stimulantCareView(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';
@@ -582,5 +586,107 @@ function renderSaferUseTab(container, isEs) {
     ])
   ]);
   container.appendChild(card);
+  const adhdTip = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Uso de Estimulantes por Posible TDAH No Diagnosticado?' : 'Using Stimulants to Cope with ADHD or Executive Dysfunction?'),
+    h('p', {}, isEs
+      ? 'Muchas personas utilizan estimulantes no recetados como automedicación de déficits de dopamina prefrontal. '
+      : 'Many individuals use unprescribed stimulants as self-medication for prefrontal dopamine deficits. '),
+    h('a', { href: '#/adhd-care' }, isEs
+      ? 'Explore el Navegador de TDAH, Cribado ASRS y Farmacoterapia Segura →'
+      : 'Explore the ADHD, Neurodiversity & Safe Pharmacotherapy Navigator →')
+  ]);
+  container.appendChild(adhdTip);
+  const triageTip = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Sobreestimulación Aguda, Crisis de Paranoia o Agitación?' : 'Acute Overamping, Paranoia, or Crisis Agitation?'),
+    h('p', {}, isEs
+      ? 'Diferencie el sobreestímulo psicológico del peligro físico de hipertermia (> 104°F) y aplique técnicas de desescalada verbal del Proyecto BETA sin recurrir a contenciones físicas peligrosas. '
+      : 'Differentiate psychological panic from life-threatening malignant hyperthermia (> 104°F) and apply Project BETA 10-domain verbal de-escalation without coercive restraints. '),
+    h('a', { href: '#/toxicology-triage' }, isEs
+      ? 'Abrir Asistente de Triage Toxicológico Agudo y Desescalada BETA →'
+      : 'Open Acute Toxicology Triage & Project BETA De-Escalation Assistant →')
+  ]);
+  container.appendChild(triageTip);
+
+  const weatherTip = h('div', { class: 'card mt-3' }, [
+    h('h3', {}, isEs ? '¿Hipertermia Maligna, Golpe de Calor o Sospecha de Rabdomiólisis?' : 'Malignant Hyperthermia, Heat Stroke or Rhabdomyolysis?'),
+    h('p', {}, isEs
+      ? 'Consulte protocolos de inmersión en agua helada, hidratación para protección renal y diferenciación de rabdomiólisis (orina oscura / té). NUNCA administre paracetamol.'
+      : 'Review ice-water immersion protocols, high-rate crystalloid renal protection, and rhabdomyolysis triage (cola-colored urine). NEVER give acetaminophen for environmental or stimulant heat stroke.'),
+    h('a', { href: '#/weather-care' }, isEs
+      ? 'Abrir Navegador de Seguridad Climática, Golpe de Calor e Hipotermia →'
+      : 'Open Weather Care, Heat Stroke & Hypothermia Navigator →')
+  ]);
+  container.appendChild(weatherTip);
+  const renalTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Rabdomiólisis y Daño Renal por Estimulantes: ' : 'Stimulant Rhabdomyolysis & Renal Safety: '),
+    h('span', {}, isEs
+      ? 'La hipertermia y agitación extrema por estimulantes provocan rotura muscular (orina color cola, CK elevada) e insuficiencia renal aguda: '
+      : 'Stimulant hyperthermia and extreme motor hyperactivity cause severe muscle breakdown (cola-colored urine, high CK) and acute kidney injury: '),
+    h('a', { href: '#/renal-care' }, isEs
+      ? 'Abrir Navegador de Salud Renal y Rabdomiólisis →'
+      : 'Open Renal Health, Rhabdomyolysis & AKI Navigator →')
+  ]);
+  container.appendChild(renalTip);
+  const pulmonaryTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? '"Pulmón de Crack", Hemorragia Alveolar y Daño Inhalatorio: ' : '"Crack Lung", Alveolar Hemorrhage & Inhalation Injury: '),
+    h('span', {}, isEs
+      ? 'Fumar estimulantes puede causar hemorragia alveolar aguda (tos con sangre, fiebre, dolor torácico) y broncoespasmo severo: '
+      : 'Smoking stimulants can trigger acute diffuse alveolar hemorrhage ("Crack Lung", hemoptysis, fever) and severe bronchospasm: '),
+    h('a', { href: '#/pulmonary-care' }, isEs
+      ? 'Abrir Navegador de Salud Pulmonar e Inhalación Segura →'
+      : 'Open Pulmonary Health, Crack Lung & Inhalation Safety Navigator →')
+  ]);
+  container.appendChild(pulmonaryTip);
+  const neurologyTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Síndrome de Encefalopatía Posterior Reversible (SEPR) y Convulsiones: ' : 'Posterior Reversible Encephalopathy Syndrome (PRES) & Seizures: '),
+    h('span', {}, isEs
+      ? 'Picos hipertensivos por estimulantes pueden desencadenar cefalea intensa, ceguera cortical y convulsiones (SEPR, requiere reducción tensional suave): '
+      : 'Stimulant hypertensive surges can trigger acute severe headache, cortical blindness, and seizures (PRES, requires controlled gradual BP lowering): '),
+    h('a', { href: '#/neurology-care' }, isEs
+      ? 'Abrir Navegador de Salud Neurológica y Neuroprotección →'
+      : 'Open Neurological Health & Neuroprotection Navigator →')
+  ]);
+  container.appendChild(neurologyTip);
+  const metabolicTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'CAD por Estimulantes, CAD Euglucémica (SGLT2) y Tormenta Tiroidea: ' : 'Stimulant DKA, SGLT2 Euglycemic DKA & Thyroid Storm: '),
+    h('span', {}, isEs
+      ? 'Las descargas adrenérgicas por estimulantes pueden desencadenar CAD severa, cetoacidosis euglucémica con fármacos SGLT2 o tormenta tiroidea: '
+      : 'Stimulant catecholamine surges can trigger fulminant DKA, euglycemic DKA with SGLT2 inhibitors, or life-threatening thyroid storm: '),
+    h('a', { href: '#/metabolic-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Metabólicas y Endocrinas →'
+      : 'Open Metabolic Emergencies & Endocrine Care Navigator →')
+  ]);
+  container.appendChild(metabolicTip);
+  const giTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Isquemia Mesentérica por Cocaína/Metanfetamina y Colitis Isquémica: ' : 'Cocaine/Methamphetamine Mesenteric Ischemia & Ischemic Colitis: '),
+    h('span', {}, isEs
+      ? 'La vasoconstricción esplácnica alfa-1 causa dolor abdominal agonizante "desproporcionado" y diarrea con sangre (hematoquecia). Requiere Angio-TC urgente: '
+      : 'Splanchnic alpha-1 vasoconstriction causes agonizing abdominal "pain out of proportion" and bloody stool (hematochezia). Mandates urgent CTA: '),
+    h('a', { href: '#/gi-care' }, isEs
+      ? 'Abrir Navegador de Emergencias Gastrointestinales e Isquemia Mesentérica →'
+      : 'Open GI Emergencies & Mesenteric Ischemia Navigator →')
+  ]);
+  container.appendChild(giTip);
+  const hematologyTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Vasculitis ANCA por Cocaína con Levamisol y Agranulocitosis Grave: ' : 'Levamisole-Adulterated Cocaine ANCA Vasculitis & Agranulocytosis: '),
+    h('span', {}, isEs
+      ? 'El levamisol en la cocaína provoca púrpura retiforme en las orejas/mejillas y agranulocitosis severa (RAN < 500/mcL) con riesgo de sepsis neutropénica: '
+      : 'Levamisole in cocaine causes earlobe/cheek retiform purpura and severe agranulocytosis (ANC < 500/mcL) with life-threatening neutropenic sepsis risk: '),
+    h('a', { href: '#/hematology-care' }, isEs
+      ? 'Abrir Navegador de Hematología, Coagulopatías y Vasculitis por Levamisol →'
+      : 'Open Hematology, Coagulopathy & Levamisole Vasculitis Navigator →')
+  ]);
+  container.appendChild(hematologyTip);
+  const entDermTip = h('div', { class: 'info-card mt-3' }, [
+    h('strong', {}, isEs ? 'Perforación Septal (CIMDL), Supraglotitis Térmica y Formicación Cutánea: ' : 'Cocaine Septal Perforation (CIMDL), Thermal Supraglottitis & Cutaneous Formication: '),
+    h('span', {}, isEs
+      ? 'Explore rehabilitación con botón septal/obturador palatino, quemaduras de vía aérea por pipa y parches hidrocoloides para excoriaciones: '
+      : 'Explore Silastic septal button/palatal obturator rehabilitation, crack-pipe thermal epiglottitis, and hydrocolloid barrier therapy for formication: '),
+    h('a', { href: '#/ent-care' }, isEs ? 'Navegador de ORL y Vía Aérea →' : 'Otolaryngology & Airway Navigator →'),
+    h('span', {}, ' | '),
+    h('a', { href: '#/dermatology-care' }, isEs ? 'Navegador de Dermatología y Heridas →' : 'Dermatology & Cutaneous Navigator →')
+  ]);
+  container.appendChild(entDermTip);
+
 }
 

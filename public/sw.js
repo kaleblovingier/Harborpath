@@ -2,11 +2,26 @@
 // Only registered when the visitor explicitly enables "Save for offline use".
 // Never caches /api/ responses (which describe a location), and immediately
 // deletes all caches and unregisters itself when Quick Exit sends { type: 'wipe' }.
+// After a wipe it never answers from or writes to an offline copy again.
+// A live search made with no signal gets a short answer that lists the SAMHSA
+// helpline, 988 and 911 instead of a failed request.
 
 const CACHE_PREFIX = 'harborpath-offline';
-const CACHE_NAME = `${CACHE_PREFIX}-v3`;
+// Content hash of every APP_SHELL and ELECTIVE_SHELL file. A deploy that changes
+// any of them changes this name, so the new copy is saved as a whole beside the
+// old one and swapped in at activation. Kept current by `npm run stamp:sw`
+// (scripts/build-check.mjs fails while it is stale).
+const BUILD = 'c06e5e1dcbd1';
+const CACHE_NAME = `${CACHE_PREFIX}-${BUILD}`;
+// Shell requests wait this long for the network before a saved copy is used,
+// so overdose steps open promptly on a weak or captive connection.
+const NETWORK_TIMEOUT_MS = 3000;
 
-// Critical tier: precached at install; install fails if any is missing.
+// Critical tier: precached at install as one complete set; install fails, and
+// nothing is kept, if any file is missing.
+// Every module app.js loads up front is listed here, and every module it can
+// reach at all (lazy views included) is in this list or ELECTIVE_SHELL
+// (test/offline.test.js walks the import graph to check).
 // Holds the app shell plus everything needed in an emergency while offline:
 // overdose response (static guide + optional rescue timer), crisis lines,
 // harm reduction guides, emergency drawer, state resources, and Spanish UI.
@@ -32,6 +47,8 @@ const APP_SHELL = [
   '/js/components/locationPicker.js',
   '/js/components/overdose.js',
   '/js/components/overdosePacing.js',
+  '/js/components/haptics.js',
+  '/js/telemetry.js',
   '/js/components/providers.js',
   '/js/components/reach.js',
   '/js/components/stateResources.js',
@@ -56,12 +73,20 @@ const APP_SHELL = [
   '/js/locales/es-clinical.js',
   '/js/locales/es-privacy.js',
   '/js/locales/es-services.js',
+  '/js/locales/es-tools.js',
+  '/js/locales/es-workspace.js',
+  '/js/locales/es-evidence.js',
+  '/js/locales/es-safety.js',
+  '/js/locales/es-recovery.js',
 ];
 
 // Elective tier: heavier, non-emergency clinical tools. Warmed in the
 // background after activation so they never delay or break install, and
 // cached on first online visit by the fetch handler below.
 const ELECTIVE_SHELL = [
+  '/js/views/tools.js',
+  '/js/views/workspace.js',
+  '/js/components/sourceContext.js',
   '/js/views/medications.js',
   '/js/views/navigator.js',
   '/js/views/guidedNavigator.js',
@@ -93,14 +118,189 @@ const ELECTIVE_SHELL = [
   '/js/views/postOverdose.js',
   '/js/views/stimulantCare.js',
   '/js/components/medicalRespiteFinder.js',
+  '/js/views/chronicPain.js',
+  '/js/views/alcoholCare.js',
+  '/js/views/familySupport.js',
+  '/js/views/adulterantCare.js',
+  '/js/views/methadoneAccess.js',
+  '/js/views/dualDiagnosis.js',
+  '/js/views/polysubstanceCare.js',
+  '/js/views/nightlifeCare.js',
+  '/js/views/sleepCare.js',
+  '/js/views/dentalCare.js',
+  '/js/views/cannabisCare.js',
+  '/js/views/viralHepatitis.js',
+  '/js/views/nicotineCare.js',
+  '/js/views/benzodiazepineCare.js',
+  '/js/views/adhdCare.js',
+  '/js/views/toxicologyTriage.js',
+  '/js/views/hospitalCare.js',
+  '/js/views/needleExposure.js',
+  '/js/views/sexualHealth.js',
+  '/js/views/novelSubstances.js',
+  '/js/views/gabapentinoidCare.js',
+  '/js/views/psychedelicCare.js',
+  '/js/views/ghbCare.js',
+  '/js/views/veinCare.js',
+  '/js/views/inhalantCare.js',
+  '/js/views/ketamineCare.js',
+  '/js/views/weatherCare.js',
+  '/js/views/liverCare.js',
+  '/js/views/endocarditisCare.js',
+  '/js/views/renalCare.js',
+  '/js/views/pulmonaryCare.js',
+  '/js/views/neurologyCare.js',
+  '/js/views/metabolicCare.js',
+  '/js/views/recoverySupport.js',
+  '/js/views/overdoseLoss.js',
+  '/js/views/giCare.js',
+  '/js/views/hematologyCare.js',
+  '/js/views/orthopedicCare.js',
+  '/js/views/ocularCare.js',
+  '/js/views/urologyCare.js',
+  '/js/views/entCare.js',
+  '/js/views/dermatologyCare.js',
+  '/js/views/cardiologyCare.js',
+  '/js/views/oncologyPalliative.js',
+  '/js/views/obstetricEmergencies.js',
+  '/js/views/icuPerioperative.js',
+  '/js/views/pediatricExposures.js',
+  '/js/views/geriatricCare.js',
+  '/js/views/adminMetrics.js',
+  '/js/views/burnToxicology.js',
+  '/js/views/embedBuilder.js',
+  '/js/views/outreachMaterials.js',
+  '/js/views/encampmentMedicine.js',
+  '/js/views/streetTrauma.js',
+  '/js/views/fhirExport.js',
+  '/js/views/toxicAlcohol.js',
+  '/js/views/massOverdoseMci.js',
+  '/js/views/moudDirective.js',
+  '/js/views/nstiWoundStaging.js',
+  '/js/views/pediatricIngestionDecon.js',
+  '/js/views/carceralMoudReentry.js',
+  '/js/views/disasterMoudClimate.js',
+  '/js/views/movementDisordersEps.js',
+  '/js/views/fungalOpportunisticCare.js',
+  '/js/views/inhalantToxicology.js',
+  '/js/views/adulterantHeavyMetals.js',
+  '/js/views/periOverdosePulmonary.js',
+  '/js/views/cardiogenicToxinHiet.js',
+  '/js/views/woodenChestRigidity.js',
+  '/js/views/hyperthermicToxidrome.js',
 ];
 
+const SHELL_PATHS = new Set(APP_SHELL);
+
+// Answer to a live search (/api/) made with no signal. Built here; no /api/
+// response is ever stored.
+const OFFLINE_API_MESSAGE = {
+  en: 'You’re offline, so live search can’t run right now. For help finding treatment, call the free SAMHSA National Helpline at 1-800-662-4357 (24/7). In a crisis, call or text 988. In an emergency, call 911.',
+  es: 'Está sin conexión, así que la búsqueda en vivo no puede funcionar ahora. Para encontrar tratamiento, llame gratis a la Línea Nacional de Ayuda de SAMHSA al 1-800-662-4357 (24/7). En una crisis, llame o envíe un mensaje de texto al 988. En una emergencia, llame al 911.',
+};
+const OFFLINE_API_FALLBACK = { en: 'https://findtreatment.gov/', es: 'https://findtreatment.gov/es' };
+
+// The interface language, sent by the page (public/js/offline.js). Held in
+// memory only, so it is lost when the browser stops an idle worker; the
+// Accept-Language header the page sets on its own requests comes first.
+let lang = null;
+
+// Set by Quick Exit. A worker that keeps running after the wipe (other open
+// tabs, a request already in flight) must not save anything again.
+let wiped = false;
+
+function deleteOwnCaches() {
+  return caches.keys().then((keys) => Promise.all(
+    keys.filter((k) => k.startsWith(CACHE_PREFIX)).map((k) => caches.delete(k)),
+  ));
+}
+
+// Save a response only into a copy that still exists: the install step creates
+// it, and a wipe (by this worker or by the page) deletes it. A write that races
+// a wipe is undone, because caches.open() would otherwise re-create the copy.
+async function store(request, response) {
+  if (wiped || !(await caches.has(CACHE_NAME))) return;
+  const cache = await caches.open(CACHE_NAME);
+  if (!wiped) await cache.put(request, response);
+  if (wiped) await deleteOwnCaches();
+}
+
+// Fetch a file for the saved copy, skipping the HTTP cache so a new version
+// never saves a stale file under its new cache name.
+async function fetchFresh(path) {
+  const response = await fetch(path, { cache: 'reload' });
+  if (!response || !response.ok) throw new Error(`${path}: ${response?.status}`);
+  return response;
+}
+
+async function warmElective() {
+  if (wiped) return;
+  await Promise.allSettled(ELECTIVE_SHELL.map(async (path) => {
+    if (wiped) return;
+    await store(path, await fetchFresh(path));
+  }));
+  if (wiped) await deleteOwnCaches();
+}
+
+async function fromCache(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  if (request.mode === 'navigate') {
+    return (await caches.match('/index.html')) || (await caches.match('/'));
+  }
+  return undefined;
+}
+
+const TIMED_OUT = Symbol('timed out');
+const FAILED = Symbol('failed');
+
+// App shell and page loads: use the network if it answers within
+// NETWORK_TIMEOUT_MS, otherwise the saved copy. Without a saved copy, keep
+// waiting for the network as a normal page would.
+async function shellResponse(request, network) {
+  let timer;
+  const timeout = new Promise((resolve) => { timer = setTimeout(resolve, NETWORK_TIMEOUT_MS, TIMED_OUT); });
+  const first = await Promise.race([network.catch(() => FAILED), timeout]);
+  clearTimeout(timer);
+  if (first !== TIMED_OUT && first !== FAILED) return first;
+  const cached = await fromCache(request);
+  if (cached) return cached;
+  if (first === FAILED) throw new Error('Offline');
+  return network;
+}
+
+// Everything else: the network first, the saved copy if the network fails.
+async function networkFirst(request, network) {
+  try {
+    return await network;
+  } catch {
+    const cached = await fromCache(request);
+    if (cached) return cached;
+    throw new Error('Offline');
+  }
+}
+
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting()),
-  );
+  event.waitUntil((async () => {
+    // Download the whole critical tier first, so a dropped connection leaves
+    // no partial copy behind: the failed install is simply discarded.
+    const entries = await Promise.all(APP_SHELL.map(async (path) => [path, await fetchFresh(path)]));
+    // Quick Exit during the download: fail the install so no worker is left.
+    if (wiped) throw new Error('Wiped');
+    const cache = await caches.open(CACHE_NAME);
+    try {
+      await Promise.all(entries.map(([path, response]) => cache.put(path, response)));
+    } catch (err) {
+      // For example, storage is full: keep nothing rather than half a copy.
+      await caches.delete(CACHE_NAME);
+      throw err;
+    }
+    if (wiped) {
+      await deleteOwnCaches();
+      throw new Error('Wiped');
+    }
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
@@ -113,49 +313,67 @@ self.addEventListener('activate', (event) => {
       ))
       .then(() => self.clients.claim())
       // Best effort: a failed elective fetch must never affect the critical tier.
-      .then(() => caches.open(CACHE_NAME))
-      .then((cache) => Promise.allSettled(ELECTIVE_SHELL.map((url) => cache.add(url))))
+      .then(warmElective)
       .catch(() => {}),
   );
 });
 
 self.addEventListener('message', (event) => {
   if (event.data?.type === 'wipe') {
+    wiped = true;
     event.waitUntil(
-      caches.keys()
-        .then((keys) => Promise.all(
-          keys.filter((k) => k.startsWith(CACHE_PREFIX)).map((k) => caches.delete(k)),
-        ))
+      deleteOwnCaches()
         .then(() => self.registration.unregister()),
     );
+  } else if (event.data?.type === 'lang' && Object.hasOwn(OFFLINE_API_MESSAGE, event.data.lang)) {
+    lang = event.data.lang;
   }
 });
+
+function requestLanguage(request) {
+  const tag = /^\s*([a-z]{2})\b/i.exec(request.headers?.get?.('Accept-Language') ?? '')?.[1]?.toLowerCase();
+  if (tag && Object.hasOwn(OFFLINE_API_MESSAGE, tag)) return tag;
+  return lang ?? 'en';
+}
+
+// Live searches pass through untouched and are never stored. With no signal,
+// explain and list the phone lines instead of failing.
+async function apiPassThrough(request) {
+  try {
+    return await fetch(request);
+  } catch (err) {
+    if (err?.name === 'AbortError') throw err;
+    const useLang = requestLanguage(request);
+    return new Response(JSON.stringify({
+      error: OFFLINE_API_MESSAGE[useLang],
+      offline: true,
+      fallbackUrl: OFFLINE_API_FALLBACK[useLang],
+    }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
+  }
+}
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  // After Quick Exit, requests go straight to the network and nothing is kept.
+  if (wiped) return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin || url.pathname === '/sw.js') return;
   // Never store API responses: they describe a location.
-  if (url.pathname.startsWith('/api/')) return;
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(apiPassThrough(request));
+    return;
+  }
 
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        if (response && response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
-        }
-        return response;
-      })
-      .catch(async () => {
-        const cached = await caches.match(request);
-        if (cached) return cached;
-        if (request.mode === 'navigate') {
-          return (await caches.match('/index.html')) || (await caches.match('/'));
-        }
-        throw new Error('Offline');
-      }),
-  );
+  const network = fetch(request);
+  // Clone before the page reads the body; the copy is saved in the background,
+  // even when the saved copy already answered after a timeout.
+  const copy = network.then((response) => (response && response.ok ? response.clone() : null));
+  event.waitUntil(copy.then((response) => response && store(request, response)).catch(() => {}));
+
+  const shell = request.mode === 'navigate' || SHELL_PATHS.has(url.pathname);
+  event.respondWith(shell ? shellResponse(request, network) : networkFirst(request, network));
 });
-

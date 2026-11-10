@@ -794,7 +794,7 @@ function telehealthGuide() {
   if (profile.modality === 'in-person') return null;
   return h('div', { class: 'callout callout-info telehealth-flex-guide' },
     h('p', { class: 'callout-title' }, icon('phone'), t('match.telehealthGuide.title', 'Cross-State Telehealth & DEA/SAMHSA Flexibilities')),
-    p(t('match.telehealthGuide.body', 'Under federal DEA and SAMHSA flexibilities, clinicians can evaluate and prescribe buprenorphine via telehealth without an in-person visit. Audio-only telephone visits provide access in broadband-insecure rural and tribal areas. Under SAMHSA rules, counseling cannot be an arbitrary barrier to starting life-saving medication.')),
+    p(t('match.telehealthGuide.body', 'Under federal DEA rules as of late 2026, buprenorphine for opioid use disorder can be started by telehealth without an in-person visit. Temporary DEA/HHS telemedicine flexibilities run through Dec. 31, 2026. Separately, a permanent DEA rule (21 CFR § 1306.51, in effect since the end of 2025) allows starting it by video or audio-only phone visit for an initial supply of up to 6 months after a state prescription-monitoring (PDMP) check; after that, continued prescribing needs an in-person exam or another permitted form of telemedicine, such as a video visit. State rules and individual prescribers may be stricter, and federal rules may change after 2026. Audio-only telephone visits provide access in broadband-insecure rural and tribal areas. Under SAMHSA rules, counseling cannot be an arbitrary barrier to starting life-saving medication.')),
   );
 }
 

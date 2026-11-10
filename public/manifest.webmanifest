@@ -1,10 +1,52 @@
 {
+  "id": "/",
   "name": "HarborPath",
   "short_name": "HarborPath",
   "description": "Find treatment, harm reduction tools, and low-cost health care. Private, free, no tracking.",
+  "lang": "en-US",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f7f5f0",
-  "theme_color": "#0b4f5c",
-  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+  "orientation": "any",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d9488",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Overdose Response (911)",
+      "short_name": "Overdose",
+      "description": "Emergency overdose steps, naloxone guide, and rescue breathing timer",
+      "url": "/#/overdose",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "988 Crisis Support",
+      "short_name": "Crisis 988",
+      "description": "Immediate confidential crisis counseling and support lines",
+      "url": "/#/crisis",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Find Care & Treatment",
+      "short_name": "Find Care",
+      "description": "Compare nearby treatment options and community health centers",
+      "url": "/#/match",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Clinical Care Tools",
+      "short_name": "Tools",
+      "description": "Browse private, zero-PII clinical decision support navigators",
+      "url": "/#/tools",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
 }

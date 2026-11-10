@@ -7,7 +7,11 @@
 // - Federal EMTALA & State Hospital Safe Discharge Protections
 
 import { h, append, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { onQuickExit } from '../state.js';
+
+// Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
+onQuickExit(resetRespiteFinderState);
 
 /**
  * NHCHC Medical Respite & Recuperative Care Standards.
@@ -171,7 +175,7 @@ export function evaluateMedicalRespiteReferral({
  * Mounts the Medical Respite Finder and Referral Component.
  */
 export function medicalRespiteFinderComponent(container) {
-  const currentLang = (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang) === 'es' ? 'es' : 'en';
+  const currentLang = getLang() === 'es' ? 'es' : 'en';
   const isEs = currentLang === 'es';
 
   container.textContent = '';

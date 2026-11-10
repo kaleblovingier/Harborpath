@@ -512,8 +512,10 @@ function parseCodeList(raw) {
 
 /**
  * Validates treatment search queries including location coarsening, radiusMiles,
- * kind, page, SAMHSA service codes (max 8), and optional payer / accreditation /
- * levelOfCare filters.
+ * kind, page, SAMHSA service codes (max 8), and optional accreditation /
+ * levelOfCare filters. Insurance is not part of a search: the browser matches
+ * coverage against each listing's payment codes (public/js/match/engine.js),
+ * so what coverage a visitor has is never sent to the server or upstream.
  */
 export function createTreatmentSearchSchema(taxonomy) {
   return new BaseSchema((input) => {
@@ -547,10 +549,10 @@ export function createTreatmentSearchSchema(taxonomy) {
     }
     for (const c of codes) {
       if (!activeTaxonomy.hasService(c) && !PAYMENT_CODE_SET.has(c) && !ACCREDITATION_CODE_SET.has(c)) {
-        throw new InputError(`Unknown service code: ${c}`);
+        throw new InputError('Unknown service code in filters');
       }
       if (taxonomy && !taxonomy.hasService(c)) {
-        throw new InputError(`Unknown service code: ${c}`);
+        throw new InputError('Unknown service code in filters');
       }
     }
 
@@ -562,18 +564,11 @@ export function createTreatmentSearchSchema(taxonomy) {
       codes: codes.sort(),
     };
 
-    if (obj.payer !== undefined && obj.payer !== null && String(obj.payer).trim() !== '') {
-      if (typeof obj.payer !== 'string') throw new InputError('payer must be a string');
-      const payerText = obj.payer.trim();
-      out.payer = payerText;
-      out.payerCodes = resolvePayerCodes(payerText);
-    }
-
     if (obj.accreditation !== undefined && obj.accreditation !== null && String(obj.accreditation).trim() !== '') {
       const accList = parseCodeList(obj.accreditation).map((c) => c.toUpperCase());
       for (const acc of accList) {
         if (!ACCREDITATION_CODE_SET.has(acc)) {
-          throw new InputError(`Unknown accreditation code: ${acc}`);
+          throw new InputError('Unknown accreditation code in filters');
         }
       }
       out.accreditation = accList.sort();
@@ -583,7 +578,7 @@ export function createTreatmentSearchSchema(taxonomy) {
       const locList = parseCodeList(obj.levelOfCare).map((c) => c.toUpperCase());
       for (const l of locList) {
         if (!LEVEL_OF_CARE_SET.has(l) && !activeTaxonomy.hasService(l)) {
-          throw new InputError(`Unknown level of care code: ${l}`);
+          throw new InputError('Unknown level of care code in filters');
         }
       }
       out.levelOfCare = locList.sort();
