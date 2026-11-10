@@ -2079,6 +2079,9 @@ export const es = {
   'route.inhalantToxicology': 'Toxicología de inhalantes, solventes volátiles y neuropatía por óxido nitroso',
   'route.adulterantHeavyMetals': 'Triaje de adulterantes ilícitos, metales pesados y agonistas alfa-2',
   'route.periOverdosePulmonary': 'Síndromes pulmonares peri-sobredosis y edema no cardiogénico',
+  'route.cardiogenicToxinHiet': 'Toxinas cardiogénicas y terapia de euglucemia con insulina a dosis altas (HIET)',
+  'route.woodenChestRigidity': 'Rigidez torácica ("tórax de madera") por opioides sintéticos y rescate de vía aérea',
+  'route.hyperthermicToxidrome': 'Crisis de hipertermia por estimulantes y catinonas sintéticas',
   'geriatric.title': 'Medicina de Adicciones en Geriatría, Criterios Beers y Prevención de Caídas',
   'geriatric.subtitle': 'Herramienta clínica confidencial (cero-PII en RAM) para adultos mayores (65+): criterios AGS Beers 2023, carga anticolinérgica (ACB), farmacocinética del TUDO, hipotensión ortostática, estreñimiento severo y apoyo a cuidadores.',
 

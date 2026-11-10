@@ -1501,4 +1501,24 @@ Two plain-language, bilingual (English / Spanish, formal *usted*) guides for gap
   - Mendelson chemical pneumonitis (sterile acid burn) vs delayed secondary bacterial aspiration pneumonia: Strict 48-hour prophylactic antibiotic prohibition per ATS/IDSA stewardship guidelines.
   - "Crack Lung" / Cocaine Diffuse Alveolar Hemorrhage (DAH) from pyrolyzed vapor (AEME): Hemoptysis, melanoptysis, ground-glass opacities, high-flow O2, corticosteroids, and absolute beta-blocker contraindication due to unopposed alpha-1 coronary vasospasm.
 
+### 64. Wave 66: Cardiogenic Toxin HIET, Synthetic Opioid Wooden Chest Rigidity & Stimulant Hyperthermia
+
+- **Cardiogenic Toxin & High-Dose Insulin Euglycemia (HIET) Navigator (`#/cardiogenic-toxin-hiet`)**:
+  - ACMT and EAPCCT consensus protocols for calcium channel blocker (CCB - amlodipine, verapamil, diltiazem) and beta-blocker (BB - propranolol, metoprolol) severe toxicity.
+  - Weight-based HIET dosing engine: Regular insulin 1 U/kg IV push bolus + continuous infusion starting at 1 U/kg/hr, titrating up to 10 U/kg/hr for refractory cardiogenic shock, alongside D10W/D50W dextrose infusion targeting euglycemia (100–250 mg/dL).
+  - Permissive hypokalemia safety rules: Insulin drives potassium intracellularly; repletion only initiated if serum K+ falls below 2.8–3.0 mEq/L to prevent rebound hyperkalemia as insulin weans.
+  - Calcium chloride/gluconate, high-dose glucagon (for pure BB shock), and 20% intravenous lipid emulsion (ILE / Intralipid) rescue thresholds.
+  - Zero-PII bilingual SBAR handover note generation for toxicology consultation and critical care transfer.
+
+- **Synthetic Opioid "Wooden Chest" Rigidity & Rapid Airway Rescue Protocol (`#/wooden-chest-rigidity`)**:
+  - ASA and ACEP consensus protocols for fentanyl-induced muscle rigidity (FIMR) involving sudden chest wall, abdominal, and vocal cord hypertonicity ("tórax de madera") causing complete mechanical inability to ventilate with bag-valve-mask (BVM).
+  - Dual-action rescue pathway: Rapid high-dose IV naloxone (2–4 mg push) vs immediate non-depolarizing neuromuscular blockade (Rocuronium 1.2 mg/kg or Vecuronium 0.1 mg/kg) with rapid sequence intubation (RSI) under video laryngoscopy.
+  - Black-box contraindication enforcement: Strict prohibition of succinylcholine due to life-threatening hyperkalemic cardiac arrest in underlying chronic denervation/rhabdomyolysis and severe jaw clenching. Strict prohibition of forceful unassisted BVM ventilation to prevent severe gastric distension and tension pneumothorax.
+
+- **Stimulant, Synthetic Cathinone & Hyperthermic Crisis Decision Engine (`#/hyperthermic-toxidrome`)**:
+  - ACMT and Wilderness Medical Society (WMS) consensus protocols for synthetic cathinones (Flakka, bath salts, alpha-PVP) and high-potency methamphetamine hyperthermic crises (core body temp > 104°F / 40°C).
+  - Rapid ice-water immersion protocol: Whole-body water/ice slurry immersion targeting core temperature reduction to < 38.5°C in < 30 minutes to prevent fatal disseminated intravascular coagulation (DIC), multi-organ failure, and irreversible anoxic-ischemic encephalopathy.
+  - Chemical sedation sequencing: High-dose parenteral benzodiazepines (Midazolam 5–10 mg IM/IV or Lorazepam 2–4 mg IV) or Ketamine (2–4 mg/kg IM / 1–2 mg/kg IV) to halt skeletal muscle heat generation.
+  - Absolute prohibitions: Ineffectiveness and hepatotoxicity/nephrotoxicity of antipyretics (acetaminophen, NSAIDs) in non-pyrogenic heat production; lethal metabolic acidosis and rhabdomyolysis acceleration from physical restraints.
+
 Not medical advice. HarborPath never endorses providers or accepts payment for listings.

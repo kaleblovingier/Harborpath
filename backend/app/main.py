@@ -131,6 +131,9 @@ async def directory_summary():
             "inhalant_toxicology": "ACMT consensus for Nitrous Oxide (Galaxy Gas) SCD and folate trap prohibition, volatile hydrocarbon SSDS epinephrine prohibition, and toluene Type 1 distal RTA",
             "adulterant_heavy_metals": "Clinical triage for Medetomidine refractory bradycardia (atipamezole prohibition), Brodifacoum superwarfarin coagulopathy (4F-PCC), and street drug Lead plumbism chelation sequencing",
             "peri_overdose_pulmonary": "Post-Naloxone NCPE (PEEP recruitment vs loop diuretic prohibition), Mendelson chemical pneumonitis (48h antibiotic delay), and Crack Lung DAH (corticosteroids vs beta-blocker prohibition)",
+            "cardiogenic_toxin_hiet": "ACMT/EAPCCT consensus for CCB and BB severe toxicity, weight-based HIET dosing (1 U/kg bolus, 1-10 U/kg/hr infusion), D10W/D50W titration, and permissive hypokalemia rules",
+            "wooden_chest_rigidity": "ASA/ACEP consensus for fentanyl-induced muscle rigidity (FIMR), failed BVM rescue, rocuronium/vecuronium RSI, and succinylcholine hyperkalemic arrest prohibition",
+            "hyperthermic_toxidrome": "ACMT and WMS consensus for synthetic cathinone / methamphetamine severe hyperthermia (>40°C), rapid ice-water immersion, parenteral sedation, and antipyretic futility",
             "syndication": "Zero-cookie iframe widgets & partner seals"
         }
     }

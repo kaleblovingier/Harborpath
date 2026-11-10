@@ -250,4 +250,10 @@ export default {
   'tools.item.adulterant-heavy-metals.description': 'Triaje clínico para bradicardia refractaria por medetomidina (prohibición de atipamezol), coagulopatía por superwarfarina/brodifacoum (CCP-4 y vitamina K oral) y quelación secuencial de saturnismo por plomo en drogas.',
   'tools.item.peri-overdose-pulmonary.title': 'Síndromes pulmonares peri-sobredosis y edema no cardiogénico',
   'tools.item.peri-overdose-pulmonary.description': 'Triaje clínico para edema pulmonar no cardiogénico post-naloxona (reclutamiento alveolar con PEEP vs prohibición de furosemida), neumonitis química de Mendelson (prohibición de antibióticos en 48h) y pulmón de crack (corticoides vs prohibición de betabloqueadores).',
+  'tools.item.cardiogenic-toxin-hiet.title': 'Toxinas cardiogénicas y terapia de euglucemia con insulina a dosis altas (HIET)',
+  'tools.item.cardiogenic-toxin-hiet.description': 'Consenso ACMT/EAPCCT para toxicidad severa por betabloqueantes y calcioantagonistas, dosificación de HIET basada en peso (bolo 1 U/kg, infusión 1-10 U/kg/h, titulación D10W/D50W), reglas de hipopotasemia permisiva y rescate con calcio, glucagón y emulsión lipídica.',
+  'tools.item.wooden-chest-rigidity.title': 'Rigidez torácica ("tórax de madera") por opioides sintéticos y rescate de vía aérea',
+  'tools.item.wooden-chest-rigidity.description': 'Consenso ASA/ACEP para rigidez de la pared torácica y cuerdas vocales por fentanilo (FIMR), fracaso de ventilación con BVM, naloxona a dosis altas vs bloqueo neuromuscular no despolarizante inmediato (rocuronio/vecuronio) y contraindicación absoluta de succinilcolina.',
+  'tools.item.hyperthermic-toxidrome.title': 'Crisis de hipertermia por estimulantes y catinonas sintéticas',
+  'tools.item.hyperthermic-toxidrome.description': 'Consenso ACMT y WMS para catinonas sintéticas (Flakka, sales de baño) y metanfetamina con hipertermia grave (>40 °C), inmersión rápida en agua con hielo (<38.5 °C en <30 min), sedación parenteral con benzodiacepinas / ketamina, futilidad de antipiréticos y prohibición de sujeción física.',
 };

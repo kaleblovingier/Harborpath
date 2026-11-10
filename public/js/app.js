@@ -58,6 +58,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'cardiogenic-toxin-hiet': () => import('./views/cardiogenicToxinHiet.js').then((m) => {
+    viewCache.set('cardiogenic-toxin-hiet', m.cardiogenicToxinHietView);
+    routeResets.set('cardiogenic-toxin-hiet', m.resetCardiogenicState);
+    return m.cardiogenicToxinHietView;
+  }),
+  'wooden-chest-rigidity': () => import('./views/woodenChestRigidity.js').then((m) => {
+    viewCache.set('wooden-chest-rigidity', m.woodenChestRigidityView);
+    routeResets.set('wooden-chest-rigidity', m.resetWoodenChestState);
+    return m.woodenChestRigidityView;
+  }),
+  'hyperthermic-toxidrome': () => import('./views/hyperthermicToxidrome.js').then((m) => {
+    viewCache.set('hyperthermic-toxidrome', m.hyperthermicToxidromeView);
+    routeResets.set('hyperthermic-toxidrome', m.resetHyperthermicState);
+    return m.hyperthermicToxidromeView;
+  }),
   'inhalant-toxicology': () => import('./views/inhalantToxicology.js').then((m) => {
     viewCache.set('inhalant-toxicology', m.inhalantToxicologyView);
     routeResets.set('inhalant-toxicology', m.resetInhalantState);
@@ -497,6 +512,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'cardiogenic-toxin-hiet': () => t('route.cardiogenicToxinHiet', 'Cardiogenic toxin & high-dose insulin euglycemia (HIET) navigator'),
+  'wooden-chest-rigidity': () => t('route.woodenChestRigidity', 'Synthetic opioid wooden chest rigidity & airway protocol'),
+  'hyperthermic-toxidrome': () => t('route.hyperthermicToxidrome', 'Stimulant & synthetic cathinone hyperthermic crisis triage'),
   'inhalant-toxicology': () => t('route.inhalantToxicology', 'Inhalant, volatile solvent & nitrous oxide neuropathy navigator'),
   'adulterant-heavy-metals': () => t('route.adulterantHeavyMetals', 'Illicit drug adulterants, heavy metals & alpha-2 agonist triage'),
   'peri-overdose-pulmonary': () => t('route.periOverdosePulmonary', 'Peri-overdose pulmonary syndromes & non-cardiogenic edema navigator'),
@@ -618,6 +636,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('cardiogenic-toxin-hiet'),
+    preloadRoute('wooden-chest-rigidity'),
+    preloadRoute('hyperthermic-toxidrome'),
     preloadRoute('inhalant-toxicology'),
     preloadRoute('adulterant-heavy-metals'),
     preloadRoute('peri-overdose-pulmonary'),
