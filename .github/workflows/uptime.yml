@@ -1,0 +1,27 @@
+name: Public uptime
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check public API health without visitor data
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 --retry-delay 10 --max-time 20 \
+            https://harborpath.vercel.app/api/health \
+            | node --input-type=module -e '
+              let body = "";
+              for await (const chunk of process.stdin) body += chunk;
+              const data = JSON.parse(body);
+              if (data.ok !== true) throw new Error("Health endpoint returned ok != true");
+              console.log("HarborPath public health endpoint is ready");
+            '
