@@ -42,7 +42,7 @@ export const INTERACTIONS = [
     title: 'Opioids + Alcohol',
     summary: 'Alcohol compounds opioid breathing suppression, impairs gag reflexes, and accelerates overdose onset.',
     mechanism: 'Ethanol enhances inhibitory GABA-A signaling and inhibits excitatory NMDA glutamate receptors in the medulla, acting synergistically with mu-opioid receptor respiratory depression.',
-    action: 'Avoid drinking alcohol when using opioids or during methadone dose titration. Note that naltrexone or acamprosate can be safely added to help reduce alcohol cravings (acamprosate is compatible with buprenorphine or methadone).',
+    action: 'Alcohol increases overdose risk with all opioid agonists. Ask a clinician about alcohol treatment: acamprosate may be compatible with buprenorphine or methadone after checking kidney function. Naltrexone must NOT be added to opioid agonist treatment: it can precipitate severe withdrawal. Do not abruptly stop alcohol or benzodiazepines if physically dependent; seek medical withdrawal care.',
     source: ['NIAAA Alcohol-Medication Interactions', 'https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/harmful-interactions-mixing-alcohol-with-medicines'],
   },
   {
@@ -72,7 +72,7 @@ export const INTERACTIONS = [
     title: 'Naltrexone (Vivitrol / Oral) + Any Opioid (7–14 Day Washout & Non-Opioid Pain Management)',
     summary: 'Starting naltrexone while opioids remain in your system triggers severe, prolonged precipitated withdrawal; stopping naltrexone leaves you with zero opioid tolerance, and managing pain while on naltrexone requires multimodal non-opioid strategies.',
     mechanism: 'Naltrexone is a potent competitive mu-opioid antagonist. Unlike naloxone (which wears off in 30–90 minutes), oral naltrexone blocks receptors for 24–72 hours and injectable Vivitrol blocks receptors for 28–30 days. Trying to "override" naltrexone with large doses of fentanyl is extremely dangerous because as plasma naltrexone levels dip or fentanyl concentrations surge, fatal respiratory arrest can occur abruptly.',
-    action: 'Strictly observe the full opioid-free washout period: 7–10 days after short-acting opioids, and 10–14+ days after fentanyl, buprenorphine, or methadone before starting naltrexone. Confirm clearance with a urine drug screen and a supervised naloxone challenge test. For acute injury or surgery while taking naltrexone, use multimodal non-opioid analgesia (scheduled acetaminophen, NSAIDs like ibuprofen/ketorolac, regional nerve blocks, and subanesthetic ketamine); never take high-dose opioids to bypass the blockade.',
+    action: 'Do not add naltrexone to opioids. FDA labeling recommends at least 7–10 opioid-free days after short-acting opioids and warns vulnerability after methadone or buprenorphine can last two weeks. Fentanyl or depot injections need an individualized plan. A negative urine screen or supervised challenge cannot guarantee safety. Tell emergency and surgical teams about naltrexone so they can plan monitored pain treatment; never take high-dose opioids to bypass the blockade.',
     source: ['FDA Vivitrol Safety Information', 'https://www.samhsa.gov/substance-use/treatment/options/naltrexone'],
   },
   {
@@ -80,7 +80,7 @@ export const INTERACTIONS = [
     substances: ['stimulants', 'alcohol'],
     severity: 'high',
     title: 'Cocaine + Alcohol (Cocaethylene Formation)',
-    summary: 'The liver combines cocaine and alcohol into a third chemical—cocaethylene—that carries an 18-to-25-fold higher risk of sudden cardiac death than cocaine alone.',
+    summary: 'Cocaine and alcohol can form cocaethylene, which increases cardiac toxicity. This warning applies to cocaine; methamphetamine and alcohol do not form cocaethylene, but still carry serious risks.',
     mechanism: 'Hepatic carboxylesterases transesterify cocaine in the presence of ethanol to form cocaethylene, which blocks dopamine reuptake and cardiac sodium/potassium channels while having a plasma half-life 3 to 5 times longer than cocaine.',
     action: 'Avoid drinking alcohol when using powder or crack cocaine. Seek immediate emergency care for chest pain, pressure, palpitations, or shortness of breath.',
     source: ['NIDA Cocaine Research Report', 'https://nida.nih.gov/research-topics/cocaine'],
@@ -148,7 +148,7 @@ export const NALTREXONE_WASHOUT_GUIDANCE = [
       'Urine screen negative for buprenorphine and norbuprenorphine.',
       'Supervised naloxone challenge or low-dose oral naltrexone test before Vivitrol.',
     ],
-    plainAdvice: 'Wait 7 to 10 days after your last sublingual film or tablet (or 30+ days if you received a monthly injection).',
+    plainAdvice: 'The FDA warns that people transitioning from buprenorphine may remain vulnerable to precipitated withdrawal for up to two weeks. Long-acting injections may require a much longer individualized plan. A calendar or negative test cannot confirm that starting naltrexone is safe; your clinician must assess readiness.',
   },
   {
     id: 'methadone',
@@ -358,7 +358,7 @@ const SEVERITY_RANK = { none: 0, info: 1, moderate: 2, high: 3, critical: 4 };
 
 export const evaluateRegimenSafety = evaluatePolypharmacyRegimen;
 
-export function evaluatePolypharmacyRegimen(substances = []) {
+export function evaluatePolypharmacyRegimen(substances = [], { lang = 'en' } = {}) {
   const list = Array.isArray(substances)
     ? substances
     : substances instanceof Set
@@ -420,6 +420,22 @@ export function evaluatePolypharmacyRegimen(substances = []) {
     depressantScore += dep.depressantWeight || 1.5;
   }
 
+  // FDA CNS-depressant warnings apply even when no opioid is selected. These
+  // rule flags are educational; the legacy numeric sum is not a validated scale.
+  if (depressants.length >= 2 && !hasAnyOpioidAgonist) {
+    alerts.push({
+      id: 'non-opioid-depressant-combination', severity: 'high',
+      title: 'Combined Sedatives Can Suppress Breathing',
+      detail: 'Alcohol, benzodiazepines, gabapentinoids, and alpha-2 sedatives can compound sedation, impair airway protection, and slow breathing. Naloxone does not reverse these non-opioid effects.',
+    });
+    actionSteps.add('Call 911 for slow or absent breathing, blue/gray lips, or inability to wake. Follow dispatcher instructions for rescue breathing or CPR; give naloxone if opioid exposure is possible.');
+    actionSteps.add('Do not abruptly stop regular alcohol or benzodiazepines: withdrawal can cause seizures or delirium and needs medical assessment.');
+  }
+
+  if ((has('buprenorphine') || has('methadone')) && has('benzos_sedatives')) {
+    actionSteps.add('FDA guidance: do not withhold buprenorphine or methadone solely because of benzodiazepine use. Arrange coordinated prescribing, sedation monitoring, and naloxone; do not stop prescribed medication abruptly.');
+  }
+
   if (depressants.length >= 3) {
     alerts.push({
       id: 'triple-depressant-synergy',
@@ -454,7 +470,7 @@ export function evaluatePolypharmacyRegimen(substances = []) {
       detail: 'Xylazine and medetomidine are non-opioid alpha-2 adrenergic sedatives. Chronic exposure followed by abrupt cessation triggers severe alpha-2 withdrawal: a life-threatening sympathetic hyperadrenergic surge (severe hypertension, tachycardia, intense tremors, chills, diaphoresis, and agitation).',
     });
     actionSteps.add('In tranq overdose emergencies, prioritize rescue breathing (1 breath every 5 seconds) after giving 1 dose of 4 mg naloxone; once spontaneous breathing is restored, do not give repetitive extra naloxone doses since it will not reverse alpha-2 sedation.');
-    actionSteps.add('For xylazine/medetomidine withdrawal and severe rebound hypertension, clinical protocols use scheduled alpha-2 agonist replacement (oral clonidine, tizanidine, or dexmedetomidine) followed by a gradual taper.');
+    actionSteps.add('For suspected xylazine/medetomidine withdrawal or severe rebound hypertension, seek urgent clinical assessment. Clinicians may use clonidine, guanfacine, tizanidine, or monitored IV dexmedetomidine; these can cause dangerous low blood pressure and are not self-treatment protocols.');
     actionSteps.add('Inspect skin regularly for necrotic tranq ulcers, which develop at injection and non-injection sites due to severe peripheral vasoconstriction; seek prompt clinical wound care.');
   }
 
@@ -485,7 +501,7 @@ export function evaluatePolypharmacyRegimen(substances = []) {
       detail: 'Naltrexone is a potent competitive mu-opioid antagonist that displaces fentanyl, buprenorphine, and methadone—causing prolonged, severe precipitated withdrawal. Trying to override naltrexone blockade with high-dose opioids can cause sudden fatal overdose.',
     });
     actionSteps.add('Ensure a full 7–10 day opioid-free interval after short-acting opioids (10–14+ days after fentanyl, buprenorphine, or methadone) before starting oral naltrexone or Vivitrol.');
-    actionSteps.add('Confirm opioid clearance with a comprehensive urine drug screen (including fentanyl metabolite LC-MS) and a supervised naloxone challenge test before intramuscular Vivitrol injection.');
+    actionSteps.add('A clinician may use opioid-specific urine tests and a supervised naloxone challenge to assess readiness, but negative results do not rule out precipitated withdrawal. No fixed waiting period guarantees safety.');
     actionSteps.add('For acute pain while on naltrexone, use multimodal non-opioid analgesics (acetaminophen, NSAIDs, regional nerve blocks, IV ketamine); never attempt to override the blockade with massive opioid doses.');
   }
 
@@ -545,7 +561,7 @@ export function evaluatePolypharmacyRegimen(substances = []) {
     actionSteps.add('Review your full medication list with a clinical pharmacist or prescriber to check for kidney/liver dose adjustments.');
   }
 
-  return {
+  const result = {
     riskLevel,
     depressantCount: depressants.length,
     depressantScore,
@@ -555,10 +571,80 @@ export function evaluatePolypharmacyRegimen(substances = []) {
     alpha2ReboundRisk,
     washoutGuidance,
     nonOpioidPainGuidance: NON_OPIOID_PAIN_ALTERNATIVES,
+    clinicianAssessmentRequired: true,
+    validatedRiskScore: false,
   };
+  return lang === 'es' ? localizeRegimenResult(result) : result;
 }
 
 
 
 /** Evaluate an in-memory combination using the existing pharmacist rules. */
 export const evaluateDrugInteractions = evaluatePolypharmacyRegimen;
+
+const AGENT_LABELS_ES = {
+  opioids_fentanyl: 'Fentanilo / heroína / otros opioides',
+  buprenorphine: 'Buprenorfina', methadone: 'Metadona',
+  naltrexone: 'Naltrexona oral o inyectable (Vivitrol)',
+  alcohol: 'Alcohol', benzos_sedatives: 'Benzodiacepinas / sedantes',
+  xylazine_medetomidine: 'Xilacina / medetomidina',
+  stimulants: 'Metanfetamina / cocaína',
+  gabapentinoids: 'Gabapentina / pregabalina', disulfiram: 'Disulfiram',
+  qtc_meds: 'Medicamentos que afectan el QTc o las enzimas hepáticas',
+};
+
+export function getRegimenAgentLabel(id, lang = 'en') {
+  return lang === 'es' ? AGENT_LABELS_ES[id] || id : REGIMEN_AGENTS.find((a) => a.id === id)?.label || id;
+}
+
+// Translated clinical summaries share the same rule ids as the English engine.
+// No free text or selections leave the browser to obtain a translation.
+const INTERACTIONS_ES = {
+  'opioids-benzos': ['Opioides + benzodiacepinas o sedantes', 'La combinación puede causar sedación profunda y paro respiratorio.', 'Ambos deprimen el sistema nervioso y reducen la respiración.', 'No suspenda la buprenorfina ni la metadona solo por usar benzodiacepinas. La FDA recomienda atención coordinada, vigilancia y acceso a naloxona. No suspenda benzodiacepinas de golpe.'],
+  'opioids-xylazine': ['Opioides + xilacina / medetomidina', 'Pueden causar sedación profunda, pulso lento y presión baja. La abstinencia de medetomidina puede causar una crisis de presión alta.', 'Los sedantes alfa-2 no son opioides; la naloxona no revierte su efecto.', 'Llame al 911, dé naloxona si puede haber opioides y apoye la respiración según el operador. Repita la naloxona según el dispositivo si la respiración no mejora o vuelve a empeorar. Busque atención por heridas o abstinencia intensa.'],
+  'opioids-gabapentinoids': ['Opioides + gabapentina / pregabalina', 'Aumenta el riesgo de sedación y dificultad para respirar, sobre todo con enfermedad renal.', 'Los efectos depresores se suman; la enfermedad renal puede acumular estos medicamentos.', 'Revise la función renal y todas las dosis con quien receta. No tome dosis adicionales y tenga naloxona disponible.'],
+  'opioids-alcohol': ['Opioides + alcohol', 'El alcohol aumenta el riesgo de respiración lenta, aspiración y sobredosis.', 'Los efectos depresores sobre el cerebro se suman.', 'La naltrexona NO es compatible con metadona o buprenorfina: puede causar abstinencia precipitada. Pregunte por acamprosato tras evaluar los riñones. Si depende del alcohol, no lo suspenda bruscamente sin atención médica.'],
+  'buprenorphine-full-agonists': ['Inicio de buprenorfina después de opioides agonistas completos', 'Una primera dosis demasiado pronto puede precipitar abstinencia. La selección por sí sola no indica cuándo sería seguro empezar.', 'La buprenorfina puede desplazar otros opioides de los receptores.', 'Acuerde con un profesional un inicio convencional basado en síntomas o un plan individualizado de dosis bajas (Método Bernese). No cambie las dosis por su cuenta.'],
+  'methadone-cyp-qtc': ['Metadona + medicamentos que afectan el ritmo o su metabolismo', 'Algunas combinaciones elevan la metadona o aumentan el riesgo de arritmia.', 'Las interacciones enzimáticas y la prolongación del QTc requieren revisión individual.', 'Pida una revisión farmacéutica; su equipo puede valorar electrocardiograma y electrolitos. El desmayo, dolor de pecho o palpitaciones requieren atención urgente.'],
+  'naltrexone-opioids': ['Naltrexona / Vivitrol + cualquier opioide', 'Puede provocar abstinencia precipitada grave. Intentar vencer el bloqueo con más opioides puede causar una sobredosis mortal.', 'La naltrexona bloquea los receptores opioides y reduce la tolerancia con el tiempo.', 'Se necesita un intervalo sin opioides y una evaluación clínica. La FDA indica al menos 7–10 días tras opioides de acción corta; la vulnerabilidad tras buprenorfina o metadona puede durar dos semanas o más según la formulación. Ningún calendario ni prueba negativa garantiza seguridad.'],
+  'cocaine-alcohol': ['Estimulantes + alcohol', 'La cocaína con alcohol puede formar cocaetileno y aumentar la toxicidad cardíaca. La metanfetamina no forma cocaetileno, pero la combinación sigue siendo peligrosa.', 'El alcohol altera los efectos y puede ocultar señales de intoxicación.', 'Evite combinar. Llame al 911 por dolor de pecho, convulsiones, sobrecalentamiento o dificultad para respirar.'],
+  'stimulants-opioids': ['Estimulantes + opioides', 'Un estimulante no previene una sobredosis de opioides y puede ocultar la somnolencia.', 'La estimulación cardíaca no revierte la depresión respiratoria de los opioides.', 'No use estimulantes para despertar a alguien. Llame al 911, use naloxona y siga las instrucciones de respiración o RCP del operador.'],
+  'alcohol-disulfiram': ['Alcohol + disulfiram', 'Puede causar vómitos intensos, taquicardia y presión arterial peligrosamente baja.', 'El disulfiram impide eliminar el acetaldehído del alcohol.', 'Evite alcohol y productos que lo contengan durante el tratamiento y por 14 días después. Una reacción intensa requiere atención de urgencia.'],
+};
+
+export function localizeInteraction(item, lang = 'en') {
+  const translated = lang === 'es' && INTERACTIONS_ES[item.id];
+  if (!translated) return { ...item };
+  const [title, summary, mechanism, action] = translated;
+  return { ...item, title, summary, mechanism, action };
+}
+
+const ALERTS_ES = {
+  'non-opioid-depressant-combination': ['Varios sedantes pueden suprimir la respiración', 'El alcohol, las benzodiacepinas, los gabapentinoides y los sedantes alfa-2 pueden sumar sus efectos aunque no haya opioides.'],
+  'triple-depressant-synergy': ['Riesgo crítico por tres o más depresores', 'La combinación puede causar pérdida de conciencia, aspiración y paro respiratorio.'],
+  'quadruple-depressant-synergy': ['Cuatro depresores combinados', 'La combinación de opioides, alcohol, benzodiacepinas y gabapentinoides requiere revisión clínica urgente.'],
+  'xylazine-alpha2-rebound-alert': ['Sedación y rebote por xilacina / medetomidina', 'La abstinencia intensa puede causar presión muy alta, taquicardia y agitación. Busque atención médica; no se automedique con agonistas alfa-2.'],
+  'precipitated-withdrawal-buprenorphine': ['Riesgo de abstinencia precipitada al iniciar buprenorfina', 'El momento y la estrategia de inicio deben acordarse con quien receta. El uso simultáneo seleccionado no demuestra que haya ocurrido abstinencia.'],
+  'precipitated-withdrawal-naltrexone': ['Naltrexona + opioides: abstinencia grave o sobredosis', 'No inicie naltrexona mientras toma opioides. Nunca intente vencer el bloqueo con dosis altas de opioides.'],
+  'methadone-qtc-cyp-synergy': ['Interacción cardíaca o metabólica con metadona', 'Revise los medicamentos con un farmacéutico; pueden necesitarse controles del ritmo y de electrolitos.'],
+  'cardiac-qtc-strain': ['Estrés cardíaco y del ritmo', 'La deshidratación y ciertos medicamentos pueden aumentar el riesgo de arritmia.'],
+  'disulfiram-acetaldehyde-reaction': ['Reacción grave: disulfiram + alcohol', 'Los vómitos intensos, el desmayo o dolor de pecho requieren atención inmediata.'],
+  'naltrexone-alcohol-therapeutic': ['Naltrexona para el trastorno por consumo de alcohol', 'No produce la reacción del disulfiram. La formulación y la seguridad hepática deben revisarse con quien receta.'],
+};
+
+function localizeRegimenResult(result) {
+  const matchedInteractions = result.matchedInteractions.map((item) => localizeInteraction(item, 'es'));
+  const actions = new Set(matchedInteractions.map((item) => item.action));
+  actions.add('Esta revisión educativa no diagnostica ni predice su riesgo personal. No existe una combinación demostrada segura por ausencia de alertas. Revise todos los medicamentos con un profesional.');
+  if (result.depressantCount >= 2) {
+    actions.add('Si no despierta, tiene labios azules o grises o respira lento, llame al 911. Siga las instrucciones del operador para respiración de rescate o RCP. Dé naloxona si puede haber opioides; no revierte otros sedantes.');
+    actions.add('No suspenda de golpe alcohol ni benzodiacepinas si tiene dependencia: puede sufrir convulsiones o delirio. Solicite atención médica.');
+  }
+  if (result.alpha2ReboundRisk) actions.add('La clonidina, guanfacina, tizanidina o dexmedetomidina requieren supervisión: pueden bajar peligrosamente la presión. Busque atención por heridas y abstinencia intensa.');
+  return {
+    ...result,
+    alerts: result.alerts.map((alert) => ({ ...alert, title: ALERTS_ES[alert.id]?.[0] || 'Revisión clínica necesaria', detail: ALERTS_ES[alert.id]?.[1] || 'Consulte con un profesional.' })),
+    matchedInteractions,
+    actionSteps: [...actions],
+  };
+}

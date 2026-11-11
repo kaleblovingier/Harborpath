@@ -8,6 +8,7 @@ import { pageHeader, section, p, strong } from './common.js';
 import { renderInsuranceSelectorHTML, renderFacilityInsuranceBadgeHTML, facilityAdmissionsQuestions } from './insuranceWidget.js';
 import { getInsuranceState, rankFacilitiesByInsurance } from './insuranceHelpers.js';
 import { treatmentCard } from '../components/facilityCard.js';
+import { setNavigatorHandoffState } from './navigatorHandoff.js';
 
 export const PRESETS = [
   { codes: [], get label() { return t('treatment.preset.any', 'Any treatment'); } },
@@ -64,7 +65,8 @@ export function treatmentView({ query = new URLSearchParams(), handoff = null } 
     selector,
     h('nav', { class: 'presets', 'aria-label': t('treatment.presets.label', 'Quick searches') },
       PRESETS.map((pr) => h('a', {
-        href: pr.codes.length ? `#/treatment?codes=${pr.codes.join(',')}` : '#/treatment',
+        href: '#/treatment',
+        onclick: () => setNavigatorHandoffState({ codes: pr.codes }),
         class: 'preset',
         'aria-current': pr.codes.join(',') === current ? 'true' : null,
       }, pr.label))),

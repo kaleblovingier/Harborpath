@@ -11,6 +11,19 @@ import esSafety from './es-safety.js';
 import esRecovery from './es-recovery.js';
 
 export const es = {
+  'route.clinicalScores': 'Referencia de abstinencia COWS y CIWA-Ar',
+  'route.withdrawalPlanner': 'Referencia de buprenorfina en dosis bajas',
+  'tools.item.clinical-scores.title': 'Referencia de abstinencia COWS y CIWA-Ar',
+  'tools.item.clinical-scores.description': 'Revise síntomas con un profesional y reconozca señales de emergencia. Las puntuaciones no garantizan seguridad.',
+  'tools.item.withdrawal-planner.title': 'Referencia de buprenorfina en dosis bajas',
+  'tools.item.withdrawal-planner.description': 'Explore una referencia educativa de seis días y preguntas para su prescriptor, con orientación sobre embarazo y heridas.',
+  'equity.region': 'Opciones de la red federal de atención',
+  'equity.title': 'Más formas de acceder a atención',
+  'equity.expanded': 'Ampliamos la búsqueda a 250 millas porque puede haber pocas opciones locales. La distancia puede incluir viajes sobre el agua; confirme acceso, elegibilidad, servicios y telesalud antes de viajar.',
+  'equity.networks': 'Los centros HRSA ofrecen tarifas según ingresos. VA e IHS y los programas tribales tienen requisitos de elegibilidad. Confirme los servicios de tratamiento directamente.',
+  'equity.unavailable': 'No se pudieron buscar algunos directorios federales. Use sus buscadores oficiales abajo.',
+  'finder.showingCoverageCount': '{count} opciones con compatibilidad de cobertura',
+  'ins.card.questions': 'Preguntas para admisiones',
   // ---------------------------------------------------------------- Sensory mode & Emergency drawer
   'sensory.enabled': 'Modo sensorial calmante activado. Movimiento y contraste suavizados.',
   'sensory.disabled': 'Modo sensorial calmante desactivado.',

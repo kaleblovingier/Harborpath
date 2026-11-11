@@ -1,12 +1,12 @@
-import { INTERACTIONS, NALTREXONE_WASHOUT_GUIDANCE, NON_OPIOID_PAIN_ALTERNATIVES, calculateNaltrexoneWashout, REGIMEN_AGENTS, evaluateRegimenSafety, evaluatePolypharmacyRegimen, evaluateDrugInteractions } from './pharmacologyEngine.js';
+import { INTERACTIONS, NALTREXONE_WASHOUT_GUIDANCE, NON_OPIOID_PAIN_ALTERNATIVES, calculateNaltrexoneWashout, REGIMEN_AGENTS, evaluateRegimenSafety, evaluatePolypharmacyRegimen, evaluateDrugInteractions, getRegimenAgentLabel, localizeInteraction } from './pharmacologyEngine.js';
 export { INTERACTIONS, NALTREXONE_WASHOUT_GUIDANCE, NON_OPIOID_PAIN_ALTERNATIVES, calculateNaltrexoneWashout, REGIMEN_AGENTS, evaluateRegimenSafety, evaluatePolypharmacyRegimen, evaluateDrugInteractions } from './pharmacologyEngine.js';
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t, getLang } from '../i18n.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetMedicationsState);
+registerQuickExitHandler(resetPharmacologyState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 
@@ -45,6 +45,11 @@ export function resetMedicationsState() {
   if (typeof activeMedicationsReset === 'function' && typeof globalThis.document !== 'undefined' && typeof globalThis.document.createElement === 'function') {
     activeMedicationsReset();
   }
+}
+
+/** Public reset contract; the engine itself is pure and holds no patient state. */
+export function resetPharmacologyState() {
+  resetMedicationsState();
 }
 
 export const MEDICATION_CATEGORIES = [
@@ -127,10 +132,10 @@ export const MEDICATIONS = [
     finderLabel: 'Find extended-release naltrexone providers',
     summary: 'A non-opioid, non-controlled medication that completely blocks opioid receptors for 28 days at a time. Ideal for people who have already completed withdrawal and want a monthly receptor blockade without physical dependence.',
     mechanism: 'Competitive mu-opioid receptor antagonist. It binds tightly to opioid receptors without activating them, preventing heroin, fentanyl, or prescription opioids from attaching or producing euphoria or sedation.',
-    howToStart: 'Requires a complete opioid-free interval of at least 7–10 days after short-acting opioids, and 10–14+ days after fentanyl, buprenorphine, or methadone. Clinicians often perform a urine screen or a small naloxone/oral naltrexone challenge test first to guarantee that no residual opioids remain, preventing severe precipitated withdrawal.',
+    howToStart: 'A prescriber must assess readiness after an opioid-free interval. FDA labeling recommends at least 7–10 days after short-acting opioids and warns that vulnerability after buprenorphine or methadone may last two weeks. Fentanyl and long-acting formulations may require an individualized longer plan. Negative urine or challenge tests cannot guarantee safety.',
     access: 'Can be prescribed and administered by any licensed physician, nurse practitioner, or physician assistant in primary care, psychiatry, or outpatient addiction clinics—no special certification required.',
     clinicalPearls: [
-      'Crucial safety note: Naltrexone resets your opioid tolerance back to zero. If you miss a monthly Vivitrol injection or stop treatment and return to opioid use, taking a dose you previously tolerated can cause an immediate, fatal overdose.',
+      'Crucial safety note: Opioid tolerance is reduced during naltrexone treatment. Near the end of a dosing interval, after a missed injection, or after stopping, previously tolerated opioids can cause fatal overdose. Keep naloxone available.',
       'Oral naltrexone tablets alone are generally not recommended for Opioid Use Disorder (except during supervised transition) because skipping just 1–2 daily pills drops the blockade while tolerance is low.',
       'Contraindicated in acute hepatitis or liver failure, and cannot be used alongside opioid pain medications (non-opioid or regional pain control must be used in emergencies).',
     ],
@@ -155,10 +160,10 @@ export const MEDICATIONS = [
     finderLabel: 'Find alcohol use disorder medication providers',
     summary: 'A first-line FDA-approved medication for alcohol use disorder that blunts the brain’s endorphin reward from alcohol, significantly reducing cravings and heavy drinking days.',
     mechanism: 'Mu-opioid receptor antagonist. Alcohol triggers the release of natural endorphins in the brain’s mesolimbic reward pathway; naltrexone blocks those endorphin receptors so drinking feels less rewarding and the urge to keep drinking after one drink ("loss of control") diminishes.',
-    howToStart: 'Unlike disulfiram or acamprosate, you do NOT need to stop drinking before starting naltrexone for alcohol use disorder. It can be taken daily to support complete abstinence or cut back heavy drinking, or taken 1 hour before anticipated drinking ("targeted dosing" / Sinclair Method). However, you must be completely free of all opioids for 7–14 days before starting.',
+    howToStart: 'Oral naltrexone may be started while someone is still drinking under a clinician’s care. The Vivitrol injection label requires that patients not be actively drinking at the first injection. Neither formulation treats acute alcohol withdrawal. Opioid-free readiness and liver health must be assessed before either formulation.',
     access: 'Available by prescription from any primary care provider, telehealth doctor, psychiatrist, or addiction program.',
     clinicalPearls: [
-      'Safe to take while actively drinking—naltrexone does not cause sickness if you drink alcohol.',
+      'Naltrexone does not cause the disulfiram-alcohol reaction. Drinking can still be dangerous; physical dependence requires a medically planned withdrawal approach.',
       'Taking the first few oral doses with food or starting at 25 mg for 2–3 days before increasing to 50 mg minimizes mild stomach upset or headache.',
       'Must be avoided in anyone taking opioid pain medications, buprenorphine, or methadone, or anyone with acute hepatitis or decompensated cirrhosis.',
     ],
@@ -266,7 +271,7 @@ export const MEDICATIONS = [
     howToStart: 'Administer immediately if someone is unresponsive with slow, shallow, snoring/gurgling, or stopped breathing. Give 1 spray (or 1 IM dose), support breathing with rescue breaths (1 breath every 5 seconds), and wait a full 2–3 minutes before giving a second dose.',
     access: '4 mg and 3 mg naloxone nasal sprays (Narcan, RiVive, generics) are available Over-The-Counter (OTC) without a prescription at pharmacies, grocery stores, and online, and are distributed for free by harm reduction programs, health departments, and mail-based programs like NEXT Distro.',
     clinicalPearls: [
-      'Why clinical toxicologists & harm reduction specialists prefer standard 4 mg naloxone + rescue breathing: The clinical goal of overdose reversal is restoring adequate spontaneous breathing—not waking someone up into agonizing withdrawal. High-dose 8 mg naloxone or long-acting nalmefene (~9–11 hr half-life) carries a significantly higher risk of severe, prolonged precipitated withdrawal (vomiting/aspiration, catecholamine surge, flash pulmonary edema, extreme agitation, and dangerous attempts to use huge amounts of fentanyl to overcome the blockade).',
+      'Use the naloxone available without delay. A CDC observational comparison found no survival benefit for 8 mg over 4 mg nasal naloxone and more withdrawal with 8 mg. Nalmefene is longer acting and may cause prolonged withdrawal; this does not prove every product has the same clinical outcome. Call 911, support breathing, and repeat according to the device if breathing is inadequate or worsens.',
       'Injectable intramuscular (IM) naloxone (0.4 mg–0.8 mg) offered by syringe services programs allows gentler, titratable reversal that restores breathing with minimal withdrawal.',
       'Xylazine ("tranq") and medetomidine are alpha-2 adrenergic sedatives—NOT opioids. Naloxone reverses the fentanyl component so breathing restarts, but the person may remain deeply sedated from xylazine. Once they are breathing steadily on their own, stop giving extra naloxone, roll them into the recovery position, and continue monitoring airway and breathing.',
     ],
@@ -297,8 +302,8 @@ export const MEDICATIONS = [
     howToStart: 'Can be started immediately—even during active stimulant use or early "crash" recovery (fatigue, depression, hypersomnia). Ask for clinicians familiar with the 2023 ASAM/AAAP Clinical Practice Guideline on Stimulant Use Disorders.',
     access: 'Contingency management is increasingly covered by state Medicaid waivers, VA medical centers, and SAMHSA-listed outpatient programs (`CMI`). Off-label medications can be prescribed by any primary care or psychiatric prescriber.',
     clinicalPearls: [
-      'In the NEJM ADAPT-2 randomized clinical trial, combining extended-release injectable naltrexone (380 mg every 3 weeks) with high-dose extended-release bupropion (450 mg/day) multiplied treatment response rates for moderate-to-severe methamphetamine use disorder compared to placebo.',
-      'Mirtazapine (15–30 mg at bedtime) has multiple randomized trials showing reduced methamphetamine use and improved sleep/anxiety.',
+      'In the NEJM ADAPT-2 trial, naltrexone plus bupropion produced a weighted response of 13.6% versus 2.5% with placebo. This was a study-specific response, not a cure rate. Treatment is off-label and unsuitable during opioid agonist treatment; bupropion requires seizure-risk screening.',
+      'ASAM/AAAP gives mirtazapine a conditional recommendation with low-certainty evidence for amphetamine-type stimulant use disorder. Discuss sedation, weight gain, depression, and the limits of the evidence with your clinician.',
       'Always carry naloxone and fentanyl test strips even if you only use cocaine, crack, or methamphetamine—cross-contamination in the stimulant supply is a leading cause of unexpected opioid overdose in people with zero opioid tolerance.',
     ],
     sources: [
@@ -975,19 +980,40 @@ function medicationCard(med) {
 }
 
 function interactionCard(item) {
+  item = localizeInteraction(item, getLang());
   return h('article', { class: 'card', id: `ix-${item.id}`, 'aria-labelledby': `ix-title-${item.id}` },
     h('div', { class: 'facility-head' },
       h('h3', { class: 'facility-name', id: `ix-title-${item.id}` }, item.title),
       severityBadge(item.severity),
     ),
-    p(strong('What happens: '), item.summary),
+    p(strong(tr('What happens: ', 'Qué sucede: ')), item.summary),
     h('dl', { class: 'service-list' },
       h('dt', null, t('meds.ix.mechanism', 'Pharmacology')),
       h('dd', null, item.mechanism),
       h('dt', null, t('meds.ix.action', 'How to stay safer')),
       h('dd', null, item.action),
     ),
-    item.source && fine('Source: ', ext(item.source[1], item.source[0])),
+    item.source && fine(tr('Source: ', 'Fuente: '), ext(item.source[1], tr(item.source[0], 'Referencia clínica'))),
+  );
+}
+
+function currentPharmacologyReference() {
+  const cards = [
+    [tr('Alcohol medication comparison', 'Comparación de medicamentos para el alcohol'),
+      tr('Acamprosate supports abstinence after withdrawal and can be used with MOUD when kidney function permits. Oral or XR naltrexone reduces heavy drinking or supports abstinence, but cannot be combined with opioid agonists. Disulfiram deters drinking through an alcohol reaction; it does not treat cravings or withdrawal and needs informed consent and liver review. Gabapentin and topiramate are off-label alternatives: discuss sedation/renal function with gabapentin and cognitive effects, kidney stones, and pregnancy risks with topiramate. None replaces emergency alcohol-withdrawal care.', 'El acamprosato ayuda a mantener la abstinencia tras la retirada y puede usarse con tratamiento opioide si los riñones lo permiten. La naltrexona oral o inyectable puede reducir el consumo o apoyar la abstinencia, pero no se combina con agonistas opioides. El disulfiram provoca una reacción al beber; no trata el deseo ni la abstinencia y requiere consentimiento y evaluación hepática. Gabapentina y topiramato son alternativas fuera de indicación: revise sedación y riñones con gabapentina, y efectos cognitivos, cálculos y riesgos del embarazo con topiramato. Ninguno sustituye la atención de urgencia por abstinencia de alcohol.'),
+      'https://www.niaaa.nih.gov/health-professionals-communities/core-resource-on-alcohol/recommend-evidence-based-treatment-know-options'],
+    [tr('Stimulant care: evidence and limits', 'Atención por estimulantes: evidencia y límites'),
+      tr('Contingency management (CMI), with CBT or community reinforcement, is the standard of care. Naltrexone + bupropion and mirtazapine may be considered off-label for selected patients; benefits are not guaranteed. Naltrexone is incompatible with methadone, buprenorphine, or other opioids; bupropion needs seizure-risk review. Mirtazapine evidence is limited. Chest pain, seizure, severe overheating, or breathing problems require 911.', 'El manejo de contingencias (CMI), con terapia cognitivo-conductual o refuerzo comunitario, es la referencia de tratamiento. Naltrexona + bupropión y mirtazapina pueden considerarse fuera de indicación en algunas personas; no garantizan beneficios. Naltrexona no se combina con metadona, buprenorfina ni otros opioides; bupropión requiere evaluar convulsiones. La evidencia para mirtazapina es limitada. Dolor de pecho, convulsiones, sobrecalentamiento intenso o problemas respiratorios requieren llamar al 911.'),
+      'https://www.asam.org/quality-care/clinical-guidelines/stimulant-use-disorders'],
+    [tr('MOUD and benzodiazepines', 'Tratamiento opioide y benzodiacepinas'),
+      tr('FDA guidance says buprenorphine or methadone should not be withheld solely because someone takes benzodiazepines or other CNS depressants. The combination still increases overdose risk. Coordinate prescribers, check sedation, carry naloxone, and plan any sedative taper with a clinician; abrupt benzodiazepine withdrawal can cause seizures.', 'La FDA indica que no debe negarse buprenorfina o metadona solo por tomar benzodiacepinas u otros depresores. La combinación sí aumenta el riesgo de sobredosis. Coordine profesionales, vigile la sedación, tenga naloxona y acuerde cualquier reducción de sedantes; suspender benzodiacepinas de golpe puede causar convulsiones.'),
+      'https://www.fda.gov/drugs/drug-safety-and-availability/fda-requiring-boxed-warning-updated-improve-safe-use-benzodiazepine-drug-class'],
+    [tr('4 mg versus 8 mg nasal naloxone', 'Naloxona nasal de 4 mg frente a 8 mg'),
+      tr('A CDC observational study found similar survival and more withdrawal with 8 mg than 4 mg. Give whichever approved product is available promptly; do not delay rescue to find a preferred strength. Nalmefene lasts longer and can cause prolonged withdrawal, but recurrent overdose remains possible. Call 911, support breathing or CPR as directed, and repeat rescue medication according to its device instructions.', 'Un estudio observacional de CDC encontró supervivencia similar y más abstinencia con 8 mg que con 4 mg. Use de inmediato el producto aprobado disponible; no demore el rescate para buscar otra concentración. El nalmefeno dura más y puede prolongar la abstinencia, pero la sobredosis puede reaparecer. Llame al 911, apoye la respiración o RCP según las instrucciones y repita el medicamento según el dispositivo.'),
+      'https://www.cdc.gov/mmwr/volumes/73/wr/mm7305a4.htm'],
+  ];
+  return section('pharmacology-reference', tr('Medication decisions to discuss with your clinician', 'Decisiones sobre medicamentos para conversar con su profesional'),
+    ...cards.map(([title, body, source]) => h('article', { class: 'card' }, h('h3', null, title), p(body), fine(ext(source, tr('Primary clinical reference', 'Referencia clínica primaria'))))),
   );
 }
 
@@ -1327,7 +1353,7 @@ export function medicationsView({ query } = {}) {
       return;
     }
 
-    const result = evaluateDrugInteractions(chosenIds);
+    const result = evaluateDrugInteractions(chosenIds, { lang: getLang() });
     const calloutTone = result.riskLevel === 'critical' || result.riskLevel === 'high'
       ? 'callout callout-emergency'
       : result.riskLevel === 'moderate'
@@ -1335,15 +1361,15 @@ export function medicationsView({ query } = {}) {
         : 'callout callout-info';
 
     const summaryTitle = result.riskLevel === 'critical'
-      ? 'Critical Multi-Substance Risk Detected'
+      ? tr('Critical Multi-Substance Risk Detected', 'Riesgo crítico por varias sustancias')
       : result.riskLevel === 'high'
-        ? 'High-Risk Combination Detected'
+        ? tr('High-Risk Combination Detected', 'Combinación de alto riesgo')
         : result.riskLevel === 'moderate'
-          ? 'Moderate Interaction — Clinical Monitoring Recommended'
-          : 'Combination Pharmacology Note';
+          ? tr('Moderate Interaction — Clinical Monitoring Recommended', 'Interacción moderada: se recomienda vigilancia clínica')
+          : tr('Combination Pharmacology Note', 'Nota sobre la combinación');
 
     if (shouldAnnounce) {
-      announce(`${summaryTitle}: ${result.alerts.length} clinical alert${result.alerts.length === 1 ? '' : 's'} and ${result.matchedInteractions.length} pairwise interaction${result.matchedInteractions.length === 1 ? '' : 's'}.`);
+      announce(tr(`${summaryTitle}: ${result.alerts.length} clinical alerts and ${result.matchedInteractions.length} pairwise interactions.`, `${summaryTitle}: ${result.alerts.length} alertas clínicas y ${result.matchedInteractions.length} interacciones.`));
     }
 
     regimenOutput.append(
@@ -1355,9 +1381,10 @@ export function medicationsView({ query } = {}) {
           severityBadge(result.riskLevel),
         ),
         result.depressantCount > 0 && p(
-          strong('Depressant Polypharmacy Score: '),
-          `${result.depressantScore.toFixed(1)} (${result.depressantCount} sedatives/depressants active)`,
+          strong(tr('Selected sedatives/depressants: ', 'Sedantes/depresores seleccionados: ')),
+          String(result.depressantCount),
         ),
+        fine(tr('Educational interaction flags, not a validated risk score or a safe-use clearance. Missing alerts do not establish safety. A pharmacist or prescriber must review your full regimen.', 'Alertas educativas, no una escala de riesgo validada ni una autorización de uso seguro. La ausencia de alertas no demuestra seguridad. Un profesional debe revisar todos sus medicamentos.')),
         result.alerts.length > 0 && ul(
           result.alerts.map((a) => [strong(`${a.title}: `), a.detail]),
         ),
@@ -1365,7 +1392,7 @@ export function medicationsView({ query } = {}) {
           ...result.matchedInteractions.map(interactionCard),
         ),
         result.actionSteps.length > 0 && h('div', null,
-          p(strong('Clinical Pharmacist Harm-Reduction Steps:')),
+          p(strong(tr('Clinical Pharmacist Harm-Reduction Steps:', 'Pasos para reducir daños:'))),
           ul(result.actionSteps),
         ),
         h('p', { class: 'actions' },
@@ -1376,7 +1403,7 @@ export function medicationsView({ query } = {}) {
               selectedRegimen.clear();
               renderRegimenChecker(true);
             },
-          }, icon('x'), 'Clear selection'),
+          }, icon('x'), tr('Clear selection', 'Borrar selección')),
         ),
       ),
     );
@@ -1384,7 +1411,7 @@ export function medicationsView({ query } = {}) {
 
   const regimenCheckerPanel = h('div', { class: 'card', id: 'regimen-safety-checker' },
     h('h3', null, t('meds.regimen.title', 'Multi-Substance Regimen & Polypharmacy Safety Check')),
-    p('Select 2 or more medications or substances below to evaluate combined sedative load, precipitated withdrawal risk, and cardiac QTc / liver enzyme interactions:'),
+    p(tr('Select 2 or more medications or substances below to review sedation, precipitated withdrawal, and heart rhythm or metabolism warnings. This is not a dosing tool. All selections stay in browser memory.', 'Seleccione dos o más medicamentos o sustancias para revisar alertas de sedación, abstinencia precipitada, ritmo cardíaco o metabolismo. No calcula dosis. Todo queda en la memoria del navegador.')),
     h('div', {
       class: 'presets',
       role: 'group',
@@ -1399,7 +1426,7 @@ export function medicationsView({ query } = {}) {
           else selectedRegimen.add(agent.id);
           renderRegimenChecker(true);
         },
-      }, agent.label);
+      }, getRegimenAgentLabel(agent.id, getLang()));
       regimenPills.push(btn);
       return btn;
     })),
@@ -1473,6 +1500,7 @@ export function medicationsView({ query } = {}) {
       ),
     ),
 
+    currentPharmacologyReference(),
     section('profiles', t('meds.profiles.title', 'Evidence-based medication profiles'),
       p('Taking medication for an opioid or alcohol use disorder is NOT "trading one addiction for another." Stabilizing receptor signaling stops the cycle of withdrawal and cravings, heals brain circuitry, and—for opioid use disorder—staying on methadone or buprenorphine is linked to fewer overdose deaths.'),
       categoryTablist,
@@ -1536,13 +1564,13 @@ export function medicationsView({ query } = {}) {
     ),
 
     section('otp-rules', t('meds.otp.title', 'Methadone Access & the 2024 SAMHSA 42 CFR Part 8 Final Rule'),
-      p('Federal updates that took effect in 2024 removed several outdated barriers to methadone care at Opioid Treatment Programs (OTPs):'),
+      p(tr('The 2024 federal rule expands access at Opioid Treatment Programs (OTPs). State requirements and individualized clinical decisions still apply:', 'La norma federal de 2024 amplía el acceso en programas de tratamiento con opioides (OTP). También aplican los requisitos estatales y las decisiones clínicas individuales:')),
       ul([
-        [strong('Faster take-home doses: '), 'Clinics may now provide up to ', strong('7 unsupervised take-home doses '), 'during the first 14 days of treatment, up to ', strong('14 take-home doses '), 'starting on day 15, and up to ', strong('28 take-home doses '), 'starting on day 31 based on individualized clinical stability rather than rigid year-long waiting periods.'],
-        [strong('Telehealth intake flexibilities: '), 'Authorized OTP practitioners can now initiate methadone or buprenorphine after an audio-visual telehealth evaluation (and audio-only for buprenorphine when video is unavailable).'],
-        [strong('No 1-year history requirement: '), 'People seeking methadone no longer have to prove a full 12-month history of opioid addiction before admission.'],
-        [strong('Counseling is never a barrier to medication: '), 'Refusing or missing counseling sessions cannot be used to automatically deny or terminate life-saving medication.'],
+        tr('Methadone take-home ceilings: up to 7 days during the first 14 days, up to 14 days from day 15, and up to 28 days from day 31. These are permitted maximums, not automatic entitlements; the OTP documents an individualized safety decision.', 'Límites de metadona para llevar: hasta 7 días durante los primeros 14 días, hasta 14 días desde el día 15 y hasta 28 días desde el día 31. Son máximos permitidos, no derechos automáticos; el OTP documenta la decisión de seguridad individual.'),
+        tr('Telehealth screening: buprenorphine may use audio-only or video when an adequate evaluation is possible. Methadone generally requires audio-visual screening. The narrow audio-only exception requires the patient to be physically with an appropriately DEA-registered licensed practitioner; audio-only is not a general home methadone start.', 'Evaluación por telesalud: la buprenorfina puede evaluarse por audio o video si la evaluación es adecuada. La metadona generalmente requiere audio y video. La excepción limitada de solo audio exige que la persona esté físicamente con un profesional habilitado y registrado ante la DEA; no autoriza un inicio general de metadona desde casa por teléfono.'),
+        tr('Adults no longer need to prove a full year of opioid addiction before admission. Counseling should be offered; refusal alone does not bar MOUD.', 'Los adultos ya no deben demostrar un año completo de adicción a opioides para ingresar. Se debe ofrecer asesoramiento; rechazarlo por sí solo no impide recibir medicación.'),
       ]),
+      fine(ext('https://www.samhsa.gov/substance-use/treatment/opioid-treatment-program/42-cfr-part-8/faqs', tr('SAMHSA Part 8 implementation questions', 'Preguntas de SAMHSA sobre la Parte 8'))),
       p(h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=OTP' }, icon('pin'), 'Search certified OTP methadone clinics near me')),
       p(h('a', { class: 'btn btn-secondary', href: '#/methadone-access' }, icon('shield'), 'Open Methadone 2024 Take-Home Calculator & Patient Rights Guide')),
     ),

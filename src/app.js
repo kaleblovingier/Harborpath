@@ -643,6 +643,11 @@ export function createApp({
     }
     try {
       if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
+      // This public reference contains agency contacts only, never visitor data.
+      // Serve exactly this allowlisted dataset; other repository files stay private.
+      if (url.pathname === '/data/state-medicaid.json') {
+        return json(req, res, 200, DATA_LOADERS.stateMedicaid());
+      }
       return serveStatic(req, res, url.pathname);
     } catch (err) {
       // Last resort: never let one request crash the process.

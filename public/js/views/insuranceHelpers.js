@@ -5,11 +5,13 @@
 // localStorage, sessionStorage, cookies, or the URL address bar, and are
 // cleared immediately by resetInsuranceState() on Quick exit (Esc x2).
 
-import { t } from '../i18n.js';
-import { onQuickExit } from '../state.js';
+import { t, getLang } from '../i18n.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
+
+const L = (en, es) => getLang() === 'es' ? es : en;
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetInsuranceState);
+registerQuickExitHandler(resetInsuranceState);
 
 export const INSURANCE_TIERS = {
   EMTALA_PROTECTED: {
@@ -17,7 +19,7 @@ export const INSURANCE_TIERS = {
     rank: 1,
     tone: 'warn',
     get label() {
-      return t('ins.tier.emtala', 'EMTALA Emergency & DEA 72-Hour Protected');
+      return L('EMTALA Emergency Screening & Stabilization', 'EMTALA: evaluación y estabilización de emergencias');
     },
   },
   CONFIRMED_MATCH: {
@@ -351,10 +353,7 @@ export function buildVerificationScript(coverageSelection = 'private', facility 
       'ins.script.parity.2',
       'Protection Against Unfair Prior Authorization & “Fail-First” Rules: Under MHPAEA, insurers cannot impose stricter prior authorization, “fail-first” (step-therapy) requirements, or arbitrary visit/day limits on addiction treatment or medications (MOUD) than they apply to medical conditions.',
     ),
-    t(
-      'ins.script.parity.3',
-      'Right to Written Criteria & Urgent Appeal: If an insurer denies or cuts short a recommended ASAM level of care, you have the legal right to demand their written medical necessity criteria free of charge and file an expedited (72-hour) internal and external parity appeal.',
-    ),
+    L('Ask for the written denial, medical-necessity criteria and appeal instructions. Ask how copays and prior authorization compare with medical/surgical benefits under MHPAEA. For urgent care, request an expedited review; eligibility and timelines depend on the plan and review type. EBSA: 1-866-444-3272.', 'Pida la denegación escrita, los criterios de necesidad médica y las instrucciones de apelación. Pregunte cómo se comparan los copagos y la autorización previa con los beneficios médicos y quirúrgicos según MHPAEA. Para atención urgente, solicite revisión acelerada; la elegibilidad y los plazos dependen del plan y del tipo de revisión. EBSA: 1-866-444-3272.'),
   ];
 
   const ekraRedFlags = [
@@ -376,9 +375,9 @@ export function buildVerificationScript(coverageSelection = 'private', facility 
     ),
   ];
 
-  const emergencyRights = t(
-    'ins.script.emergency',
-    'Emergency & Acute Withdrawal Rights: Under EMTALA (42 U.S.C. § 1395dd), hospital emergency rooms must screen and stabilize emergency medical conditions (including life-threatening alcohol/sedative withdrawal or overdose) regardless of insurance or ability to pay. Under the DEA 72-Hour Rule (21 CFR § 1306.07(b)), hospital and emergency practitioners may administer or dispense up to 72 hours of buprenorphine or methadone to relieve acute opioid withdrawal.',
+  const emergencyRights = L(
+    'EMTALA: participating hospital emergency departments must screen and stabilize emergency conditions regardless of insurance or ability to pay; bills may still apply. The separate DEA 72-Hour Rule (21 CFR § 1306.07(b)) permits eligible non-OTP practitioners to dispense, not prescribe, up to a three-day supply of narcotic medication while arranging referral, subject to federal, state and local law. It cannot be renewed or extended and does not guarantee medication at every hospital.',
+    'EMTALA: las salas de emergencia hospitalarias participantes deben evaluar y estabilizar emergencias sin importar el seguro ni la capacidad de pago; pueden existir facturas. La regla separada de 72 horas de la DEA (21 CFR § 1306.07(b)) permite a profesionales elegibles fuera de un OTP dispensar, no recetar, hasta tres días de medicamentos narcóticos mientras coordinan una derivación, conforme a la ley federal, estatal y local. No se puede renovar ni extender y no garantiza medicamentos en todos los hospitales.',
   );
 
   const questions = [...insurerQuestions, ...admissionsQuestions];
@@ -454,10 +453,7 @@ export function evaluateFacilityCoverage(facility, coverageSelection = 'any', { 
   // https://www.cms.gov/Priorities/your-patient-rights/emergency-room-rights
   if (isEr || f.hasEmergencyDepartment === true) {
     const matchedCodes = ['HI', 'DT'].filter((c) => codeSet.has(c));
-    const explanation = t(
-      'ins.eval.emtala',
-      'Protected by EMTALA (42 U.S.C. § 1395dd), which requires hospital emergency departments to provide a medical screening exam and stabilizing care for acute withdrawal or medical emergencies regardless of insurance or ability to pay, and the DEA 72-Hour Rule (21 CFR § 1306.07(b)), which allows immediate administration of buprenorphine or methadone for acute opioid withdrawal.',
-    );
+    const explanation = L('EMTALA requires participating hospital emergency departments to screen for an emergency medical condition and provide stabilizing care or appropriate transfer regardless of insurance or ability to pay. Care may be billed. This does not guarantee a specific medication or insurance coverage.', 'EMTALA exige que las salas de emergencia hospitalarias participantes evalúen emergencias y proporcionen estabilización o traslado adecuado sin importar el seguro o la capacidad de pago. La atención puede facturarse. No garantiza un medicamento específico ni cobertura del seguro.');
     return {
       ...INSURANCE_TIERS.EMTALA_PROTECTED,
       id: INSURANCE_TIERS.EMTALA_PROTECTED.id,
@@ -475,10 +471,7 @@ export function evaluateFacilityCoverage(facility, coverageSelection = 'any', { 
           'ins.eval.emtala.right1',
           'EMTALA (42 U.S.C. § 1395dd): Emergency screening and stabilization required regardless of insurance status or ability to pay.',
         ),
-        t(
-          'ins.eval.emtala.right2',
-          'DEA 72-Hour Rule (21 CFR § 1306.07(b)): Hospital/ER practitioners may administer up to 72 hours of buprenorphine or methadone for acute opioid withdrawal.',
-        ),
+        L('The separate DEA 72-Hour Rule permits eligible practitioners to dispense up to a three-day supply while arranging ongoing treatment; availability and other laws apply.', 'La regla separada de 72 horas de la DEA permite a profesionales elegibles dispensar hasta tres días mientras coordinan tratamiento continuo; se aplican la disponibilidad y otras leyes.'),
       ],
       warnings: [],
       verificationScript: buildVerificationScript(norm, f),

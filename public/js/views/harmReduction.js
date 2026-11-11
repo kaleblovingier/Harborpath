@@ -21,10 +21,10 @@ import {
   tocNav,
   emergencyCallout,
 } from './common.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetHarmReductionState);
+registerQuickExitHandler(resetHarmReductionState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 
@@ -157,16 +157,16 @@ export const NALOXONE_ACTION_STEPS = [
   {
     step: 3,
     id: 'call-911',
-    title: 'Call 911 immediately — Good Samaritan legal protections apply',
-    titleEs: 'Llame al 911 de inmediato — Aplican leyes de protección del Buen Samaritano',
+    title: 'Call 911 immediately — protections vary by jurisdiction',
+    titleEs: 'Llame al 911 de inmediato — las protecciones varían según el lugar',
     clinicalDetail:
-      'Dial 911 right away. Report: "A person is unresponsive and not breathing" along with your exact location. Good Samaritan overdose laws in over 48 states and Washington D.C. provide criminal immunity for minor drug and paraphernalia possession for calling.',
+      'Dial 911 right away. Give the exact location and describe responsiveness and breathing. Many jurisdictions offer limited Good Samaritan protections for seeking overdose help, but covered offenses, conditions, and arrest protections vary. This is not a guarantee of immunity.',
     plainDetail:
-      'Call 911 right away. Tell the operator: "Someone is unresponsive and not breathing" and give your address. Good Samaritan laws in almost all states protect you from minor drug possession charges when calling for medical help.',
+      'Call 911 now. Give the address and describe breathing. Many places protect people seeking overdose help, but the rules differ. No website can promise that you will not be arrested.',
     clinicalDetailEs:
-      'Llame al 911 de inmediato. Informe: "Hay una persona inconsciente que no respira" y dé la dirección exacta. Las leyes de Buen Samaritano protegen contra cargos menores de posesión al pedir ayuda médica.',
+      'Llame al 911 de inmediato. Dé la ubicación exacta y describa la respuesta y la respiración. Muchas jurisdicciones ofrecen protecciones limitadas al pedir ayuda por sobredosis; los delitos cubiertos, condiciones y protecciones frente al arresto varían. No se garantiza inmunidad.',
     plainDetailEs:
-      'Llame al 911 de inmediato. Diga: "Alguien no responde y no respira" y dé la dirección. Las leyes del Buen Samaritano le protegen de arresto por posesión menor al pedir auxilio.',
+      'Llame al 911 ahora. Dé la dirección y describa la respiración. Muchas localidades protegen a quienes piden ayuda por sobredosis, pero las reglas varían. No se puede prometer que no habrá arresto.',
   },
   {
     step: 4,
@@ -229,9 +229,9 @@ export const GOOD_SAMARITAN_STEPS = [
     title: 'Core legal immunities: What Good Samaritan laws cover',
     titleEs: 'Inmunidades legales clave: Lo que cubren las leyes del Buen Samaritano',
     detail:
-      'Over 48 states and Washington D.C. have enacted Overdose Good Samaritan laws. In most jurisdictions, both the caller seeking medical assistance AND the person overdosing receive legal immunity from arrest, charge, and prosecution for minor drug possession (personal use amounts) and drug paraphernalia possession.',
+      'Good Samaritan protections differ by state and territory. Some cover specified low-level possession offenses for the caller, the person overdosing, or both; others provide a defense or sentencing consideration. Protection from arrest, charges, and prosecution are different and are not universally provided.',
     detailEs:
-      'Más de 48 estados y Washington D.C. cuentan con leyes del Buen Samaritano. En la gran mayoría, tanto la persona que llama como la persona que sufre la sobredosis reciben inmunidad contra arresto y cargos por posesión menor para consumo personal y posesión de parafernalia.',
+      'Las protecciones del Buen Samaritano varían por estado y territorio. Algunas cubren ciertos delitos menores de posesión para quien llama, la persona con sobredosis o ambos; otras ofrecen una defensa o consideración en la sentencia. La protección frente al arresto, cargos y procesamiento no es universal.',
   },
   {
     step: 3,
@@ -239,9 +239,9 @@ export const GOOD_SAMARITAN_STEPS = [
     title: 'Civil and criminal protection for administering naloxone',
     titleEs: 'Protección civil y penal por administrar naloxona',
     detail:
-      'All 50 states have passed naloxone access laws granting civil liability immunity and criminal immunity to lay responders who administer naloxone in good faith to someone suspected of experiencing an overdose. You cannot be sued or prosecuted for giving Narcan.',
+      'Naloxone access and good-faith responder protections are established in many jurisdictions, with different eligibility and exceptions. Do not delay naloxone or 911 while checking laws. No blanket promise of civil or criminal immunity applies to every situation.',
     detailEs:
-      'Los 50 estados otorgan inmunidad civil y penal a cualquier persona que administre naloxona de buena fe ante una sospecha de sobredosis. No puede ser demandado ni procesado por aplicar Narcan.',
+      'Muchas jurisdicciones regulan el acceso a naloxona y protegen la ayuda de buena fe, con requisitos y excepciones distintos. No demore la naloxona ni la llamada al 911 por consultar las leyes. No existe una garantía universal de inmunidad civil o penal.',
   },
   {
     step: 4,
@@ -249,9 +249,9 @@ export const GOOD_SAMARITAN_STEPS = [
     title: 'Crucial limitations: What is NOT covered by Good Samaritan laws',
     titleEs: 'Límites cruciales: Lo que NO cubren las leyes del Buen Samaritano',
     detail:
-      'Good Samaritan statutes generally do NOT protect against outstanding felony arrest warrants, drug sales/trafficking or possession with intent to distribute (large quantities), violent crimes, or weapons offenses. Protection requires remaining at the scene and cooperating with emergency responders by sharing medical details.',
+      'Exceptions may involve trafficking, weapons, warrants, or other offenses, and differ locally. Some laws require good faith, giving identifying information, remaining at the scene, or other steps. Check the current law and local legal aid; this guide is general information.',
     detailEs:
-      'Las leyes del Buen Samaritano generalmente NO protegen contra órdenes de arresto pendientes por delitos graves, venta/tráfico de drogas o posesión con intención de distribuir (grandes cantidades), ni delitos violentos o de armas. La protección exige permanecer en el lugar y cooperar con el personal médico.',
+      'Las excepciones pueden incluir tráfico, armas, órdenes de arresto u otros delitos y varían por lugar. Algunas leyes exigen buena fe, identificación, permanecer en el lugar u otros pasos. Consulte la norma vigente o asistencia legal local; esta guía es información general.',
   },
   {
     step: 5,
@@ -259,9 +259,9 @@ export const GOOD_SAMARITAN_STEPS = [
     title: 'Interacting safely with first responders at the scene',
     titleEs: 'Cómo interactuar con seguridad con los socorristas en el lugar',
     detail:
-      'Before emergency responders arrive, secure and store any extra drugs or paraphernalia out of plain view. When paramedics arrive, state the facts clearly: "They took [substance] and I administered [number] doses of naloxone at [time]." Paramedics are healthcare professionals whose priority is airway and oxygenation, not legal enforcement.',
+      'Stay focused on breathing and emergency care. Tell responders what may have been taken and the number and time of naloxone doses, if known. Follow safety instructions and do not handle loose needles or delay care to move supplies.',
     detailEs:
-      'Antes de que lleguen los socorristas, guarde cualquier sustancia o parafernalia fuera de la vista. Cuando lleguen los paramédicos, informe con claridad: "Consumió [sustancia] y apliqué [número] dosis de naloxona a las [hora]". Su prioridad médica es salvar la vida y restaurar la oxigenación.',
+      'Priorice la respiración y la atención de emergencia. Informe qué pudo consumir y el número y hora de dosis de naloxona, si lo sabe. Siga las instrucciones de seguridad; no manipule agujas sueltas ni demore la atención para mover suministros.',
   },
 ];
 
@@ -307,9 +307,9 @@ export const SUPPLY_PATHWAYS = [
     title: 'Fentanyl and Xylazine Test Strips',
     titleEs: 'Tiras reactivas para fentanilo y xilacina',
     desc:
-      'Rapid immunoassay test strips that detect fentanyl analogs and xylazine adulterants in street drug supplies, pressed pills, and powders. Available free at most SSPs, mobile outreach vans, and health clinics, or available by mail. Dilution protocol: mix ~10 mg of drug with 1/2 tsp water (or 1 full tsp water for methamphetamine/MDMA to prevent false positives), dip for 15s, and read in 2–5 minutes (1 line = detected; 2 lines = negative).',
+      'Fentanyl, xylazine, and benzodiazepine strips check only their target substances and do not establish safety or purity. Ask an SSP for the current instructions for your exact brand and version: dilution, dip time, and reading window differ. A negative result can miss potent drugs or an unevenly mixed sample.',
     descEs:
-      'Tiras rápidas de inmunoensayo que detectan análogos de fentanilo y adulterantes de xilacina en polvos, pastillas y estimulantes. Disponibles gratis en programas SSP, unidades móviles y clínicas de salud, o por correo. Protocolo: mezcle ~10 mg con ½ cucharadita de agua (o 1 cucharadita completa para metanfetamina/MDMA para evitar falsos positivos), sumerja 15 s y lea en 2–5 minutos (1 línea = positivo; 2 líneas = negativo).',
+      'Las tiras para fentanilo, xilacina o benzodiacepinas solo buscan sus sustancias específicas y no demuestran seguridad ni pureza. Pida a un SSP las instrucciones vigentes de la marca y versión exactas: cambian la dilución, inmersión y lectura. Un negativo puede omitir sustancias potentes o una mezcla desigual.',
     link: 'https://dancesafe.org/',
     linkText: 'DanceSafe Drug Checking Guides & Kits',
     linkTextEs: 'Guías y kits de análisis DanceSafe',
@@ -395,7 +395,7 @@ export function buildNaloxoneActionCard({ plainLanguage = false } = {}) {
     ),
     p(plainLanguage
       ? tr(
-          'Naloxone saves lives during an opioid or fentanyl overdose. Here are the 6 critical steps to save a life right away, with full Good Samaritan legal protections when calling 911.',
+          'Naloxone saves lives during an opioid or fentanyl overdose. Follow these steps and call 911 immediately. Good Samaritan protections differ by jurisdiction and are not guaranteed.',
           'La naloxona salva vidas durante una sobredosis de opioides o fentanilo. Siga estos 6 pasos de emergencia para salvar una vida, con protección legal completa al llamar al 911.',
         )
       : tr(
@@ -763,7 +763,7 @@ export function harmReductionView() {
         h('a', { href: '#/plan' }, tr('Build a Personal Safety Plan that stays in this browser', 'Cree un Plan de Seguridad Personal en este navegador')), '.'),
     ),
 
-    section('checking', tr('Fentanyl & xylazine test strips (Drug checking)', 'Tiras reactivas para fentanilo y xilacina'),
+    section('checking', tr('Fentanyl, xylazine & benzodiazepine test strips', 'Tiras para fentanilo, xilacina y benzodiacepinas'),
       testStripCalculator(),
       p(tr(
         'Fentanyl, xylazine, and medetomidine turn up frequently in counterfeit pressed pills, street powders, and stimulants. Test strips are inexpensive, fast, and available from syringe programs and vending machines.',
@@ -773,34 +773,43 @@ export function harmReductionView() {
         h('h3', null, tr('Step-by-step drug testing protocol', 'Protocolo paso a paso para análisis de sustancias')),
         h('ol', null,
           h('li', null, tr(
-            'Place a small amount of the drug (at least 10 mg) or residue from a baggie in a clean, dry cup or cooker.',
-            'Coloque una pequeña muestra (al menos 10 mg) o residuo en un recipiente limpio y seco.',
+            'Check the strip’s target, brand, version, expiry, and intact package. Use a clean container and prepare the representative sample specified by that product’s current instructions.',
+            'Revise la sustancia objetivo, marca, versión, caducidad y empaque intacto. Use un recipiente limpio y prepare la muestra representativa que indiquen sus instrucciones vigentes.',
           )),
           h('li', null, tr(
-            'Add clean water and dissolve: use about 1/2 teaspoon of water for opioids or powders, or 1 full teaspoon of water for methamphetamine or MDMA (stimulants require higher dilution to prevent false positive results).',
-            'Añada agua limpia y disuelva: use ½ cucharadita para opioides/polvos, o 1 cucharadita completa para metanfetamina o MDMA (los estimulantes requieren más agua para evitar falsos positivos).',
+            'Measure the sample and water exactly as that insert directs and mix thoroughly. There is no universal dilution: too concentrated can give false positives; too dilute can miss the target. Do not reuse fentanyl-strip instructions for xylazine or benzodiazepine strips.',
+            'Mida la muestra y el agua exactamente como indica el folleto y mezcle bien. No existe una dilución universal: una concentración alta puede dar falsos positivos y una muy baja puede omitir la sustancia. No use instrucciones de fentanilo para tiras de xilacina o benzodiacepinas.',
           )),
           h('li', null, tr(
-            'Dip the wavy absorption end of the strip into the liquid for 15 seconds.',
-            'Sumerja la punta de absorción de la tira en el líquido durante 15 segundos.',
+            'Dip only the marked absorbent end to the product’s depth limit for its stated duration, then lay it flat. Start a separate timing check for each product.',
+            'Sumerja solo el extremo absorbente indicado hasta el límite y durante el tiempo que diga el producto; después colóquelo plano. Controle el tiempo por separado para cada producto.',
           )),
           h('li', null, tr(
-            'Lay the strip flat on a dry surface and wait 2 to 5 minutes to read the result.',
-            'Coloque la tira sobre una superficie seca y espere entre 2 y 5 minutos para leer el resultado.',
+            'Read only within the stated window and identify the control line. No control line means invalid: repeat with a new strip. Follow that brand’s diagram rather than assuming left or right line positions.',
+            'Lea solo dentro del tiempo indicado e identifique la línea de control. Si falta, la prueba no es válida: repita con una tira nueva. Siga el diagrama de la marca; no suponga posiciones izquierda o derecha.',
           )),
         ),
         h('ul', { class: 'result-key' },
-          h('li', { class: 'result-pos' }, strong(tr('One line: Fentanyl or xylazine detected.', 'Una línea: Fentanilo o xilacina detectado.'))),
-          h('li', { class: 'result-neg' }, strong(tr('Two lines: Negative (not detected).', 'Dos líneas: Negativo (no detectado).')), tr(' Even a faint second line counts as negative.', ' Incluso una segunda línea tenue cuenta como resultado negativo.')),
-          h('li', null, strong(tr('No line or only a right-side line: ', 'Sin líneas o solo una línea a la derecha: ')), tr('The test strip was invalid. Retest with a fresh strip.', 'La prueba no fue válida. Repita con una tira nueva.')),
+          h('li', { class: 'result-pos' }, strong(tr('For common competitive strips, control line only means target detected; follow your insert.', 'En muchas tiras competitivas, solo la línea de control indica detección; siga el folleto.'))),
+          h('li', { class: 'result-neg' }, strong(tr('Control plus test line usually means not detected, including a faint test line within the reading window.', 'Control más línea de prueba suele indicar no detectado, incluso si la línea de prueba es tenue dentro del tiempo indicado.'))),
+          h('li', null, strong(tr('No control line: invalid. ', 'Sin línea de control: inválida. ')), tr('A negative strip never establishes safety, dose, purity, or absence of every dangerous drug.', 'Un negativo nunca demuestra seguridad, dosis, pureza ni ausencia de todas las sustancias peligrosas.')),
         ),
         fine(tr('Instructions may vary by manufacturer. Always review packaging guidelines.', 'Las instrucciones pueden variar según el fabricante. Revise el empaque.')),
       ),
       ul([
         [strong(tr('A negative test does not guarantee 100% safety. ', 'Un resultado negativo no garantiza seguridad total. ')), tr('Fentanyl can be unevenly distributed throughout a pill or batch ("chocolate chip cookie effect"), and strips do not detect newly emerging synthetic compounds. Always carry naloxone.', 'El fentanilo puede distribuirse de manera desigual en una pastilla o lote. Lleve siempre naloxona.')],
-        [strong(tr('Xylazine test strips (XTS): ', 'Tiras para xilacina (XTS): ')), tr('Follow the exact same testing procedure and warn you if severe sedatives are present in your supply.', 'Siguen el mismo procedimiento y avisan si hay sedantes fuertes en su suministro.')],
+        [strong(tr('Xylazine test strips (XTS): ', 'Tiras para xilacina (XTS): ')), tr('Use their own dilution instructions. They do not automatically detect medetomidine, and some drugs can cross-react.', 'Use su propia dilución. No detectan automáticamente medetomidina y algunas sustancias pueden producir reacciones cruzadas.')],
         [strong(tr('Lab-grade confirmatory testing: ', 'Análisis de laboratorio confirmatorio: ')), tr('The ', 'El '), ext('https://www.streetsafe.supply/', 'UNC Street Drug Analysis Lab'), tr(' tests mailed samples sent through harm reduction partners and publishes anonymous results. ', ' analiza muestras anónimas. '), ext('https://dancesafe.org/', 'DanceSafe'), tr(' sells comprehensive test kits and reagent supplies.', ' ofrece kits completos de reactivos.')],
       ]),
+      h('details', { class: 'card', id: 'strip-product-instructions' },
+        h('summary', null, tr('Product-specific examples and benzodiazepine limits', 'Ejemplos por producto y límites de las tiras de benzodiacepinas')),
+        p(tr('Fentanyl: follow the exact insert supplied with your product; BTNX FYL and FYL 2.0 have separate instructions. Mix, dip, and read by that version’s instructions. Strips do not detect every synthetic opioid.', 'Fentanilo: siga el folleto exacto del producto; BTNX FYL y FYL 2.0 tienen instrucciones distintas. Mezcle, sumerja y lea según esa versión. Las tiras no detectan todos los opioides sintéticos.')),
+        p(ext('https://www.btnx.com/harmreduction', tr('BTNX manufacturer instructions by version', 'Instrucciones del fabricante BTNX por versión'))),
+        p(tr('Xylazine example, only for DanceSafe WHPM Version 2 (Summer 2025) powdered opioid instructions: 10 mg in 5 mL water, stir, dip 15 seconds, and read after 3 minutes. Pressed pills use a different preparation. This is not a recipe for other brands or substances; this version advises against use on non-opioids because performance data are insufficient.', 'Ejemplo de xilacina, solo para las instrucciones de opioides en polvo de DanceSafe WHPM versión 2 (verano de 2025): 10 mg en 5 mL de agua, mezclar, sumergir 15 segundos y leer tras 3 minutos. Las pastillas prensadas tienen otra preparación. No sirve para otras marcas o sustancias; esta versión desaconseja usarla con sustancias no opioides por datos insuficientes.')),
+        p(ext('https://dancesafe.org/wp-content/uploads/2025/10/DS_Instructions_XTS_v2_Summer25.pdf', tr('DanceSafe XTS Version 2 instructions', 'Instrucciones DanceSafe XTS versión 2'))),
+        p(tr('Benzodiazepines: first confirm that the product is intended for drug checking, not just a urine test. For the SAFe-B product described by Virginia public health, prepare the sample and a teaspoon of water exactly as the insert shows, mix, dip for 15 seconds, lay flat, and read at 5 minutes. These instructions apply only to SAFe-B; consult its full insert for sample amount and warnings. It does not detect every benzodiazepine or measure strength. A fentanyl or xylazine result says nothing about benzodiazepines.', 'Benzodiacepinas: confirme que el producto es para analizar sustancias, no solo orina. Para SAFe-B, descrito por salud pública de Virginia, prepare la muestra y una cucharadita de agua exactamente como muestra el folleto, mezcle, sumerja 15 segundos, coloque plano y lea a los 5 minutos. Solo aplica a SAFe-B; revise el folleto completo para cantidad y advertencias. No detecta todas las benzodiacepinas ni mide potencia. Un resultado de fentanilo o xilacina no informa sobre benzodiacepinas.')),
+        p(ext('https://www.vdh.virginia.gov/content/uploads/sites/3/2023/07/Reference-Guide-Benzodiazepine-Test-Strips.pdf', tr('Virginia public health: SAFe-B instructions and limitations', 'Salud pública de Virginia: instrucciones y límites de SAFe-B'))),
+      ),
     ),
 
     section('safer-use', tr('Lower your risk', 'Disminuya su riesgo'),

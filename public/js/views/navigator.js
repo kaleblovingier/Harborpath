@@ -1,6 +1,6 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 import {
   ALL_POPULATION_RECOMMENDERS,
   evaluatePopulationPathways,
@@ -15,8 +15,9 @@ import {
   REENTRY_TRANSITION_INPUT,
 } from './populationHelpers.js';
 import { NEVER_USE_ALONE, hotlinesById } from '../content/hotlines.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler as onQuickExit } from '../quickExitRegistry.js';
 import { resetNavigatorState, onNavigatorReset, setNavigatorHandoffState as storeNavigatorHandoff } from './navigatorHandoff.js';
+import { printClinicalHandout } from '../components/printHandout.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetNavigatorState);
@@ -583,7 +584,7 @@ export function formatAsamHandoffText(answers = {}, evaluation = evaluateAsamCar
     'SAMHSA DIRECTORY SEARCH FILTERS USED:',
     `- Focused Filter Codes (<= 8): ${codeDescriptions.join(', ') || 'None'}`,
     `- Broad Core Codes: ${(evalResult.broadCodes ?? []).join(', ') || 'None'}`,
-    `- HarborPath Search Route: ${evalResult.searchHref}`,
+    '- HarborPath Search Route: #/treatment (filters transferred in browser memory)',
     '',
     'FEDERAL PATIENT RIGHTS & EMERGENCY BRIDGE CARE:',
     '- EMTALA: Hospital emergency departments must screen and stabilize emergency medical conditions (severe withdrawal, overdose, active labor, systemic infection) regardless of ability to pay.',
@@ -1590,7 +1591,14 @@ export function careNavigatorView({ query } = {}) {
             {
               type: 'button',
               class: 'btn btn-ghost',
-              onclick: () => window.print(),
+              onclick: () => printClinicalHandout(h('article', { class: 'asam-summary-card print-handout' },
+                h('h1', null, getLang() === 'es' ? 'Resumen de atención para conversar con un profesional' : 'Care summary to discuss with a clinician'),
+                p(t('nav.disclaimer', 'This is not a diagnosis or a clinical assessment. A licensed clinician will assess you.')),
+                h('h2', null, `${result.asamLevel} — ${result.asamTitle}`), p(result.summary),
+                ul((result.dimensionBreakdown ?? []).map((dimension) => `${dimension.dimension} · ${dimension.title}: ${dimension.finding}`)),
+                ...(result.redFlags.length ? [h('h2', null, getLang() === 'es' ? 'Alertas de seguridad' : 'Safety alerts'), ul(result.redFlags)] : []),
+                p(getLang() === 'es' ? 'Llame al 911 ante una emergencia médica o al 988 para crisis. EMTALA protege la evaluación y estabilización de emergencias en hospitales participantes sin importar capacidad de pago.' : 'Call 911 for a medical emergency or 988 for crisis support. EMTALA protects emergency screening and stabilization at participating hospitals regardless of ability to pay.'),
+                fine(getLang() === 'es' ? 'La información impresa queda fuera del control de Salida rápida.' : 'Printed information remains outside Quick Exit’s control.'))),
             },
             icon('printer'),
             t('nav.cta.print', 'Print my answers'),
@@ -2130,6 +2138,10 @@ export function careNavigatorView({ query } = {}) {
     ),
 
     emergencyCallout(),
+
+    h('div', { class: 'actions no-print' },
+      h('a', { class: 'btn btn-secondary', href: '#/clinical-scores' }, getLang() === 'es' ? 'Autoevaluaciones COWS / CIWA-Ar' : 'COWS / CIWA-Ar self-checks'),
+      h('a', { class: 'btn btn-secondary', href: '#/withdrawal-planner' }, getLang() === 'es' ? 'Referencia de abstinencia y dosis bajas' : 'Withdrawal & low-dose initiation reference')),
 
     // 6-Dimension Interactive Questionnaire
     section(

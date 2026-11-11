@@ -433,7 +433,20 @@ export const LAZY_LOADERS = {
     viewCache.set('navigator', m.careNavigatorView);
     return m.careNavigatorView;
   }),
-  'guided-navigator': () => LAZY_LOADERS.guided(),
+  'clinical-scores': () => import('./views/clinicalScores.js').then((m) => {
+    viewCache.set('clinical-scores', m.clinicalScoresView);
+    routeResets.set('clinical-scores', m.resetClinicalScoresState);
+    return m.clinicalScoresView;
+  }),
+  'withdrawal-planner': () => import('./views/withdrawalPlanner.js').then((m) => {
+    viewCache.set('withdrawal-planner', m.withdrawalPlannerView);
+    routeResets.set('withdrawal-planner', m.resetWithdrawalPlannerState);
+    return m.withdrawalPlannerView;
+  }),
+  'guided-navigator': () => LAZY_LOADERS.guided().then((view) => {
+    viewCache.set('guided-navigator', view);
+    return view;
+  }),
   guided: () => import('./views/guidedNavigator.js').then((m) => {
     viewCache.set('guided', m.guidedNavigatorView);
     return m.guidedNavigatorView;
@@ -530,6 +543,8 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'clinical-scores': () => t('route.clinicalScores', 'COWS & CIWA-Ar withdrawal reference'),
+  'withdrawal-planner': () => t('route.withdrawalPlanner', 'Low-dose buprenorphine reference planner'),
   'salicylate-nsaid-tox': () => t('route.salicylateNsaidTox', 'Salicylate & NSAID toxicity, urine alkalinization & airway protection navigator'),
   'mood-stabilizer-tox': () => t('route.moodStabilizerTox', 'Lithium, valproate hyperammonemia & lamotrigine toxicity navigator'),
   'antimuscarinic-toxidrome': () => t('route.antimuscarinicToxidrome', 'Antimuscarinic, diphenhydramine street-cut & delirium navigator'),
@@ -743,6 +758,9 @@ export function preloadAllLazyViews() {
     preloadRoute('workspace'),
     preloadRoute('match'),
     preloadRoute('navigator'),
+    preloadRoute('clinical-scores'),
+    preloadRoute('withdrawal-planner'),
+    preloadRoute('guided-navigator'),
     preloadRoute('guided'),
     preloadRoute('medications'),
     preloadRoute('plan'),
@@ -828,7 +846,8 @@ export function prepareRouteNavigation(href, { navigatorHandoff = false } = {}) 
   carried = snapshot
     ? { path, query: new URLSearchParams(), handoff: { codes: [...snapshot.codes] } }
     : [...query.keys()].length ? { path, query } : null;
-  return '#/' + path;
+  const hrefForRoute = `#/${path}`;
+  return hrefForRoute;
 }
 
 export function routeViewOptions(path, query) {
@@ -912,6 +931,14 @@ let firstRender = true;
 let lastMeta = null;
 let renderSeq = 0;
 let lastPath = '';
+let mountedView = null;
+
+function cleanupMountedView() {
+  const previous = mountedView;
+  mountedView = null;
+  try { previous?._cleanup?.(); } catch { /* Continue unmounting. */ }
+  try { previous?.onUnmount?.(); } catch { /* Continue unmounting. */ }
+}
 
 const hasDom = typeof document !== 'undefined';
 const main = hasDom ? document.getElementById('main') : null;
@@ -980,6 +1007,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
     return;
   }
   const token = ++renderSeq;
+  cleanupMountedView();
   const isInitial = firstRender;
   firstRender = false;
 
@@ -1021,6 +1049,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
     content = viewLoadFailed(resolved.title, () => render(), { overdoseSteps: path === 'overdose' });
   }
   main.replaceChildren(content);
+  mountedView = content;
   syncTablists(main);
   if (!routeHash) {
     if (isInitial) focusInPageTarget(location.hash.slice(1));
@@ -1049,6 +1078,7 @@ export function runQuickExitResets() {
     try { reset(); } catch { /* keep clearing the others */ }
   }
   executeGlobalQuickExit();
+  cleanupMountedView();
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
@@ -1173,25 +1203,28 @@ if (hasDom) {
   let lastEscape = 0;
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    const more = nav?.querySelector('.nav-more-menu[open]');
-    if (more) {
-      // Closing the menu must not count toward the Esc-Esc quick exit.
-      more.open = false;
-      more.querySelector('summary')?.focus();
+    // Count the first Escape even when it also closes an open menu.
+    // Repeated keydown events from holding a key do not count as two presses.
+    if (e.repeat) return;
+    const now = Date.now();
+    if (lastEscape && now - lastEscape < 1000) {
       lastEscape = 0;
+      quickExit();
       return;
     }
-    // Escape closes the open mobile menu and returns focus to its button. Like
-    // the More menu above, closing it does not count toward the Esc-Esc exit.
+    lastEscape = now;
+    const more = nav?.querySelector('.nav-more-menu[open]');
+    if (more) {
+      more.open = false;
+      more.querySelector('summary')?.focus();
+      return;
+    }
+    // The first press also closes the mobile menu and restores focus.
     if (toggle?.getAttribute('aria-expanded') === 'true') {
       closeMenu();
       toggle.focus();
-      lastEscape = 0;
       return;
     }
-    const now = Date.now();
-    if (now - lastEscape < 1000) quickExit();
-    lastEscape = now;
   });
 
   toggle?.addEventListener('click', () => {

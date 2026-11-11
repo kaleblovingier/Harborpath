@@ -1,5 +1,5 @@
 import { h, ext } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 import { healthCenterCard, providerCard } from './facilityCard.js';
 import { renderFacilityInsuranceBadgeHTML, facilityAdmissionsQuestions } from '../views/insuranceWidget.js';
 
@@ -20,6 +20,9 @@ export function equityFallbackPanel({ fallback, safetyNetResults = [], unavailab
     h('p', { class: 'help' }, t('equity.networks', 'HRSA health centers offer fees based on income. VA and IHS / Tribal programs have eligibility requirements. These are additional care options; confirm substance use services directly.')),
     safetyNetResults.map(safetyNetCard),
     unavailableNetworks.length > 0 && h('p', { class: 'help', role: 'status' }, t('equity.unavailable', 'Some federal directories could not be searched. Use their official finders below.')),
-    h('p', { class: 'actions' }, fallback.links.map((link) => ext(link.href, link.label))),
+    h('p', { class: 'actions' }, fallback.links.map((link) => {
+      const label = getLang() === 'es' ? link.labelEs || link.label : link.label;
+      return link.href.startsWith('#/') ? h('a', { href: link.href }, label) : ext(link.href, label);
+    })),
   );
 }

@@ -1,5 +1,7 @@
 // Clinical handoffs live only in this module's RAM. The router imports this
 // small module without loading the assessment view or its clinical engines.
+import { registerQuickExitHandler as onQuickExit } from '../quickExitRegistry.js';
+
 let currentNavigatorState = null;
 const resetCallbacks = new Set();
 
@@ -48,3 +50,5 @@ export function resetNavigatorState() {
   }
   currentNavigatorState = null;
 }
+
+onQuickExit(resetNavigatorState);

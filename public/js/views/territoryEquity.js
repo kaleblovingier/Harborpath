@@ -1,19 +1,31 @@
 // Pure in-RAM search policy. No coordinates, ZIPs, or clinical state are stored.
 export const ISLAND_TERRITORIES = Object.freeze(['PR', 'GU', 'VI', 'AS', 'MP']);
 
+const TERRITORIAL_AGENCIES = Object.freeze({
+  PR: { label: 'Puerto Rico: ASSMCA', href: 'https://www.assmca.pr.gov/' },
+  GU: { label: 'Guam: GBHWC', href: 'https://gbhwc.guam.gov/' },
+  VI: { label: 'U.S. Virgin Islands: Department of Health', labelEs: 'Islas Vírgenes: Departamento de Salud', href: 'https://doh.vi.gov/' },
+  AS: { label: 'American Samoa: DHSS', labelEs: 'Samoa Americana: DHSS', href: 'https://www.dhss.as/' },
+  MP: { label: 'Northern Mariana Islands: CHCC', labelEs: 'Islas Marianas del Norte: CHCC', href: 'https://www.chcc.health/' },
+});
+
 export function buildTerritoryAndRuralFallback({ location = {}, radius = 25, resultCount } = {}) {
-  const territory = ISLAND_TERRITORIES.includes(String(location?.state ?? '').toUpperCase());
-  const sparse = Number.isFinite(resultCount) && resultCount <= 3;
+  const stateCode = String(location?.state ?? '').toUpperCase();
+  const territory = ISLAND_TERRITORIES.includes(stateCode);
+  const sparse = Number.isFinite(resultCount) && resultCount < 3;
   const active = territory || location?.rural === true || sparse;
   return {
     active,
     reason: territory ? 'territory' : active ? 'limited-local-results' : null,
     radius: active ? 250 : radius,
-    networks: active ? ['hrsa', 'va', 'ihs'] : [],
+    networks: active ? ['hrsa', 'va', 'ihs', 'rhc', 'er'] : [],
     links: active ? [
-      { label: 'HRSA health centers', href: 'https://findahealthcenter.hrsa.gov/' },
-      { label: 'VA locations (eligibility applies)', href: 'https://www.va.gov/find-locations/' },
-      { label: 'IHS / Tribal health (eligibility applies)', href: 'https://www.ihs.gov/findhealthcare/' },
+      ...(territory ? [TERRITORIAL_AGENCIES[stateCode]] : []),
+      { label: 'HRSA health centers', labelEs: 'Centros de salud HRSA', href: 'https://findahealthcenter.hrsa.gov/' },
+      { label: 'VA locations (eligibility applies)', labelEs: 'Centros VA (requieren elegibilidad)', href: 'https://www.va.gov/find-locations/' },
+      { label: 'IHS / Tribal health (eligibility applies)', labelEs: 'Salud IHS / tribal (requiere elegibilidad)', href: 'https://www.ihs.gov/findhealthcare/' },
+      { label: 'Rural Health Clinics and emergency hospitals', labelEs: 'Clínicas rurales y hospitales de emergencia', href: '#/health?tab=federal&network=rhc' },
+      { label: 'Statewide telehealth and treatment', labelEs: 'Telesalud estatal y tratamiento', href: '#/treatment' },
     ] : [],
   };
 }
@@ -28,6 +40,7 @@ export async function searchWithEquityFallback({ location, radius, search, api, 
   if (signal?.aborted) throw new DOMException('Search cancelled', 'AbortError');
   const next = buildTerritoryAndRuralFallback({ location, radius, resultCount: data.total ?? data.results?.length ?? 0 });
   if (next.active && next.radius > fallback.radius) data = await search(next.radius);
+  if (signal?.aborted) throw new DOMException('Search cancelled', 'AbortError');
   fallback = next;
   if (!fallback.active) return { data, fallback, safetyNetResults: [], unavailableNetworks: [] };
 

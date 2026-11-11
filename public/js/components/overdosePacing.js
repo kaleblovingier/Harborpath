@@ -25,12 +25,12 @@ import {
   REVERSAL_FORMULATIONS,
 } from '../content/reversalFormulations.js';
 import { t, getLang } from '../i18n.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
 import { hapticOverdoseBeat, hapticPattern, hapticPulse } from './haptics.js';
 import { createOverdoseResilienceState, transitionOverdoseResilience } from '../views/overdoseResilience.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetOverdosePacer);
+registerQuickExitHandler(resetOverdoseTimerState);
 
 /**
  * Five-Step Rescue Protocol Schema and Clinical Content
@@ -521,6 +521,17 @@ export function resetOverdosePacer() {
   return getOverdosePacerState();
 }
 
+/** Quick Exit also releases captured callbacks and detached view subscriptions. */
+export function resetOverdoseTimerState() {
+  registeredOnComplete = null;
+  registeredOnReset = null;
+  resetOverdosePacer();
+  subscribers.clear();
+  lastBreathingTick = 0;
+  lastReDoseTick = 0;
+  return getOverdosePacerState();
+}
+
 /**
  * DOM Component: Interactive Overdose Rescue Pacing Assistant
  */
@@ -721,6 +732,11 @@ export function overdosePacer(props = {}) {
 
   root.append(liveAnnouncer, header, navContainer, stepContainer);
   renderAll();
+  root._cleanup = () => {
+    unsubscribe();
+    resetOverdoseTimerState();
+    clear(root);
+  };
   return root;
 }
 

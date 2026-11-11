@@ -13,6 +13,8 @@ const entries = [
   ['crisis', 'emergency', 'Talk to someone now', 'Find crisis support, confidential helplines, and someone to talk with about next steps.', ['individual', 'supporter', 'care-team']],
   ['harm-reduction', 'planning', 'Stay safer', 'Find naloxone, test-strip instructions, safer-use information, and support without a requirement to quit.', ['individual', 'supporter', 'care-team']],
   ['navigator', 'care', 'Clinical care navigator', 'Explore care needs across withdrawal, physical health, mental health, and daily living. A guide for discussion, not a diagnosis.', ['individual', 'care-team']],
+  ['clinical-scores', 'care', 'COWS & CIWA-Ar withdrawal reference', 'Review withdrawal symptoms with a clinician and recognize emergency warning signs. Scores do not establish safety.', ['individual', 'supporter', 'care-team']],
+  ['withdrawal-planner', 'planning', 'Low-dose buprenorphine reference', 'Explore a six-day educational reference and questions for a prescriber, with pregnancy and wound care guidance.', ['individual', 'supporter', 'care-team']],
   ['assessment', 'care', 'Withdrawal assessment tools', 'Review structured withdrawal screening tools with a trained healthcare professional.', ['care-team']],
   ['medications', 'care', 'Medications and interactions', 'Explore treatment medications and interaction information to discuss with a pharmacist or prescriber.', ['individual', 'supporter', 'care-team']],
   ['health', 'care', 'Low-cost and community health care', 'Search health centers, mental health care, VA, IHS, rural clinics, and emergency hospitals.', ['individual', 'supporter', 'care-team']],

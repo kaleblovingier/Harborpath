@@ -3,7 +3,8 @@
 
 import { h, clear, ext, icon, announce } from '../dom.js';
 import { state, subscribe } from '../state.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
+import { printClinicalHandout } from '../components/printHandout.js';
 import {
   COVERAGE_OPTIONS,
   evaluateFacilityCoverage,
@@ -201,10 +202,9 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
         ),
         h('p', null,
           h('strong', null, t('ins.widget.deaLead', 'DEA 72-Hour Rule (21 CFR § 1306.07(b)): ')),
-          t(
-            'ins.widget.deaBody',
-            'Federal regulations allow hospital and emergency room practitioners to administer or dispense up to 72 hours (3 days) of buprenorphine or methadone to relieve acute opioid withdrawal while connecting you to ongoing treatment, even if the hospital is not an OTP clinic.',
-          ),
+          getLang() === 'es'
+            ? 'Profesionales elegibles fuera de un OTP pueden dispensar, no recetar, hasta tres días de medicamentos narcóticos mientras coordinan una derivación. No se puede renovar ni extender. Se aplican las leyes estatales y locales, la evaluación clínica y la disponibilidad; no es una garantía de recibir medicación.'
+            : 'Eligible non-OTP practitioners may dispense, not prescribe, up to a three-day supply of narcotic medication while arranging referral. It cannot be renewed or extended. State and local laws, clinical assessment and availability apply; this is not a guarantee of medication.',
         ),
       );
     }
@@ -271,6 +271,8 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
         }, t('ins.widget.browseStatesLink', 'Browse state & territory Medicaid directories')),
       );
     }
+    stateLinkWrap.append(' · ', h('a', { href: '/data/state-medicaid.json' },
+      getLang() === 'es' ? 'Datos públicos de Medicaid por estado (JSON)' : 'Public state Medicaid directory data (JSON)'));
   }
 
   function renderVerificationDrawer(current) {
@@ -301,9 +303,7 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
       class: 'btn btn-small btn-ghost',
       'aria-label': t('ins.widget.printScriptAria', 'Print insurance and parity verification checklist'),
       onclick: () => {
-        if (typeof window !== 'undefined' && typeof window.print === 'function') {
-          window.print();
-        }
+        printClinicalHandout(scriptContent);
       },
     }, icon('printer'), t('ins.widget.printBtn', 'Print checklist'));
 

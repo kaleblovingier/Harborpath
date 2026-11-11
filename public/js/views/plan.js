@@ -1,15 +1,21 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
-import { t } from '../i18n.js';
-import { onQuickExit } from '../state.js';
+import { t, getLang } from '../i18n.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
 import { NEVER_USE_ALONE } from '../content/hotlines.js';
+import { connectSafetyPlanState, therapyPreferencesWidget, rightsAndSafetyGuide } from './rightsAndSafetyPlan.js';
+import { setNavigatorHandoffState } from './navigatorHandoff.js';
+import { printClinicalHandout } from '../components/printHandout.js';
+
+const L = (en, es) => getLang() === 'es' ? es : en;
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetPlanState);
+registerQuickExitHandler(resetPlanState);
 
 let activePlanState = null;
 let activePlanReset = null;
 let activeTimerReset = null;
+const planResetCallbacks = new Set();
 
 /**
  * The 6 core evidence-based pillars of the Stanley-Brown Safety Planning Intervention (SPI),
@@ -427,6 +433,8 @@ const createDefaultPlanState = () => ({
   saferEnvironment: '',      // alias for environmental safety
   naloxoneLocation: '',      // Naloxone placement mapping & test strips
   notes: '',                 // Notes, reminders to myself & reasons for living
+  returnToUseAction: '',
+  preferredTherapies: '',
 });
 
 let inMemoryPlanState = createDefaultPlanState();
@@ -504,8 +512,18 @@ export function setPlanState(patch = {}) {
 export function resetPlanState() {
   inMemoryPlanState = createDefaultPlanState();
   notifyPlanListeners();
+  for (const reset of planResetCallbacks) {
+    try { reset(); } catch { /* Continue clearing other mounted tools. */ }
+  }
   return getPlanState();
 }
+
+connectSafetyPlanState({
+  getState: getPlanState,
+  setState: setPlanState,
+  resetState: resetPlanState,
+  subscribe: (callback) => { planListeners.add(callback); return () => planListeners.delete(callback); },
+});
 
 function normalizeField(value) {
   if (Array.isArray(value)) {
@@ -516,10 +534,10 @@ function normalizeField(value) {
 
 function formatBlock(title, rawValue) {
   if (rawValue === undefined || rawValue === null) {
-    return `${title}\n(None listed yet)`;
+    return `${title}\n${L('(None listed yet)', '(Sin completar)')}`;
   }
   const val = normalizeField(rawValue);
-  const body = val ? (Array.isArray(rawValue) ? `• ${val}` : val) : '(None listed yet)';
+  const body = val ? (Array.isArray(rawValue) ? `• ${val}` : val) : L('(None listed yet)', '(Sin completar)');
   return `${title}\n${body}`;
 }
 
@@ -539,6 +557,31 @@ export function formatSafetyPlanText(plan = inMemoryPlanState) {
   const env = safePlan.environmentalSafety || safePlan.saferEnvironment;
   const naloxone = safePlan.naloxoneLocation;
   const notes = safePlan.notes;
+
+  if (getLang() === 'es') {
+    return [
+      'HARBORPATH: PLAN PERSONAL DE SEGURIDAD Y RECUPERACIÓN',
+      'Plan privado, escrito en su navegador y bajo su control.', '',
+      formatBlock('1. MI META ACTUAL', goal), '',
+      formatBlock('2. MIS DESENCADENANTES Y SITUACIONES DE RIESGO', safePlan.triggers || warningSigns), '',
+      formatBlock('3. SEÑALES TEMPRANAS DE DIFICULTAD', warningSigns), '',
+      formatBlock('4. ESTRATEGIAS QUE ME AYUDAN', coping), '',
+      formatBlock('5. DISTRACCIONES Y LUGARES SEGUROS', social), '',
+      formatBlock('6. PERSONAS DE CONFIANZA Y APOYOS', support), '',
+      formatBlock('7. PROFESIONALES Y CONTACTOS DE CRISIS', prof), '',
+      formatBlock('8. CÓMO HACER MI ENTORNO MÁS SEGURO', env), '',
+      formatBlock('9. DÓNDE ESTÁN MI NALOXONA Y MIS TIRAS REACTIVAS', naloxone), '',
+      formatBlock('10. NOTAS Y RECORDATORIOS', notes), '',
+      formatBlock('SI VUELVO A CONSUMIR: MI PRÓXIMO PASO SEGURO', safePlan.returnToUseAction), '',
+      formatBlock('ENFOQUES TERAPÉUTICOS PARA CONVERSAR', safePlan.preferredTherapies), '',
+      'APOYO GRATUITO LAS 24 HORAS',
+      '• Crisis de salud mental: llame o envíe un mensaje al 988 (inglés y español).',
+      '• Línea nacional SAMHSA: 1-800-662-4357.',
+      `• Never Use Alone (prevención de sobredosis): ${NEVER_USE_ALONE.label}.`,
+      '• SafeSpot (prevención de sobredosis): 800-972-0590.',
+      '• Emergencia médica: llame al 911 y dé naloxona si no despierta o no respira.',
+    ].join('\n');
+  }
 
   const sections = [
     '============================================================',
@@ -580,6 +623,10 @@ export function formatSafetyPlanText(plan = inMemoryPlanState) {
     '',
     // Notes & reminders
     formatBlock('10. NOTES & REMINDERS TO MYSELF', notes),
+    '',
+    formatBlock(L('IF I RETURN TO USE: MY NEXT SAFE STEP', 'SI VUELVO A CONSUMIR: MI PRÓXIMO PASO SEGURO'), safePlan.returnToUseAction),
+    '',
+    formatBlock(L('THERAPY APPROACHES TO DISCUSS', 'ENFOQUES TERAPÉUTICOS PARA CONVERSAR'), safePlan.preferredTherapies),
     '',
     '------------------------------------------------------------',
     '24/7 FREE & CONFIDENTIAL CRISIS & OVERDOSE ESCALATION LINES',
@@ -772,6 +819,9 @@ export function urgeSurfingTimer() {
     display.textContent = fmt(remaining);
     livePrompt.textContent = t('plan.timer.reset', 'Timer paused and reset. Start again whenever you are ready.');
   };
+  const resetTimer = activeTimerReset;
+  planResetCallbacks.add(resetTimer);
+  root._cleanup = () => { stopTimer(); planResetCallbacks.delete(resetTimer); };
   return root;
 }
 
@@ -865,7 +915,7 @@ function intakeScriptBuilderCard() {
 
   renderScript();
 
-  return h('div', { class: 'card intake-script-card', id: 'intake' },
+  const root = h('div', { class: 'card intake-script-card', id: 'intake' },
     h('h3', null, t('plan.script.heading', 'Interactive “What to Say When You Call a Clinic” Script Builder')),
     fine(t('plan.script.sub', 'Choose who is calling, what kind of care you are asking about, and how you plan to pay to get a word-for-word phone script.')),
     h('div', { class: 'location-row' },
@@ -892,23 +942,30 @@ function intakeScriptBuilderCard() {
       h('button', {
         type: 'button',
         class: 'btn btn-secondary btn-small',
-        onclick: () => window.print(),
+        onclick: () => printClinicalHandout(scriptOutput),
       }, icon('printer'), t('plan.script.printBtn', 'Print script')),
     ),
     copyMsg,
   );
+  const resetScript = () => {
+    Object.assign(state, { caller: 'self', need: 'moud_bup', insurance: 'medicaid' });
+    callerSelect.value = state.caller;
+    needSelect.value = state.need;
+    insuranceSelect.value = state.insurance;
+    copyMsg.textContent = '';
+    clear(scriptOutput);
+  };
+  planResetCallbacks.add(resetScript);
+  root._cleanup = () => { resetScript(); planResetCallbacks.delete(resetScript); clear(root); };
+  return root;
 }
 
 /**
  * Interactive Stanley-Brown Evidence-Based Suicide & Overdose Safety Planning model view.
  * Zero-knowledge: Backed strictly by ephemeral browser RAM (zero storage/queries).
  */
-export function planView({ query } = {}) {
-  // If query provides a goal, initialize ephemeral state if currently empty
-  const initialGoal = query?.get('goal');
-  if (initialGoal && !inMemoryPlanState.goal) {
-    setPlanState({ goal: initialGoal });
-  }
+export function planView() {
+  // Clinical goals can only come from the RAM builder, never a URL query.
 
   const previewBody = h('div', { class: 'safety-plan-preview-body' });
   const copyStatus = h('p', { class: 'field-status', role: 'status', 'aria-live': 'polite' });
@@ -957,6 +1014,8 @@ export function planView({ query } = {}) {
       [t('plan.preview.environmentalSafety', 'Step 6: Environmental safety & substance locking'), plan.environmentalSafety || plan.saferEnvironment],
       [t('plan.preview.naloxoneLocation', 'Where naloxone & test strips are kept'), plan.naloxoneLocation],
       [t('plan.preview.notes', 'Notes & reminders to myself'), plan.notes],
+      [L('If I return to use: my next safe step', 'Si vuelvo a consumir: mi próximo paso seguro'), plan.returnToUseAction],
+      [L('Therapy approaches to discuss', 'Enfoques terapéuticos para conversar'), plan.preferredTherapies],
     ];
 
     previewBody.append(
@@ -1128,7 +1187,10 @@ export function planView({ query } = {}) {
   syncChipStates();
   renderPreview();
 
-  return h('div', { class: 'view view-prose' },
+  const preferences = therapyPreferencesWidget();
+  const timer = urgeSurfingTimer();
+  const intakeScript = intakeScriptBuilderCard();
+  const root = h('div', { class: 'view view-prose' },
     pageHeader(
       t('plan.title', 'Safety planning, counseling & what to expect'),
       t(
@@ -1237,6 +1299,15 @@ export function planView({ query } = {}) {
           rows: 1,
         }),
 
+        preferences,
+        createField({
+          key: 'returnToUseAction',
+          id: 'plan-return-to-use',
+          label: L('If I return to use: my next safe step', 'Si vuelvo a consumir: mi próximo paso seguro'),
+          helpText: L('Consider contacting a trusted person or clinician, keeping naloxone nearby, avoiding mixing sedatives, and remembering that tolerance may be lower. A return to use is a reason to reconnect with care.', 'Considere contactar a una persona de confianza o a su profesional, tener naloxona cerca, evitar mezclar sedantes y recordar que la tolerancia puede haber bajado. Volver a consumir es motivo para reconectarse con la atención.'),
+          placeholder: L('Who I can call and what I can do next...', 'A quién puedo llamar y qué puedo hacer después...'),
+          rows: 2,
+        }),
         createField({
           key: 'notes',
           id: 'plan-notes',
@@ -1260,7 +1331,7 @@ export function planView({ query } = {}) {
           h('button', {
             type: 'button',
             class: 'btn btn-secondary',
-            onclick: () => window.print(),
+            onclick: () => printClinicalHandout(previewBody.parentElement ?? previewBody),
           }, icon('printer'), t('plan.btn.print', 'Print / Save as PDF')),
           h('button', {
             type: 'button',
@@ -1279,7 +1350,7 @@ export function planView({ query } = {}) {
         'plan.cravingToolkit.intro',
         'Having an urge or sudden wave of anxiety right now? Use this 3- or 5-minute guided pacer and evidence-based grounding exercises to help your nervous system ride out the peak safely.',
       )),
-      urgeSurfingTimer(),
+      timer,
       h('div', { class: 'results-list' },
         GROUNDING_EXERCISES.map((ex) => h('article', { class: 'card', id: `grounding-${ex.id}` },
           h('h3', null, ex.title),
@@ -1296,7 +1367,7 @@ export function planView({ query } = {}) {
         'plan.intake.intro',
         'Calling or walking into a treatment program for the first time can feel intimidating—especially if you have had judgmental healthcare experiences in the past. Knowing what happens step by step puts you in the driver’s seat.',
       )),
-      intakeScriptBuilderCard(),
+      intakeScript,
       h('ol', { class: 'steps' },
         INTAKE_STEPS.map((s) => h('li', { class: 'step', id: `intake-step-${s.step}` },
           h('span', { class: 'step-num', 'aria-hidden': 'true' }, String(s.step)),
@@ -1332,7 +1403,8 @@ export function planView({ query } = {}) {
           h('p', { class: 'actions' },
             h('a', {
               class: 'btn btn-small btn-secondary',
-              href: `#/treatment?codes=${m.samhsaCode}`,
+              href: '#/treatment',
+              onclick: () => setNavigatorHandoffState({ codes: [m.samhsaCode] }),
             }, icon('compass'), `Find ${m.code} programs near me`),
           ),
         )),
@@ -1373,7 +1445,7 @@ export function planView({ query } = {}) {
           h('button', {
             type: 'button',
             class: 'btn btn-primary btn-small',
-            onclick: () => window.print(),
+            onclick: (event) => printClinicalHandout(event.currentTarget.closest('#cfr-part2-handout')),
           }, icon('printer'), t('plan.rights.printBtn', 'Print confidentiality handout')),
           h('button', {
             type: 'button',
@@ -1391,5 +1463,16 @@ export function planView({ query } = {}) {
         '.',
       ),
     ),
+    rightsAndSafetyGuide(),
   );
+  root._cleanup = () => {
+    planListeners.delete(handleStateUpdate);
+    preferences._cleanup?.();
+    timer._cleanup?.();
+    intakeScript._cleanup?.();
+    for (const control of Object.values(inputRefs)) control.value = '';
+    clear(previewBody);
+    clear(root);
+  };
+  return root;
 }

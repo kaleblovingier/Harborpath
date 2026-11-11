@@ -18,11 +18,11 @@ import {
   recommendForCoOccurring,
 } from './populationHelpers.js';
 import { MEDICATIONS } from './medications.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
 import { setNavigatorHandoffState } from './navigatorHandoff.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetGuidedNavigatorState);
+registerQuickExitHandler(resetGuidedNavigatorState);
 
 /**
  * Bilingual English/Spanish helper that reads the active language from i18n.js
@@ -221,8 +221,8 @@ export function detectCrisisOrOverdose(input = '') {
         'Posible emergencia por sobredosis — Llame al 911 y administre naloxona ahora',
       ),
       guidance: gt(
-        'If someone is unresponsive, not breathing normally, making gurgling sounds, or has blue/gray lips or fingernails: call 911 immediately, give naloxone (Narcan) nasal spray right away, support breathing, and repeat naloxone every 2 to 3 minutes if they do not wake up.',
-        'Si alguien no responde, no respira normalmente, hace sonidos de gorgoteo o tiene labios o uñas azules o grises: llame al 911 de inmediato, administre naloxona (Narcan) en aerosol nasal, apoye la respiración y repita la naloxona cada 2 a 3 minutos si no despierta.',
+        'If someone is unresponsive or not breathing normally, call 911, give naloxone for suspected opioid overdose, and follow dispatcher instructions for breathing support or CPR. Repeat nasal naloxone with a new device every 2 to 3 minutes if breathing stays abnormal or worsens, following its label. Normal breathing, not wakefulness alone, guides repeat dosing.',
+        'Si alguien no responde o no respira normalmente, llame al 911, administre naloxona ante posible sobredosis de opioides y siga las instrucciones para respiración o RCP. Repita la naloxona nasal con un dispositivo nuevo cada 2 a 3 minutos si la respiración sigue anormal o empeora, según su etiqueta. La respiración normal, no solo despertar, guía la repetición.',
       ),
       actions: [
         { label: gt('Call 911 Immediately', 'Llame al 911 de inmediato'), href: 'tel:911', kind: 'emergency' },
@@ -688,9 +688,7 @@ export function runGuidedTriage(session = {}) {
   }
 
   const recommendedCodes = codeOrder.slice(0, 8);
-  const searchHref = recommendedCodes.length
-    ? `#/treatment?codes=${recommendedCodes.join(',')}`
-    : '#/treatment';
+  const searchHref = '#/treatment'; // Codes travel only through the RAM handoff.
 
   const summaryPoints = [];
   if (crisisIntercept.intercepted) {
@@ -861,6 +859,9 @@ export function resetGuidedNavigatorState() {
       /* ignore view listener errors during quick exit */
     }
   }
+  // Rendering a blank view may compute a default synthesis; reset must still
+  // finish with no retained triage result or previously supplied clinical input.
+  guidedState = createInitialState();
   return getGuidedNavigatorState();
 }
 
@@ -1838,7 +1839,7 @@ export function guidedNavigatorView() {
   renderStepContent();
   renderSynthesis(false);
 
-  return h(
+  const view = h(
     'div',
     { class: 'view-guided-navigator stack' },
     pageHeader(
@@ -2001,4 +2002,11 @@ export function guidedNavigatorView() {
       synthesisContainer,
     ),
   );
+  view._cleanup = () => {
+    resetListeners.delete(handleResetView);
+    textInput.value = '';
+    textInput.setAttribute('value', '');
+    clear(view);
+  };
+  return view;
 }
