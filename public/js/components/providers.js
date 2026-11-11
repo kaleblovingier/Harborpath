@@ -1,11 +1,13 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { api } from '../api.js';
-import { state, setRadius } from '../state.js';
+import { state, setRadius, onQuickExit } from '../state.js';
 import { locationPicker, RADII } from './locationPicker.js';
 import { providerCard, providerText } from './facilityCard.js';
 import { radiusFor, nextRadius } from './reach.js';
 import { statePanel } from './stateResources.js';
 import { t, tp, formatNumber, formatDate } from '../i18n.js';
+import { searchWithEquityFallback } from '../views/territoryEquity.js';
+import { equityFallbackPanel } from './equityFallback.js';
 
 export { providerCard, providerText };
 
@@ -118,6 +120,7 @@ export function providerFinder({ initialKind = 'va', initialType, initialFilter 
   const listEl = h('div', { class: 'results-list' });
   const moreEl = h('div', { class: 'results-more' });
   const sourceEl = h('p', { class: 'source-note' });
+  const equitySlot = h('div', { class: 'provider-equity-slot' });
 
   const tabButtons = PROVIDER_NETWORKS.map((net) => h('button', {
     type: 'button',
@@ -153,6 +156,7 @@ export function providerFinder({ initialKind = 'va', initialType, initialFilter 
     listEl,
     moreEl,
     sourceEl,
+    equitySlot,
   );
 
   function currentNet() {
@@ -276,6 +280,7 @@ export function providerFinder({ initialKind = 'va', initialType, initialFilter 
   async function runSearch() {
     clear(moreEl);
     clear(sourceEl);
+    clear(equitySlot);
     const loc = state.location;
     if (!loc) {
       statusEl.textContent = '';
@@ -295,14 +300,23 @@ export function providerFinder({ initialKind = 'va', initialType, initialFilter 
     clear(listEl).append(...skeletonList());
 
     try {
-      const data = await api.providers({
+      const signal = controller.signal;
+      const equity = await searchWithEquityFallback({ location: loc, radius: state.radius, api, signal, primaryNetwork: activeKind,
+        search: (radius) => api.providers({
         lat: loc.lat,
         lng: loc.lng,
-        radius: state.radius,
+        radius,
         kind: activeKind,
         type: activeKind,
         filter: activeFilter || undefined,
-      }, controller.signal);
+        }, signal),
+      });
+      if (signal.aborted) return;
+      const data = equity.data;
+      if (equity.fallback.active) setRadius(equity.fallback.radius);
+      clear(equitySlot);
+      const fallbackPanel = equityFallbackPanel(equity);
+      if (fallbackPanel) equitySlot.append(fallbackPanel);
 
       allResults = data.results ?? [];
       shownCount = 0;
@@ -378,8 +392,9 @@ export function providerFinder({ initialKind = 'va', initialType, initialFilter 
 
   renderHeaderAndFilters();
   runSearch();
+  const unregister = onQuickExit(() => { controller?.abort(); allResults = []; clear(equitySlot); });
 
-  return h('div', { class: 'finder provider-finder' },
+  const root = h('div', { class: 'finder provider-finder' },
     h('div', { class: 'card finder-search' },
       locationPicker({ onChange: runSearch }),
     ),
@@ -391,4 +406,6 @@ export function providerFinder({ initialKind = 'va', initialType, initialFilter 
     panel,
     statePanel(),
   );
+  root._cleanupFinder = () => { controller?.abort(); unregister(); };
+  return root;
 }

@@ -5,7 +5,9 @@ import { TREATMENT_FILTERS } from '../codes.js';
 import { treatmentFinder } from '../components/finder.js';
 import { t } from '../i18n.js';
 import { pageHeader, section, p, strong } from './common.js';
-import { insuranceSelectorWidget } from './insuranceWidget.js';
+import { renderInsuranceSelectorHTML, renderFacilityInsuranceBadgeHTML, facilityAdmissionsQuestions } from './insuranceWidget.js';
+import { getInsuranceState, rankFacilitiesByInsurance } from './insuranceHelpers.js';
+import { treatmentCard } from '../components/facilityCard.js';
 
 export const PRESETS = [
   { codes: [], get label() { return t('treatment.preset.any', 'Any treatment'); } },
@@ -18,12 +20,27 @@ export const PRESETS = [
   { codes: ['SS'], get label() { return t('treatment.preset.ss', 'Sliding fee scale'); } },
 ];
 
-export function treatmentView({ query = new URLSearchParams() } = {}) {
+export function treatmentView({ query = new URLSearchParams(), handoff = null } = {}) {
   const rawCodes = query && typeof query.get === 'function' ? (query.get('codes') ?? '') : '';
-  const initialCodes = rawCodes.split(',').filter(Boolean);
+  const initialCodes = handoff ? [...handoff.codes] : rawCodes.split(',').filter(Boolean);
   const current = initialCodes.slice().sort().join(',');
+  const finder = treatmentFinder({
+    kind: 'sa', filters: TREATMENT_FILTERS, initialCodes,
+    noun: t('treatment.noun', 'treatment locations'),
+    prioritizesCoverage: () => getInsuranceState().selectedCoverage !== 'any' || getInsuranceState().emergencyFlag,
+    rankResults: (facilities) => {
+      const insurance = getInsuranceState();
+      return rankFacilitiesByInsurance(facilities, insurance.selectedCoverage, { emergency: insurance.emergencyFlag });
+    },
+    renderCard: (facility, options) => {
+      const card = treatmentCard(facility, options);
+      card.append(renderFacilityInsuranceBadgeHTML(facility, { showExplanation: true }), facilityAdmissionsQuestions(facility));
+      return card;
+    },
+  });
 
-  return h('div', { class: 'view' },
+  const selector = renderInsuranceSelectorHTML({ onChange: () => finder.refreshResults() });
+  const root = h('div', { class: 'view' },
     pageHeader(
       t('treatment.title', 'Find treatment'),
       t('treatment.lede', {
@@ -44,19 +61,14 @@ export function treatmentView({ query = new URLSearchParams() } = {}) {
         h('a', { href: '#/plan' }, t('treatment.helper.plan', 'See what happens at your first intake visit')),
       ),
     ),
-    insuranceSelectorWidget(),
+    selector,
     h('nav', { class: 'presets', 'aria-label': t('treatment.presets.label', 'Quick searches') },
       PRESETS.map((pr) => h('a', {
         href: pr.codes.length ? `#/treatment?codes=${pr.codes.join(',')}` : '#/treatment',
         class: 'preset',
         'aria-current': pr.codes.join(',') === current ? 'true' : null,
       }, pr.label))),
-    treatmentFinder({
-      kind: 'sa',
-      filters: TREATMENT_FILTERS,
-      initialCodes,
-      noun: t('treatment.noun', 'treatment locations'),
-    }),
+    finder,
     h('div', { class: 'callout callout-warn' },
       h('p', null,
         strong(t('treatment.warn.lead', {
@@ -123,4 +135,6 @@ export function treatmentView({ query = new URLSearchParams() } = {}) {
         tel('18006624357', '1-800-662-4357'), '.'),
     ),
   );
+  root._cleanup = () => { finder._cleanupFinder(); selector._cleanupInsuranceWidget(); };
+  return root;
 }

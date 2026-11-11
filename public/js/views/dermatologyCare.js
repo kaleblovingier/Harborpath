@@ -1,4 +1,4 @@
-import { h, clear } from '../dom.js';
+import { h, clear, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 
 function el(tag, props = {}, ...children) {
@@ -909,10 +909,14 @@ export function dermatologyCareView() {
     isEs ? 'Copiar SBAR al Portapapeles' : 'Copy SBAR to Clipboard',
     async () => {
       const txt = formatDermatologySbarText(getDermatologyState());
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(txt);
-      }
-      copyStatus.textContent = isEs ? '¡Copiado al portapapeles!' : 'Copied to clipboard!';
+      const ok = await copyText(txt, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        failedLabel: isEs ? 'No se pudo copiar — seleccione el texto manualmente' : 'Copy failed — select text manually',
+      });
+      copyStatus.textContent = ok
+        ? (isEs ? '¡Copiado al portapapeles!' : 'Copied to clipboard!')
+        : (isEs ? 'No se pudo acceder al portapapeles. Copie el texto manualmente.' : 'Could not access clipboard. Select the text to copy manually.');
     },
     { className: 'button primary copy-sbar-btn' }
   );

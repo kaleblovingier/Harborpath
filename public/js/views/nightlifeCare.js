@@ -3,7 +3,7 @@
 // Clinical standards: DanceSafe, American College of Medical Toxicology (ACMT), Crew 2000, UK Club Health
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
@@ -425,24 +425,28 @@ export function nightlifeCareView() {
     // Navigation Tabs
     const tabsNav = h('nav', { class: 'tab-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de Ocio Nocturno' : 'Nightlife Tabs' }, [
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'profiles' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'profiles'),
         onclick: () => { setNightlifeState({ activeTab: 'profiles' }); render(); }
       }, isEs ? 'Perfiles de Sustancias' : 'Substance Profiles'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'reagents' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'reagents'),
         onclick: () => { setNightlifeState({ activeTab: 'reagents' }); render(); }
       }, isEs ? 'Reactivos Químicos' : 'Reagent Testing'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'bladder-neuro' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'bladder-neuro'),
         onclick: () => { setNightlifeState({ activeTab: 'bladder-neuro' }); render(); }
       }, isEs ? 'Salud Vesical y B12' : 'Bladder Health & B12'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'safety-plan' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'safety-plan'),
@@ -718,15 +722,18 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
 
   const copyStatus = h('span', { class: 'copy-status', 'aria-live': 'polite' }, '');
   const copyBtn = h('button', {
+    type: 'button',
     class: 'btn btn-primary',
     onclick: async () => {
-      try {
-        await navigator.clipboard.writeText(summaryText);
-        copyStatus.textContent = isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!';
-        setTimeout(() => { copyStatus.textContent = ''; }, 3000);
-      } catch (_e) {
-        copyStatus.textContent = isEs ? ' Error al copiar' : ' Copy failed';
-      }
+      const ok = await copyText(summaryText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        failedLabel: isEs ? 'Error al copiar' : 'Copy failed',
+      });
+      copyStatus.textContent = ok
+        ? (isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!')
+        : (isEs ? ' Error al copiar' : ' Copy failed');
+      if (ok) setTimeout(() => { copyStatus.textContent = ''; }, 3000);
     }
   }, [
     icon('copy'),
@@ -734,6 +741,7 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
   ]);
 
   const resetBtn = h('button', {
+    type: 'button',
     class: 'btn btn-secondary',
     onclick: () => {
       resetNightlifeState();

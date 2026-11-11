@@ -19,6 +19,7 @@ import {
 } from './populationHelpers.js';
 import { MEDICATIONS } from './medications.js';
 import { onQuickExit } from '../state.js';
+import { setNavigatorHandoffState } from './navigatorHandoff.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetGuidedNavigatorState);
@@ -863,24 +864,7 @@ export function resetGuidedNavigatorState() {
   return getGuidedNavigatorState();
 }
 
-// Wire Quick Exit (#quick-exit click and double-Escape) to wipe RAM state automatically.
-if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
-  let lastEscTime = 0;
-  document.addEventListener('keydown', (e) => {
-    if (e?.key !== 'Escape') return;
-    const now = Date.now();
-    if (now - lastEscTime < 1000) {
-      resetGuidedNavigatorState();
-    }
-    lastEscTime = now;
-  });
-  document.addEventListener('click', (e) => {
-    const target = e?.target;
-    if (target && (target.id === 'quick-exit' || target.closest?.('#quick-exit'))) {
-      resetGuidedNavigatorState();
-    }
-  });
-}
+// Quick Exit is dispatched centrally by app.js through onQuickExit above.
 
 // ---------------------------------------------------------------------------
 // Guided Conversational Navigator View
@@ -1771,7 +1755,9 @@ export function guidedNavigatorView() {
           'a',
           {
             class: 'btn btn-primary',
-            href: triage.searchHref,
+            href: '#/treatment',
+            'data-navigator-handoff': 'true',
+            onclick: () => setNavigatorHandoffState({ codes: triage.recommendedCodes }),
             'aria-label': gt('Open treatment finder with recommended filters', 'Abrir buscador de tratamiento con los filtros recomendados'),
           },
           icon('search'),
@@ -1781,7 +1767,9 @@ export function guidedNavigatorView() {
           'a',
           {
             class: 'btn btn-secondary',
-            href: triage.asamResult.broadSearchHref,
+            href: '#/treatment',
+            'data-navigator-handoff': 'true',
+            onclick: () => setNavigatorHandoffState({ codes: triage.asamResult.broadCodes }),
             'aria-label': gt('Broaden treatment search to core filters', 'Ampliar búsqueda de tratamiento a filtros principales'),
           },
           gt('Broaden Search (Core Filters)', 'Ampliar búsqueda (filtros principales)'),

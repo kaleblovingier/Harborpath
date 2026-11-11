@@ -1,7 +1,9 @@
 import { api } from './api.js';
-import { state, subscribe, wipeAll, runQuickExitHandlers, onQuickExit } from './state.js';
+import { executeGlobalQuickExit } from './quickExitRegistry.js';
+import { getNavigatorHandoffState, resetNavigatorState } from './views/navigatorHandoff.js';
+import { state, subscribe, wipeAll, onQuickExit } from './state.js';
 import { initI18n, onLanguageChange, isPlainLanguage, setPlainLanguage, t, formatDate } from './i18n.js';
-import { announce, h, tel, icon } from './dom.js';
+import { announce, h, tel, icon, syncTablists, wireTablistKeyboard } from './dom.js';
 import {
   homeView,
   treatmentView,
@@ -58,6 +60,21 @@ function loadGuidesModule() {
 }
 
 export const LAZY_LOADERS = {
+  'salicylate-nsaid-tox': () => import('./views/salicylateTox.js').then((m) => {
+    viewCache.set('salicylate-nsaid-tox', m.salicylateToxView);
+    routeResets.set('salicylate-nsaid-tox', m.resetSalicylateToxState);
+    return m.salicylateToxView;
+  }),
+  'mood-stabilizer-tox': () => import('./views/moodStabilizerTox.js').then((m) => {
+    viewCache.set('mood-stabilizer-tox', m.moodStabilizerToxView);
+    routeResets.set('mood-stabilizer-tox', m.resetMoodStabilizerToxState);
+    return m.moodStabilizerToxView;
+  }),
+  'antimuscarinic-toxidrome': () => import('./views/antimuscarinicTox.js').then((m) => {
+    viewCache.set('antimuscarinic-toxidrome', m.antimuscarinicToxView);
+    routeResets.set('antimuscarinic-toxidrome', m.resetAntimuscarinicToxState);
+    return m.antimuscarinicToxView;
+  }),
   'cardiogenic-toxin-hiet': () => import('./views/cardiogenicToxinHiet.js').then((m) => {
     viewCache.set('cardiogenic-toxin-hiet', m.cardiogenicToxinHietView);
     routeResets.set('cardiogenic-toxin-hiet', m.resetCardiogenicState);
@@ -416,6 +433,7 @@ export const LAZY_LOADERS = {
     viewCache.set('navigator', m.careNavigatorView);
     return m.careNavigatorView;
   }),
+  'guided-navigator': () => LAZY_LOADERS.guided(),
   guided: () => import('./views/guidedNavigator.js').then((m) => {
     viewCache.set('guided', m.guidedNavigatorView);
     return m.guidedNavigatorView;
@@ -512,6 +530,9 @@ export const LAZY_LOADERS = {
 };
 
 export const ROUTE_TITLES = {
+  'salicylate-nsaid-tox': () => t('route.salicylateNsaidTox', 'Salicylate & NSAID toxicity, urine alkalinization & airway protection navigator'),
+  'mood-stabilizer-tox': () => t('route.moodStabilizerTox', 'Lithium, valproate hyperammonemia & lamotrigine toxicity navigator'),
+  'antimuscarinic-toxidrome': () => t('route.antimuscarinicToxidrome', 'Antimuscarinic, diphenhydramine street-cut & delirium navigator'),
   'cardiogenic-toxin-hiet': () => t('route.cardiogenicToxinHiet', 'Cardiogenic toxin & high-dose insulin euglycemia (HIET) navigator'),
   'wooden-chest-rigidity': () => t('route.woodenChestRigidity', 'Synthetic opioid wooden chest rigidity & airway protocol'),
   'hyperthermic-toxidrome': () => t('route.hyperthermicToxidrome', 'Stimulant & synthetic cathinone hyperthermic crisis triage'),
@@ -589,6 +610,7 @@ export const ROUTE_TITLES = {
   treatment: () => t('route.treatment', 'Find treatment'),
   navigator: () => t('route.navigator', 'Clinical care navigator (ASAM)'),
   guided: () => t('route.guided', 'Guided navigator & triage'),
+  'guided-navigator': () => t('route.guided', 'Guided navigator & triage'),
   medications: () => t('route.medications', 'Medications & interactions'),
   'harm-reduction': () => t('route.harm', 'Harm reduction'),
   overdose: () => t('route.overdose', 'Overdose response'),
@@ -619,13 +641,44 @@ export const ROUTE_TITLES = {
   privacy: () => t('route.privacy', 'Privacy'),
 };
 
+let electiveCssPromise = null;
+function ensureElectiveStyles() {
+  if (typeof window === 'undefined' || typeof document === 'undefined' || !document.head || typeof document.createElement !== 'function') {
+    return Promise.resolve();
+  }
+  if (electiveCssPromise) return electiveCssPromise;
+  if (document.head.querySelector?.('link[href="/css/elective.css"]')) {
+    electiveCssPromise = Promise.resolve();
+    return electiveCssPromise;
+  }
+  electiveCssPromise = new Promise((resolve) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/css/elective.css';
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve();
+    };
+    const timer = setTimeout(done, 1200);
+    link.addEventListener?.('load', done, { once: true });
+    link.addEventListener?.('error', done, { once: true });
+    document.head.append(link);
+  });
+  return electiveCssPromise;
+}
+
 export function preloadRoute(path) {
   if (SYNC_VIEWS[path]) return Promise.resolve(SYNC_VIEWS[path]);
-  if (viewCache.has(path)) return Promise.resolve(viewCache.get(path));
+  if (viewCache.has(path)) return ensureElectiveStyles().then(() => viewCache.get(path));
   const loader = LAZY_LOADERS[path];
   if (!loader) return Promise.resolve(null);
   if (!pendingLoads.has(path)) {
-    const p = loader().finally(() => pendingLoads.delete(path));
+    const p = Promise.all([loader(), ensureElectiveStyles()])
+      .then(([view]) => view)
+      .finally(() => pendingLoads.delete(path));
     pendingLoads.set(path, p);
   }
   return pendingLoads.get(path);
@@ -636,6 +689,9 @@ export function preloadRoute(path) {
 // precached by the service worker's own APP_SHELL and ELECTIVE_SHELL lists.
 export function preloadAllLazyViews() {
   return Promise.all([
+    preloadRoute('salicylate-nsaid-tox'),
+    preloadRoute('mood-stabilizer-tox'),
+    preloadRoute('antimuscarinic-toxidrome'),
     preloadRoute('cardiogenic-toxin-hiet'),
     preloadRoute('wooden-chest-rigidity'),
     preloadRoute('hyperthermic-toxidrome'),
@@ -765,12 +821,30 @@ export function parseHash(hashStr) {
   return { path, query };
 }
 
+// Keep the selected clinical filters out of links, history and session restore.
+export function prepareRouteNavigation(href, { navigatorHandoff = false } = {}) {
+  const { path, query } = splitHref(href);
+  const snapshot = path === 'treatment' && navigatorHandoff ? getNavigatorHandoffState() : null;
+  carried = snapshot
+    ? { path, query: new URLSearchParams(), handoff: { codes: [...snapshot.codes] } }
+    : [...query.keys()].length ? { path, query } : null;
+  return '#/' + path;
+}
+
+export function routeViewOptions(path, query) {
+  return {
+    query, meta: lastMeta,
+    handoff: path === 'treatment' && carried?.path === path && carried.handoff
+      ? { codes: [...carried.handoff.codes] } : null,
+  };
+}
+
 export function resolveRoute(path, query) {
   if (Object.hasOwn(ROUTE_TITLES, path)) {
     const title = ROUTE_TITLES[path]();
     const syncView = SYNC_VIEWS[path] ?? viewCache.get(path) ?? null;
     if (syncView) {
-      return { view: () => syncView({ query, meta: lastMeta }), lazyPath: null, title };
+      return { view: () => syncView(routeViewOptions(path, query)), lazyPath: null, title };
     }
     return { view: null, lazyPath: path, title };
   }
@@ -933,7 +1007,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
     const loadedView = await preloadRoute(resolved.lazyPath).catch(() => { failed = true; return null; });
     if (token !== renderSeq) return;
     main.removeAttribute('aria-busy');
-    if (loadedView) buildView = () => loadedView({ query, meta: lastMeta });
+    if (loadedView) buildView = () => loadedView(routeViewOptions(path, query));
     else if (failed) buildView = () => viewLoadFailed(resolved.title, () => render(), { overdoseSteps: resolved.lazyPath === 'overdose' });
     else buildView = () => notFoundView({ query });
   }
@@ -947,6 +1021,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
     content = viewLoadFailed(resolved.title, () => render(), { overdoseSteps: path === 'overdose' });
   }
   main.replaceChildren(content);
+  syncTablists(main);
   if (!routeHash) {
     if (isInitial) focusInPageTarget(location.hash.slice(1));
     return;
@@ -960,6 +1035,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
 
 // ---------------------------------------------------------------- Quick exit
 // Plain-language mode lives in memory only; Quick exit turns it off with the rest.
+onQuickExit(resetNavigatorState);
 onQuickExit(() => setPlainLanguage(false, { notify: false }));
 
 export function runQuickExitResets() {
@@ -972,7 +1048,7 @@ export function runQuickExitResets() {
   for (const reset of routeResets.values()) {
     try { reset(); } catch { /* keep clearing the others */ }
   }
-  runQuickExitHandlers();
+  executeGlobalQuickExit();
   if (typeof document !== 'undefined') {
     document.getElementById('btn-emergency-drawer')?.setAttribute('aria-expanded', 'false');
   }
@@ -1012,6 +1088,10 @@ function renderFooterMeta() {
 }
 
 if (hasDom) {
+  wireTablistKeyboard(main);
+  main?.addEventListener('click', (e) => {
+    if (e.target?.closest?.('[role="tab"]')) queueMicrotask(() => syncTablists(main));
+  });
   function alignNavMoreMenu(details) {
     if (!details || !details.open) return;
     const menu = details.querySelector('.nav-more-links');
@@ -1064,9 +1144,9 @@ if (hasDom) {
     const a = e.target.closest('a[href^="#/"], a[href="#"]');
     if (!a) return;
     e.preventDefault();
-    const { path, query } = splitHref(a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href'));
-    carried = [...query.keys()].length ? { path, query } : null;
-    const href = `#/${path}`;
+    const href = prepareRouteNavigation(a.getAttribute('href') === '#' ? '#/' : a.getAttribute('href'), {
+      navigatorHandoff: a.hasAttribute('data-navigator-handoff'),
+    });
     if (href === location.hash || (href === '#/' && !location.hash)) render();
     else location.replace(href);
   });
@@ -1083,7 +1163,12 @@ if (hasDom) {
 
   window.addEventListener('hashchange', () => render({ hashChange: true }));
 
-  document.getElementById('quick-exit')?.addEventListener('click', quickExit);
+  // Delegation includes Quick Exit controls inside dynamically loaded views.
+  document.addEventListener('click', (event) => {
+    if (!event.target?.closest?.('#quick-exit, .hp-quick-exit-btn')) return;
+    event.preventDefault();
+    quickExit();
+  });
 
   let lastEscape = 0;
   document.addEventListener('keydown', (e) => {

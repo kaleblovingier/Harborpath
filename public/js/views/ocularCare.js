@@ -7,7 +7,7 @@
 // Topiramate Ciliochoroidal Angle-Closure Glaucoma (Pilocarpine Contraindication), and Orbital Cellulitis / Cavernous Sinus Thrombosis.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { getLang } from '../i18n.js';
 
 // ============================================================================
@@ -402,8 +402,9 @@ export function ocularCareView() {
           role: 'tab',
           class: `ocular-tab-btn ${isActive ? 'active' : ''}`,
           'aria-selected': isActive ? 'true' : 'false',
-          'aria-controls': `tab-panel-${tab.id}`,
+          'aria-controls': 'ocular-tab-panel',
           id: `tab-btn-${tab.id}`,
+          tabindex: isActive ? '0' : '-1',
         }, [
           icon(tab.iconName, { class: 'ocular-tab-icon' }),
           h('span', {}, isEs ? tab.labelEs : tab.labelEn),
@@ -413,12 +414,13 @@ export function ocularCareView() {
       })
     );
     container.appendChild(tabNav);
+    syncTablists(container);
 
     // Tab Panel Container
     const panel = h('section', {
       class: 'ocular-tab-panel',
       role: 'tabpanel',
-      id: `tab-panel-${state.activeTab}`,
+      id: 'ocular-tab-panel',
       'aria-labelledby': `tab-btn-${state.activeTab}`,
     });
     container.appendChild(panel);
@@ -590,21 +592,16 @@ export function ocularCareView() {
       type: 'button',
       class: 'ocular-copy-btn',
     }, [
-      icon(state.sbarCopied ? 'check' : 'copy', { class: 'ocular-btn-icon' }),
-      h('span', {}, state.sbarCopied
-        ? (isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!')
-        : (isEs ? 'Copiar Informe SBAR' : 'Copy SBAR Note')
-      ),
+      icon('copy', { class: 'ocular-btn-icon' }),
+      h('span', {}, isEs ? 'Copiar Informe SBAR' : 'Copy SBAR Note'),
     ]);
 
     copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(sbarText);
-        setOcularState({ sbarCopied: true });
-        setTimeout(() => setOcularState({ sbarCopied: false }), 2500);
-      } catch (err) {
-        console.error('Failed to copy SBAR text:', err);
-      }
+      await copyText(sbarText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!',
+        announceSuccess: isEs ? 'Informe SBAR copiado al portapapeles.' : 'SBAR note copied to clipboard.',
+      });
     });
 
     const actionContainer = h('div', { class: 'ocular-sbar-actions' }, [copyBtn]);
@@ -615,6 +612,7 @@ export function ocularCareView() {
   }
 
   render();
+  wireTablistKeyboard(container);
   const unsubscribe = subscribeOcularState(render);
 
   return container;

@@ -5,7 +5,7 @@
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII, zero cookies.
 // Security Invariant: Safe DOM manipulation via ../dom.js (zero string injection, zero inline styles).
 
-import { h, clear, icon, announce, tel } from '../dom.js';
+import { h, clear, icon, announce, tel, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { pageHeader } from './common.js';
 
@@ -544,17 +544,11 @@ export function fungalOpportunisticCareView() {
     copyBtn.appendChild(icon('copy'));
     copyBtn.appendChild(h('span', null, isEs ? 'Copiar Reporte SBAR' : 'Copy SBAR Report'));
     copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(sbarArea.value);
-        copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
-        setTimeout(() => {
-          clear(copyBtn);
-          copyBtn.appendChild(icon('copy'));
-          copyBtn.appendChild(h('span', null, isEs ? 'Copiar Reporte SBAR' : 'Copy SBAR Report'));
-        }, 2000);
-      } catch (err) {
-        sbarArea.select();
-      }
+      const ok = await copyText(sbarArea.value, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+      });
+      if (!ok && typeof sbarArea.select === 'function') sbarArea.select();
     });
     sbarCard.appendChild(copyBtn);
   }

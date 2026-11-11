@@ -919,7 +919,8 @@ export function reentryView(containerOrOptions = {}, maybeOptions = {}) {
       role: 'tab',
       id: `tab-btn-${tab.id}`,
       'aria-selected': isSelected ? 'true' : 'false',
-      'aria-controls': `tab-panel-${tab.id}`,
+      'aria-controls': isSelected ? `tab-panel-${tab.id}` : null,
+      tabindex: isSelected ? '0' : '-1',
       class: isSelected ? 'tab active' : 'tab',
     }, tab.label);
 

@@ -2,7 +2,7 @@
 // Clinical standards: CDC OD2A, SAMHSA, FDA Drug Safety Communications, ACMT (American College of Medical Toxicology)
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
@@ -524,24 +524,28 @@ export function polysubstanceCareView() {
     // Navigation Tabs
     const tabsNav = h('nav', { class: 'tab-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de Polisustancias' : 'Polysubstance Tabs' }, [
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'checker' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'checker'),
         onclick: () => { setPolysubstanceState({ activeTab: 'checker' }); render(); }
       }, isEs ? 'Verificador de Interacción' : 'Synergy Checker'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'airway' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'airway'),
         onclick: () => { setPolysubstanceState({ activeTab: 'airway' }); render(); }
       }, isEs ? 'Vía Aérea y Naloxona' : 'Airway & Naloxone'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'serotonin' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'serotonin'),
         onclick: () => { setPolysubstanceState({ activeTab: 'serotonin' }); render(); }
       }, isEs ? 'Toxicidad Serotonina (Hunter)' : 'Serotonin Toxicity'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'safety-plan' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'safety-plan'),
@@ -810,15 +814,18 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
 
   const copyStatus = h('span', { class: 'copy-status', 'aria-live': 'polite' }, '');
   const copyBtn = h('button', {
+    type: 'button',
     class: 'btn btn-primary',
     onclick: async () => {
-      try {
-        await navigator.clipboard.writeText(summaryText);
-        copyStatus.textContent = isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!';
-        setTimeout(() => { copyStatus.textContent = ''; }, 3000);
-      } catch (_e) {
-        copyStatus.textContent = isEs ? ' Error al copiar' : ' Copy failed';
-      }
+      const ok = await copyText(summaryText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        failedLabel: isEs ? 'Error al copiar' : 'Copy failed',
+      });
+      copyStatus.textContent = ok
+        ? (isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!')
+        : (isEs ? ' Error al copiar' : ' Copy failed');
+      if (ok) setTimeout(() => { copyStatus.textContent = ''; }, 3000);
     }
   }, [
     icon('copy'),
@@ -826,6 +833,7 @@ function renderSafetyPlanTab(isEs, localState, evalResult, reRender) {
   ]);
 
   const resetBtn = h('button', {
+    type: 'button',
     class: 'btn btn-secondary',
     onclick: () => {
       resetPolysubstanceState();

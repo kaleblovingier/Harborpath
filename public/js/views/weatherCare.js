@@ -6,7 +6,7 @@
 // CDC Extreme Cold & Heat Response Standards for Unhoused & Substance Using Populations.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -507,6 +507,7 @@ export function weatherCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'wc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `wc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setWeatherState({ viewMode: 'community' }),
@@ -515,6 +516,7 @@ export function weatherCareView() {
         h('span', {}, t('wc.mode.community', 'Community & Street Mode (Warmth, Hydration & Cold Safety)')),
       ]),
       h('button', {
+        type: 'button',
         class: `wc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setWeatherState({ viewMode: 'clinical' }),
@@ -527,30 +529,35 @@ export function weatherCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'wc-tabs-nav', role: 'tablist', 'aria-label': 'Weather Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `wc-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setWeatherState({ activeTab: 'triage' }),
       }, t('wc.tabs.triage', 'Weather Emergency Triage')),
       h('button', {
+        type: 'button',
         class: `wc-tab-btn ${state.activeTab === 'hypothermia' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'hypothermia' ? 'true' : 'false',
         onclick: () => setWeatherState({ activeTab: 'hypothermia' }),
       }, t('wc.tabs.hypothermia', 'Hypothermia Staging (Swiss I–IV)')),
       h('button', {
+        type: 'button',
         class: `wc-tab-btn ${state.activeTab === 'frostbite' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'frostbite' ? 'true' : 'false',
         onclick: () => setWeatherState({ activeTab: 'frostbite' }),
       }, t('wc.tabs.frostbite', 'Frostbite & Trench Foot Care')),
       h('button', {
+        type: 'button',
         class: `wc-tab-btn ${state.activeTab === 'heatStroke' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'heatStroke' ? 'true' : 'false',
         onclick: () => setWeatherState({ activeTab: 'heatStroke' }),
       }, t('wc.tabs.heatStroke', 'Heat Stroke & Stimulant Hyperthermia')),
       h('button', {
+        type: 'button',
         class: `wc-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -716,25 +723,26 @@ export function weatherCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildWeatherSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('wc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildWeatherSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('wc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'wc-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('wc.sbar.title', 'Zero-PII Environmental & Weather Clinical SBAR Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildWeatherSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('wc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildWeatherSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('wc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildWeatherSbarText(state, evaluation, 'en')),
     ]);

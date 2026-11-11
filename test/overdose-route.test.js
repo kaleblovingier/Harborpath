@@ -351,7 +351,7 @@ test('overdose pacer registers resetOverdosePacer for Quick Exit and app.js impo
 
   const fnMatch = appSource.match(/export function runQuickExitResets\(\)\s*\{([\s\S]*?)\n\}/);
   assert.ok(fnMatch, 'runQuickExitResets() function must be exported from app.js');
-  assert.ok(fnMatch[1].includes('runQuickExitHandlers()'), 'runQuickExitResets runs the registered module resets');
+  assert.ok(fnMatch[1].includes('executeGlobalQuickExit()'), 'runQuickExitResets runs the registered module resets');
   // Importing a module on the way out would fetch it, and an offline worker
   // would save it again right after the wipe.
   assert.doesNotMatch(fnMatch[1], /import\(/, 'runQuickExitResets must not import modules');

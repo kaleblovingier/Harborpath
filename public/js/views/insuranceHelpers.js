@@ -449,7 +449,10 @@ export function evaluateFacilityCoverage(facility, coverageSelection = 'any', { 
   const hasSafetyNet = safetyNetCodes.length > 0 || isHealthCenter;
 
   // 1. EMTALA Emergency & DEA 72-Hour Rule Protected
-  if (isEr || (Boolean(emergency) && (codeSet.has('HI') || codeSet.has('DT')))) {
+  // A detox or inpatient service code alone does not establish an emergency
+  // department. Never promise EMTALA protections at a standalone program.
+  // https://www.cms.gov/Priorities/your-patient-rights/emergency-room-rights
+  if (isEr || f.hasEmergencyDepartment === true) {
     const matchedCodes = ['HI', 'DT'].filter((c) => codeSet.has(c));
     const explanation = t(
       'ins.eval.emtala',
@@ -811,9 +814,6 @@ export function rankFacilitiesByCoverage(facilities = [], coverageSelection = 'a
 
   const annotated = facilities.map((facility, idx) => {
     const coverageMatch = evaluateFacilityCoverage(facility, norm, { ...options, emergency });
-    if (facility && typeof facility === 'object') {
-      facility.coverageMatch = coverageMatch;
-    }
     return {
       item: facility && typeof facility === 'object' ? { ...facility, coverageMatch } : facility,
       rank: coverageMatch.rank,
@@ -833,4 +833,9 @@ export function rankFacilitiesByCoverage(facilities = [], coverageSelection = 'a
   });
 
   return annotated.map((entry) => entry.item);
+}
+
+/** Compatibility name for the treatment view; keeps ranking pure and in RAM. */
+export function rankFacilitiesByInsurance(facilities = [], coverageSelection = 'any', options = {}) {
+  return rankFacilitiesByCoverage(facilities, coverageSelection, options);
 }

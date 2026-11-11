@@ -1,0 +1,143 @@
+/* Clinical printouts contain the visible care guidance, without app chrome. */
+@media print {
+  @page {
+    margin: 0.55in;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font: 10.5pt/1.45 Arial, sans-serif;
+  }
+
+  *,
+  *::before,
+  *::after {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .site-header,
+  .site-nav,
+  .site-footer,
+  .safety-bar,
+  .quick-exit,
+  .hp-quick-exit-btn,
+  .skip-link,
+  .emergency-drawer-wrapper,
+  .emergency-drawer-backdrop,
+  .no-print,
+  .finder-search,
+  .filters,
+  .presets,
+  .results-more,
+  .wizard-nav,
+  button,
+  input,
+  select,
+  textarea,
+  [role="tablist"] {
+    display: none !important;
+  }
+
+  main,
+  .wrap,
+  .view,
+  .view-prose,
+  .view-medications {
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .card,
+  .step,
+  .callout,
+  .print-handout,
+  .verification-script-card,
+  .asam-summary-card,
+  .xylazine-action-card,
+  .naloxone-action-card,
+  .rural-territory-reach-card,
+  .safety-plan-preview {
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 12pt 0 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  dt,
+  thead {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Admissions scripts remain available on paper even when collapsed onscreen. */
+  details > :not(summary) {
+    display: block !important;
+  }
+
+  details::details-content {
+    content-visibility: visible !important;
+  }
+
+  summary {
+    list-style: none;
+    font-weight: bold;
+  }
+
+  .table-wrap {
+    overflow: visible !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  th,
+  td {
+    border: 0.5pt solid #000 !important;
+    padding: 4pt 6pt !important;
+  }
+
+  a {
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+  }
+
+  .verification-script-card a[href^="https://"]::after,
+  .rural-territory-reach-card a[href^="https://"]::after,
+  .safety-plan-preview a[href^="https://"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+  }
+}

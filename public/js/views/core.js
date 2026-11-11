@@ -1,4 +1,4 @@
-import { h, clear, ext, tel, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, icon, announce, copyText } from '../dom.js';
 import { state, subscribe, setPersist, toggleSaved } from '../state.js';
 import { MENTAL_HEALTH_FILTERS } from '../codes.js';
 import { treatmentFinder, healthCenterFinder } from '../components/finder.js';
@@ -556,21 +556,21 @@ export function savedView() {
         p(t('saved.empty', 'Nothing saved yet. Tap “Save” on any listing to keep it here while you compare.'))));
       return;
     }
+    const copyAllBtn = h('button', {
+      type: 'button', class: 'btn btn-ghost',
+      onclick: async () => {
+        const text = items.map(formatSavedText).join('\n\n');
+        await copyText(text, {
+          trigger: copyAllBtn,
+          announceSuccess: t('saved.copied', 'Saved list copied'),
+          announceFailure: t('common.copyUnavailable', 'Copy is not available in this browser'),
+        });
+      },
+    }, icon('copy'), t('saved.copyAll', 'Copy all'));
     tools.append(
       h('button', { type: 'button', class: 'btn btn-secondary', onclick: () => window.print() },
         icon('printer'), t('saved.print', 'Print list')),
-      h('button', {
-        type: 'button', class: 'btn btn-ghost',
-        onclick: async () => {
-          const text = items.map(formatSavedText).join('\n\n');
-          try {
-            await navigator.clipboard.writeText(text);
-            announce(t('saved.copied', 'Saved list copied'));
-          } catch {
-            announce(t('common.copyUnavailable', 'Copy is not available in this browser'));
-          }
-        },
-      }, icon('copy'), t('saved.copyAll', 'Copy all')),
+      copyAllBtn,
       h('button', {
         type: 'button', class: 'btn btn-ghost',
         onclick: () => {

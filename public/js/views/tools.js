@@ -105,6 +105,9 @@ const entries = [
   ['cardiogenic-toxin-hiet', 'emergency', 'Cardiogenic toxin & high-dose insulin euglycemia (HIET) navigator', 'ACMT/EAPCCT consensus protocols for calcium channel blocker and beta-blocker severe toxicity, weight-based HIET dosing (1 U/kg bolus, 1-10 U/kg/hr infusion, D10W/D50W titration), permissive hypokalemia rules, and calcium/glucagon/lipid rescue.', ['individual', 'supporter', 'care-team']],
   ['wooden-chest-rigidity', 'emergency', 'Synthetic opioid "wooden chest" rigidity & rapid airway rescue protocol', 'ASA/ACEP consensus protocols for fentanyl-induced chest wall and vocal cord rigidity (FIMR), failed BVM rescue, high-dose naloxone vs immediate non-depolarizing neuromuscular blockade (Rocuronium/Vecuronium), and succinylcholine black-box hyperkalemic cardiac arrest prohibition.', ['individual', 'supporter', 'care-team']],
   ['hyperthermic-toxidrome', 'emergency', 'Stimulant, synthetic cathinone & hyperthermic crisis decision engine', 'ACMT and Wilderness Medical Society consensus for synthetic cathinones (Flakka, bath salts) and methamphetamine hyperthermia (>104°F / 40°C), rapid ice-water immersion targeting <38.5°C in <30 min, high-dose parenteral benzodiazepine / ketamine sedation, antipyretic futility, and physical restraint prohibition.', ['individual', 'supporter', 'care-team']],
+  ['salicylate-nsaid-tox', 'emergency', 'Salicylate, aspirin & NSAID toxicity, urine alkalinization & dialysis navigator', 'AACT/ACMT/EXTRIP consensus for acute and chronic salicylate toxicity, methyl salicylate (wintergreen oil), pre-intubation hyperventilation protection, K+-gated NaHCO3 urine alkalinization, CSF neuroglycopenia dextrose dosing, and hemodialysis triggers.', ['individual', 'supporter', 'care-team']],
+  ['mood-stabilizer-tox', 'emergency', 'Lithium, valproate hyperammonemia & lamotrigine toxicity navigator', 'ACMT and EXTRIP protocols for acute vs. chronic lithium neurotoxicity and dialysis, valproate hyperammonemic encephalopathy (IV L-carnitine), meropenem seizure alerts, and lamotrigine QRS sodium-channel / 4-day SJS restart guardrails.', ['individual', 'supporter', 'care-team']],
+  ['antimuscarinic-toxidrome', 'emergency', 'Antimuscarinic, diphenhydramine street-cut & delirium navigator', 'Clinical decision support for diphenhydramine fentanyl-cut hybrid overdoses, Datura/scopolamine delirium, QRS >= 100 ms NaHCO3 rescue, bladder retention decompression, and rivastigmine/physostigmine contraindication gates.', ['individual', 'supporter', 'care-team']],
 ];
 
 // Plain-language search words for each topic, in English and Spanish:
@@ -245,6 +248,9 @@ export const TOOL_KEYWORDS = Object.freeze({
   'cardiogenic-toxin-hiet': ['cardiogenic', 'calcium channel blocker', 'beta blocker', 'hiet', 'high dose insulin', 'euglycemia', 'amlodipine', 'diltiazem', 'verapamil', 'metoprolol', 'atenolol', 'propranolol', 'intralipid', 'lipid emulsion', 'calcium chloride', 'glucagon', 'hypoglycemia', 'hypokalemia', 'bloqueador de canales de calcio', 'betabloqueante', 'insulina a dosis altas'],
   'wooden-chest-rigidity': ['wooden chest', 'chest wall rigidity', 'fimr', 'fentanyl rigidity', 'stiff chest', 'airway rescue', 'bvm failure', 'rocuronium', 'vecuronium', 'succinylcholine contraindication', 'bag valve mask failure', 'intubation', 'peep', 'rigidez torácica', 'tórax de madera', 'rigidez por fentanilo', 'vía aérea'],
   'hyperthermic-toxidrome': ['hyperthermia', 'bath salts', 'flakka', 'synthetic cathinone', 'a-pvp', 'methamphetamine', 'excited delirium', 'hyperpyrexia', 'ice water immersion', 'chemical restraint', 'midazolam', 'ketamine', 'rhabdomyolysis', 'antipyretic contraindication', 'physical restraint prohibition', 'hipertermia', 'sales de baño', 'inmersión en agua con hielo'],
+  'salicylate-nsaid-tox': ['salicylate', 'aspirin', 'asa', 'wintergreen', 'methyl salicylate', 'pepto bismol', 'bismuth subsalicylate', 'nsaid', 'ibuprofen', 'urine alkalinization', 'sodium bicarbonate', 'neuroglycopenia', 'hemodialysis', 'salicilato', 'aspirina', 'gaulteria', 'alcalinización urinaria', 'hemodiálisis'],
+  'mood-stabilizer-tox': ['lithium', 'valproate', 'depakote', 'divalproex', 'hyperammonemia', 'ammonia', 'carnitine', 'levocarnitine', 'meropenem', 'lamotrigine', 'lamictal', 'sjs', 'nephrogenic diabetes insipidus', 'litio', 'valproato', 'amonio', 'carnitina', 'lamotrigina'],
+  'antimuscarinic-toxidrome': ['anticholinergic', 'antimuscarinic', 'diphenhydramine', 'benadryl', 'sleep aid', 'sleepy powder', 'datura', 'scopolamine', 'jimsonweed', 'physostigmine', 'rivastigmine', 'urinary retention', 'qrs sodium bicarbonate', 'difenhidramina', 'anticolinérgico', 'escopolamina', 'fisostigmina', 'retención urinaria'],
   'recovery-support': ['sober living', 'sober house', 'recovery housing', 'recovery residence', 'halfway house', 'oxford house', 'peer coach', 'peer support', 'relapse', 'aftercare', 'after rehab',
     'vivienda sobria', 'casa de recuperación', 'recaída', 'coach de recuperación', 'apoyo entre pares', 'después del tratamiento'],
   'overdose-loss': ['grief', 'bereavement', 'died', 'death', 'loss', 'funeral', 'death certificate', 'toxicology', 'grasp', 'compassionate friends',
@@ -271,9 +277,31 @@ export const CATEGORY_GROUPS = Object.freeze([
 
 export const categoryGroupFor = (category) => CATEGORY_GROUPS.find((group) => group.categories.includes(category)) ?? null;
 
+// Short, touch-friendly pill & card-badge labels for each category group so
+// chips wrap cleanly without horizontal overflow at 320px viewports.
+const CATEGORY_PILL_META = Object.freeze({
+  emergency: Object.freeze({ key: 'tools.pill.emergency', label: 'Urgent support', chipClass: 'chip-emergency' }),
+  care: Object.freeze({ key: 'tools.pill.care', label: 'Find care', chipClass: 'chip-care' }),
+  'harm-reduction': Object.freeze({ key: 'tools.pill.harmReduction', label: 'Stay safer', chipClass: 'chip-warn' }),
+  health: Object.freeze({ key: 'tools.pill.health', label: 'Medical guides', chipClass: 'chip-primary' }),
+  planning: Object.freeze({ key: 'tools.pill.planning', label: 'Plans & support', chipClass: 'chip-ok' }),
+  populations: Object.freeze({ key: 'tools.pill.populations', label: 'By situation', chipClass: 'chip-secondary' }),
+});
+
+const POPULAR_SUGGESTIONS = Object.freeze([
+  { id: 'naloxone', key: 'tools.suggestion.naloxone', label: 'Naloxone' },
+  { id: 'buprenorphine', key: 'tools.suggestion.buprenorphine', label: 'Buprenorphine' },
+  { id: 'methadone', key: 'tools.suggestion.methadone', label: 'Methadone' },
+  { id: 'xylazine', key: 'tools.suggestion.xylazine', label: 'Xylazine' },
+  { id: 'alcohol', key: 'tools.suggestion.alcohol', label: 'Alcohol' },
+  { id: 'pregnancy', key: 'tools.suggestion.pregnancy', label: 'Pregnancy' },
+  { id: 'housing', key: 'tools.suggestion.housing', label: 'Housing' },
+].map(Object.freeze));
+
 const initialState = () => ({ query: '', audience: 'all', category: 'all' });
 let filters = initialState();
 const resetListeners = new Set();
+let activeKeydownCleanup = null;
 export const getCareToolsState = () => ({ ...filters });
 export function resetCareToolsState() {
   filters = initialState();
@@ -305,10 +333,13 @@ export function filterCareTools({ query = '', audience = 'all', category = 'all'
 }
 
 export function careToolsView({ meta } = {}) {
-  // Only the most recently rendered directory needs a reset callback.
+  // Only the most recently rendered directory needs a reset callback and '/' listener.
   resetListeners.clear();
+  activeKeydownCleanup?.();
+  activeKeydownCleanup = null;
+
   const search = h('input', { id: 'care-tools-search', type: 'search', value: filters.query,
-    autocomplete: 'off', spellcheck: 'false', 'aria-describedby': 'care-tools-privacy' });
+    autocomplete: 'off', spellcheck: 'false', 'aria-describedby': 'care-tools-shortcut care-tools-privacy' });
   const audience = h('select', { id: 'care-tools-audience' },
     h('option', { value: 'all' }, t('tools.audience.all', 'Everyone')),
     h('option', { value: 'individual' }, t('tools.audience.individual', 'For me')),
@@ -321,6 +352,53 @@ export function careToolsView({ meta } = {}) {
   category.value = filters.category;
   const count = h('p', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', class: 'tools-count' });
   const list = h('div', { class: 'tools-grid', id: 'care-tools-results' });
+
+  const pillDefs = [
+    { id: 'all', key: 'tools.category.all', label: 'All topics' },
+    ...CATEGORY_GROUPS.map((group) => {
+      const metaEntry = CATEGORY_PILL_META[group.id];
+      return { id: group.id, key: metaEntry?.key ?? group.key, label: metaEntry?.label ?? group.label };
+    }),
+  ];
+  const categoryPills = pillDefs.map((item) => h('button', {
+    type: 'button',
+    class: 'preset tools-category-pill',
+    dataset: { category: item.id },
+    'aria-pressed': String(filters.category === item.id),
+    onclick: () => {
+      category.value = item.id;
+      update();
+    },
+  }, t(item.key, item.label)));
+
+  const suggestionEntries = POPULAR_SUGGESTIONS.map((item) => {
+    const button = h('button', {
+      type: 'button',
+      class: 'preset tools-suggestion-chip',
+      dataset: { suggestion: item.id },
+      'aria-pressed': 'false',
+      onclick: () => {
+        const term = t(item.key, item.label);
+        const isActive = normalize(search.value.trim()) === normalize(term);
+        search.value = isActive ? '' : term;
+        update();
+      },
+    }, t(item.key, item.label));
+    return { ...item, button };
+  });
+
+  function syncControls() {
+    for (const pill of categoryPills) {
+      pill.setAttribute('aria-pressed', String(pill.dataset.category === filters.category));
+    }
+    const qNorm = normalize(filters.query.trim());
+    for (const entry of suggestionEntries) {
+      const term = t(entry.key, entry.label);
+      const active = Boolean(qNorm) && qNorm === normalize(term);
+      entry.button.setAttribute('aria-pressed', String(active));
+    }
+  }
+
   function show() {
     const tools = filterCareTools(filters);
     count.textContent = t('tools.count', '{n} tools and guides', { n: tools.length });
@@ -329,12 +407,20 @@ export function careToolsView({ meta } = {}) {
       list.append(h('p', { class: 'card' }, t('tools.empty', 'No tools match these filters. Try a broader word or clear the filters.')));
       return;
     }
-    for (const tool of tools) list.append(h('article', { class: 'card tool-card' },
-      h('h2', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))),
-      h('p', null, t(tool.descriptionKey, tool.description))));
+    for (const tool of tools) {
+      const group = categoryGroupFor(tool.category);
+      const badgeMeta = group ? CATEGORY_PILL_META[group.id] : null;
+      list.append(h('article', { class: 'card tool-card' },
+        h('h2', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))),
+        group && h('div', { class: 'chips' },
+          h('span', { class: `chip ${badgeMeta?.chipClass ?? 'chip-secondary'} tool-category-badge` },
+            t(badgeMeta?.key ?? group.key, badgeMeta?.label ?? group.label))),
+        h('p', null, t(tool.descriptionKey, tool.description))));
+    }
   }
   const update = () => {
     filters = { query: search.value.slice(0, 200), audience: audience.value, category: category.value };
+    syncControls();
     show();
   };
   search.maxLength = 200;
@@ -342,19 +428,74 @@ export function careToolsView({ meta } = {}) {
   audience.addEventListener('change', update);
   category.addEventListener('change', update);
   const reset = () => {
-    search.value = ''; audience.value = 'all'; category.value = 'all'; show();
+    search.value = ''; audience.value = 'all'; category.value = 'all'; syncControls(); show();
   };
   resetListeners.add(reset);
+  syncControls();
   show();
-  return h('div', { class: 'view care-tools' },
+
+  const root = h('div', { class: 'view care-tools' },
     pageHeader(t('tools.title', 'Find the right tool for your next step'),
       t('tools.lede', 'Practical guides for your own care, supporting someone, or working with patients. Choose what is useful and skip the rest.')),
     emergencyCallout(),
     h('section', { class: 'card tools-filters no-print', 'aria-label': t('tools.filters', 'Filter care tools') },
-      h('div', { class: 'field' }, h('label', { for: 'care-tools-search' }, t('tools.search', 'Search tools and guides')), search),
+      h('div', { class: 'field' },
+        h('label', { for: 'care-tools-search' }, t('tools.search', 'Search tools and guides')),
+        search,
+        h('p', { id: 'care-tools-shortcut', class: 'help' }, t('tools.searchShortcut', 'Press / anytime to jump to search.'))),
       h('div', { class: 'field' }, h('label', { for: 'care-tools-audience' }, t('tools.audience', 'Who are you helping?')), audience),
       h('div', { class: 'field' }, h('label', { for: 'care-tools-category' }, t('tools.category', 'What would help?')), category),
       h('button', { class: 'btn btn-ghost', type: 'button', onclick: () => { resetCareToolsState(); search.focus(); } }, t('tools.clear', 'Clear filters')),
       h('p', { id: 'care-tools-privacy', class: 'small muted' }, t('tools.privacy', 'Search stays in this browser. It is not sent, saved, or added to the address bar. Quick exit clears it.'))),
+    h('section', {
+      class: 'hero-search tools-discovery no-print',
+      'aria-label': t('tools.discovery.region', 'Quick topic filters and popular searches'),
+    },
+      h('div', { class: 'tools-discovery-group' },
+        h('p', { class: 'label', id: 'care-tools-pills-label' }, t('tools.categoryPills.heading', 'Quick topic filter')),
+        h('div', { class: 'presets tools-category-pills', role: 'group', 'aria-labelledby': 'care-tools-pills-label' }, categoryPills)),
+      h('div', { class: 'tools-discovery-group' },
+        h('p', { class: 'label', id: 'care-tools-suggestions-label' }, t('tools.suggestions.heading', 'Popular searches')),
+        h('div', { class: 'presets tools-suggestion-chips', role: 'group', 'aria-labelledby': 'care-tools-suggestions-label' },
+          suggestionEntries.map((entry) => entry.button)))),
     count, list, sourceContext({ meta }));
+
+  const onKeydown = (e) => {
+    if (!e || e.defaultPrevented || e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+    const target = e.target;
+    const tag = target?.tagName?.toUpperCase?.() ?? '';
+    const editableAttr = target?.getAttribute?.('contenteditable');
+    const editable = Boolean(
+      target?.isContentEditable
+      || editableAttr === ''
+      || editableAttr === 'true'
+      || editableAttr === 'plaintext-only',
+    );
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || editable) return;
+    e.preventDefault?.();
+    search.focus?.();
+  };
+
+  const onDocumentKeydown = (e) => {
+    if (root.isConnected === false) {
+      cleanup();
+      return;
+    }
+    onKeydown(e);
+  };
+
+  const cleanup = () => {
+    if (typeof document?.removeEventListener === 'function') {
+      document.removeEventListener('keydown', onDocumentKeydown);
+    }
+    if (activeKeydownCleanup === cleanup) activeKeydownCleanup = null;
+  };
+
+  root.addEventListener('keydown', onKeydown);
+  if (typeof document?.addEventListener === 'function') {
+    document.addEventListener('keydown', onDocumentKeydown);
+    activeKeydownCleanup = cleanup;
+  }
+
+  return root;
 }

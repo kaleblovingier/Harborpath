@@ -38,7 +38,10 @@ export function saveButton(item) {
       : t('card.saveLabel', 'Save {name}', { name: item.name }));
   };
   btn.addEventListener('click', () => {
-    const nowSaved = toggleSaved(item);
+    // Only public directory facts belong in an optionally persisted bookmark.
+    // Insurance annotations and which clinical filters matched stay in RAM.
+    const { coverageMatch, matchedCodes, ...directoryItem } = item;
+    const nowSaved = toggleSaved(directoryItem);
     render();
     announce(nowSaved
       ? t('card.savedAnnounce', '{name} saved', { name: item.name })

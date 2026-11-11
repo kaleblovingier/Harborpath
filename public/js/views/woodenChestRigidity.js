@@ -3,7 +3,7 @@
 // ASA, ACEP, and SAMHSA Emergency Overdose Guidelines.
 // Ephemeral in-RAM state, zero persistent storage, zero PII, WCAG 2.1 AA compliant.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { pageHeader } from './common.js';
 
@@ -449,20 +449,11 @@ export function woodenChestRigidityView() {
         type: 'button',
         class: 'btn btn-primary',
         onclick: async () => {
-          try {
-            if (navigator.clipboard?.writeText) {
-              await navigator.clipboard.writeText(sbarTextarea.value);
-            } else {
-              sbarTextarea.select();
-              document.execCommand('copy');
-            }
-            copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
-            setTimeout(() => {
-              copyBtn.textContent = isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note';
-            }, 2000);
-          } catch {
-            sbarTextarea.select();
-          }
+          const ok = await copyText(sbarTextarea.value, {
+            trigger: copyBtn,
+            copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+          });
+          if (!ok && typeof sbarTextarea.select === 'function') sbarTextarea.select();
         },
       },
       isEs ? 'Copiar Nota SBAR' : 'Copy SBAR Note',

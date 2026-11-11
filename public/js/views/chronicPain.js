@@ -8,7 +8,7 @@
 // - FDA Drug Safety Communication: FDA requiring Boxed Warning updated for Benzodiazepine class (2020)
 // - ASAM National Practice Guideline for the Treatment of Opioid Use Disorder (2020 focused update)
 
-import { h, append, icon } from '../dom.js';
+import { h, append, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 /**
@@ -454,6 +454,7 @@ export function chronicPainView() {
   // Tab Navigation
   const tabList = h('div', { class: 'tab-nav', role: 'tablist', 'aria-label': 'Pain and Sedative Sections' });
   const tabPainBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'pain' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-pain-btn',
@@ -462,6 +463,7 @@ export function chronicPainView() {
   }, t('pain.tab.pain', 'Pain & Buprenorphine'));
 
   const tabSedativeBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'sedative' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-sedative-btn',
@@ -470,6 +472,7 @@ export function chronicPainView() {
   }, t('pain.tab.sedative', 'Benzodiazepine Taper Calculator'));
 
   const tabMultimodalBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'multimodal' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-multimodal-btn',
@@ -850,14 +853,8 @@ export function chronicPainView() {
   const copyStatus = actionsCard.querySelector('#pain-copy-status');
   copyBtn.addEventListener('click', async () => {
     const summaryText = formatPainSummaryText(inMemoryState, 'en');
-    try {
-      await navigator.clipboard.writeText(summaryText);
-      copyStatus.textContent = 'Summary copied to clipboard.';
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => { copyBtn.textContent = 'Copy Plain-Text Summary'; }, 2000);
-    } catch {
-      copyStatus.textContent = 'Unable to access clipboard.';
-    }
+    const ok = await copyText(summaryText, { trigger: copyBtn, copiedLabel: 'Copied!' });
+    copyStatus.textContent = ok ? 'Summary copied to clipboard.' : 'Unable to access clipboard.';
   });
 
   const resetBtn = actionsCard.querySelector('#btn-reset-pain');

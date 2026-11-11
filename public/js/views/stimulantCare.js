@@ -7,7 +7,7 @@
 // - ASAM / AAAP Clinical Practice Guideline on the Management of Stimulant Use Disorders (2023)
 // - CDC Stimulant Harm Reduction & Safe Inhalation Protocols
 
-import { h, append, icon } from '../dom.js';
+import { h, append, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
 
@@ -325,8 +325,9 @@ export function stimulantCareView(containerOrOptions = {}) {
         role: 'tab',
         class: `tab-button ${stimulantCareState.activeTab === tab.id ? 'active' : ''}`,
         'aria-selected': String(stimulantCareState.activeTab === tab.id),
-        'aria-controls': `tab-content-${tab.id}`,
-        id: `tab-${tab.id}`
+        'aria-controls': 'stimulant-tab-content',
+        id: `tab-${tab.id}`,
+        tabindex: stimulantCareState.activeTab === tab.id ? '0' : '-1'
       }, isEs ? tab.labelEs : tab.labelEn);
 
       btn.addEventListener('click', () => {
@@ -340,7 +341,7 @@ export function stimulantCareView(containerOrOptions = {}) {
     // Content Area
     const contentArea = h('div', {
       class: 'tab-content-area',
-      id: `tab-content-${stimulantCareState.activeTab}`,
+      id: 'stimulant-tab-content',
       role: 'tabpanel',
       'aria-labelledby': `tab-${stimulantCareState.activeTab}`
     });
@@ -354,9 +355,11 @@ export function stimulantCareView(containerOrOptions = {}) {
     }
 
     wrapper.appendChild(contentArea);
+    syncTablists(wrapper);
   }
 
   draw();
+  wireTablistKeyboard(wrapper);
   if (container) {
     container.textContent = '';
     container.appendChild(wrapper);
@@ -562,17 +565,11 @@ function renderAssessmentTab(container, isEs, onRerender) {
   const copyBtn = h('button', { type: 'button', class: 'button secondary-button' }, isEs ? 'Copiar Directivas' : 'Copy Directives');
   copyBtn.addEventListener('click', async () => {
     const text = formatStimulantSummaryText(stimulantCareState, isEs ? 'es' : 'en');
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? 'Copiar Directivas' : 'Copy Directives';
-        }, 2000);
-      }
-    } catch {
-      // Fallback
-    }
+    await copyText(text, {
+      trigger: copyBtn,
+      copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+      announceSuccess: isEs ? 'Directivas copiadas al portapapeles.' : 'Directives copied to clipboard.',
+    });
   });
 
   const printBtn = h('button', { type: 'button', class: 'button primary-button' }, isEs ? 'Imprimir Directivas' : 'Print Directives');

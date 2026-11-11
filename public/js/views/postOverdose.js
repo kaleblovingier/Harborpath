@@ -7,7 +7,7 @@
 // - DEA 72-Hour Emergency Dispensing Rule: 21 C.F.R. § 1306.07(b)
 // - American College of Emergency Physicians (ACEP) Post-Arrest & Overdose Care Consensus
 
-import { h, append, icon } from '../dom.js';
+import { h, append, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
 import { NEVER_USE_ALONE } from '../content/hotlines.js';
@@ -341,8 +341,9 @@ export function postOverdoseView(containerOrOptions = {}) {
         role: 'tab',
         class: `tab-button ${postOverdoseState.activeTab === tab.id ? 'active' : ''}`,
         'aria-selected': String(postOverdoseState.activeTab === tab.id),
-        'aria-controls': `tab-content-${tab.id}`,
-        id: `tab-${tab.id}`
+        'aria-controls': 'post-overdose-tab-content',
+        id: `tab-${tab.id}`,
+        tabindex: postOverdoseState.activeTab === tab.id ? '0' : '-1'
       }, isEs ? tab.labelEs : tab.labelEn);
 
       btn.addEventListener('click', () => {
@@ -356,7 +357,7 @@ export function postOverdoseView(containerOrOptions = {}) {
     // Content Area
     const contentArea = h('div', {
       class: 'tab-content-area',
-      id: `tab-content-${postOverdoseState.activeTab}`,
+      id: 'post-overdose-tab-content',
       role: 'tabpanel',
       'aria-labelledby': `tab-${postOverdoseState.activeTab}`
     });
@@ -370,9 +371,11 @@ export function postOverdoseView(containerOrOptions = {}) {
     }
 
     wrapper.appendChild(contentArea);
+    syncTablists(wrapper);
   }
 
   draw();
+  wireTablistKeyboard(wrapper);
   if (container) {
     container.textContent = '';
     container.appendChild(wrapper);
@@ -543,17 +546,11 @@ function renderTriageTab(container, isEs, onRerender) {
   const copyBtn = h('button', { type: 'button', class: 'button secondary-button' }, isEs ? 'Copiar Plan' : 'Copy Plan');
   copyBtn.addEventListener('click', async () => {
     const text = formatPostOverdoseSummaryText(postOverdoseState, isEs ? 'es' : 'en');
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? 'Copiar Plan' : 'Copy Plan';
-        }, 2000);
-      }
-    } catch {
-      // Fallback
-    }
+    await copyText(text, {
+      trigger: copyBtn,
+      copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+      announceSuccess: isEs ? 'Plan copiado al portapapeles.' : 'Plan copied to clipboard.',
+    });
   });
 
   const printBtn = h('button', { type: 'button', class: 'button primary-button' }, isEs ? 'Imprimir Plan' : 'Print Plan');

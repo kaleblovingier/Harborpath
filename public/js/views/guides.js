@@ -1,7 +1,5 @@
 import { h, ext, tel, icon } from '../dom.js';
 import { t } from '../i18n.js';
-import { overdoseGuide } from '../components/overdose.js';
-import { overdosePacer } from '../components/overdosePacing.js';
 import { mutualAidFinder } from '../components/mutualAidFinder.js';
 import { HOTLINES } from '../content/hotlines.js';
 import { offlineControlCard } from './core.js';
@@ -12,17 +10,7 @@ import { choosingCareView, QUESTIONS, RED_FLAGS } from './choosingCare.js';
 export { choosingCareView, QUESTIONS, RED_FLAGS };
 
 // ---------------------------------------------------------------- Overdose
-export function overdoseView() {
-  return h('div', { class: 'view view-overdose' },
-    pageHeader(t('od.title', 'Overdose response'), t('od.lede', 'What to do right now, step by step.'),
-      h('p', { class: 'actions' }, tel('911', [icon('phone'), t('common.call911', 'Call 911')], { class: 'btn btn-emergency btn-large' }))),
-    overdoseGuide(),
-    section('rescue-timer', t('od.rescueTimer', 'Interactive rescue timer (optional)'),
-      overdosePacer(),
-    ),
-    offlineControlCard(),
-  );
-}
+export { overdoseView } from './overdose.js';
 
 // ---------------------------------------------------------------- Harm reduction
 // Built at render time so the table follows the active language (hr.combo.* keys).

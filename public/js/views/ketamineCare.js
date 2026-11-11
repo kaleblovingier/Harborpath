@@ -6,7 +6,7 @@
 // Harm Reduction Coalition & DanceSafe Dissociative Safety Protocols.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -485,6 +485,7 @@ export function ketamineCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'kc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `kc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setKetamineState({ viewMode: 'community' }),
@@ -493,6 +494,7 @@ export function ketamineCareView() {
         h('span', {}, t('kc.mode.community', 'Community & Peer Mode (Bladder Safety & K-Cramps)')),
       ]),
       h('button', {
+        type: 'button',
         class: `kc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setKetamineState({ viewMode: 'clinical' }),
@@ -505,24 +507,28 @@ export function ketamineCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'kc-tabs-nav', role: 'tablist', 'aria-label': 'Ketamine Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `kc-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setKetamineState({ activeTab: 'triage' }),
       }, t('kc.tabs.triage', 'Uropathy & Symptom Triage')),
       h('button', {
+        type: 'button',
         class: `kc-tab-btn ${state.activeTab === 'uropathy' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'uropathy' ? 'true' : 'false',
         onclick: () => setKetamineState({ activeTab: 'uropathy' }),
       }, t('kc.tabs.uropathy', 'K-Bladder Staging (1–4)')),
       h('button', {
+        type: 'button',
         class: `kc-tab-btn ${state.activeTab === 'kcramps' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'kcramps' ? 'true' : 'false',
         onclick: () => setKetamineState({ activeTab: 'kcramps' }),
       }, t('kc.tabs.kcramps', 'K-Cramps & Biliary Triage')),
       h('button', {
+        type: 'button',
         class: `kc-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -670,25 +676,26 @@ export function ketamineCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildKetamineSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('kc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildKetamineSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('kc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'kc-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('kc.sbar.title', 'Zero-PII Ketamine & Urology Clinical Handoff Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildKetamineSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('kc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildKetamineSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('kc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildKetamineSbarText(state, evaluation, 'en')),
     ]);

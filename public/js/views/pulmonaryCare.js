@@ -6,7 +6,7 @@
 // Harm Reduction Coalition Guidelines for Safer Smoking and Inhalation Equipment.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -364,6 +364,7 @@ export function pulmonaryCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'pc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `pc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setPulmonaryState({ viewMode: 'community' }),
@@ -372,6 +373,7 @@ export function pulmonaryCareView() {
         h('span', {}, t('pc.mode.community', 'Community & Patient Mode (Shortness of Breath, Cough & Safer Pipes)')),
       ]),
       h('button', {
+        type: 'button',
         class: `pc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setPulmonaryState({ viewMode: 'clinical' }),
@@ -384,30 +386,35 @@ export function pulmonaryCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'pc-tabs-nav', role: 'tablist', 'aria-label': 'Pulmonary Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setPulmonaryState({ activeTab: 'triage' }),
       }, t('pc.tabs.triage', 'Pulmonary Emergency Triage')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'syndromes' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'syndromes' ? 'true' : 'false',
         onclick: () => setPulmonaryState({ activeTab: 'syndromes' }),
       }, t('pc.tabs.syndromes', 'Clinical Syndromes & Crack Lung')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'overdose' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'overdose' ? 'true' : 'false',
         onclick: () => setPulmonaryState({ activeTab: 'overdose' }),
       }, t('pc.tabs.overdose', 'Post-Overdose NCPE & Aspiration')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'saferInhalation' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'saferInhalation' ? 'true' : 'false',
         onclick: () => setPulmonaryState({ activeTab: 'saferInhalation' }),
       }, t('pc.tabs.saferInhalation', 'Safer Smoking & Inhalation Kits')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -558,25 +565,26 @@ export function pulmonaryCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildPulmonarySbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('pc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildPulmonarySbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('pc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'pc-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('pc.sbar.title', 'Zero-PII Pulmonary & Inhalation Clinical SBAR Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildPulmonarySbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('pc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildPulmonarySbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('pc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildPulmonarySbarText(state, evaluation, 'en')),
     ]);

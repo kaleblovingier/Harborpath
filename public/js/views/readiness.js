@@ -1,4 +1,4 @@
-import { h, clear, ext, tel, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, icon, announce, copyText } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
@@ -1259,17 +1259,13 @@ export function readinessView({ query } = {}) {
     {
       type: 'button',
       class: 'btn btn-primary',
-      onclick: () => {
+      onclick: async () => {
         const text = formatReadinessSummaryText();
-        if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-          navigator.clipboard.writeText(text).catch(() => {});
-        }
-        announce(t('readiness.actions.announceCopied', 'Readiness summary report copied to clipboard'));
-        copyBtn.textContent = t('readiness.actions.copied', '✓ Report Copied!');
-        setTimeout(() => {
-          clear(copyBtn);
-          copyBtn.append(icon('clipboard'), t('readiness.actions.copyBtn', ' Copy Readiness Summary'));
-        }, 3000);
+        await copyText(text, {
+          trigger: copyBtn,
+          copiedLabel: t('readiness.actions.copied', '✓ Report Copied!'),
+          announceSuccess: t('readiness.actions.announceCopied', 'Readiness summary report copied to clipboard'),
+        });
       },
     },
     icon('clipboard'),

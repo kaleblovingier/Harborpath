@@ -6,7 +6,7 @@
 // Surgical Infectious Disease Consensus on Pyomyositis, Clostridial Myonecrosis (Eagle Effect) & Opioid/Alcohol Bone Health (OPIAD & Femoral Head AVN).
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { getLang } from '../i18n.js';
 
 // ============================================================================
@@ -397,8 +397,9 @@ export function orthopedicCareView() {
           role: 'tab',
           class: `orthopedic-tab-btn ${isActive ? 'active' : ''}`,
           'aria-selected': isActive ? 'true' : 'false',
-          'aria-controls': `tab-panel-${tab.id}`,
+          'aria-controls': 'orthopedic-tab-panel',
           id: `tab-btn-${tab.id}`,
+          tabindex: isActive ? '0' : '-1',
         }, [
           icon(tab.iconName, { class: 'orthopedic-tab-icon' }),
           h('span', {}, isEs ? tab.labelEs : tab.labelEn),
@@ -408,12 +409,13 @@ export function orthopedicCareView() {
       })
     );
     container.appendChild(tabNav);
+    syncTablists(container);
 
     // Tab Panel Container
     const panel = h('section', {
       class: 'orthopedic-tab-panel',
       role: 'tabpanel',
-      id: `tab-panel-${state.activeTab}`,
+      id: 'orthopedic-tab-panel',
       'aria-labelledby': `tab-btn-${state.activeTab}`,
     });
     container.appendChild(panel);
@@ -585,21 +587,16 @@ export function orthopedicCareView() {
       type: 'button',
       class: 'orthopedic-copy-btn',
     }, [
-      icon(state.sbarCopied ? 'check' : 'copy', { class: 'orthopedic-btn-icon' }),
-      h('span', {}, state.sbarCopied
-        ? (isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!')
-        : (isEs ? 'Copiar Informe SBAR' : 'Copy SBAR Note')
-      ),
+      icon('copy', { class: 'orthopedic-btn-icon' }),
+      h('span', {}, isEs ? 'Copiar Informe SBAR' : 'Copy SBAR Note'),
     ]);
 
     copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(sbarText);
-        setOrthopedicState({ sbarCopied: true });
-        setTimeout(() => setOrthopedicState({ sbarCopied: false }), 2500);
-      } catch (err) {
-        console.error('Failed to copy SBAR text:', err);
-      }
+      await copyText(sbarText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!',
+        announceSuccess: isEs ? 'Informe SBAR copiado al portapapeles.' : 'SBAR note copied to clipboard.',
+      });
     });
 
     const actionContainer = h('div', { class: 'orthopedic-sbar-actions' }, [copyBtn]);
@@ -610,6 +607,7 @@ export function orthopedicCareView() {
   }
 
   render();
+  wireTablistKeyboard(container);
   const unsubscribe = subscribeOrthopedicState(render);
 
   return container;

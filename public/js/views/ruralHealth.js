@@ -31,7 +31,7 @@
  * - Complete bilingual parity (English / Spanish).
  */
 
-import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, sms, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
@@ -440,7 +440,8 @@ export function ruralHealthView(containerOrOptions = {}, maybeOptions = {}) {
       id: `tab-btn-rh-${tab.id}`,
       'data-tab': tab.id,
       'aria-selected': isSelected ? 'true' : 'false',
-      'aria-controls': `tab-panel-rh-${tab.id}`,
+      'aria-controls': 'tab-panel-rh',
+      tabindex: isSelected ? '0' : '-1',
       class: isSelected ? 'tab active' : 'tab',
     }, tab.label);
 
@@ -455,7 +456,7 @@ export function ruralHealthView(containerOrOptions = {}, maybeOptions = {}) {
 
   // Active Tab Panel
   const tabPanel = h('div', {
-    id: `tab-panel-rh-${currentTab}`,
+    id: 'tab-panel-rh',
     role: 'tabpanel',
     'aria-labelledby': `tab-btn-rh-${currentTab}`,
     class: 'tab-content-panel',
@@ -672,18 +673,11 @@ export function ruralHealthView(containerOrOptions = {}, maybeOptions = {}) {
   const copyBtn = h('button', { type: 'button', class: 'btn btn-secondary' }, isEs ? 'Copiar Plan Rural' : 'Copy Rural Health Plan');
   copyBtn.addEventListener('click', async () => {
     const text = formatRuralHealthSummaryText(plan, lang);
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
-        announce(isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard');
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? 'Copiar Plan Rural' : 'Copy Rural Health Plan';
-        }, 2500);
-      } catch {
-        // Fallback or ignore
-      }
-    }
+    await copyText(text, {
+      trigger: copyBtn,
+      copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+      announceSuccess: isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard',
+    });
   });
   actions.append(copyBtn);
 
@@ -696,9 +690,11 @@ export function ruralHealthView(containerOrOptions = {}, maybeOptions = {}) {
 
   root.append(actions);
 
+  syncTablists(root);
   if (container) {
     container.append(root);
   }
+  wireTablistKeyboard(container ?? root);
   return root;
 }
 

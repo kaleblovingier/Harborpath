@@ -7,7 +7,7 @@
 // SAMHSA / ASAM Harm Reduction Integration Standards for Reproductive & Sexual Health in Substance Use.
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -435,6 +435,7 @@ export function sexualHealthView() {
     // Dual-Mode Selector
     const modeSwitcher = h('div', { class: 'sh-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Selector' }, [
       h('button', {
+        type: 'button',
         class: `sh-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setSexualHealthState({ viewMode: 'community' }),
@@ -443,6 +444,7 @@ export function sexualHealthView() {
         h('span', {}, t('sh.mode.community', 'Individual & Community Mode (Plain Language & Safe Sex Guide)')),
       ]),
       h('button', {
+        type: 'button',
         class: `sh-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setSexualHealthState({ viewMode: 'clinical' }),
@@ -455,30 +457,35 @@ export function sexualHealthView() {
     // Tab Navigation
     const tabsList = h('div', { class: 'sh-tabs-nav', role: 'tablist', 'aria-label': 'Sexual Health Navigation Tabs' }, [
       h('button', {
+        type: 'button',
         class: `sh-tab-btn ${state.activeTab === 'calculator' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'calculator' ? 'true' : 'false',
         onclick: () => setSexualHealthState({ activeTab: 'calculator' }),
       }, t('sh.tabs.calculator', 'Triage & Prevention Calculator')),
       h('button', {
+        type: 'button',
         class: `sh-tab-btn ${state.activeTab === 'doxy-pep' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'doxy-pep' ? 'true' : 'false',
         onclick: () => setSexualHealthState({ activeTab: 'doxy-pep' }),
       }, t('sh.tabs.doxyPep', 'CDC 2024 Doxy-PEP Protocol')),
       h('button', {
+        type: 'button',
         class: `sh-tab-btn ${state.activeTab === 'prep-options' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'prep-options' ? 'true' : 'false',
         onclick: () => setSexualHealthState({ activeTab: 'prep-options' }),
       }, t('sh.tabs.prepOptions', 'HIV PrEP Modalities & PEP Transition')),
       h('button', {
+        type: 'button',
         class: `sh-tab-btn ${state.activeTab === 'emergency-contraception' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'emergency-contraception' ? 'true' : 'false',
         onclick: () => setSexualHealthState({ activeTab: 'emergency-contraception' }),
       }, t('sh.tabs.contraception', 'Emergency Contraception & Weight')),
       h('button', {
+        type: 'button',
         class: `sh-tab-btn ${state.activeTab === 'barriers' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'barriers' ? 'true' : 'false',
@@ -618,35 +625,28 @@ export function sexualHealthView() {
     ]);
 
     // SBAR Handoff Action Box
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar',
+      onclick: () => {
+        const text = buildSexualHealthSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn, copiedLabel: 'Copied to Clipboard!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('sh.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar secondary',
+      onclick: () => {
+        const text = buildSexualHealthSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn, copiedLabel: '¡Copiado al Portapapeles!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('sh.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'sbar-export-container' }, [
       h('div', { class: 'sbar-header' }, [
         h('h4', {}, t('sh.sbar.title', 'Zero-PII Clinical Request & SBAR Note Generator')),
         h('p', {}, t('sh.sbar.desc', 'Generate an anonymous, structured clinical summary for urgent care, telehealth, or primary care to request Doxy-PEP, PrEP, or Emergency Contraception. Operates 100% in local memory.')),
       ]),
-      h('div', { class: 'sbar-actions' }, [
-        h('button', {
-          class: 'btn-copy-sbar',
-          onclick: (e) => {
-            const text = buildSexualHealthSbarText(state, evaluation, 'en');
-            navigator.clipboard.writeText(text).then(() => {
-              const original = e.currentTarget.textContent;
-              e.currentTarget.textContent = 'Copied to Clipboard!';
-              setTimeout(() => { e.currentTarget.textContent = original; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('sh.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-        h('button', {
-          class: 'btn-copy-sbar secondary',
-          onclick: (e) => {
-            const text = buildSexualHealthSbarText(state, evaluation, 'es');
-            navigator.clipboard.writeText(text).then(() => {
-              const original = e.currentTarget.textContent;
-              e.currentTarget.textContent = '¡Copiado al Portapapeles!';
-              setTimeout(() => { e.currentTarget.textContent = original; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('sh.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-      ]),
+      h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
     ]);
 
     section.appendChild(inputsGrid);

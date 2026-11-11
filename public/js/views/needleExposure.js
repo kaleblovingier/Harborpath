@@ -7,7 +7,7 @@
 // OSHA Bloodborne Pathogens Standard (29 CFR § 1910.1030).
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -569,6 +569,7 @@ export function needleExposureView() {
     // 2. Dual-Mode Switcher (Occupational vs Community)
     const modeSwitcher = h('div', { class: 'exposure-mode-switcher', role: 'group', 'aria-label': 'Exposure Setting Selector' }, [
       h('button', {
+        type: 'button',
         class: `mode-toggle-btn ${state.viewMode === 'occupational' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'occupational' ? 'true' : 'false',
         onclick: () => setExposureState({ viewMode: 'occupational' }),
@@ -577,6 +578,7 @@ export function needleExposureView() {
         h('span', {}, t('needle.mode.occupational', 'Healthcare & Occupational Exposure (OSHA / Clinician Mode)')),
       ]),
       h('button', {
+        type: 'button',
         class: `mode-toggle-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setExposureState({ viewMode: 'community' }),
@@ -589,36 +591,42 @@ export function needleExposureView() {
     // 3. Tab Navigation
     const tabsList = h('div', { class: 'exposure-tabs-nav', role: 'tablist', 'aria-label': 'Exposure Navigation Tabs' }, [
       h('button', {
+        type: 'button',
         class: `exposure-tab-btn ${state.activeTab === 'calculator' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'calculator' ? 'true' : 'false',
         onclick: () => setExposureState({ activeTab: 'calculator' }),
       }, t('needle.tabs.calculator', 'Triage & PEP Calculator')),
       h('button', {
+        type: 'button',
         class: `exposure-tab-btn ${state.activeTab === 'decontamination' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'decontamination' ? 'true' : 'false',
         onclick: () => setExposureState({ activeTab: 'decontamination' }),
       }, t('needle.tabs.decontamination', 'First Aid & Banned Actions')),
       h('button', {
+        type: 'button',
         class: `exposure-tab-btn ${state.activeTab === 'pep-regimens' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'pep-regimens' ? 'true' : 'false',
         onclick: () => setExposureState({ activeTab: 'pep-regimens' }),
       }, t('needle.tabs.pepRegimens', 'Antiretroviral Regimens')),
       h('button', {
+        type: 'button',
         class: `exposure-tab-btn ${state.activeTab === 'hbv-tetanus' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'hbv-tetanus' ? 'true' : 'false',
         onclick: () => setExposureState({ activeTab: 'hbv-tetanus' }),
       }, t('needle.tabs.hbvTetanus', 'HBV, HCV & Tetanus Protocol')),
       h('button', {
+        type: 'button',
         class: `exposure-tab-btn ${state.activeTab === 'osha-rights' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'osha-rights' ? 'true' : 'false',
         onclick: () => setExposureState({ activeTab: 'osha-rights' }),
       }, t('needle.tabs.oshaRights', 'OSHA Worker Rights (No Cost)')),
       h('button', {
+        type: 'button',
         class: `exposure-tab-btn ${state.activeTab === 'community-sharps' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'community-sharps' ? 'true' : 'false',
@@ -783,39 +791,28 @@ export function needleExposureView() {
     ]);
 
     // 1-Click SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar',
+      onclick: () => {
+        const text = buildExposureSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn, copiedLabel: 'Copied to Clipboard!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('needle.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar secondary',
+      onclick: () => {
+        const text = buildExposureSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn, copiedLabel: '¡Copiado al Portapapeles!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('needle.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'sbar-export-container' }, [
       h('div', { class: 'sbar-header' }, [
         h('h4', {}, t('needle.sbar.title', 'Clinical Handoff & Documentation SBAR Generator (Zero PII)')),
         h('p', {}, t('needle.sbar.desc', 'Generate a standardized clinical SBAR note for Emergency Department triage, Urgent Care handoff, or Employee Health reporting. Operates 100% in local memory.')),
       ]),
-      h('div', { class: 'sbar-actions' }, [
-        h('button', {
-          class: 'btn-copy-sbar',
-          onclick: (e) => {
-            const text = buildExposureSbarText(state, evaluation, 'en');
-            navigator.clipboard.writeText(text).then(() => {
-              const original = e.currentTarget.textContent;
-              e.currentTarget.textContent = 'Copied to Clipboard!';
-              setTimeout(() => { e.currentTarget.textContent = original; }, 2500);
-            }).catch(() => {
-              // fallback
-            });
-          },
-        }, [icon('copy'), h('span', {}, t('needle.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-        h('button', {
-          class: 'btn-copy-sbar secondary',
-          onclick: (e) => {
-            const text = buildExposureSbarText(state, evaluation, 'es');
-            navigator.clipboard.writeText(text).then(() => {
-              const original = e.currentTarget.textContent;
-              e.currentTarget.textContent = '¡Copiado al Portapapeles!';
-              setTimeout(() => { e.currentTarget.textContent = original; }, 2500);
-            }).catch(() => {
-              // fallback
-            });
-          },
-        }, [icon('copy'), h('span', {}, t('needle.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-      ]),
+      h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
     ]);
 
     section.appendChild(inputsGrid);

@@ -7,7 +7,7 @@
 // - Roozen HG et al. A systematic review of the CRAFT approach. Addiction. 2010;105(10):1729-1738.
 // - SAMHSA Supporting Family and Friends (PEP21-02-01-001)
 
-import { h, append, icon } from '../dom.js';
+import { h, append, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
@@ -296,6 +296,7 @@ export function familySupportView() {
   // Tab Navigation
   const tabList = h('div', { class: 'tab-nav', role: 'tablist', 'aria-label': 'Family CRAFT Sections' });
   const tabCommBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'communication' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-comm-btn',
@@ -304,6 +305,7 @@ export function familySupportView() {
   }, t('family.tab.communication', 'Positive Communication Script'));
 
   const tabBoundariesBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'boundaries' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-boundaries-btn',
@@ -312,6 +314,7 @@ export function familySupportView() {
   }, t('family.tab.boundaries', 'Natural Consequences & Boundaries'));
 
   const tabSafetyBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'safety' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-safety-btn',
@@ -559,14 +562,8 @@ export function familySupportView() {
   const copyStatus = actionsCard.querySelector('#family-copy-status');
   copyBtn.addEventListener('click', async () => {
     const text = formatCraftSummaryText(inMemoryState, 'en');
-    try {
-      await navigator.clipboard.writeText(text);
-      copyStatus.textContent = 'Plan copied to clipboard.';
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => { copyBtn.textContent = 'Copy Plain-Text Plan'; }, 2000);
-    } catch {
-      copyStatus.textContent = 'Unable to access clipboard.';
-    }
+    const ok = await copyText(text, { trigger: copyBtn, copiedLabel: 'Copied!' });
+    copyStatus.textContent = ok ? 'Plan copied to clipboard.' : 'Unable to access clipboard.';
   });
 
   const resetBtn = actionsCard.querySelector('#btn-reset-family');

@@ -16,6 +16,7 @@ import {
 } from './populationHelpers.js';
 import { NEVER_USE_ALONE, hotlinesById } from '../content/hotlines.js';
 import { onQuickExit } from '../state.js';
+import { resetNavigatorState, onNavigatorReset, setNavigatorHandoffState as storeNavigatorHandoff } from './navigatorHandoff.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetNavigatorState);
@@ -177,106 +178,14 @@ function normalizeSubstances(raw) {
   return new Set();
 }
 
-// Ephemeral in-memory handoff state kept strictly in browser RAM (never written
-// to localStorage, sessionStorage, cookies, or URL query parameters).
-let currentNavigatorState = null;
-const resetCallbacks = new Set();
-
-function clonePathway(pathway) {
-  if (!pathway || typeof pathway !== 'object') return pathway;
-  return {
-    ...pathway,
-    codes: Array.isArray(pathway.codes) ? [...pathway.codes] : [],
-    clinicalActions: Array.isArray(pathway.clinicalActions) ? [...pathway.clinicalActions] : [],
-  };
-}
-
-function cloneNavigatorState(snap) {
-  if (!snap || typeof snap !== 'object') return null;
-  return {
-    ...snap,
-    answers: snap.answers
-      ? {
-          ...snap.answers,
-          substances: [...normalizeSubstances(snap.answers.substances)],
-        }
-      : {},
-    recommendation: snap.recommendation
-      ? {
-          ...snap.recommendation,
-          codes: Array.isArray(snap.recommendation.codes) ? [...snap.recommendation.codes] : [],
-          broadCodes: Array.isArray(snap.recommendation.broadCodes) ? [...snap.recommendation.broadCodes] : [],
-          redFlags: Array.isArray(snap.recommendation.redFlags) ? [...snap.recommendation.redFlags] : [],
-          clinicalNotes: Array.isArray(snap.recommendation.clinicalNotes) ? [...snap.recommendation.clinicalNotes] : [],
-          populationPathways: Array.isArray(snap.recommendation.populationPathways)
-            ? snap.recommendation.populationPathways.map(clonePathway)
-            : [],
-        }
-      : null,
-    populationPathways: Array.isArray(snap.populationPathways)
-      ? snap.populationPathways.map(clonePathway)
-      : [],
-    codes: Array.isArray(snap.codes) ? [...snap.codes] : [],
-    broadCodes: Array.isArray(snap.broadCodes) ? [...snap.broadCodes] : [],
-    updatedAt: snap.updatedAt ?? Date.now(),
-  };
-}
-
-export function getNavigatorHandoffState() {
-  return cloneNavigatorState(currentNavigatorState);
-}
-
+// Keep the legacy view exports while the router uses the decoupled helper.
+export { getNavigatorHandoffState, resetNavigatorState } from './navigatorHandoff.js';
 export function setNavigatorHandoffState(next) {
-  if (!next || typeof next !== 'object') {
-    currentNavigatorState = null;
-    return null;
-  }
-  const rawAnswers = next.answers ?? {};
-  const normalizedAnswers = {
-    ...rawAnswers,
-    substances: [...normalizeSubstances(rawAnswers.substances)],
-  };
-  const recommendation =
-    next.recommendation ??
-    (Object.keys(rawAnswers).length > 0 ? evaluateAsamCare(normalizedAnswers) : null);
-  const populationPathways = Array.isArray(next.populationPathways)
-    ? next.populationPathways.map(clonePathway)
-    : Array.isArray(recommendation?.populationPathways)
-      ? recommendation.populationPathways.map(clonePathway)
-      : [];
-  const codes = Array.isArray(next.codes)
-    ? [...next.codes].slice(0, 8)
-    : Array.isArray(recommendation?.codes)
-      ? [...recommendation.codes].slice(0, 8)
-      : [];
-  const broadCodes = Array.isArray(next.broadCodes)
-    ? [...next.broadCodes]
-    : Array.isArray(recommendation?.broadCodes)
-      ? [...recommendation.broadCodes]
-      : [];
-
-  currentNavigatorState = {
+  if (!next || typeof next !== 'object') return storeNavigatorHandoff(null);
+  return storeNavigatorHandoff({
     ...next,
-    answers: normalizedAnswers,
-    recommendation,
-    populationPathways,
-    codes,
-    broadCodes,
-    updatedAt: typeof next.updatedAt === 'number' ? next.updatedAt : Date.now(),
-  };
-  return getNavigatorHandoffState();
-}
-
-export function resetNavigatorState() {
-  currentNavigatorState = null;
-  for (const cb of [...resetCallbacks]) {
-    try {
-      cb();
-    } catch {
-      // ignore listener errors during reset
-    }
-  }
-  currentNavigatorState = null;
+    recommendation: next.recommendation ?? (next.answers ? evaluateAsamCare(next.answers) : null),
+  });
 }
 
 /**
@@ -1207,7 +1116,7 @@ function careRouteAddition(route) {
       'p',
       { class: 'actions' },
       route.links.map((l) =>
-        h('a', { class: 'btn btn-secondary btn-small', href: l.href }, icon('search'), `${l.label} (${l.codes.join(', ')})`),
+        h('a', { class: 'btn btn-secondary btn-small', href: '#/treatment', 'data-navigator-handoff': 'true', onclick: () => setNavigatorHandoffState({ codes: l.codes }) }, icon('search'), `${l.label} (${l.codes.join(', ')})`),
       ),
       route.extraLinks.map((l) => h('a', { class: 'btn btn-ghost btn-small', href: l.href }, l.label)),
     ),
@@ -1451,7 +1360,7 @@ export function careNavigatorView({ query } = {}) {
       : null;
 
     // Answer-specific additions (narrower searches, urgent callouts) shown
-    // inside the matching pathway card. Links carry SAMHSA codes only.
+    // inside the matching pathway card. Finder clicks hand codes over in RAM.
     const careRoutesByPathway = new Map(
       getPopulationCareRoutes(answers).map((route) => [route.pathwayId, route]),
     );
@@ -1504,7 +1413,8 @@ export function careNavigatorView({ query } = {}) {
                     'a',
                     {
                       class: 'btn btn-secondary btn-small',
-                      href: pathway.searchHref,
+                      href: '#/treatment',
+                      'data-navigator-handoff': 'true',
                       onclick: () => {
                         setNavigatorHandoffState({
                           answers: {
@@ -1617,7 +1527,8 @@ export function careNavigatorView({ query } = {}) {
             'a',
             {
               class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large',
-              href: result.searchHref,
+              href: '#/treatment',
+              'data-navigator-handoff': 'true',
               onclick: () => {
                 setNavigatorHandoffState({
                   answers: {
@@ -1638,7 +1549,8 @@ export function careNavigatorView({ query } = {}) {
             'a',
             {
               class: 'btn btn-secondary',
-              href: result.broadSearchHref,
+              href: '#/treatment',
+              'data-navigator-handoff': 'true',
               onclick: () => {
                 setNavigatorHandoffState({
                   answers: {
@@ -2054,7 +1966,7 @@ export function careNavigatorView({ query } = {}) {
     updateRecommendation(announceReset, { skipHandoffStore });
   }
 
-  resetCallbacks.add(() => performFormReset({ announceReset: false, skipHandoffStore: true }));
+  onNavigatorReset(() => performFormReset({ announceReset: false, skipHandoffStore: true }));
 
   const resetBtn = h(
     'button',
@@ -2063,7 +1975,7 @@ export function careNavigatorView({ query } = {}) {
       class: 'btn btn-ghost btn-small',
       onclick: () => {
         performFormReset({ announceReset: true, skipHandoffStore: true });
-        currentNavigatorState = null;
+        storeNavigatorHandoff(null);
       },
     },
     icon('x'),
@@ -2137,7 +2049,8 @@ export function careNavigatorView({ query } = {}) {
               'a',
               {
                 class: 'btn btn-secondary btn-small',
-                href: pathway.searchHref,
+                href: '#/treatment',
+                      'data-navigator-handoff': 'true',
                 onclick: () => {
                   setNavigatorHandoffState({
                     answers: {

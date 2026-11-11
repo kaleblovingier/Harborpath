@@ -6,7 +6,7 @@
 // CDC Clinical Guidance on Infective Endocarditis & Soft Tissue Infections in People Who Inject Drugs (PWID).
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -500,6 +500,7 @@ export function veinCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'vc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `vc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setVeinState({ viewMode: 'community' }),
@@ -508,6 +509,7 @@ export function veinCareView() {
         h('span', {}, t('vc.mode.community', 'Community & Peer Mode (Vein Preservation & Arterial Hit Safety)')),
       ]),
       h('button', {
+        type: 'button',
         class: `vc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setVeinState({ viewMode: 'clinical' }),
@@ -520,24 +522,28 @@ export function veinCareView() {
     // Navigation Tabs
     const tabsList = h('div', { class: 'vc-tabs-nav', role: 'tablist', 'aria-label': 'Vein Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `vc-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setVeinState({ activeTab: 'triage' }),
       }, t('vc.tabs.triage', 'Vascular Complication Triage')),
       h('button', {
+        type: 'button',
         class: `vc-tab-btn ${state.activeTab === 'anatomy' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'anatomy' ? 'true' : 'false',
         onclick: () => setVeinState({ activeTab: 'anatomy' }),
       }, t('vc.tabs.anatomy', 'Anatomical Injection Risk Zones')),
       h('button', {
+        type: 'button',
         class: `vc-tab-btn ${state.activeTab === 'technique' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'technique' ? 'true' : 'false',
         onclick: () => setVeinState({ activeTab: 'technique' }),
       }, t('vc.tabs.technique', 'Safer Technique & Filtration')),
       h('button', {
+        type: 'button',
         class: `vc-tab-btn ${state.activeTab === 'rehab' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'rehab' ? 'true' : 'false',
@@ -734,25 +740,26 @@ export function veinCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildVeinSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('vc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildVeinSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('vc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'vc-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('vc.sbar.title', 'Zero-PII Vascular Clinical Handoff & Triage Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildVeinSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('vc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildVeinSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('vc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildVeinSbarText(state, evaluation, 'en')),
     ]);

@@ -73,6 +73,30 @@ export function coverageTierBadge(facility, options = {}) {
   return badge;
 }
 
+// These template adapters return safe DOM nodes, preserving the app's text-only
+// DOM construction rather than parsing markup under the strict CSP.
+export function renderFacilityInsuranceBadgeHTML(facility, options = {}) {
+  return coverageTierBadge(facility, options);
+}
+
+export function renderInsuranceSelectorHTML(options = {}) {
+  return insuranceSelectorWidget(options);
+}
+
+export function facilityAdmissionsQuestions(facility) {
+  // Parity: https://www.dol.gov/agencies/ebsa/about-ebsa/our-activities/resource-center/publications/understanding-your-mental-health-and-substance-use-disorder-benefits
+  // EKRA: https://www.justice.gov/webform/usao-cdca/sober-homes-victim-identification
+  const script = buildVerificationScript(getInsuranceState().selectedCoverage, facility);
+  return h('details', { class: 'facility-details admissions-questions' },
+    h('summary', null, t('ins.card.questions', 'Questions to Ask Admissions')),
+    h('ol', { class: 'checklist' }, script.admissionsQuestions.map((q) => h('li', null, q))),
+    h('h4', null, t('ins.widget.headingParity', 'Your federal MHPAEA insurance parity rights')),
+    h('ul', { class: 'list' }, script.parityRights.map((q) => h('li', null, q))),
+    h('h4', null, t('ins.widget.headingEkra', 'Anti-patient-brokering red flags (EKRA, 18 U.S.C. § 220)')),
+    h('ul', { class: 'flag-list' }, script.ekraRedFlags.map((q) => h('li', null, q))),
+  );
+}
+
 /**
  * Interactive in-RAM coverage selector widget with:
  * - Coverage pill bar (role="group")

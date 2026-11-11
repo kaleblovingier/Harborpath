@@ -27,6 +27,7 @@ import {
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
 import { hapticOverdoseBeat, hapticPattern, hapticPulse } from './haptics.js';
+import { createOverdoseResilienceState, transitionOverdoseResilience } from '../views/overdoseResilience.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetOverdosePacer);
@@ -198,31 +199,20 @@ function getInitialPacerState() {
     Boolean(window.matchMedia('(prefers-reduced-motion: reduce)')?.matches);
 
   return {
+    ...createOverdoseResilienceState(),
     currentStep: 1,
-    isBreathingActive: false,
-    breathCount: 0,
-    breathPhase: 'ready', // 'ready' | 'inhale' | 'pause'
-    breathCycleSeconds: 5,
-    currentBreathSecond: 0, // 0..5
 
     firstDoseAdministered: false,
     firstDoseTimestamp: null,
     firstDoseRoute: 'nasal_4mg', // 'nasal_4mg' | 'im_0_4mg'
     firstDoseNostril: 'right', // 'right' | 'left'
 
-    reDoseTimerActive: false,
-    reDoseElapsedSeconds: 0,
-    reDoseRemainingSeconds: 180, // Total 180s (3:00)
-    twoMinuteAlertTriggered: false,
-    threeMinuteAlertTriggered: false,
-    evaluationAlert: null, // null | '2min_evaluate' | '3min_redose_prompt'
 
     secondDoseAdministered: false,
     secondDoseTimestamp: null,
     secondDoseRoute: 'nasal_4mg',
     secondDoseNostril: 'left',
 
-    spontaneousBreathingResumed: false,
     reducedMotion: prefersReduced,
     completed: false,
   };
@@ -231,6 +221,9 @@ function getInitialPacerState() {
 let pacerState = getInitialPacerState();
 let breathingIntervalId = null;
 let reDoseIntervalId = null;
+let lastBreathingTick = 0;
+let lastReDoseTick = 0;
+const timerNow = () => globalThis.performance?.now?.() ?? Date.now();
 let activeBreathingOptions = {};
 let activeReDoseOptions = {};
 const subscribers = new Set();
@@ -317,19 +310,22 @@ export function startRescueBreathingTimer(options = {}) {
     clearInterval(breathingIntervalId);
     breathingIntervalId = null;
   }
-  pacerState.isBreathingActive = true;
-  if (pacerState.currentBreathSecond === 0) {
-    pacerState.currentBreathSecond = 1;
-    pacerState.breathPhase = 'inhale';
-    pacerState.breathCount += 1;
+  const previousBreaths = pacerState.breathCount;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'START_BREATHING' });
+  if (pacerState.breathCount > previousBreaths) {
     hapticOverdoseBeat();
     try { announce(t('pacer.announce.breathingStarted', 'Rescue breathing started: Inhale 1 breath now.')); } catch {}
     if (typeof onBreath === 'function') onBreath(pacerState.breathCount);
   }
   notifySubscribers();
 
+  if (!pacerState.isBreathingActive) return getOverdosePacerState();
+  lastBreathingTick = timerNow();
   breathingIntervalId = setInterval(() => {
-    tickRescueBreathingStep(options);
+    const seconds = Math.floor((timerNow() - lastBreathingTick) / 1000);
+    if (seconds < 1) return;
+    lastBreathingTick += seconds * 1000;
+    tickRescueBreathingStep(options, seconds);
   }, 1000);
 
   return getOverdosePacerState();
@@ -340,24 +336,21 @@ export function startRescueBreathingTimer(options = {}) {
  */
 export function tickRescueBreathing(stepCount = 1, options = {}) {
   const steps = Math.max(1, Math.floor(Number(stepCount) || 1));
-  for (let i = 0; i < steps; i++) {
-    tickRescueBreathingStep(options);
-  }
+  tickRescueBreathingStep(options, steps);
   return getOverdosePacerState();
 }
 
-function tickRescueBreathingStep(options = {}) {
+function tickRescueBreathingStep(options = {}, seconds = 1) {
+  if (!pacerState.isBreathingActive || pacerState.spontaneousBreathingResumed) return;
   const merged = { ...activeBreathingOptions, ...options };
   const { onTick, onBreath } = merged;
-  pacerState.currentBreathSecond = (pacerState.currentBreathSecond % 5) + 1;
-  if (pacerState.currentBreathSecond === 1) {
-    pacerState.breathCount += 1;
-    pacerState.breathPhase = 'inhale';
+  const previousBreaths = pacerState.breathCount;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'BREATH_TICK', seconds });
+  // A delayed callback updates the display once; never replay missed cues.
+  if (pacerState.breathPhase === 'inhale' && pacerState.breathCount > previousBreaths) {
     hapticOverdoseBeat();
     try { announce(t('pacer.announce.breathDelivered', 'Breath {n}: Deliver 1 breath now.', { n: pacerState.breathCount })); } catch {}
     if (typeof onBreath === 'function') onBreath(pacerState.breathCount);
-  } else {
-    pacerState.breathPhase = 'pause';
   }
   if (typeof onTick === 'function') onTick(getOverdosePacerState());
   notifySubscribers();
@@ -371,8 +364,7 @@ export function stopRescueBreathingTimer() {
     clearInterval(breathingIntervalId);
     breathingIntervalId = null;
   }
-  pacerState.isBreathingActive = false;
-  pacerState.breathPhase = 'ready';
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'STOP_BREATHING' });
   notifySubscribers();
   return getOverdosePacerState();
 }
@@ -387,14 +379,19 @@ export function startReDoseTimer(options = {}) {
     clearInterval(reDoseIntervalId);
     reDoseIntervalId = null;
   }
-  pacerState.reDoseTimerActive = true;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'START_DOSE_CLOCK' });
   if (!pacerState.firstDoseTimestamp) {
     pacerState.firstDoseTimestamp = Date.now();
   }
   notifySubscribers();
 
+  if (!pacerState.reDoseTimerActive) return getOverdosePacerState();
+  lastReDoseTick = timerNow();
   reDoseIntervalId = setInterval(() => {
-    tickReDoseTimerStep(options);
+    const seconds = Math.floor((timerNow() - lastReDoseTick) / 1000);
+    if (seconds < 1) return;
+    lastReDoseTick += seconds * 1000;
+    tickReDoseTimerStep(options, seconds);
   }, 1000);
 
   return getOverdosePacerState();
@@ -405,24 +402,21 @@ export function startReDoseTimer(options = {}) {
  */
 export function tickReDoseTimer(seconds = 1, options = {}) {
   const s = Math.max(1, Math.floor(Number(seconds) || 1));
-  for (let i = 0; i < s; i++) {
-    tickReDoseTimerStep(options);
-  }
+  tickReDoseTimerStep(options, s);
   return getOverdosePacerState();
 }
 
-function tickReDoseTimerStep(options = {}) {
+function tickReDoseTimerStep(options = {}, seconds = 1) {
   // Recovery ends dose prompts even if a queued timer callback runs afterward.
-  if (pacerState.spontaneousBreathingResumed) return;
+  if (!pacerState.reDoseTimerActive || pacerState.spontaneousBreathingResumed) return;
   const merged = { ...activeReDoseOptions, ...options };
   const { onTick, onAlert } = merged;
-  pacerState.reDoseElapsedSeconds += 1;
-  pacerState.reDoseRemainingSeconds = Math.max(0, 180 - pacerState.reDoseElapsedSeconds);
+  const hadTwoMinuteAlert = pacerState.twoMinuteAlertTriggered;
+  const hadThreeMinuteAlert = pacerState.threeMinuteAlertTriggered;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'DOSE_TICK', seconds });
 
   // 2-Minute Mark Evaluation (120 seconds)
-  if (pacerState.reDoseElapsedSeconds >= 120 && !pacerState.twoMinuteAlertTriggered) {
-    pacerState.twoMinuteAlertTriggered = true;
-    pacerState.evaluationAlert = '2min_evaluate';
+  if (pacerState.twoMinuteAlertTriggered && !hadTwoMinuteAlert && !pacerState.threeMinuteAlertTriggered) {
     try {
       announce(t('pacer.announce.alert2min', 'Two minutes elapsed. If breathing is still slow, shallow, or absent, give another naloxone dose with a new nasal spray in the other nostril, following the product label. Continue 911-directed breathing support or CPR.'));
     } catch {}
@@ -431,9 +425,7 @@ function tickReDoseTimerStep(options = {}) {
   }
 
   // 3-Minute Re-Dosing Threshold (180 seconds)
-  if (pacerState.reDoseElapsedSeconds >= 180 && !pacerState.threeMinuteAlertTriggered) {
-    pacerState.threeMinuteAlertTriggered = true;
-    pacerState.evaluationAlert = '3min_redose_prompt';
+  if (pacerState.threeMinuteAlertTriggered && !hadThreeMinuteAlert) {
     try {
       announce(t('pacer.announce.alert3min', 'Three minutes reached. If breathing is still slow, shallow, or absent, give another dose with a new nasal spray in the other nostril, following the product label. If breathing is normal, stay with the person and keep watching their breathing.'));
     } catch {}
@@ -453,17 +445,13 @@ export function stopReDoseTimer() {
     clearInterval(reDoseIntervalId);
     reDoseIntervalId = null;
   }
-  pacerState.reDoseTimerActive = false;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'STOP_DOSE_CLOCK' });
   notifySubscribers();
   return getOverdosePacerState();
 }
 
 function resetDoseClock() {
-  pacerState.reDoseElapsedSeconds = 0;
-  pacerState.reDoseRemainingSeconds = 180;
-  pacerState.twoMinuteAlertTriggered = false;
-  pacerState.threeMinuteAlertTriggered = false;
-  pacerState.evaluationAlert = null;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'RESET_DOSE_CLOCK' });
 }
 
 /**
@@ -504,8 +492,7 @@ export function recordSecondDose(options = {}) {
  * Records that spontaneous breathing has resumed and navigates to Recovery Position (Step 5).
  */
 export function recordSpontaneousBreathingResumed() {
-  pacerState.spontaneousBreathingResumed = true;
-  pacerState.currentStep = 5;
+  pacerState = transitionOverdoseResilience(pacerState, { type: 'RECOVER' });
   stopRescueBreathingTimer();
   stopReDoseTimer();
   notifySubscribers();
@@ -671,11 +658,15 @@ export function overdosePacer(props = {}) {
     // Step 4 reactive clock updates
     if (stateSnapshot.currentStep === 4) {
       const display = stepContainer.querySelector('.timer-display');
+      const twoMinuteCountdown = stepContainer.querySelector('.pacer-naloxone-countdown');
       const elapsed = stepContainer.querySelector('.pacer-elapsed-display');
       const alertArea = stepContainer.querySelector('.pacer-alert-container');
 
       if (display) {
         display.textContent = formatTime(stateSnapshot.reDoseRemainingSeconds);
+      }
+      if (twoMinuteCountdown) {
+        twoMinuteCountdown.textContent = formatTime(stateSnapshot.naloxoneRemainingSeconds);
       }
       if (elapsed) {
         elapsed.textContent = t('pacer.step4.elapsed', 'Elapsed since most recent dose: {time}', { time: formatTime(stateSnapshot.reDoseElapsedSeconds) });
@@ -951,7 +942,9 @@ function buildStep4RedosingClock(stepDef) {
       'aria-label': t('pacer.step4.timerAria', 'Naloxone re-dosing countdown timer'),
     },
       h('div', { class: 'pacer-clock-digits-group' },
-        h('span', { class: 'pacer-clock-label' }, t('pacer.step4.clockLabel', 'Countdown to Re-Dosing Evaluation:')),
+        h('span', { class: 'pacer-clock-label' }, getLang() === 'es' ? 'Revisar la respiración a los 2 minutos:' : '2-minute breathing check / re-dose evaluation:'),
+        h('h3', { class: 'pacer-naloxone-countdown' }, formatTime(pacerState.naloxoneRemainingSeconds)),
+        h('span', { class: 'pacer-clock-label' }, getLang() === 'es' ? 'Recordatorio del límite de 3 minutos de la etiqueta:' : '3-minute product-label reminder:'),
         h('p', { class: 'timer-display' }, formatTime(pacerState.reDoseRemainingSeconds)),
         h('p', { class: 'pacer-elapsed-display' },
           t('pacer.step4.elapsed', 'Elapsed since most recent dose: {time}', { time: formatTime(pacerState.reDoseElapsedSeconds) })

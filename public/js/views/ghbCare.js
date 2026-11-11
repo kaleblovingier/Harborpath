@@ -6,7 +6,7 @@
 // European Monitoring Centre for Drugs and Drug Addiction (EMCDDA) Chemsex & GHB Safety Advisories.
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -414,24 +414,28 @@ export function ghbCareView() {
     // Navigation Tabs
     const tabsList = h('div', { class: 'ghb-tabs-nav', role: 'tablist', 'aria-label': 'GHB Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `ghb-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setGhbState({ activeTab: 'triage' }),
       }, t('ghb.tabs.triage', 'Coma & Overdose Triage')),
       h('button', {
+        type: 'button',
         class: `ghb-tab-btn ${state.activeTab === 'compounds' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'compounds' ? 'true' : 'false',
         onclick: () => setGhbState({ activeTab: 'compounds' }),
       }, t('ghb.tabs.compounds', 'Substance Science: GHB vs GBL vs BDO')),
       h('button', {
+        type: 'button',
         class: `ghb-tab-btn ${state.activeTab === 'withdrawal' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'withdrawal' ? 'true' : 'false',
         onclick: () => setGhbState({ activeTab: 'withdrawal' }),
       }, t('ghb.tabs.withdrawal', 'Withdrawal Staging & Baclofen Protocol')),
       h('button', {
+        type: 'button',
         class: `ghb-tab-btn ${state.activeTab === 'harm_reduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harm_reduction' ? 'true' : 'false',
@@ -622,25 +626,26 @@ export function ghbCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildGhbSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('ghb.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildGhbSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('ghb.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'ghb-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('ghb.sbar.title', 'Zero-PII Clinical Handoff & Dispatch Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildGhbSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('ghb.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildGhbSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('ghb.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildGhbSbarText(state, evaluation, 'en')),
     ]);
