@@ -95,6 +95,7 @@ Treatment and telehealth searches share one client (`fetchListingPage` in `src/f
 - One entry per source in `data/meta.json`: `serviceCodes`, `zcta`, `places`, `healthCenters`, `zipStates`, `islandPlaces`, `stateAgencies`, `stateMedicaid`, `vaFacilities`, `ihsFacilities`, `erHospitals`, `ruralHealthClinics`.
 - `sourceUpdated` is when the publisher last changed the data (its `Last-Modified` header, else its own modified or fetched date); `builtAt` is when HarborPath downloaded it. Either may be `null`. All dates are ISO 8601 in UTC, and ages are whole days.
 - Treatment listings are not bundled. They are searched live and cached for at most `maxCacheMinutes`.
+- The care-tools catalog shows the validated `dataBuiltAt` snapshot date separately from the live treatment-search/cache note. It links to the detailed source disclosure; neither the catalog date nor the disclosure verifies that an individual provider listing or law is current.
 
 ### Rate limiting and proxies
 

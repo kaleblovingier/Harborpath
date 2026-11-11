@@ -1,7 +1,7 @@
 import { h, clear } from '../dom.js';
 import { t } from '../i18n.js';
 import { pageHeader, emergencyCallout } from './common.js';
-import { sourceContext } from '../components/sourceContext.js';
+import { freshnessCue, sourceContext } from '../components/sourceContext.js';
 
 // This catalog contains only public links and copy. Search and audience choices
 // stay in memory: never send them to the API, history, or device storage.
@@ -373,6 +373,22 @@ export function careToolsView({ meta } = {}) {
     },
   }, t(item.key, item.label)));
 
+  const audiencePills = [
+    { id: 'all', key: 'tools.audiencePill.all', label: 'Everyone' },
+    { id: 'individual', key: 'tools.audiencePill.individual', label: 'My care' },
+    { id: 'supporter', key: 'tools.audiencePill.supporter', label: 'Supporting someone' },
+    { id: 'care-team', key: 'tools.audiencePill.team', label: 'Care team' },
+  ].map((item) => h('button', {
+    type: 'button',
+    class: 'preset tools-audience-pill',
+    dataset: { audience: item.id },
+    'aria-pressed': String(filters.audience === item.id),
+    onclick: () => {
+      audience.value = item.id;
+      update();
+    },
+  }, t(item.key, item.label)));
+
   const suggestionEntries = POPULAR_SUGGESTIONS.map((item) => {
     const button = h('button', {
       type: 'button',
@@ -392,6 +408,9 @@ export function careToolsView({ meta } = {}) {
   function syncControls() {
     for (const pill of categoryPills) {
       pill.setAttribute('aria-pressed', String(pill.dataset.category === filters.category));
+    }
+    for (const pill of audiencePills) {
+      pill.setAttribute('aria-pressed', String(pill.dataset.audience === filters.audience));
     }
     const qNorm = normalize(filters.query.trim());
     for (const entry of suggestionEntries) {
@@ -457,10 +476,13 @@ export function careToolsView({ meta } = {}) {
         h('p', { class: 'label', id: 'care-tools-pills-label' }, t('tools.categoryPills.heading', 'Quick topic filter')),
         h('div', { class: 'presets tools-category-pills', role: 'group', 'aria-labelledby': 'care-tools-pills-label' }, categoryPills)),
       h('div', { class: 'tools-discovery-group' },
+        h('p', { class: 'label', id: 'care-tools-audience-pills-label' }, t('tools.audiencePills.heading', 'Quick audience filter')),
+        h('div', { class: 'presets tools-audience-pills', role: 'group', 'aria-labelledby': 'care-tools-audience-pills-label' }, audiencePills)),
+      h('div', { class: 'tools-discovery-group' },
         h('p', { class: 'label', id: 'care-tools-suggestions-label' }, t('tools.suggestions.heading', 'Popular searches')),
         h('div', { class: 'presets tools-suggestion-chips', role: 'group', 'aria-labelledby': 'care-tools-suggestions-label' },
           suggestionEntries.map((entry) => entry.button)))),
-    count, list, sourceContext({ meta }));
+    count, list, freshnessCue({ meta }), sourceContext({ meta, id: 'care-tools-sources' }));
 
   const onKeydown = (e) => {
     if (!e || e.defaultPrevented || e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;

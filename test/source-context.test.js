@@ -1,6 +1,6 @@
 import test, { afterEach, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { sourceContext } from '../public/js/components/sourceContext.js';
+import { freshnessCue, sourceContext } from '../public/js/components/sourceContext.js';
 import { useDictionary } from '../public/js/i18n.js';
 import es from '../public/js/locales/es.js';
 import esEvidence from '../public/js/locales/es-evidence.js';
@@ -58,6 +58,33 @@ test('source context shows the supplied snapshot date without claiming verificat
   assert.match(panel.textContent, /do not update automatically during a search/);
 });
 
+test('care-tools freshness cue shows the build date and separates live from bundled data', () => {
+  const cue = freshnessCue({ meta: { dataBuiltAt: '2026-10-21T00:21:17.460Z' } });
+  const [time] = elements(cue, 'time');
+  const [link] = elements(cue, 'a');
+
+  assert.equal(cue.tagName, 'SECTION');
+  assert.equal(cue.getAttribute('aria-labelledby'), 'tools-freshness-title');
+  assert.equal(time.getAttribute('datetime'), '2026-10-21T00:21:17.460Z');
+  assert.equal(time.textContent, 'October 21, 2026');
+  assert.match(cue.textContent, /Treatment searches check SAMHSA’s live directory/);
+  assert.match(cue.textContent, /temporary cached response/);
+  assert.match(cue.textContent, /not confirmation that each listing, service, or law is current/);
+  assert.equal(link.getAttribute('href'), '#care-tools-sources');
+
+  const details = sourceContext({ meta: { dataBuiltAt: '2026-10-21' }, id: 'care-tools-sources' });
+  assert.equal(details.getAttribute('id'), 'care-tools-sources');
+});
+
+test('care-tools freshness cue explains unavailable dates without rendering invalid values', () => {
+  for (const meta of [undefined, null, {}, { dataBuiltAt: 'not-a-date' }, { dataBuiltAt: '2026-02-30' }]) {
+    const cue = freshnessCue({ meta });
+    assert.equal(elements(cue, 'time').length, 0);
+    assert.match(cue.textContent, /Date unavailable on this device/);
+    assert.doesNotMatch(cue.textContent, /Invalid Date|undefined|NaN/);
+  }
+});
+
 test('missing or invalid metadata leaves a usable offline explanation and source links', () => {
   const cases = [undefined, null, {}, { dataBuiltAt: null }, { dataBuiltAt: 0 },
     { dataBuiltAt: 'not-a-date' }, { dataBuiltAt: '2026-02-30' },
@@ -94,6 +121,7 @@ test('disclosure and official outbound links preserve native keyboard access and
 test('Spanish renders dates, review limits, offline guidance and sources in Spanish', () => {
   useDictionary('es', { ...es, ...esEvidence });
   const panel = sourceContext({ meta: { dataBuiltAt: '2026-10-21T00:21:17.460Z' } });
+  const cue = freshnessCue({ meta: { dataBuiltAt: '2026-10-21T00:21:17.460Z' } });
   assert.equal(panel.children[0].textContent, 'Fuentes y verificación');
   assert.match(elements(panel, 'time')[0].textContent, /21.*octubre.*2026/);
   assert.match(panel.textContent, /resúmenes legales estatales no están verificados/);
@@ -102,6 +130,11 @@ test('Spanish renders dates, review limits, offline guidance and sources in Span
   assert.match(panel.textContent, /Consulte las fuentes oficiales/);
   const unavailable = sourceContext();
   assert.match(unavailable.textContent, /Fecha no disponible en este dispositivo/);
+  assert.equal(elements(cue, 'time')[0].textContent, elements(panel, 'time')[0].textContent);
+  assert.match(cue.textContent, /Vigencia de los recursos/);
+  assert.match(cue.textContent, /consultan el directorio en línea de SAMHSA/);
+  assert.match(cue.textContent, /La fecha de compilación no confirma/);
+  assert.doesNotMatch(cue.textContent, /Freshness at a glance|Treatment searches check/);
   assert.doesNotMatch(panel.textContent, /Sources and verification|Verification limits|opens in a new tab/);
 });
 

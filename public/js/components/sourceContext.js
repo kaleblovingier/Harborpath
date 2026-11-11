@@ -14,12 +14,12 @@ function snapshotDate(value) {
 
 /**
  * A keyboard-accessible, initially collapsed source and verification disclosure.
- * @param {{meta?: {dataBuiltAt?: string}|null}} [options] Existing /api/meta data.
+ * @param {{meta?: {dataBuiltAt?: string}|null, id?: string}} [options] Existing /api/meta data.
  * Returns a DOM element; callers re-render it when metadata or language changes.
  */
-export function sourceContext({ meta = null } = {}) {
+export function sourceContext({ meta = null, id } = {}) {
   const date = snapshotDate(meta?.dataBuiltAt);
-  return h('details', { class: 'card source-context' },
+  return h('details', { class: 'card source-context', id },
     h('summary', null, t('evidence.title', 'Sources and verification')),
     h('p', { class: 'small' },
       h('strong', null, t('evidence.snapshotLabel', 'Bundled data snapshot:')),
@@ -59,4 +59,31 @@ export function sourceContext({ meta = null } = {}) {
         t('evidence.sourcePlaces', 'Census location data'))),
       h('li', null, ext('https://www.medicaid.gov/about-us/where-can-people-get-help-medicaid-chip',
         t('evidence.sourceMedicaid', 'State Medicaid contacts')))));
+}
+
+/**
+ * Visible freshness summary for the care-tools catalog. The date describes the
+ * bundled-data build only; live treatment search has a separate cache policy.
+ * @param {{meta?: {dataBuiltAt?: string}|null}} [options] Existing /api/meta data.
+ */
+export function freshnessCue({ meta = null } = {}) {
+  const date = snapshotDate(meta?.dataBuiltAt);
+  return h('section', { class: 'card tools-freshness', 'aria-labelledby': 'tools-freshness-title' },
+    h('h2', { id: 'tools-freshness-title' }, t('evidence.toolsFreshnessTitle', 'Freshness at a glance')),
+    h('p', { class: 'small' },
+      h('strong', null, t('evidence.snapshotLabel', 'Bundled data snapshot:')),
+      ' ',
+      date
+        ? h('time', { datetime: date.toISOString() }, formatDate(date, {
+          year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC',
+        }))
+        : t('evidence.snapshotUnavailable', 'Date unavailable on this device.')),
+    h('p', { class: 'small' }, t('evidence.toolsLive',
+      'Treatment searches check SAMHSA’s live directory. During an outage, a temporary cached response may be shown.')),
+    h('p', { class: 'small' },
+      t('evidence.toolsBundled',
+        'Other directories use bundled data. The build date is not confirmation that each listing, service, or law is current.'),
+      ' ',
+      h('a', { href: '#care-tools-sources' },
+        t('evidence.toolsSourcesLink', 'Review sources and limits'))));
 }

@@ -205,6 +205,60 @@ test('category filter pills use type="button", stay short for 320px viewports, a
   assert.equal(carePill.getAttribute('aria-pressed'), 'false');
 });
 
+test('quick audience pills filter in 1 tap and stay synchronized with the audience select in EN and ES', () => {
+  installDom();
+  const root = tools.careToolsView();
+  const select = root.querySelector('#care-tools-audience');
+  const pills = root.querySelectorAll('.tools-audience-pill');
+
+  assert.equal(pills.length, 4, 'Everyone + each of the three supported audiences');
+  for (const pill of pills) {
+    assert.equal(pill.getAttribute('type'), 'button');
+    assert.ok(['true', 'false'].includes(pill.getAttribute('aria-pressed')));
+    assert.ok(pill.textContent.trim().length > 0 && pill.textContent.trim().length <= 24,
+      `Audience pill "${pill.textContent}" should stay short`);
+  }
+
+  const everyone = pills.find((pill) => pill.dataset.audience === 'all');
+  const supporter = pills.find((pill) => pill.dataset.audience === 'supporter');
+  const careTeam = pills.find((pill) => pill.dataset.audience === 'care-team');
+  assert.equal(everyone.getAttribute('aria-pressed'), 'true');
+
+  supporter.listeners.click[0]();
+  assert.equal(select.value, 'supporter');
+  assert.equal(tools.getCareToolsState().audience, 'supporter');
+  assert.equal(supporter.getAttribute('aria-pressed'), 'true');
+  assert.equal(everyone.getAttribute('aria-pressed'), 'false');
+  assert.equal(root.querySelectorAll('.tool-card').length,
+    tools.filterCareTools({ audience: 'supporter' }).length);
+
+  select.value = 'care-team';
+  select.listeners.change[0]({ target: select });
+  assert.equal(careTeam.getAttribute('aria-pressed'), 'true');
+  assert.equal(supporter.getAttribute('aria-pressed'), 'false');
+  assert.equal(root.querySelectorAll('.tool-card').length,
+    tools.filterCareTools({ audience: 'care-team' }).length);
+
+  everyone.listeners.click[0]();
+  assert.equal(select.value, 'all');
+  assert.equal(everyone.getAttribute('aria-pressed'), 'true');
+
+  useDictionary('es', es);
+  const rootEs = tools.careToolsView();
+  const esPills = rootEs.querySelectorAll('.tools-audience-pill');
+  for (const pill of esPills) {
+    assert.ok(pill.textContent.trim().length > 0 && pill.textContent.trim().length <= 24,
+      `Spanish audience pill "${pill.textContent}" stays short for 320px`);
+  }
+  assert.equal(esPills.find((pill) => pill.dataset.audience === 'care-team').textContent,
+    esTools['tools.audiencePill.team']);
+  const esSupporter = esPills.find((pill) => pill.dataset.audience === 'supporter');
+  esSupporter.listeners.click[0]();
+  assert.equal(rootEs.querySelector('#care-tools-audience').value, 'supporter');
+  assert.equal(rootEs.querySelectorAll('.tool-card').length,
+    tools.filterCareTools({ audience: 'supporter' }).length);
+});
+
 test('popular quick-search suggestion chips filter in 1 tap and toggle/clear cleanly in EN and ES', () => {
   installDom();
   const root = tools.careToolsView();
@@ -337,6 +391,8 @@ test('tools.js and es-tools.js maintain 100% bilingual parity and security invar
     assert.ok(esTools[key].trim().length > 0, `Empty Spanish translation for ${key}`);
   }
   for (const key of [
+    'tools.audiencePills.heading',
+    'tools.audiencePill.team',
     'tools.pill.emergency',
     'tools.pill.care',
     'tools.pill.harmReduction',

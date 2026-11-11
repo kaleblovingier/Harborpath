@@ -1,0 +1,6 @@
+## [t1] Implemented care-tools discovery and freshness cues
+- Codebase/domain discoveries: `dataBuiltAt` is already served through `/api/meta`; `sourceContext` owns validation and localized formatting. Reusing these paths avoids a new endpoint or duplicate date logic. Keep the catalog freshness note distinct from the detailed disclosure, with the live treatment cache clearly separated from bundled datasets.
+- Wrong assumptions and corrections: the full `npm test` suite is not green in this checkout; focused care-tools/source-context tests pass, but 19 failures are reported in unrelated existing clinical, navigation, provider-search, service-worker, and Quick Exit areas.
+- Debugging dead-ends and what actually worked: parallel full-suite execution still produced an exit code 1; a serial rerun produced the same 2066-pass/19-fail count. `npm run stamp:sw` is required after client assets change and also verifies the shell hash.
+- Techniques/patterns worth reusing: audience chips can write the existing select value and reuse the same `update()` path; `aria-pressed` synchronization belongs in the shared control-sync function. Validate date metadata through the existing `snapshotDate` helper and provide an explicit unavailable state.
+- Learnings consumed: none found.

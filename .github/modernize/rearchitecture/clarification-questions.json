@@ -1,0 +1,552 @@
+{
+  "schema": "clarification-questions/v1",
+  "generated_at": "2026-11-11T20:50:13.1043082Z",
+  "user_input": "as a team of 5 agents, upgrade and expand the platform, its info, its features and usability.",
+  "title": "HarborPath in-place enhancement",
+  "assessment_snapshot": {
+    "intro": "The documentation describes HarborPath as an existing bilingual harm-reduction and care-navigation platform with:",
+    "bullets": [
+      "161,462 JavaScript/TypeScript LOC across 10 visible top-level project directories; the project profile classifies the request as an in-place upgrade of the same platform.",
+      "A dependency-free Node.js server and browser-native ES modules, with public directories and care-navigation tools.",
+      "Clinical state held in browser RAM only—not URLs, persistent storage, network requests, or logs—and coarse location quantization with local geocoding.",
+      "A registered, synchronous Quick Exit reset designed to remain reliable across failures and in-flight work; English/Spanish parity, accessibility, and print parity are explicit guardrails.",
+      "PHASE1_HELPERS.md names plain-language variants and answer-specific additions for older-adult, stimulant-use, and co-occurring pathway cards as next possibilities; AI_NAVIGATOR_SPEC.md lists a fully on-device model as a future optional layer.",
+      "ARCHITECTURE.md documents stale-result and dataset-freshness metadata for treatment and telehealth directories."
+    ]
+  },
+  "proposed_outcome": "Deliver a bounded in-place improvement to existing HarborPath information and usability, preserving current user-facing behavior, dependency-free architecture unless explicitly changed, English/Spanish parity, accessibility and print behavior, identical security headers, RAM-only clinical state, coarse/local location handling, and resilient Quick Exit. Do not introduce clinical or legal claims; any new clinical content must be supported by authoritative primary sources, framed bilingually with limitations, and include appropriate emergency escalation.",
+  "scope": [
+    "frontend",
+    "backend",
+    "generic"
+  ],
+  "status": "answered",
+  "questions": [
+    {
+      "id": "F1",
+      "kit": "frontend",
+      "field": "target.framework",
+      "title": "Frontend framework",
+      "question": "For this in-place enhancement, should the current browser-native JavaScript frontend remain as-is, or should a target framework and version be specified?",
+      "importance": "required",
+      "impact": 4,
+      "recommended": "Keep existing browser-native JavaScript (no framework change)",
+      "default": null,
+      "prefilled": true,
+      "prefilled_value": "Keep existing browser-native JavaScript (no framework change)",
+      "answer": {
+        "value": "Keep existing browser-native JavaScript (no framework change)",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "Keep existing browser-native JavaScript (no framework change)",
+          "label": "Keep the current browser-native JavaScript frontend"
+        },
+        {
+          "value": "Specify a target frontend framework and version",
+          "label": "Specify a different framework and version"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "F2",
+      "kit": "frontend",
+      "field": "target.component_library",
+      "title": "UI component library",
+      "question": "Should the current dependency-free UI remain without a component library, or should a specific component/UI library and version be introduced?",
+      "importance": "required",
+      "impact": 4,
+      "recommended": "Keep existing dependency-free UI (no component library)",
+      "default": null,
+      "prefilled": true,
+      "prefilled_value": "Keep existing dependency-free UI (no component library)",
+      "answer": {
+        "value": "Keep existing dependency-free UI (no component library)",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "Keep existing dependency-free UI (no component library)",
+          "label": "Keep the current UI with no added library"
+        },
+        {
+          "value": "Specify a component/UI library and version",
+          "label": "Specify a component/UI library and version"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "F3",
+      "kit": "frontend",
+      "field": "visual.screenshots",
+      "title": "Current UI references",
+      "question": "Provide screenshot/screen-recording paths or URLs for the existing UI in scope, or state that the current UI is the reference and no screenshots are available.",
+      "importance": "required",
+      "impact": 4,
+      "recommended": null,
+      "default": null,
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "no screenshot available",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "F4",
+      "kit": "frontend",
+      "field": "visual.design_system",
+      "title": "Design system",
+      "question": "Which design-system or token source should guide the enhancement? You may confirm reuse of the current visual system or provide a specific source.",
+      "importance": "required",
+      "impact": 3,
+      "recommended": "match existing pixel-by-pixel using extracted CSS custom properties",
+      "default": "match existing pixel-by-pixel using extracted CSS custom properties",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "match existing pixel-by-pixel using extracted CSS custom properties",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "match existing pixel-by-pixel using extracted CSS custom properties",
+          "label": "Match the existing visual system and CSS custom properties"
+        },
+        {
+          "value": "Provide a different design-system/token source",
+          "label": "Provide a different design-system/token source"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "F5",
+      "kit": "frontend",
+      "field": "compliance.accessibility",
+      "title": "Accessibility standard",
+      "question": "Which accessibility standard should the work target while preserving current accessibility behavior?",
+      "importance": "recommended",
+      "impact": 3,
+      "recommended": "WCAG 2.1 AA",
+      "default": "WCAG 2.1 AA",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "WCAG 2.1 AA",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "WCAG 2.1 AA",
+          "label": "WCAG 2.1 AA"
+        },
+        {
+          "value": "WCAG 2.2 AA",
+          "label": "WCAG 2.2 AA"
+        },
+        {
+          "value": "Section 508",
+          "label": "Section 508"
+        },
+        {
+          "value": "Preserve current accessibility baseline; no additional standard",
+          "label": "Preserve current baseline; no additional standard"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "F6",
+      "kit": "frontend",
+      "field": "compatibility.browsers",
+      "title": "Browser targets",
+      "question": "List required browsers/runtime versions, or confirm the recommended modern-evergreen target.",
+      "importance": "recommended",
+      "impact": 2,
+      "recommended": null,
+      "default": "modern evergreen (Chrome, Firefox, Safari, Edge — latest 2 major versions)",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "default",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "F7",
+      "kit": "frontend",
+      "field": "responsive.breakpoints",
+      "title": "Responsive behavior",
+      "question": "Which responsive strategy should be preserved or applied?",
+      "importance": "recommended",
+      "impact": 3,
+      "recommended": "Mobile-first using existing breakpoints",
+      "default": "mobile-first using existing breakpoints",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "Mobile-first using existing breakpoints",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "Match current responsive behavior",
+          "label": "Match current responsive behavior"
+        },
+        {
+          "value": "Mobile-first using existing breakpoints",
+          "label": "Mobile-first using existing breakpoints"
+        },
+        {
+          "value": "Specify another responsive/breakpoint strategy",
+          "label": "Specify another strategy"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "F8",
+      "kit": "frontend",
+      "field": "i18n.locales",
+      "title": "Languages in scope",
+      "question": "Which locales should remain in scope? English and Spanish are documented current requirements; add any others if desired.",
+      "importance": "optional",
+      "impact": 3,
+      "recommended": null,
+      "default": "preserve current locales; keep existing i18n library if present",
+      "prefilled": true,
+      "prefilled_value": "en, es",
+      "answer": {
+        "value": [
+          "en, es"
+        ],
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "en",
+          "label": "English (en)"
+        },
+        {
+          "value": "es",
+          "label": "Spanish (es)"
+        },
+        {
+          "value": "Additional locales",
+          "label": "Additional locales (specify)"
+        }
+      ],
+      "allow_other": true,
+      "type": "multi_select"
+    },
+    {
+      "id": "F9",
+      "kit": "frontend",
+      "field": "state_mgmt.preference",
+      "title": "Frontend state handling",
+      "question": "Confirm or specify the client-side state approach. Clinical state must remain in browser RAM only and must not enter URLs, storage, network requests, or logs.",
+      "importance": "optional",
+      "impact": 3,
+      "recommended": null,
+      "default": "preserve existing pattern if identifiable; otherwise recommend minimal (component state + server-state library)",
+      "prefilled": true,
+      "prefilled_value": "Preserve the existing in-memory state pattern; clinical state remains in browser RAM only.",
+      "answer": {
+        "value": "Preserve the existing in-memory state pattern; clinical state remains in browser RAM only.",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "F10",
+      "kit": "frontend",
+      "field": "routing.preference",
+      "title": "Routing preference",
+      "question": "Confirm the current routing/URL behavior or specify a different preference. Clinical state must not be encoded in URLs.",
+      "importance": "optional",
+      "impact": 3,
+      "recommended": null,
+      "default": "use the de-facto router for the chosen target framework",
+      "prefilled": true,
+      "prefilled_value": "Preserve existing hash-based routes and URL contracts; do not encode clinical state in URLs.",
+      "answer": {
+        "value": "Preserve existing hash-based routes and URL contracts; do not encode clinical state in URLs.",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "B1",
+      "kit": "backend",
+      "field": "target.framework",
+      "title": "Backend framework",
+      "question": "Should the existing dependency-free Node.js server remain unchanged, or should a target backend framework and version be specified?",
+      "importance": "required",
+      "impact": 4,
+      "recommended": "Keep existing Node.js server; retain Node 20/22 compatibility",
+      "default": null,
+      "prefilled": true,
+      "prefilled_value": "Keep existing Node.js server; retain Node 20/22 compatibility",
+      "answer": {
+        "value": "Keep existing Node.js server; retain Node 20/22 compatibility",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "Keep existing Node.js server; retain Node 20/22 compatibility",
+          "label": "Keep the existing Node.js server and documented Node 20/22 compatibility"
+        },
+        {
+          "value": "Specify a target backend framework and version",
+          "label": "Specify a different framework and version"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "B2",
+      "kit": "backend",
+      "field": "api.contract_preservation",
+      "title": "API compatibility",
+      "question": "What API contract policy should apply to existing routes, payloads, and status codes?",
+      "importance": "required",
+      "impact": 5,
+      "recommended": "must preserve",
+      "default": "must preserve",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "must preserve",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "must preserve",
+          "label": "Must preserve all existing contracts"
+        },
+        {
+          "value": "can break with versioning",
+          "label": "Breaking changes allowed only with versioning"
+        },
+        {
+          "value": "can break",
+          "label": "Breaking changes allowed"
+        },
+        {
+          "value": "partial: specify contracts",
+          "label": "Preserve specified contracts only"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "B3",
+      "kit": "backend",
+      "field": "data.migration_strategy",
+      "title": "Data migration",
+      "question": "Should this work avoid database/schema changes and preserve the existing data arrangement, or is a migration in scope?",
+      "importance": "required",
+      "impact": 5,
+      "recommended": "no migration",
+      "default": "TBD / assess in research phase",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "TBD / assess in research phase",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "in-place",
+          "label": "In-place schema changes"
+        },
+        {
+          "value": "dual-write",
+          "label": "Dual-write old and new schemas"
+        },
+        {
+          "value": "new schema",
+          "label": "New schema with migration"
+        },
+        {
+          "value": "no migration",
+          "label": "No migration; keep existing data arrangement"
+        },
+        {
+          "value": "TBD / assess in research phase",
+          "label": "Defer assessment to research"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "B4",
+      "kit": "backend",
+      "field": "auth.framework",
+      "title": "Authentication policy",
+      "question": "Specify the authentication/authorization framework or policy to preserve, or confirm that no new authentication work is in scope.",
+      "importance": "recommended",
+      "impact": 3,
+      "recommended": null,
+      "default": "preserve existing auth mechanism; detect from codebase",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "default",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "B5",
+      "kit": "backend",
+      "field": "nfr.sla",
+      "title": "Service targets",
+      "question": "Provide latency, throughput, or availability targets, or state that the current production baseline should be preserved.",
+      "importance": "recommended",
+      "impact": 2,
+      "recommended": null,
+      "default": "match current production baseline; no regression",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "default",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "G1",
+      "kit": "generic",
+      "field": "success.definition",
+      "title": "Definition of done",
+      "question": "Which bounded improvement should be prioritized, and what observable user-facing result should count as success?",
+      "importance": "required",
+      "impact": 5,
+      "recommended": null,
+      "default": "feature parity with the current system; all existing user-facing behaviors preserved",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "default",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "G2",
+      "kit": "generic",
+      "field": "out_of_scope",
+      "title": "Scope boundaries",
+      "question": "List any areas or behaviors to exclude. Current constraints are prefilled; refine them if needed.",
+      "importance": "recommended",
+      "impact": 4,
+      "recommended": null,
+      "default": "no explicit exclusions; agent will infer from project structure",
+      "prefilled": true,
+      "prefilled_value": "Do not add speculative clinical/legal claims or new clinical content unless supported by authoritative primary sources, framed bilingually with limitations and emergency escalation. Preserve identical CSP/security headers; RAM-only clinical state (never URL/storage/network/logs); coarse location quantization and local geocoding; deterministic synchronous registry-based Quick Exit resilient across failures/in-flight work; English/Spanish, accessibility, and print parity. Do not touch user MCP configuration or the recovery bundle.",
+      "answer": {
+        "value": "Do not add speculative clinical/legal claims or new clinical content unless supported by authoritative primary sources, framed bilingually with limitations and emergency escalation. Preserve identical CSP/security headers; RAM-only clinical state (never URL/storage/network/logs); coarse location quantization and local geocoding; deterministic synchronous registry-based Quick Exit resilient across failures/in-flight work; English/Spanish, accessibility, and print parity. Do not touch user MCP configuration or the recovery bundle.",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    },
+    {
+      "id": "G3",
+      "kit": "generic",
+      "field": "existing_tests.posture",
+      "title": "Existing test policy",
+      "question": "What must-pass policy should apply to the existing test suite once implementation is approved?",
+      "importance": "recommended",
+      "impact": 2,
+      "recommended": "must pass",
+      "default": "must pass",
+      "prefilled": false,
+      "prefilled_value": null,
+      "answer": {
+        "value": "must pass",
+        "source": "user"
+      },
+      "depends_on": null,
+      "options": [
+        {
+          "value": "must pass",
+          "label": "Must pass; no regressions"
+        },
+        {
+          "value": "can rewrite",
+          "label": "Can rewrite with equivalent coverage"
+        },
+        {
+          "value": "ignore",
+          "label": "Ignore outdated/broken tests and write new tests"
+        },
+        {
+          "value": "partial: specify suites",
+          "label": "Partial: specify required suites"
+        }
+      ],
+      "allow_other": true,
+      "type": "single_select"
+    },
+    {
+      "id": "G5",
+      "kit": "generic",
+      "field": "constraints.additional",
+      "title": "Additional constraints",
+      "question": "Add any requirements, exclusions, dependencies, compliance rules, or operational constraints not covered above.",
+      "importance": "optional",
+      "impact": 3,
+      "recommended": null,
+      "default": "None beyond the decisions listed in this specification.",
+      "prefilled": true,
+      "prefilled_value": "None beyond the decisions listed in this specification.",
+      "answer": {
+        "value": "None beyond the decisions listed in this specification.",
+        "source": "user"
+      },
+      "depends_on": null,
+      "type": "text",
+      "options": []
+    }
+  ]
+}

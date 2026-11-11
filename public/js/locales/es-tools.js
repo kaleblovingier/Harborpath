@@ -279,4 +279,9 @@ export default {
   'tools.item.mood-stabilizer-tox.description': 'Protocolos ACMT y EXTRIP para neurotoxicidad por litio aguda vs. crónica y diálisis, encefalopatía hiperamonémica por valproato (L-carnitina IV), alerta por meropenem y rescate de QRS / reinicio tras 4 días por lamotrigina.',
   'tools.item.antimuscarinic-toxidrome.title': 'Navegador de delirio antimuscarínico y corte callejero con difenhidramina',
   'tools.item.antimuscarinic-toxidrome.description': 'Soporte clínico para sobredosis híbrida de difenhidramina y fentanilo, delirio por Datura/escopolamina, rescate de QRS >= 100 ms con bicarbonato, descompresión vesical y exclusiones de fisostigmina/rivastigmina.',
+  'tools.audiencePills.heading': 'Filtro rápido por público',
+  'tools.audiencePill.all': 'Todas las personas',
+  'tools.audiencePill.individual': 'Mi atención',
+  'tools.audiencePill.supporter': 'Apoyo a alguien',
+  'tools.audiencePill.team': 'Equipo de atención',
 };

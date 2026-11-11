@@ -1291,9 +1291,17 @@ if (hasDom) {
     renderFooterMeta();
     // Update only the source disclosure if metadata arrives after a new view
     // renders; preserve the visitor's focus, filters, and checklist.
-    if (main?.querySelector('.source-context')) {
-      import('./components/sourceContext.js').then(({ sourceContext }) => {
-        main?.querySelector('.source-context')?.replaceWith(sourceContext({ meta: lastMeta }));
+    const disclosure = main?.querySelector('.source-context');
+    const freshness = main?.querySelector('.tools-freshness');
+    if (disclosure || freshness) {
+      import('./components/sourceContext.js').then(({ freshnessCue, sourceContext }) => {
+        const currentDisclosure = main?.querySelector('.source-context');
+        if (currentDisclosure) {
+          currentDisclosure.replaceWith(sourceContext({
+            meta: lastMeta, id: currentDisclosure.getAttribute('id') ?? undefined,
+          }));
+        }
+        main?.querySelector('.tools-freshness')?.replaceWith(freshnessCue({ meta: lastMeta }));
       }).catch(() => {});
     }
   }).catch(() => { /* footer note is optional */ });

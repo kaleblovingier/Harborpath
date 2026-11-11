@@ -1212,6 +1212,12 @@ tbody th { font-weight: 700; min-width: 200px; }
 .tools-filters input, .tools-filters select { width: 100%; min-width: 0; min-height: 44px; }
 .tools-filters > p { grid-column: 1 / -1; margin: 0; }
 .tools-filters > button { justify-self: start; }
+.tools-discovery { display: grid; gap: 8px; }
+.tools-discovery-group .label { margin: 0 0 6px; }
+.tools-discovery-group .presets { margin: 0; }
+.tools-freshness { margin-top: 20px; overflow-wrap: anywhere; }
+.tools-freshness h2 { font-size: 1.05rem; margin: 0 0 10px; }
+.tools-freshness p:last-child { margin-bottom: 0; }
 .tools-count { font-weight: 600; margin: 22px 0 12px; }
 .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 14px; }
 .tool-card h2 { font-size: 1.15rem; margin: 0 0 10px; }
