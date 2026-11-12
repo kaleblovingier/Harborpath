@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "HarborPath Azure migration task plan. Scope is limited by the Java AppCAT report's incomplete coverage of the Node.js and Python components.",
+  "tasks": [
+    {
+      "type": "setupBaseline",
+      "id": "001-setup-baseline",
+      "description": "Capture the current HarborPath behavior and test baseline before migration work.",
+      "reason": "The migration must preserve existing behavior and privacy guarantees.",
+      "requirements": "Snapshot the repository and establish the frozen behavior specification needed for post-migration verification. Include the web/server and backend source trees; do not treat the AppCAT report as comprehensive.",
+      "snapshotFolder": ".",
+      "dependencies": []
+    },
+    {
+      "type": "transform",
+      "id": "002-prepare-harborpath-for-azure",
+      "description": "Prepare the confirmed active HarborPath application components for Azure hosting.",
+      "reason": "The user requested migration of the entire application, while the Java AppCAT workflow did not comprehensively assess the Node.js or Python components.",
+      "requirements": "Validate which repository components are active and prepare the confirmed Node.js web/server and, if in production use, Python backend for Azure Container Apps deployment. Preserve current user-visible behavior, accessibility, privacy protections, security headers, health checks, static data, and proxy-aware rate limiting. Do not select or migrate unverified database, cache, queue, or other external services without first confirming they are used. Assessment report issue checked but not confirmed: AWS credential configuration incidents are located under .venv/Lib/site-packages/Celery/Kombu files and were not found in application source.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      },
+      "dependencies": []
+    },
+    {
+      "type": "integrationTest",
+      "id": "003-integrationTest",
+      "description": "Build integration tests for migrated Azure services and run post-migration verification",
+      "reason": "Questionnaire default: mock-mode integration verification when no Azure environment is provided.",
+      "requirements": "Verify the migrated active components against the frozen baseline using mocked external dependencies. Cover health checks, key web/API flows, privacy boundaries, and expected interactions between active components. Do not require live Azure resource IDs or store connection strings in this plan.",
+      "dependencies": [
+        "001-setup-baseline",
+        "002-prepare-harborpath-for-azure"
+      ]
+    },
+    {
+      "type": "security",
+      "id": "004-security-cve-remediation",
+      "description": "Scan and remediate vulnerable HarborPath dependencies before deployment.",
+      "reason": "Every modernization plan includes security and CVE remediation unless explicitly excluded.",
+      "requirements": "Scan all applicable dependency manifests for the active Node.js and Python components and remediate identified vulnerabilities to patched versions. If remediation requires a major upgrade, record the affected dependency, current and target versions, and breaking-change risk. Rebuild and run applicable tests. Recheck the AppCAT credential finding against application-owned code and dependencies; do not treat vendored package paths as confirmed application credentials.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      },
+      "dependencies": [
+        "002-prepare-harborpath-for-azure"
+      ]
+    },
+    {
+      "type": "deployment",
+      "id": "005-deploy-harborpath-to-container-apps",
+      "description": "Deploy the confirmed active HarborPath components to Azure Container Apps.",
+      "reason": "Azure Container Apps is the deployment-target default for this plan; deployment is required to complete the requested move to Azure.",
+      "requirements": "Deploy only the components confirmed as active. Preserve the existing Node.js container behavior and configure the Python component only if confirmed to be part of the production application. Validate health checks, runtime configuration, proxy behavior, privacy protections, and post-deployment smoke tests. The target Azure environment, region, and permission to provision new resources must be confirmed before execution. Do not store resource IDs or connection strings in this task plan.",
+      "targetAzureService": "Azure Container Apps",
+      "resourceStatus": "Azure Container Apps environment not found in repository; existing environment or authorized provisioning must be confirmed before execution",
+      "deploymentTool": "bicep",
+      "skills": [
+        {
+          "name": "azcli-containerapp-deploy",
+          "location": "builtin"
+        }
+      ],
+      "dependencies": [
+        "003-integrationTest",
+        "004-security-cve-remediation"
+      ]
+    }
+  ],
+  "metadata": {
+    "planName": "azure-migration-harborpath",
+    "projectName": "Harborpath",
+    "language": "java",
+    "createdAt": "2026-11-12T01:44:13.791Z",
+    "version": "1.0"
+  }
+}

@@ -269,8 +269,8 @@ export const TOOL_CATALOG = Object.freeze(entries.map(([id, category, title, des
 // from it. A new catalog category must be added to one of these groups
 // (test/navigation.test.js checks this).
 export const CATEGORY_GROUPS = Object.freeze([
-  { id: 'emergency', key: 'tools.category.emergency', label: 'Urgent support', categories: ['emergency'] },
   { id: 'care', key: 'tools.category.care', label: 'Find and understand care', categories: ['care'] },
+  { id: 'emergency', key: 'tools.category.emergency', label: 'Urgent support', categories: ['emergency'] },
   { id: 'harm-reduction', key: 'tools.category.harmReduction', label: 'Stay safer (harm reduction)', categories: ['harm', 'harm-reduction'] },
   { id: 'health', key: 'tools.category.health', label: 'Physical health and medical guides', categories: ['health', 'clinical-support'] },
   { id: 'planning', key: 'tools.category.planning', label: 'Planning and support', categories: ['planning'] },
@@ -353,7 +353,7 @@ export function careToolsView({ meta } = {}) {
   audience.value = filters.audience;
   category.value = filters.category;
   const count = h('p', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', class: 'tools-count' });
-  const list = h('div', { class: 'tools-grid', id: 'care-tools-results' });
+  const list = h('div', { class: 'tools-results', id: 'care-tools-results' });
 
   const pillDefs = [
     { id: 'all', key: 'tools.category.all', label: 'All topics' },
@@ -428,15 +428,19 @@ export function careToolsView({ meta } = {}) {
       list.append(h('p', { class: 'card' }, t('tools.empty', 'No tools match these filters. Try a broader word or clear the filters.')));
       return;
     }
-    for (const tool of tools) {
-      const group = categoryGroupFor(tool.category);
-      const badgeMeta = group ? CATEGORY_PILL_META[group.id] : null;
-      list.append(h('article', { class: 'card tool-card' },
-        h('h2', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))),
-        group && h('div', { class: 'chips' },
-          h('span', { class: `chip ${badgeMeta?.chipClass ?? 'chip-secondary'} tool-category-badge` },
-            t(badgeMeta?.key ?? group.key, badgeMeta?.label ?? group.label))),
-        h('p', null, t(tool.descriptionKey, tool.description))));
+    for (const group of CATEGORY_GROUPS) {
+      const groupedTools = tools.filter((tool) => group.categories.includes(tool.category));
+      if (!groupedTools.length) continue;
+      const headingId = `care-tools-group-${group.id}`;
+      list.append(h('section', { class: 'tools-result-group', 'aria-labelledby': headingId },
+        h('h2', { id: headingId }, t(group.key, group.label)),
+        h('div', { class: 'tools-grid' },
+          groupedTools.map((tool) => h('article', { class: 'card tool-card' },
+            h('h2', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))),
+            h('div', { class: 'chips' },
+              h('span', { class: `chip ${CATEGORY_PILL_META[group.id]?.chipClass ?? 'chip-secondary'} tool-category-badge` },
+                t(CATEGORY_PILL_META[group.id]?.key ?? group.key, CATEGORY_PILL_META[group.id]?.label ?? group.label))),
+            h('p', null, t(tool.descriptionKey, tool.description)))))));
     }
   }
   const update = () => {

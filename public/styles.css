@@ -10,12 +10,13 @@
   --border: #cbd5e1;
   --border-strong: #64748b;
   --border-subtle: #e2e8f0;
-  --brand: #0d9488;
+  --brand: #0f766e;
   --brand-strong: #0f766e;
   --brand-soft: #f0fdfa;
-  --brand-border: #99f6e4;
+  --brand-border: #0f766e;
   --on-brand: #ffffff;
-  --accent: #0284c7;
+  --on-danger: #ffffff;
+  --accent: #0369a1;
   --accent-warm: #d97706;
   --danger: #dc2626;
   --danger-strong: #991b1b;
@@ -25,7 +26,7 @@
   --warn-strong: #92400e;
   --warn-soft: #fffbeb;
   --warn-border: #fde68a;
-  --info: #0284c7;
+  --info: #0369a1;
   --info-strong: #0369a1;
   --info-soft: #f0f9ff;
   --info-border: #bae6fd;
@@ -81,6 +82,7 @@
     --brand-soft: #042f2e;
     --brand-border: #14b8a6;
     --on-brand: #042f2e;
+    --on-danger: #0f172a;
     --accent: #38bdf8;
     --accent-warm: #f59e0b;
     --danger: #f87171;
@@ -197,7 +199,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 44px; padding: 0 16px;
   border: 0; border-radius: var(--radius-full);
-  background: var(--danger); color: #fff;
+  background: var(--danger); color: var(--on-danger);
   font: 700 0.92rem/1 var(--font);
   cursor: pointer; white-space: nowrap;
   box-shadow: var(--shadow-sm);
@@ -364,8 +366,8 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
 .btn-secondary:hover { background: color-mix(in srgb, var(--brand) 18%, transparent); border-color: var(--brand); color: var(--brand-strong); box-shadow: var(--shadow-sm); }
 .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border); }
 .btn-ghost:hover { background: var(--surface-2); border-color: var(--border-strong); color: var(--text); }
-.btn-emergency { background: var(--danger); color: #fff; border-color: var(--danger); }
-.btn-emergency:hover { background: var(--danger-strong); border-color: var(--danger-strong); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-emergency { background: var(--danger); color: var(--on-danger); border-color: var(--danger); }
+.btn-emergency:hover { background: var(--danger-strong); border-color: var(--danger-strong); color: var(--on-danger); box-shadow: var(--shadow-sm); }
 .btn-small { min-height: 44px; padding: 0 14px; font-size: 0.92rem; }
 .btn-large { min-height: 56px; padding: 0 28px; font-size: 1.1rem; }
 .link-btn {
@@ -2010,10 +2012,9 @@ body.sensory-mode-active [tabindex]:focus-visible {
   .asam-summary-card a[href^="https://"]::after,
   .xylazine-action-card a[href^="https://"]::after,
   .naloxone-action-card a[href^="https://"]::after {
-    content: " (" attr(href) ")";
-    font-size: 8.5pt;
-    word-break: break-all;
+    content: none !important;
   }
+  a.tel[href^="tel:"]::after { content: none !important; }
 }
 /* Global 320px mobile overflow guards */
 main{overflow-wrap:anywhere}

@@ -10,6 +10,61 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
+function themeTokens(css, selector) {
+  const block = css.match(selector);
+  assert.ok(block, 'expected theme token block');
+  return Object.fromEntries(
+    [...block[1].matchAll(/(--[\w-]+):\s*(#[\da-f]{6})\s*;/gi)]
+      .map(([, name, value]) => [name, value]),
+  );
+}
+
+function contrastRatio(foreground, background) {
+  const luminance = (color) => {
+    const [r, g, b] = color.match(/[0-9a-f]{2}/gi).map((part) => parseInt(part, 16) / 255)
+      .map((channel) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const a = luminance(foreground);
+  const b = luminance(background);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+
+test('light and dark theme foreground and control tokens meet contrast thresholds', () => {
+  const css = read('public/styles.css');
+  const themes = [
+    themeTokens(css, /:root\s*\{([^}]*)\}/),
+    themeTokens(css, /@media\s*\(prefers-color-scheme:\s*dark\)\s*\{\s*:root\s*\{([^}]*)\}/),
+  ];
+
+  for (const [index, tokens] of themes.entries()) {
+    const label = index === 0 ? 'light' : 'dark';
+    const atLeast = (foreground, background, minimum, purpose) => {
+      const ratio = contrastRatio(foreground, background);
+      assert.ok(ratio >= minimum, `${label} ${purpose}: ${ratio.toFixed(2)}:1 < ${minimum}:1`);
+    };
+
+    for (const background of [tokens['--bg'], tokens['--surface']]) {
+      atLeast(tokens['--text'], background, 4.5, 'body text');
+      atLeast(tokens['--muted'], background, 4.5, 'muted text');
+      atLeast(tokens['--brand'], background, 4.5, 'links');
+      atLeast(tokens['--focus'], background, 3, 'focus indicator');
+      atLeast(tokens['--brand-border'], background, 3, 'interactive brand border');
+    }
+    atLeast(tokens['--on-brand'], tokens['--brand'], 4.5, 'primary button text');
+    atLeast(tokens['--on-danger'], tokens['--danger'], 4.5, 'emergency button text');
+    if (index === 0) {
+      atLeast(tokens['--info'], tokens['--info-soft'], 4.5, 'information text');
+      atLeast(tokens['--ok'], tokens['--ok-soft'], 4.5, 'success text');
+      atLeast(tokens['--warn-strong'], tokens['--warn-soft'], 4.5, 'warning text');
+      atLeast(tokens['--danger-strong'], tokens['--danger-soft'], 4.5, 'danger text');
+    }
+  }
+
+  assert.match(css, /\.quick-exit\s*\{[^}]*color:\s*var\(--on-danger\)/s);
+  assert.match(css, /\.btn-emergency\s*\{[^}]*color:\s*var\(--on-danger\)/s);
+});
+
 function publicJs() {
   const out = [];
   const walk = (dir) => {
@@ -54,10 +109,24 @@ test('scrollable tables can be reached by keyboard', () => {
   }
 });
 
-test('selects cannot force horizontal scrolling on small phones', () => {
+test('small-screen controls stay responsive and common targets meet minimum sizes', () => {
   const css = read('public/styles.css');
   assert.match(css, /\.select \{[^}]*max-width: 100%/);
-  assert.match(css, /\.safety-bar a \{[^}]*min-height: 24px/);
+  assert.match(css, /\.safety-bar a \{[^}]*min-height:\s*24px/);
+  assert.match(css, /\.site-nav a \{[^}]*min-height:\s*44px/s);
+  assert.match(css, /\.btn \{[^}]*min-height:\s*44px/s);
+  assert.match(css, /\.link-btn \{\s*min-height:\s*36px/s);
+});
+
+test('printed links do not append hidden href values or clinical query strings', () => {
+  const css = read('public/styles.css');
+  const printCss = read('public/css/print.css');
+  const html = read('public/index.html');
+  assert.match(css, /\.print-handout a\[href\^="https:\/\/"\]::after,[^}]*\{\s*content:\s*none\s*!important;/s);
+  assert.match(css, /a\.tel\[href\^="tel:"\]::after\s*\{\s*content:\s*none\s*!important;/);
+  assert.doesNotMatch(printCss, /content:\s*[^;]*attr\(href\)[^;]*!important/i);
+  assert.match(html, /href="\/styles\.css"/);
+  assert.match(html, /href="\/css\/print\.css"\s+media="print"/);
 });
 
 // ------------------------------------------------------------ Minimal DOM harness for dom.js helpers

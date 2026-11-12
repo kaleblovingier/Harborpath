@@ -840,14 +840,14 @@ export function parseHash(hashStr) {
 }
 
 // Keep the selected clinical filters out of links, history and session restore.
-export function prepareRouteNavigation(href, { navigatorHandoff = false } = {}) {
-  const { path, query } = splitHref(href);
+export function prepareRouteNavigation(targetHref, { navigatorHandoff = false } = {}) {
+  const { path, query } = splitHref(targetHref);
   const snapshot = path === 'treatment' && navigatorHandoff ? getNavigatorHandoffState() : null;
   carried = snapshot
     ? { path, query: new URLSearchParams(), handoff: { codes: [...snapshot.codes] } }
     : [...query.keys()].length ? { path, query } : null;
-  const hrefForRoute = `#/${path}`;
-  return hrefForRoute;
+  const href = `#/${path}`;
+  return href;
 }
 
 export function routeViewOptions(path, query) {
@@ -1045,7 +1045,7 @@ async function render({ hashChange = false, moveFocus = true } = {}) {
     content = buildView();
   } catch (err) {
     // A view that throws would leave "Loading…" up for good; show the built-in help instead.
-    console.error(err);
+    console.error('[app] View rendering failed');
     content = viewLoadFailed(resolved.title, () => render(), { overdoseSteps: path === 'overdose' });
   }
   main.replaceChildren(content);
@@ -1068,6 +1068,9 @@ onQuickExit(resetNavigatorState);
 onQuickExit(() => setPlainLanguage(false, { notify: false }));
 
 export function runQuickExitResets() {
+  // Invalidate a view render still waiting on a lazy import before any reset
+  // runs, so it cannot mount sensitive UI after Quick Exit has cleared it.
+  renderSeq += 1;
   wipeAll();
   carried = null;
   // Only modules already in memory hold state: lazy views registered a reset
