@@ -1203,9 +1203,23 @@ if (hasDom) {
   let lastEscape = 0;
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    // Count the first Escape even when it also closes an open menu.
     // Repeated keydown events from holding a key do not count as two presses.
     if (e.repeat) return;
+    // An Escape used to dismiss navigation is not a Quick Exit press.
+    const more = nav?.querySelector('.nav-more-menu[open]');
+    if (more) {
+      more.open = false;
+      more.querySelector('summary')?.focus();
+      lastEscape = 0;
+      return;
+    }
+    // The first press closes the mobile menu and restores focus.
+    if (toggle?.getAttribute('aria-expanded') === 'true') {
+      closeMenu();
+      toggle.focus();
+      lastEscape = 0;
+      return;
+    }
     const now = Date.now();
     if (lastEscape && now - lastEscape < 1000) {
       lastEscape = 0;
@@ -1213,18 +1227,6 @@ if (hasDom) {
       return;
     }
     lastEscape = now;
-    const more = nav?.querySelector('.nav-more-menu[open]');
-    if (more) {
-      more.open = false;
-      more.querySelector('summary')?.focus();
-      return;
-    }
-    // The first press also closes the mobile menu and restores focus.
-    if (toggle?.getAttribute('aria-expanded') === 'true') {
-      closeMenu();
-      toggle.focus();
-      return;
-    }
   });
 
   toggle?.addEventListener('click', () => {

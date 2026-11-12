@@ -1,6 +1,6 @@
-## [t1] Implemented care-tools discovery and freshness cues
-- Codebase/domain discoveries: `dataBuiltAt` is already served through `/api/meta`; `sourceContext` owns validation and localized formatting. Reusing these paths avoids a new endpoint or duplicate date logic. Keep the catalog freshness note distinct from the detailed disclosure, with the live treatment cache clearly separated from bundled datasets.
-- Wrong assumptions and corrections: the full `npm test` suite is not green in this checkout; focused care-tools/source-context tests pass, but 19 failures are reported in unrelated existing clinical, navigation, provider-search, service-worker, and Quick Exit areas.
-- Debugging dead-ends and what actually worked: parallel full-suite execution still produced an exit code 1; a serial rerun produced the same 2066-pass/19-fail count. `npm run stamp:sw` is required after client assets change and also verifies the shell hash.
-- Techniques/patterns worth reusing: audience chips can write the existing select value and reuse the same `update()` path; `aria-pressed` synchronization belongs in the shared control-sync function. Validate date metadata through the existing `snapshotDate` helper and provide an explicit unavailable state.
-- Learnings consumed: none found.
+## [t4] Prevent menu-dismissal Escape from triggering Quick Exit
+- Codebase/domain discoveries: `app.js` owns both navigation dismissal and double-Escape Quick Exit; handling the menu first prevents event-order overlap. The app’s build/lint checks also validate the generated service-worker build stamp.
+- Wrong assumptions and corrections: a menu-dismissal Escape must not count as the first Quick Exit Escape; UI tests alone were not enough to validate focus, so the open local app was checked in a browser.
+- Debugging dead-ends and what actually worked: the first lint/build attempt surfaced a stale service-worker hash after the client script changed; `npm run stamp:sw` refreshed it and both checks then passed.
+- Techniques/patterns worth reusing: give navigation Escape handlers precedence over global keyboard shortcuts, clear pending shortcut timing when a menu consumes Escape, and restore focus to the dismissed control.
+- Learnings consumed: [frontend/audience-freshness-cue]

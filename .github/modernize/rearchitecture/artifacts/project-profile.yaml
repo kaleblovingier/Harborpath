@@ -1,83 +1,48 @@
 project:
   scope_path: "."
-  loc: 161462
-  languages: [javascript]
+  loc: 26993
+  languages: [javascript, python, swift, java]
   git: true
   structure:
-    android: "Android platform support"
-    backend: "Backend services"
-    data: "Reference and application data"
-    docs: "Project documentation"
-    ios: "iOS platform support"
-    legacy: "Legacy assets or compatibility code"
+    src: "Primary client application source"
+    backend: "Python backend module"
     public: "Static web assets"
-    scripts: "Project maintenance and build scripts"
-    src: "Primary application source"
-    test: "Automated tests"
-  skip_patterns:
-    - "**/.git/**"
-    - "**/.svn/**"
-    - "**/.hg/**"
-    - "**/node_modules/**"
-    - "**/.vscode/**"
-    - "**/.idea/**"
-    - "**/.vs/**"
-    - "**/__pycache__/**"
-    - "**/.pytest_cache/**"
-    - "**/.mypy_cache/**"
-    - "**/.tox/**"
-    - "**/venv/**"
-    - "**/.venv/**"
-    - "**/env/**"
-    - "**/dist/**"
-    - "**/build/**"
-    - "**/.next/**"
-    - "**/.nuxt/**"
-    - "**/coverage/**"
-    - "**/.turbo/**"
-    - "**/.parcel-cache/**"
-    - "**/*.min.js"
-    - "**/*.min.css"
-    - "**/*.bundle.js"
-    - "**/*.bundle.css"
-    - "**/*.d.ts"
-    - "**/*.designer.cs"
-    - "**/*.g.cs"
-    - "**/*.generated.cs"
-  notes: "HarborPath harm-reduction and care-navigation platform. This run is narrowed to a user-facing resource-discovery and freshness-usability slice; no clinical-content expansion or technology-stack change."
-
+    test: "Built-in test suites"
+    scripts: "Project utility scripts"
+    docs: "Product and technical documentation"
+    data: "Application data"
+    legacy: "Legacy application content"
+    android: "Android mobile wrapper"
+    ios: "iOS mobile wrapper"
+  notes: "Existing HarborPath platform with a dependency-free Node.js/JavaScript primary app, a small Python backend, and mobile wrappers. This work is limited to one user journey; repository decomposition results are diagnostic only and are not used to fan out tasks."
 assessment:
   change_type: upgrade
   rationale: |
-    The user requested in-place platform improvements. Documentation review identified
-    resource discovery and freshness communication as documented opportunities; submitted
-    clarification confirms existing browser-native JavaScript, dependency-free UI, current
-    routes/API contracts, English/Spanish parity, and preservation of existing behavior.
-    To keep work bounded and avoid speculative clinical content, scope this run to a
-    user-facing resource-discovery/freshness usability slice. No framework, package,
-    backend contract, schema, or infrastructure change is authorized.
-  transformations:
-    - fromStack: "HarborPath platform"
-      toStack: "HarborPath platform"
+    The request is for one bounded improvement to the existing HarborPath platform,
+    retaining its current stack and application shape. It is an in-place enhancement,
+    not an extraction or cross-stack rewrite. The user directed the coordinator to proceed without waiting on PM/UX;
+    the frontend integration lead selects one bounded improvement from
+    repository evidence, using the architecture artifact as a safety boundary.
+  transformations: []
   grouping_needed: false
-  deep_planning: false
+  deep_planning: undecided
 
 progress_sync:
-  run_id: "6f3c7ac5-dfbf-4f4f-8551-7f6bf8d359a9"
+  run_id: d2c21aaa-b63d-4631-a48e-e135a1cb865f
   grouping_mode: none
   execution_mode: all-at-once
-  plan_start_time: "2026-11-11T20:44:04Z"
-  plan_completed_time: "2026-11-11T21:06:11Z"
-  execution_start_time: "2026-11-11T21:19:00Z"
-  execution_completed_time: null
-  validation_start_time: null
-  validation_completed_time: null
-  total_phases: 1
-  completed_phases: 0
-  total_modules: 10
+  plan_start_time: "2026-11-11T23:35:16Z"
+  plan_completed_time: "2026-11-12T00:16:56Z"
+  execution_start_time: "2026-11-12T00:16:56Z"
+  execution_completed_time: "2026-11-12T00:42:33Z"
+  validation_start_time: "2026-11-12T00:47:27Z"
+  validation_completed_time: "2026-11-12T00:55:45Z"
+  total_phases: 4
+  completed_phases: 2
+  total_modules: 13
   completed_modules: 0
-  total_tasks: 2
-  completed_tasks: 0
-  total_commits: 206
+  total_tasks: 5
+  completed_tasks: 3
+  total_commits: 207
   build_verified: true
   test_verified: false
