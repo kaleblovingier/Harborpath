@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A private planning companion for finding substance use care, preparing for a call, and supporting someone you care about.">
+  <meta name="theme-color" content="#f7f3e8">
+  <meta name="referrer" content="no-referrer">
+  <title>HarborPath | Care Companion</title>
+  <link rel="icon" href="./mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./site.css">
+  <script src="./site.js" type="module"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap top">
+      <a class="brand" href="#top" aria-label="HarborPath home">
+        <img src="./mark.svg" width="38" height="38" alt="">
+        <span>HarborPath<small>CARE COMPANION</small></span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#guides">Guides</a>
+        <a href="#resources">Resources</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap" id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> A LITTLE DIRECTION</p>
+        <h1 id="hero-title">Care starts with<br><em>one small step.</em></h1>
+        <p class="intro">Looking for substance use support can feel overwhelming. Pick a short guide and take the next step at your own pace.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#guides">Explore the guides <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="#resources">Find care resources <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <figure class="hero-art">
+        <img src="./harbor.svg" alt="" width="640" height="480" fetchpriority="high">
+        <figcaption><span>THE WAY FORWARD</span><span>COASTAL STUDY</span></figcaption>
+      </figure>
+    </section>
+    <section class="guide-section" id="guides" aria-labelledby="guide-title">
+      <p class="eyebrow"><span></span> STEP BY STEP</p>
+      <div class="section-head">
+        <div>
+          <h2 id="guide-title">Where are you today?</h2>
+          <p>Choose the guide that fits what you need right now.</p>
+        </div>
+        <p class="privacy-note"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg> No account or personal details needed</p>
+      </div>
+      <div class="cards" id="guide-list"></div>
+      <noscript><p>Turn on JavaScript to use the interactive guides. The links in the resources section still work.</p></noscript>
+      <section class="plan" id="plan" aria-labelledby="plan-title" hidden>
+        <div class="plan-head">
+          <div>
+            <p class="eyebrow" id="plan-eyebrow"></p>
+            <h3 id="plan-title" tabindex="-1"></h3>
+          </div>
+          <span class="count" id="progress" role="status"></span>
+        </div>
+        <fieldset>
+          <legend class="visually-hidden">Steps to check off</legend>
+          <div id="steps"></div>
+        </fieldset>
+        <div class="plan-footer">
+          <p>Checkmarks stay on this page and clear when you reload or close it.</p>
+          <div class="plan-actions">
+            <button type="button" class="button secondary" id="reset">Clear checkmarks</button>
+            <button type="button" class="button primary" id="print">Print this guide</button>
+          </div>
+        </div>
+      </section>
+    </section>
+    <section class="resources" id="resources" aria-labelledby="resources-title">
+      <div>
+        <p class="eyebrow"><span></span> WHEN YOU’RE READY</p>
+        <h2 id="resources-title">Find care resources</h2>
+        <p>Explore the directories and contact providers directly to confirm openings, cost, and coverage.</p>
+      </div>
+      <div class="resource-links">
+        <a href="https://harborpath.vercel.app/#/treatment"><span><strong>HarborPath treatment finder</strong><small>Browse options by location, payment, and services.</small></span><span aria-hidden="true">↗</span></a>
+        <a href="https://harborpath.vercel.app/#/tools"><span><strong>HarborPath care tools</strong><small>Explore the full platform’s tools and guides.</small></span><span aria-hidden="true">↗</span></a>
+        <a href="https://findtreatment.gov/"><span><strong>FindTreatment.gov</strong><small>Search SAMHSA’s U.S. treatment directory.</small></span><span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <strong>HarborPath</strong>
+    <p>Planning information only. Contact a qualified care provider for medical advice.</p>
+  </footer>
+</body>
+</html>

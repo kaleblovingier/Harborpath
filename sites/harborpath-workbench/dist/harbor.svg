@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <title>A winding path to the coast at sunrise</title>
+  <defs>
+    <pattern id="paper" width="13" height="17" patternUnits="userSpaceOnUse">
+      <path d="M2 2h1m7 3h.5M5 11h1m5 4h1M0 16h.5" fill="none" stroke="#183e34" stroke-opacity=".16" stroke-width="1"/>
+    </pattern>
+    <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse">
+      <path d="M-2 2l4-4m-2 11L9 0m-2 11l4-4" fill="none" stroke="#f4efe2" stroke-opacity=".2" stroke-width=".8"/>
+    </pattern>
+    <g id="sprig" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6">
+      <path d="M1 31C3 18 3 9 1 0m1 19C-1 13-5 10-8 8m11 6c4-5 8-8 12-9M2 25c5-4 8-6 13-6"/>
+    </g>
+    <g id="grass" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7">
+      <path d="M0 26C-1 17-4 11-12 4m13 22C4 14 3 7 1 0m2 26c4-8 9-11 16-14"/>
+    </g>
+  </defs>
+  <path fill="#eae1cb" d="M0 0h640v480H0z"/>
+  <path d="M0 134c59-6 92-15 151-5s94 9 124 3m238-53c35 0 84-12 127-7M0 97c23 2 57 0 74-5m431 69c46-4 98-6 135-1" fill="none" stroke="#b5a68a" stroke-width="1" opacity=".65"/>
+  <circle cx="418" cy="126" r="61" fill="#bc673e"/>
+  <path fill="#a5b297" d="M0 177c51 4 95 7 147 2s109 2 157-1 87 3 135 1 70-3 113-1l88-2v143H0z"/>
+  <path d="M300 181h68m17 0h53m10 0h47m10 0h46m-197 9h38m21 0h44m11 0h86m-259 11h62m24 0h88m12 0h47m-154 13h118m-198 9h40m27 0h70m41 0h73m-364 15h33m18 0h98m-122 15h70m25 0h106m18 0h31m-268 13h53m129 0h43" fill="none" stroke="#f4efe2" stroke-width="1.25" stroke-linecap="round" opacity=".75"/>
+  <path d="M0 193c54-8 85 1 119 11 25 8 41 10 66 12 39 4 57 22 91 32l-5 62L0 327z" fill="#6e876c"/>
+  <path d="M0 217c41-8 68-7 112 5 32 9 53 12 89 15 33 3 51 9 72 18l-57 53L0 351z" fill="#3b5d4c"/>
+  <path d="M640 199c-35-4-60 1-81 15-26 17-34 30-65 36-33 6-64 5-92 12-55 13-81 45-138 68l376 52z" fill="#70866c"/>
+  <path d="M640 232c-32-2-56 7-76 23-26 21-52 25-91 28-55 4-95 22-125 46l-14 65 306-25z" fill="#a5b297"/>
+  <path d="M0 271c77 18 130 28 180 17 49-12 70-32 108-33 35-1 70 14 101 31 35 19 63 43 106 48 38 5 102-6 145-18v164H0z" fill="#183e34"/>
+  <path d="M0 316c63 18 113 23 164 17 48-6 93-45 140-45 39 0 69 28 116 42 57 17 136 33 220 0v150H0z" fill="#315846"/>
+  <path d="M0 383c51-16 90-19 139-10 81 15 116-18 173-24 56-7 108 29 161 26 67-5 114-21 167-14v119H0z" fill="#183e34"/>
+  <path d="M0 383c51-16 90-19 139-10 81 15 116-18 173-24 56-7 108 29 161 26 67-5 114-21 167-14v119H0z" fill="url(#hatch)"/>
+  <path d="M264 480c20-29 70-50 110-64 41-14 78-29 74-47-5-23-62-30-109-43-43-12-64-25-60-38 3-12 27-22 54-22 20 0 33 3 49 10-17-5-35-6-49-5-20 2-35 7-36 16-1 10 21 19 51 26 63 16 145 23 150 56 5 32-43 54-85 77-19 11-29 21-36 34z" fill="#f4efe2"/>
+  <path d="M287 480c16-24 57-43 106-61 36-14 71-31 67-49-4-26-62-33-119-49-43-12-67-25-58-36" fill="none" stroke="#bc9e7b" stroke-width="1.25" opacity=".75"/>
+  <path d="M15 235c42-4 77 1 116 11 29 7 56 7 78 9m-204 81c63 14 115 18 165 12 38-5 58-19 83-28m-234 78c39-8 85-8 123 0 65 12 99 2 135-8m238-105c33-3 55-15 74-27m-94 125c31-2 68-13 100-16m-151 65c56-20 118-17 180-32" fill="none" stroke="#a5b297" stroke-width="1" opacity=".55"/>
+  <g color="#b6c2a0" opacity=".85">
+    <use href="#grass" x="76" y="411"/><use href="#sprig" x="119" y="430"/><use href="#grass" x="196" y="394"/>
+    <use href="#grass" x="534" y="422"/><use href="#sprig" x="569" y="397"/><use href="#grass" x="607" y="433"/>
+    <use href="#sprig" transform="translate(233 348) scale(.6)"/><use href="#grass" transform="translate(395 349) scale(.6)"/>
+    <use href="#sprig" transform="translate(51 309) scale(.55)"/><use href="#grass" transform="translate(134 301) scale(.45)"/>
+  </g>
+  <path d="M235 108q8-7 15 0 7-7 15 0m12-16q5-5 10 0 5-5 10 0" fill="none" stroke="#3b5d4c" stroke-width="1.8" stroke-linecap="round"/>
+  <path fill="url(#paper)" d="M0 0h640v480H0z"/>
+</svg>
