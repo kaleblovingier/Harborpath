@@ -171,13 +171,13 @@ function helpForSection() {
 
 // ---------------------------------------------------------------- Home
 /**
- * The three things a first-time visitor on a phone needs most, in the first
- * screen: emergency help, treatment near them, and someone to talk to.
+ * Keep emergency help, nearby treatment, and someone to talk to together
+ * before the longer search and discovery tools.
  */
 function quickHelp() {
   const samhsa = HOTLINES.substanceUse.find((line) => line.id === 'samhsa').call;
   return h('section', { class: 'quick-help', 'aria-labelledby': 'quick-help-title' },
-    h('h2', { id: 'quick-help-title', class: 'visually-hidden' }, t('home.quick.title', 'Get help now')),
+    h('h2', { id: 'quick-help-title' }, t('home.quick.title', 'Get help now')),
     h('ul', { class: 'quick-grid' },
       h('li', { class: 'quick-card quick-emergency' },
         h('h3', { class: 'quick-title' }, icon('alert'), t('common.emergency.title', 'Someone not breathing or won’t wake up?')),
@@ -187,8 +187,8 @@ function quickHelp() {
         })),
         h('p', { class: 'actions' },
           tel('911', [icon('phone'), t('common.call911', 'Call 911')], { class: 'btn btn-emergency' }),
-          h('a', { class: 'btn btn-secondary', href: '#/overdose' }, t('common.emergency.steps', 'Overdose response steps')),
-          tel('988', [icon('phone'), t('home.quick.988', 'Crisis line 988')], { class: 'btn btn-ghost' }),
+          h('a', { class: 'btn home-text-action', href: '#/overdose' }, t('common.emergency.steps', 'Overdose response steps')),
+          tel('988', [icon('phone'), t('home.quick.988', 'Crisis line 988')], { class: 'btn home-text-action' }),
         ),
       ),
       h('li', { class: 'quick-card' },
@@ -198,7 +198,7 @@ function quickHelp() {
           plain: 'See licensed places near you that help with drugs or alcohol, including places that give medicine.',
         })),
         h('p', { class: 'actions' },
-          h('a', { class: 'btn btn-primary', href: '#/treatment' }, icon('search'), t('home.quick.find.cta', 'Search near me'))),
+          h('a', { class: 'btn home-text-action', href: '#/treatment' }, t('home.quick.find.cta', 'Search near me'), icon('chevron'))),
       ),
       h('li', { class: 'quick-card' },
         h('h3', { class: 'quick-title' }, icon('message'), t('home.quick.talk.title', 'Talk to someone')),
@@ -207,8 +207,8 @@ function quickHelp() {
           plain: 'Call the free SAMHSA Helpline any time, day or night. It is private. You can talk in English or Spanish.',
         })),
         h('p', { class: 'actions' },
-          tel(samhsa.number, [icon('phone'), samhsa.label], { class: 'btn btn-primary' }),
-          h('a', { class: 'btn btn-ghost', href: '#/crisis' }, t('home.quick.talk.all', 'All support lines'))),
+          tel(samhsa.number, [icon('phone'), samhsa.label], { class: 'btn home-text-action' }),
+          h('a', { class: 'btn home-text-action', href: '#/crisis' }, t('home.quick.talk.all', 'All support lines'))),
       ),
     ),
   );
@@ -217,12 +217,22 @@ function quickHelp() {
 export function homeView() {
   const go = (href) => () => location.replace(href);
   return h('div', { class: 'view view-home' },
-    h('section', { class: 'hero', 'aria-labelledby': 'page-title' },
-      h('h1', { id: 'page-title', tabindex: '-1' },
-        t('home.hero.fit', 'Find treatment that fits your needs, your insurance, and your life.')),
+    h('section', { class: 'hero home-hero', 'aria-labelledby': 'page-title' },
+      h('div', { class: 'home-hero-copy' },
+        h('h1', { id: 'page-title', tabindex: '-1' },
+          t('home.hero.heading', 'Find care that'), ' ',
+          h('em', null, t('home.hero.emphasis', 'fits your life.'))),
+        h('p', { class: 'lede' },
+          t('home.hero.lede', {
+            text: 'Search licensed addiction treatment, clinical care navigation, medication guides, harm reduction tools, and low-cost health care near you. Free and private, with no sign-up, ads, or tracking.',
+            plain: 'Find help for drug or alcohol use, ways to stay safer, and low-cost health care near you. It is free and private. No sign-up, no ads, no tracking.',
+          })),
+        h('div', { class: 'home-hero-links' },
+          h('a', { class: 'btn btn-primary', href: '#/treatment' }, t('app.nav.treatment', 'Find treatment'), icon('chevron')),
+          h('a', { class: 'btn home-text-action', href: '#/tools' }, t('app.nav.tools', 'Care tools')))),
+      h('div', { class: 'home-hero-art' },
+        h('img', { src: '/harbor.svg', width: 640, height: 480, alt: '', fetchpriority: 'high' })),
     ),
-    // Emergency, treatment, and someone to talk to come first so they fit on
-    // the first screen of a small phone; the longer introduction follows.
     quickHelp(),
     section('start-here', t('home.start.title', 'Start with what you need today'),
       h('div', { class: 'path-grid' },
@@ -242,19 +252,14 @@ export function homeView() {
         h('a', { href: '#/workspace' }, t('tools.item.workspace.title', 'Care team workspace')), ' · ',
         h('a', { href: '#/tools' }, t('home.start.browse', 'Browse all care tools and guides')))),
     h('section', { class: 'hero-intro', 'aria-labelledby': 'hero-search-title' },
-      h('h2', { id: 'hero-search-title', class: 'visually-hidden' }, t('home.search.title', 'Search by location')),
-      h('p', { class: 'lede' },
-        t('home.hero.lede', {
-          text: 'Search licensed addiction treatment, clinical care navigation, medication guides, harm reduction tools, and low-cost health care near you. Free and private, with no sign-up, ads, or tracking.',
-          plain: 'Find help for drug or alcohol use, ways to stay safer, and low-cost health care near you. It is free and private. No sign-up, no ads, no tracking.',
-        })),
+      h('h2', { id: 'hero-search-title' }, t('home.search.title', 'Search by location')),
       h('div', { class: 'card hero-search' },
         locationPicker(),
         h('div', { class: 'hero-actions' },
           h('button', { type: 'button', class: 'btn btn-primary', onclick: go('#/match') }, icon('search'), t('home.cta.find', 'Find treatment')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=virtual') }, icon('globe'), t('home.cta.online', 'Explore online treatment')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=affordable') }, icon('heart'), t('home.cta.affordable', 'Find affordable care')),
-          h('button', { type: 'button', class: 'btn btn-emergency', onclick: go('#/crisis') }, icon('phone'), t('home.cta.helpNow', 'Get help now')),
+          h('button', { type: 'button', class: 'btn home-text-action', onclick: go('#/match?start=virtual') }, t('home.cta.online', 'Explore online treatment')),
+          h('button', { type: 'button', class: 'btn home-text-action', onclick: go('#/match?start=affordable') }, t('home.cta.affordable', 'Find affordable care')),
+          h('button', { type: 'button', class: 'btn home-text-action home-urgent-action', onclick: go('#/crisis') }, t('home.cta.helpNow', 'Get help now')),
         ),
         h('p', { class: 'hero-more' },
           h('a', { href: '#/treatment' }, t('home.cta.directory', 'Search the full treatment directory')), ' · ',
