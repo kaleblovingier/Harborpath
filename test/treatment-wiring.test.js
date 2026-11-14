@@ -111,7 +111,7 @@ test('treatment handoff and coverage chips re-rank cards in RAM without another 
   }
 });
 
-test('provider search expands a sparse area and renders HRSA / IHS safety-net cards', async () => {
+test('provider search expands a sparse area and renders additional safety-net cards', async () => {
   const restore = installDom();
   const previous = { providers: api.providers, healthCenters: api.healthCenters, summary: api.nearbySummary, fetch: globalThis.fetch };
   const requests = [];
@@ -131,10 +131,12 @@ test('provider search expands a sparse area and renders HRSA / IHS safety-net ca
     state.radius = 25;
     finder = providerFinder({ initialKind: 'va' });
     await new Promise((resolve) => setImmediate(resolve));
-    assert.deepEqual(requests, [['va', 25], ['va', 250], ['hrsa', 250], ['ihs', 250]]);
+    assert.deepEqual(requests, [['va', 25], ['va', 250], ['hrsa', 250], ['ihs', 250], ['rhc', 250], ['er', 250]]);
     assert.equal(state.radius, 250);
     assert.match(finder.querySelector('.provider-equity-slot').textContent, /HRSA community care/);
     assert.match(finder.querySelector('.provider-equity-slot').textContent, /IHS care/);
+    assert.match(finder.querySelector('.provider-equity-slot').textContent, /RHC care/);
+    assert.match(finder.querySelector('.provider-equity-slot').textContent, /ER care/);
     assert.match(finder.querySelector('.provider-equity-slot').textContent, /eligibility requirements/);
   } finally {
     finder?._cleanupFinder(); state.location = null; state.radius = 25;
@@ -147,7 +149,7 @@ test('all island territories widen immediately; sparse searches widen once and f
   for (const territory of ['PR', 'GU', 'VI', 'AS', 'MP']) {
     const policy = buildTerritoryAndRuralFallback({ location: { state: territory }, radius: 10 });
     assert.equal(policy.radius, 250);
-    assert.deepEqual(policy.networks, ['hrsa', 'va', 'ihs']);
+    assert.deepEqual(policy.networks, ['hrsa', 'va', 'ihs', 'rhc', 'er']);
   }
   assert.equal(buildTerritoryAndRuralFallback({ location: { state: 'WA' }, radius: 25, resultCount: 4 }).active, false);
   const radii = [];
@@ -157,12 +159,18 @@ test('all island territories widen immediately; sparse searches widen once and f
     search: async (radius) => { radii.push(radius); return { total: radius === 25 ? 1 : 5, results: [] }; },
     api: {
       healthCenters: async ({ radius }) => { networks.push(['hrsa', radius]); return { results: [{ id: 'hc' }] }; },
-      providers: async ({ type, radius }) => { networks.push([type, radius]); if (type === 'ihs') throw new Error('Unavailable'); return { results: [{ id: 'va' }] }; },
+      providers: async ({ type, radius }) => {
+        networks.push([type, radius]);
+        if (type === 'ihs') throw new Error('Unavailable');
+        return { results: [{ id: type }] };
+      },
     },
   });
   assert.deepEqual(radii, [25, 250]);
-  assert.deepEqual(networks, [['hrsa', 250], ['va', 250], ['ihs', 250]]);
-  assert.deepEqual(result.safetyNetResults.map((f) => f.kind), ['health-center', 'provider']);
+  assert.deepEqual(networks, [['hrsa', 250], ['va', 250], ['ihs', 250], ['rhc', 250], ['er', 250]]);
+  assert.deepEqual(result.safetyNetResults.map((f) => [f.kind, f.providerType]), [
+    ['health-center', 'hrsa'], ['provider', 'va'], ['provider', 'rhc'], ['provider', 'er'],
+  ]);
   assert.deepEqual(result.unavailableNetworks, ['ihs']);
   assert.equal(result.data.total, 5);
   assert.ok(!JSON.stringify(result.fallback).includes('lat'));

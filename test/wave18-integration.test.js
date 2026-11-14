@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { LAZY_LOADERS, ROUTE_TITLES, preloadRoute } from '../public/js/app.js';
 import { TOOL_CATALOG, filterCareTools } from '../public/js/views/tools.js';
+import { installMockDom } from './fixtures/mockDomHelper.js';
 import {
   getDualDiagnosisState,
   setDualDiagnosisState,
@@ -73,9 +74,12 @@ test('Wave 18: Care Tools Catalog & Search Filtering Integration', () => {
   assert.ok(esTools['tools.item.dual-diagnosis.description']);
 });
 
-test('Wave 18: Guides Cross-Module Navigation Links', () => {
-  const guidesContent = readFileSync(new URL('../public/js/views/guides.js', import.meta.url), 'utf8');
-  assert.match(guidesContent, /#\/dual-diagnosis/, 'guides.js must provide direct navigation link to #/dual-diagnosis');
+test('Wave 18: Recovery and family support links directly to the dual diagnosis guide', async () => {
+  const supportView = await preloadRoute('support');
+  const restore = installMockDom();
+  try {
+    assert.ok(supportView().querySelectorAll('a').some(link => link.getAttribute('href') === '#/dual-diagnosis'));
+  } finally { restore(); }
 });
 
 test('Wave 18: Service Worker Manifest & Elective Cache Verification', () => {
