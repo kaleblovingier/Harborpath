@@ -1660,6 +1660,8 @@ export const es = {
   'app.viewLoadFailed': 'Esta página no se cargó. Revise su conexión e intente de nuevo. La ayuda de abajo funciona sin señal.',
 
   'home.hero.title': 'Encuentre atención y manténgase más seguro/a, en sus propios términos.',
+  'home.hero.heading': 'Encuentre atención que',
+  'home.hero.emphasis': 'se adapte a su vida.',
   'home.hero.lede': 'Busque tratamiento con licencia para adicciones, navegación clínica de atención, guías de medicamentos, herramientas de reducción de daños y atención médica de bajo costo cerca de usted. Gratis y privado, sin registro, anuncios ni rastreo.',
   'home.cta.treatment': 'Tratamiento cerca de mí',
   'home.cta.navigator': 'Navegador de atención (ASAM)',

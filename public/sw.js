@@ -11,7 +11,7 @@ const CACHE_PREFIX = 'harborpath-offline';
 // any of them changes this name, so the new copy is saved as a whole beside the
 // old one and swapped in at activation. Kept current by `npm run stamp:sw`
 // (scripts/build-check.mjs fails while it is stale).
-const BUILD = '279c7394b046';
+const BUILD = '397f361305e5';
 const CACHE_NAME = `${CACHE_PREFIX}-${BUILD}`;
 // Shell requests wait this long for the network before a saved copy is used,
 // so overdose steps open promptly on a weak or captive connection.
@@ -30,9 +30,12 @@ const APP_SHELL = [
   '/',
   '/index.html',
   '/styles.css',
+  '/css/home.css',
   '/css/print.css',
+  '/css/print-handouts.css',
   '/icons.svg',
   '/favicon.svg',
+  '/harbor.svg',
   '/manifest.webmanifest',
   '/js/app.js',
   '/js/api.js',
@@ -40,6 +43,7 @@ const APP_SHELL = [
   '/js/dom.js',
   '/js/i18n.js',
   '/js/offline.js',
+  '/js/quickExitRegistry.js',
   '/js/regionsApi.js',
   '/js/state.js',
   '/js/components/facilityCard.js',
@@ -54,6 +58,8 @@ const APP_SHELL = [
   '/js/components/stateResources.js',
   '/js/components/sensoryMode.js',
   '/js/components/emergencyDrawer.js',
+  '/js/components/equityFallback.js',
+  '/js/components/printHandout.js',
   '/js/components/stateLegalCard.js',
   '/js/components/mutualAidFinder.js',
   '/js/components/sessionBookmarks.js',
@@ -63,9 +69,15 @@ const APP_SHELL = [
   '/js/views/core.js',
   '/js/views/treatment.js',
   '/js/views/guides.js',
+  '/js/views/overdose.js',
+  '/js/views/overdoseResilience.js',
+  '/js/views/support.js',
+  '/js/views/rightsAndSafetyPlan.js',
   '/js/views/choosingCare.js',
   '/js/views/states.js',
   '/js/views/health.js',
+  '/js/views/navigatorHandoff.js',
+  '/js/views/territoryEquity.js',
   '/js/views/insuranceHelpers.js',
   '/js/views/insuranceWidget.js',
   '/js/locales/es.js',
@@ -94,6 +106,9 @@ const ELECTIVE_SHELL = [
   '/js/views/harmReduction.js',
   '/js/views/populationHelpers.js',
   '/js/views/plan.js',
+  '/js/views/clinicalScores.js',
+  '/js/views/withdrawalPlanner.js',
+  '/js/views/pharmacologyEngine.js',
   '/js/views/assessment.js',
   '/js/views/readiness.js',
   '/js/views/match.js',
