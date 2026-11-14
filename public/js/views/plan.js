@@ -9,6 +9,15 @@ import { printClinicalHandout } from '../components/printHandout.js';
 
 const L = (en, es) => getLang() === 'es' ? es : en;
 
+function treatmentHandoffLink(codes, iconName, label) {
+  return h('a', {
+    class: 'btn btn-small btn-secondary',
+    href: '#/treatment',
+    'data-navigator-handoff': true,
+    onclick: () => setNavigatorHandoffState({ codes }),
+  }, icon(iconName), label);
+}
+
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 registerQuickExitHandler(resetPlanState);
 
@@ -1376,10 +1385,8 @@ export function planView() {
             p(strong(s.summary)),
             ul(s.details),
             s.relatedCodes.length > 0 && h('p', { class: 'actions' },
-              h('a', {
-                class: 'btn btn-small btn-secondary',
-                href: `#/treatment?codes=${s.relatedCodes.join(',')}`,
-              }, icon('search'), `Search facilities (${s.relatedCodes.join(', ')})`),
+              treatmentHandoffLink(s.relatedCodes, 'search',
+                L(`Search facilities (${s.relatedCodes.join(', ')})`, `Buscar centros (${s.relatedCodes.join(', ')})`)),
             ),
           ),
         )),
@@ -1401,11 +1408,8 @@ export function planView() {
           p(strong('Best for: '), m.bestFor),
           p(strong('What it looks like in real life: '), m.whatItLooksLike),
           h('p', { class: 'actions' },
-            h('a', {
-              class: 'btn btn-small btn-secondary',
-              href: '#/treatment',
-              onclick: () => setNavigatorHandoffState({ codes: [m.samhsaCode] }),
-            }, icon('compass'), `Find ${m.code} programs near me`),
+            treatmentHandoffLink([m.samhsaCode], 'compass',
+              L(`Find ${m.code} programs near me`, `Buscar programas de ${m.code} cerca de mí`)),
           ),
         )),
       ),

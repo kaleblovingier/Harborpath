@@ -319,7 +319,8 @@ describe('navigator.js — 4 Priority Clinical Pathways & ASAM Integration', () 
       assert.ok(VALID_SAMHSA_CODES.has(c), `Expected ${c} to be a valid SAMHSA code`);
     }
     assert.match(transition.physiologicalWhy, /tolerance|incarceration|fentanyl/i);
-    assert.ok(transition.actionSteps.some((s) => /1306\.07\(b\)|72-Hour Rule/i.test(s)));
+    assert.ok(transition.actionSteps.some((s) => /contact a prescriber, OTP, or treatment program promptly/i.test(s)));
+    assert.ok(transition.actionSteps.some((s) => /cannot guarantee same-day medication/i.test(s)));
     assert.ok(transition.actionSteps.some((s) => /Never Use Alone|SafeSpot/i.test(s)));
     assert.ok(transition.actionSteps.some((s) => /CJ|PEER|Medicaid/i.test(s)));
     assert.equal(transition.searchHref, `#/treatment?codes=${transition.recommendedCodes.join(',')}`);
@@ -389,8 +390,8 @@ describe('navigator.js — 4 Priority Clinical Pathways & ASAM Integration', () 
     });
     assert.equal(severeOpioidCalc.score, 22);
     assert.equal(severeOpioidCalc.navWithdrawalRisk, 'severe');
-    assert.match(severeOpioidCalc.bupGuidance, /xylazine|clonidine|tizanidine/i);
-    assert.match(severeOpioidCalc.bupGuidance, /1306\.07\(b\)/);
+    assert.match(severeOpioidCalc.bupGuidance, /seek urgent medical help/i);
+    assert.match(severeOpioidCalc.bupGuidance, /not a validated withdrawal scale or treatment decision/i);
 
     const alcCalc = scoreAlcoholSedativeRisk({
       dailyHeavyUse: true,

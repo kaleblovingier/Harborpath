@@ -22,6 +22,8 @@ import { printClinicalHandout } from '../components/printHandout.js';
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetNavigatorState);
 
+const tr = (en, es) => getLang() === 'es' ? es : en;
+
 // Valid SAMHSA filter codes for Dimension 6 validation and chip display
 const PAYMENT_OPTIONS = [
   { code: '', label: 'Any cost or insurance option' },

@@ -173,18 +173,18 @@ describe('evaluateAsamCare() — ASAM Criteria (4th Edition) Clinical Engine', (
   });
 });
 
-describe('scoreOpioidWithdrawal() — Validated SOWS / COWS-Informed Calculator', () => {
-  it('scores none/minimal withdrawal (0–4) and warns against premature sublingual buprenorphine initiation while explaining micro-induction & methadone', () => {
+describe('scoreOpioidWithdrawal() — opioid symptom self-check', () => {
+  it('scores none/minimal withdrawal (0–4) and warns that medication timing needs a clinician', () => {
     const zero = scoreOpioidWithdrawal({});
     assert.equal(zero.score, 0);
     assert.equal(zero.band, 'none_minimal');
     assert.equal(zero.navWithdrawalRisk, 'none');
     assert.match(zero.bupGuidance, /precipitated withdrawal/i);
-    assert.match(zero.bupGuidance, /Bernese|#\/medications/i);
-    assert.match(zero.bupGuidance, /methadone/i);
+    assert.match(zero.bupGuidance, /not a validated withdrawal scale/i);
+    assert.match(zero.bupGuidance, /ask a clinician/i);
   });
 
-  it('scores mild withdrawal (5–12) and highlights fentanyl lipophilicity and micro-induction options', () => {
+  it('scores mild withdrawal (5–12) without selecting a medication dose or start time', () => {
     const mild = scoreOpioidWithdrawal({
       restlessness: 2,
       sweating_chills: 2,
@@ -195,8 +195,8 @@ describe('scoreOpioidWithdrawal() — Validated SOWS / COWS-Informed Calculator'
     assert.equal(mild.score, 9);
     assert.equal(mild.band, 'mild');
     assert.equal(mild.navWithdrawalRisk, 'mild');
-    assert.match(mild.bupGuidance, /fentanyl/i);
-    assert.match(mild.bupGuidance, /Bernese|#\/medications/i);
+    assert.match(mild.bupGuidance, /no score or fixed wait guarantees/i);
+    assert.match(mild.bupGuidance, /does not choose a dose or start time/i);
   });
 
   it('scores moderate (13–20), moderately_severe (21–24), and severe (>= 25) withdrawal accurately and supports boolean inputs', () => {
@@ -239,7 +239,8 @@ describe('scoreOpioidWithdrawal() — Validated SOWS / COWS-Informed Calculator'
     assert.equal(severe.score, 32);
     assert.equal(severe.band, 'severe');
     assert.equal(severe.navWithdrawalRisk, 'severe');
-    assert.match(severe.bupGuidance, /1306\.07\(b\)|72-Hour Rule/i);
+    assert.match(severe.bupGuidance, /seek urgent medical care/i);
+    assert.match(severe.bupGuidance, /clinician must decide/i);
   });
 });
 

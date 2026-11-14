@@ -25,13 +25,14 @@ function finderLink(codes, en, es) {
 
 export function supportView() {
   return h('div', { class: 'view view-prose view-support' },
-    pageHeader(tr('Recovery & family support', 'Recuperación y apoyo familiar'),
+    pageHeader(tr('Recovery & family support', 'Apoyo para la recuperación y la familia'),
       tr('Choose support that respects your goals, language, culture, and prescribed medications.', 'Elija apoyo que respete sus metas, idioma, cultura y medicamentos recetados.')),
     section('peer', tr('Peer support & meetings', 'Apoyo entre pares y reuniones'),
       p(tr('You can be in recovery while taking prescribed methadone or buprenorphine. Group practices vary. Ask about accessibility, Spanish meetings, costs, and medication policies before joining. Peer support complements clinical care.', 'Puede estar en recuperación tomando metadona o buprenorfina recetadas. Las prácticas de los grupos varían. Pregunte por accesibilidad, reuniones en español, costos y políticas de medicamentos. El apoyo entre pares complementa la atención clínica.')),
       mutualAidFinder(),
       resourceList(PEER_SUPPORT_DIRECTORY.map(({ name, href, en, es }) => ({ name, href, desc: tr(en, es) }))),
       finderLink(['PEER'], 'Find programs with peer support', 'Buscar programas con apoyo entre pares'),
+      p(h('a', { href: '#/dual-diagnosis' }, tr('Explore dual diagnosis and integrated mental health', 'Explorar el diagnóstico dual y la atención integrada de salud mental'))),
     ),
     section('family', tr('For family & friends', 'Para familiares y amistades'),
       resourceList([

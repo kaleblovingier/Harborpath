@@ -66,6 +66,7 @@ export const MEDICATIONS = [
     id: 'buprenorphine',
     category: 'oud',
     name: 'Buprenorphine',
+    searchTerms: ['Bernese Method', 'micro-induction', 'microinducción'],
     brands: [
       'Suboxone (buprenorphine/naloxone film or tablet)',
       'Zubsolv (buprenorphine/naloxone sublingual tablet)',
@@ -407,8 +408,8 @@ export const BERNESE_EXAMPLE_SCHEDULE = [];
 
 export const REVERSAL_COMPARISON = [
   {
-    product: 'Naloxone nasal spray (OTC products vary)',
-    productEs: 'Naloxona en aerosol nasal (los productos de venta libre varían)',
+    product: 'Naloxone nasal spray (RiVive 3 mg or Narcan 4 mg — OTC)',
+    productEs: 'Naloxona en aerosol nasal (RiVive 3 mg o Narcan 4 mg, de venta libre)',
     onset: 'May work within minutes',
     onsetEs: 'Puede hacer efecto en minutos',
     duration: 'Temporary; effects may wear off before the opioid',
@@ -737,10 +738,7 @@ export const WASHOUT_GUIDELINES = {
   },
 };
 
-/**
- * Calculates evidence-based washout duration, required clinical waiting interval,
- * COWS withdrawal thresholds, and precipitated withdrawal prevention guidance.
- */
+/** Looks up transition guidance. A null minimum means the tool cannot determine timing. */
 export function calculateWashout(arg1, arg2) {
   let fromRaw, toRaw;
   if (typeof arg1 === 'object' && arg1 !== null) {
@@ -918,6 +916,7 @@ export function filterMedications({ category = 'all', query = '' } = {}) {
     if (!q) return true;
     const haystack = [
       med.name,
+      ...(med.searchTerms || []),
       ...(med.brands || []),
       med.forms,
       med.summary,
@@ -1240,7 +1239,7 @@ export function medicationsView({ query } = {}) {
         p(tr('The opioid-free interval depends on the opioid, formulation, and individual circumstances. No fixed interval in this tool can confirm that starting oral or extended-release naltrexone is safe. Transitions from methadone or buprenorphine may require longer planning.', 'El período sin opioides depende del opioide, la formulación y las circunstancias individuales. Ningún intervalo fijo de esta herramienta confirma que sea seguro iniciar naltrexona oral o de liberación prolongada. Las transiciones desde metadona o buprenorfina pueden requerir más planificación.')),
         h('div', { class: 'callout callout-info' },
           h('p', { class: 'callout-title' }, icon('shield'), tr('Before starting', 'Antes de iniciar')),
-          p(tr('A urine test or naloxone challenge cannot guarantee that you are ready. Do not stop or change prescribed treatment to follow this tool; ask a clinician to review product labeling and your situation.', 'Una prueba de orina o de naloxona no garantiza que esté listo. No suspenda ni cambie un tratamiento recetado para seguir esta herramienta; pida a un profesional que revise la etiqueta del producto y su situación.')),
+          p(tr('A clinician may consider a naloxone challenge test. A negative urine test or a tolerated challenge cannot confirm that it is safe to start. Ask a clinician to review the product labeling and your situation before changing prescribed treatment.', 'Un profesional puede considerar una prueba de desafío con naloxona. Un análisis de orina negativo o una prueba tolerada no confirman que sea seguro iniciar. Pida a un profesional que revise la etiqueta del producto y su situación antes de cambiar un tratamiento recetado.')),
         ),
         fine(ext('https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/021897s057lbl.pdf', tr('FDA Vivitrol prescribing information', 'Información de prescripción de Vivitrol de la FDA'))),
       ),

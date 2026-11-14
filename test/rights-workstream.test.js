@@ -8,6 +8,7 @@ import { executeGlobalQuickExit } from '../public/js/quickExitRegistry.js';
 import { evaluateFacilityCoverage, buildVerificationScript, setInsuranceState, getInsuranceState } from '../public/js/views/insuranceHelpers.js';
 import { insuranceSelectorWidget } from '../public/js/views/insuranceWidget.js';
 import { getNavigatorHandoffState, resetNavigatorState } from '../public/js/views/navigatorHandoff.js';
+import { prepareRouteNavigation, routeViewOptions } from '../public/js/app.js';
 
 function installDom() {
   const restore = installMockDom();
@@ -59,18 +60,29 @@ test('safety goals ignore URL input; therapy and return-to-use selections reset 
   } finally { view?._cleanup(); restore(); }
 });
 
-test('counseling program selections use a RAM handoff with no clinical URL query', () => {
+test('intake and counseling program selections reach the finder in RAM without a URL query', () => {
   const restore = installDom();
   let view;
   try {
     resetNavigatorState();
     view = planView();
-    const link = view.querySelectorAll('a').find((item) => item.textContent.includes('Find CBT programs'));
-    assert.equal(link.getAttribute('href'), '#/treatment');
-    link.click();
-    assert.deepEqual(getNavigatorHandoffState().codes, ['CBT']);
+    const links = view.querySelectorAll('a');
+    for (const [label, codes] of [
+      ['Search facilities (DT, WI, NOE)', ['DT', 'WI', 'NOE']],
+      ['Find CBT programs', ['CBT']],
+    ]) {
+      const link = links.find(item => item.textContent.includes(label));
+      assert.ok(link, `Could not find ${label}`);
+      assert.equal(link.getAttribute('href'), '#/treatment');
+      link.click();
+      assert.deepEqual(getNavigatorHandoffState().codes, codes);
+      assert.equal(prepareRouteNavigation(link.getAttribute('href'), {
+        navigatorHandoff: link.hasAttribute('data-navigator-handoff'),
+      }), '#/treatment');
+      assert.deepEqual(routeViewOptions('treatment', new URLSearchParams()).handoff?.codes, codes);
+    }
     assert.ok(view.querySelectorAll('a').every((item) => !String(item.getAttribute('href')).startsWith('#/treatment?')));
-  } finally { view?._cleanup(); resetNavigatorState(); restore(); }
+  } finally { prepareRouteNavigation('#/'); view?._cleanup(); resetNavigatorState(); restore(); }
 });
 
 test('rights guide and exported safety plan support Spanish with qualified CAPTA and Part 2 protections', () => {

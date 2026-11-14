@@ -73,14 +73,15 @@ describe('MEDICATIONS clinical data & schema', () => {
     assert.ok(bup);
     assert.ok(bup.brands.some((b) => b.includes('Sublocade')));
     assert.ok(bup.brands.some((b) => b.includes('Brixadi')));
-    assert.match(bup.howToStart, /Bernese Method/i);
+    assert.match(bup.howToStart, /A clinician may discuss .* a low-dose approach/);
+    assert.match(bup.howToStart, /not a dosing or start-time guide/);
     assert.match(bup.access, /X-waiver/i);
 
     const methadone = MEDICATIONS.find((m) => m.id === 'methadone');
     assert.ok(methadone);
     assert.deepEqual(methadone.samhsaCodes, ['OTP', 'MU']);
-    assert.match(methadone.access, /42 CFR Part 8/i);
-    assert.ok(methadone.clinicalPearls.some((p) => /QTc/i.test(p)));
+    assert.match(methadone.access, /Part 8 rule allows individualized OTP decisions/i);
+    assert.ok(methadone.clinicalPearls.some((p) => /heart rhythm/i.test(p)));
 
     const vivitrol = MEDICATIONS.find((m) => m.id === 'xr-naltrexone');
     assert.ok(vivitrol);
@@ -94,7 +95,8 @@ describe('MEDICATIONS clinical data & schema', () => {
     const reversal = MEDICATIONS.find((m) => m.id === 'naloxone-nalmefene');
     assert.ok(reversal);
     assert.ok(reversal.samhsaCodes.includes('NOE'));
-    assert.ok(reversal.clinicalPearls.some((p) => /4 mg/i.test(p) && /nalmefene/i.test(p)));
+    assert.match(reversal.mechanism, /Nalmefene lasts longer/);
+    assert.match(reversal.howToStart, /call 911.*Follow the product label for repeat doses/);
     assert.ok(reversal.clinicalPearls.some((p) => /xylazine/i.test(p)));
 
     const stimulant = MEDICATIONS.find((m) => m.id === 'stimulant-care');
@@ -167,8 +169,9 @@ describe('INTERACTIONS clinical data & filterInteractions()', () => {
     assert.equal(oud.length, 3);
     const aud = filterMedications({ category: 'aud' });
     assert.equal(aud.length, 4);
-    const bernese = filterMedications({ query: 'Bernese' });
-    assert.ok(bernese.some((m) => m.id === 'buprenorphine'));
+    for (const query of ['Bernese', 'micro-induction', 'microinducción']) {
+      assert.ok(filterMedications({ query }).some((m) => m.id === 'buprenorphine'), query);
+    }
   });
 });
 
