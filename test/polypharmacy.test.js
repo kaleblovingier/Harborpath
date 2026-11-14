@@ -4,7 +4,6 @@ import {
   INTERACTIONS,
   REGIMEN_AGENTS,
   BERNESE_EXAMPLE_SCHEDULE,
-  WASHOUT_GUIDELINES,
   calculateWashout,
   evaluateRegimenSafety,
   scoreRespiratoryRisk,
@@ -96,89 +95,36 @@ describe('MOUD Drug-Drug & Polypharmacy Interactions', () => {
 });
 
 describe('Washout Calculations & Clearance Intervals', () => {
-  it('validates WASHOUT_GUIDELINES structure and authoritative clinical thresholds', () => {
-    assert.ok(WASHOUT_GUIDELINES.naltrexone);
-    assert.ok(WASHOUT_GUIDELINES.buprenorphine_traditional);
-    assert.ok(WASHOUT_GUIDELINES.alcohol_after_disulfiram);
-    assert.ok(WASHOUT_GUIDELINES.opioid_after_naltrexone);
-
-    // Naltrexone guidelines
-    const naltSources = WASHOUT_GUIDELINES.naltrexone.sources;
-    assert.equal(naltSources.short_acting_opioid.minHours, 168);
-    assert.equal(naltSources.fentanyl.minHours, 240);
-    assert.equal(naltSources.methadone.minHours, 240);
-    assert.equal(naltSources.buprenorphine.minHours, 168);
-
-    // Traditional buprenorphine guidelines
-    const bupSources = WASHOUT_GUIDELINES.buprenorphine_traditional.sources;
-    assert.equal(bupSources.short_acting_opioid.minHours, 12);
-    assert.equal(bupSources.short_acting_opioid.cowsThreshold, 8);
-    assert.equal(bupSources.methadone.minHours, 36);
-    assert.equal(bupSources.methadone.cowsThreshold, 12);
-    assert.equal(bupSources.fentanyl.minHours, 48);
-    assert.equal(bupSources.fentanyl.alternativeStrategy, 'low_dose_micro_induction');
-
-    // Disulfiram to alcohol
-    const disulfSources = WASHOUT_GUIDELINES.alcohol_after_disulfiram.sources;
-    assert.equal(disulfSources.disulfiram.minHours, 336);
-    assert.equal(disulfSources.metronidazole.minHours, 72);
-
-    // Opioids after naltrexone
-    const opSources = WASHOUT_GUIDELINES.opioid_after_naltrexone.sources;
-    assert.equal(opSources.oral_naltrexone.minHours, 72);
-    assert.equal(opSources.injectable_naltrexone.minHours, 672);
+  it('returns naltrexone transition guidance without a self-clearance interval', () => {
+    for (const [source, target] of [
+      ['heroin', 'naltrexone'],
+      ['street fentanyl', 'vivitrol'],
+      ['methadone', 'oral naltrexone'],
+      ['buprenorphine', 'naltrexone'],
+    ]) {
+      const transition = calculateWashout({ currentSubstance: source, targetMedication: target });
+      assert.equal(transition.requiresWashout, true, source);
+      assert.equal(transition.opioidFreeRequired, true, source);
+      assert.equal(transition.minimumHours, null, source);
+      assert.equal(transition.cowsThreshold, null, source);
+      assert.match(transition.clinicalGuidance, /a clinician must assess/i, source);
+    }
   });
 
-  it('calculates naltrexone washout requirements across short-acting, fentanyl, and methadone sources', () => {
-    // Short-acting opioid (heroin / oxycodone) -> Naltrexone
-    const shortToNalt = calculateWashout({ currentSubstance: 'heroin', targetMedication: 'naltrexone' });
-    assert.equal(shortToNalt.requiresWashout, true);
-    assert.equal(shortToNalt.minimumHours, 168);
-    assert.equal(shortToNalt.recommendedDays, '7–10 days');
-    assert.equal(shortToNalt.opioidFreeRequired, true);
-    assert.match(shortToNalt.clinicalGuidance, /naloxone challenge/i);
-
-    // Fentanyl -> Vivitrol (extended lipophilic clearance)
-    const fentToVivitrol = calculateWashout('street fentanyl', 'vivitrol');
-    assert.equal(fentToVivitrol.requiresWashout, true);
-    assert.equal(fentToVivitrol.minimumHours, 240);
-    assert.equal(fentToVivitrol.recommendedDays, '10–14+ days');
-    assert.match(fentToVivitrol.clinicalGuidance, /lipophilic/i);
-
-    // Methadone -> Naltrexone (long terminal elimination half-life)
-    const methToNalt = calculateWashout('methadone', 'oral naltrexone');
-    assert.equal(methToNalt.requiresWashout, true);
-    assert.equal(methToNalt.minimumHours, 240);
-    assert.equal(methToNalt.recommendedDays, '10–14+ days');
-    assert.match(methToNalt.clinicalGuidance, /half-life/i);
-
-    // Buprenorphine -> Naltrexone (tight binding affinity)
-    const bupToNalt = calculateWashout('buprenorphine', 'naltrexone');
-    assert.equal(bupToNalt.requiresWashout, true);
-    assert.equal(bupToNalt.minimumHours, 168);
-  });
-
-  it('calculates traditional buprenorphine initiation waiting times and COWS thresholds', () => {
-    // Short-acting opioid -> Buprenorphine (12-24h wait, COWS >= 8)
-    const shortToBup = calculateWashout({ currentSubstance: 'oxycodone', targetMedication: 'buprenorphine' });
-    assert.equal(shortToBup.requiresWashout, true);
-    assert.equal(shortToBup.minimumHours, 12);
-    assert.equal(shortToBup.cowsThreshold, 8);
-    assert.equal(shortToBup.requiresWithdrawal, true);
-
-    // Methadone -> Buprenorphine (36-72h wait, COWS >= 12, <= 30mg taper)
-    const methToBup = calculateWashout('methadone', 'suboxone');
-    assert.equal(methToBup.requiresWashout, true);
-    assert.equal(methToBup.minimumHours, 36);
-    assert.equal(methToBup.cowsThreshold, 12);
-    assert.match(methToBup.clinicalGuidance, /30 mg/);
-
-    // Fentanyl -> Traditional Buprenorphine (48-72h wait, highlights Bernese alternative)
-    const fentToBup = calculateWashout('fentanyl', 'buprenorphine');
-    assert.equal(fentToBup.requiresWashout, true);
-    assert.equal(fentToBup.minimumHours, 48);
-    assert.equal(fentToBup.alternativeStrategy, 'low_dose_micro_induction');
-    assert.match(fentToBup.clinicalGuidance, /Bernese Method/i);
+  it('requires clinician assessment for a standard buprenorphine start', () => {
+    for (const [source, target] of [
+      ['oxycodone', 'buprenorphine'],
+      ['methadone', 'suboxone'],
+      ['fentanyl', 'buprenorphine'],
+    ]) {
+      const transition = calculateWashout(source, target);
+      assert.equal(transition.requiresWashout, true, source);
+      assert.equal(transition.requiresWithdrawal, true, source);
+      assert.equal(transition.minimumHours, null, source);
+      assert.equal(transition.cowsThreshold, null, source);
+      assert.match(transition.clinicalGuidance, /clinician/i, source);
+      assert.equal(transition.alternativeStrategy, source === 'fentanyl' ? 'discuss_with_clinician' : null);
+    }
   });
 
   it('calculates disulfiram and metronidazole alcohol abstinence intervals', () => {
@@ -218,57 +164,9 @@ describe('Washout Calculations & Clearance Intervals', () => {
   });
 });
 
-describe('Bernese Scheduling & Low-Dose Micro-Induction', () => {
-  it('exports BERNESE_EXAMPLE_SCHEDULE with complete 7-day stepwise micro-titration', () => {
-    assert.ok(Array.isArray(BERNESE_EXAMPLE_SCHEDULE));
-    assert.equal(BERNESE_EXAMPLE_SCHEDULE.length, 7);
-
-    BERNESE_EXAMPLE_SCHEDULE.forEach((step, idx) => {
-      assert.ok(step.day);
-      assert.ok(step.bupDose);
-      assert.ok(step.fullAgonist);
-      assert.ok(step.why);
-    });
-
-    // Day 1: Starts low (0.5 mg once or twice daily) while continuing full agonist
-    const day1 = BERNESE_EXAMPLE_SCHEDULE[0];
-    assert.equal(day1.day, 'Day 1');
-    assert.match(day1.bupDose, /0\.5 mg/);
-    assert.match(day1.fullAgonist, /Continue current/i);
-    assert.match(day1.why, /<5% of mu receptors/);
-
-    // Day 2: 0.5 mg twice daily (1 mg total)
-    const day2 = BERNESE_EXAMPLE_SCHEDULE[1];
-    assert.equal(day2.day, 'Day 2');
-    assert.match(day2.bupDose, /1 mg total/);
-
-    // Day 3: 1 mg twice daily (2 mg total)
-    const day3 = BERNESE_EXAMPLE_SCHEDULE[2];
-    assert.equal(day3.day, 'Day 3');
-    assert.match(day3.bupDose, /2 mg total/);
-
-    // Day 4: 2 mg twice daily (4 mg total)
-    const day4 = BERNESE_EXAMPLE_SCHEDULE[3];
-    assert.equal(day4.day, 'Day 4');
-    assert.match(day4.bupDose, /4 mg total/);
-
-    // Day 5: 4 mg twice daily (8 mg total), reduce/stop full agonist
-    const day5 = BERNESE_EXAMPLE_SCHEDULE[4];
-    assert.equal(day5.day, 'Day 5');
-    assert.match(day5.bupDose, /8 mg total/);
-
-    // Day 6: 4 mg three times daily (12 mg total), full agonist discontinued
-    const day6 = BERNESE_EXAMPLE_SCHEDULE[5];
-    assert.equal(day6.day, 'Day 6');
-    assert.match(day6.bupDose, /12 mg total/);
-    assert.match(day6.fullAgonist, /Discontinue full-agonist/i);
-
-    // Day 7+: Therapeutic blockade (16 to 24 mg daily)
-    const day7 = BERNESE_EXAMPLE_SCHEDULE[6];
-    assert.equal(day7.day, 'Day 7+');
-    assert.match(day7.bupDose, /16 mg to 24 mg daily/);
-    assert.match(day7.fullAgonist, /None/i);
-    assert.match(day7.why, /receptor blockade/i);
+describe('Buprenorphine initiation safety', () => {
+  it('does not export a patient dosing schedule through the legacy API', () => {
+    assert.deepEqual(BERNESE_EXAMPLE_SCHEDULE, []);
   });
 });
 
