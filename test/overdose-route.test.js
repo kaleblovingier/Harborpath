@@ -345,7 +345,7 @@ test('overdoseView() mounts both the static guide and the interactive pacer, wit
   });
 });
 
-test('overdose pacer registers resetOverdosePacer for Quick Exit and app.js imports nothing on exit', () => {
+test('overdose pacer registers its full timer reset and app.js imports nothing on exit', () => {
   const appSource = fs.readFileSync(path.join(rootDir, 'public', 'js', 'app.js'), 'utf8');
   const pacerSource = fs.readFileSync(path.join(rootDir, 'public', 'js', 'components', 'overdosePacing.js'), 'utf8');
 
@@ -356,8 +356,8 @@ test('overdose pacer registers resetOverdosePacer for Quick Exit and app.js impo
   // would save it again right after the wipe.
   assert.doesNotMatch(fnMatch[1], /import\(/, 'runQuickExitResets must not import modules');
 
-  assert.ok(pacerSource.includes("import { onQuickExit } from '../state.js';"));
-  assert.ok(pacerSource.includes('onQuickExit(resetOverdosePacer);'), 'overdosePacing.js registers its reset when it loads');
+  assert.match(pacerSource, /import \{ registerQuickExitHandler \} from '\.\.\/quickExitRegistry\.js';/);
+  assert.match(pacerSource, /^registerQuickExitHandler\(resetOverdoseTimerState\);/m);
 });
 
 test('calling runQuickExitResets() halts active pacer timers and restores clean state', async () => {

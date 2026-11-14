@@ -399,7 +399,8 @@ test('Wave 6: overdosePacer renders authentic clinical Spanish strings when lang
     // Advance to Step 4 (Re-dosing clock & Xylazine caution)
     setOverdosePacerStep(4);
     const step4Text = pacerRoot.textContent;
-    assert.match(step4Text, /Cuenta regresiva para la evaluación de re-dosificación:/);
+    assert.match(step4Text, /Revisar la respiración a los 2 minutos:/);
+    assert.match(step4Text, /Recordatorio del límite de 3 minutos de la etiqueta:/);
     assert.match(step4Text, /Transcurrido desde la dosis más reciente:/);
     assert.match(step4Text, /Administración de la segunda dosis \(Fosa nasal opuesta\)/);
     assert.match(step4Text, /Administrar segunda dosis de 4 mg en la fosa nasal OPUESTA/);
