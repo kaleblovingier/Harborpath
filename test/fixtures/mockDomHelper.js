@@ -150,6 +150,7 @@ export function installMockDom() {
 
   const prevDoc = globalThis.document;
   const prevNode = globalThis.Node;
+  const prevNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
 
   globalThis.Node = MockElement;
   globalThis.document = {
@@ -167,16 +168,15 @@ export function installMockDom() {
     },
   };
 
-  try {
-    Object.defineProperty(globalThis.navigator, 'clipboard', {
-      value: { writeText: async () => {} },
-      configurable: true,
-      writable: true,
-    });
-  } catch {}
+  Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    value: { clipboard: { writeText: async () => {} } },
+  });
 
   return () => {
     globalThis.document = prevDoc;
     globalThis.Node = prevNode;
+    if (prevNavigator) Object.defineProperty(globalThis, 'navigator', prevNavigator);
+    else delete globalThis.navigator;
   };
 }
