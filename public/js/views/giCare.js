@@ -7,7 +7,7 @@
 // World Society of Emergency Surgery (WSES) Guidelines on Boerhaave Esophageal Perforation & Internal Drug Packet Concealment.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { getLang } from '../i18n.js';
 
 // ============================================================================
@@ -417,8 +417,9 @@ export function giCareView() {
           role: 'tab',
           class: `gi-tab-btn ${isActive ? 'active' : ''}`,
           'aria-selected': isActive ? 'true' : 'false',
-          'aria-controls': `tab-panel-${tab.id}`,
+          'aria-controls': 'gi-tab-panel',
           id: `tab-btn-${tab.id}`,
+          tabindex: isActive ? '0' : '-1',
         }, [
           icon(tab.iconName, { class: 'gi-tab-icon' }),
           h('span', {}, isEs ? tab.labelEs : tab.labelEn),
@@ -428,12 +429,13 @@ export function giCareView() {
       })
     );
     container.appendChild(tabNav);
+    syncTablists(container);
 
     // Tab Panel Container
     const panel = h('section', {
       class: 'gi-tab-panel',
       role: 'tabpanel',
-      id: `tab-panel-${state.activeTab}`,
+      id: 'gi-tab-panel',
       'aria-labelledby': `tab-btn-${state.activeTab}`,
     });
     container.appendChild(panel);
@@ -606,21 +608,16 @@ export function giCareView() {
       type: 'button',
       class: 'gi-copy-btn',
     }, [
-      icon(state.sbarCopied ? 'check' : 'copy', { class: 'gi-btn-icon' }),
-      h('span', {}, state.sbarCopied
-        ? (isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!')
-        : (isEs ? 'Copiar Informe SBAR' : 'Copy SBAR Note')
-      ),
+      icon('copy', { class: 'gi-btn-icon' }),
+      h('span', {}, isEs ? 'Copiar Informe SBAR' : 'Copy SBAR Note'),
     ]);
 
     copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(sbarText);
-        setGiState({ sbarCopied: true });
-        setTimeout(() => setGiState({ sbarCopied: false }), 2500);
-      } catch (err) {
-        console.error('Failed to copy SBAR text:', err);
-      }
+      await copyText(sbarText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado al Portapapeles!' : 'Copied to Clipboard!',
+        announceSuccess: isEs ? 'Informe SBAR copiado al portapapeles.' : 'SBAR note copied to clipboard.',
+      });
     });
 
     const actionContainer = h('div', { class: 'gi-sbar-actions' }, [copyBtn]);
@@ -631,6 +628,7 @@ export function giCareView() {
   }
 
   render();
+  wireTablistKeyboard(container);
   const unsubscribe = subscribeGiState(render);
 
   return container;

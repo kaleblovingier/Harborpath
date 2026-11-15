@@ -376,7 +376,7 @@ test('Quick Exit runs the resets of loaded modules, isolates failures, and impor
   assert.doesNotMatch(body, /import\(/, 'no module is fetched (and re-saved offline) on the way out');
 });
 
-test('every module with a reset registers it for Quick Exit (lazy loader or onQuickExit)', () => {
+test('every module with a reset registers it for Quick Exit', () => {
   const app = readPublic('/js/app.js');
   const viaLoader = new Set([...app.matchAll(/import\('\.\/([^']+)'\)\.then\(\(m\) => \{[^}]*?routeResets\.set\(/g)].map((m) => m[1]));
   const missing = [];
@@ -387,7 +387,7 @@ test('every module with a reset registers it for Quick Exit (lazy loader or onQu
       else if (rel.endsWith('.js')) {
         const src = readPublic(`/js/${rel}`);
         if (!/^export function reset\w*\(/m.test(src)) continue;
-        if (viaLoader.has(rel) || /^onQuickExit\(\w+\);/m.test(src)) continue;
+        if (viaLoader.has(rel) || /^(?:onQuickExit|registerQuickExitHandler)\(\w+\);/m.test(src)) continue;
         missing.push(rel);
       }
     }

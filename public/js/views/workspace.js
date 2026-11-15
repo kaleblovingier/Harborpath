@@ -186,7 +186,7 @@ export function careWorkspaceView({ meta } = {}) {
   const stageViews = CARE_WORKSPACE_STAGES.map((stage) => section(
     `workspace-${stage.id}`,
     t(stage.titleKey, stage.title),
-    p(t(stage.descriptionKey, stage.description)),
+    h('p', { class: 'workspace-stage-description' }, t(stage.descriptionKey, stage.description)),
     h('ul', { class: 'list checklist workspace-tasks' }, stage.tasks.map((task) => {
       const id = `workspace-task-${task.id}`;
       const control = h('input', {
@@ -198,7 +198,9 @@ export function careWorkspaceView({ meta } = {}) {
       controls.set(task.id, control);
       return h('li', null, h('label', { for: id, class: 'check workspace-task' }, control, h('span', null, t(task.key, task.label, { nua: NEVER_USE_ALONE.label }))));
     })),
-    h('div', { class: 'actions no-print' }, stage.links.map((link) => h('a', { class: 'btn btn-small btn-secondary', href: link.href }, t(link.key, link.label)))),
+    h('ul', { class: 'workspace-stage-links no-print' },
+      stage.links.map((link) => h('li', null,
+        h('a', { href: link.href }, t(link.key, link.label))))),
   ));
 
   const copyButton = h('button', {
@@ -222,7 +224,7 @@ export function careWorkspaceView({ meta } = {}) {
   const root = h('div', { class: 'view view-prose care-workspace' },
     pageHeader(t('workspace.title', 'Care team workspace'), t('workspace.intro', 'A practical checklist for healthcare workers, peer navigators, and community teams supporting a visit, referral, or transition of care.')),
     emergencyCallout(),
-    h('div', { class: 'callout' },
+    h('div', { class: 'callout workspace-privacy' },
       p(t('workspace.privacy', 'Use a fresh checklist for each person. Checkmarks stay only in this tab’s memory while you browse HarborPath. Reset before the next person; reloading, closing the tab, or Quick Exit clears them.')),
       fine(t('workspace.noDetails', 'There are no fields for names, contact details, clinical notes, or other personal information. This workspace does not read answers or saved resources from other tools.')),
     ),

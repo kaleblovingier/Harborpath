@@ -12,6 +12,7 @@ import {
 } from '../public/js/views/populationHelpers.js';
 import { evaluateAsamCare, evaluateTransitionRisk, getPopulationCareRoutes } from '../public/js/views/navigator.js';
 import { TREATMENT_FILTERS } from '../public/js/codes.js';
+import { getNavigatorHandoffState, resetNavigatorState } from '../public/js/views/navigatorHandoff.js';
 
 const taxonomy = JSON.parse(readFileSync(new URL('../data/service-codes.json', import.meta.url), 'utf8'));
 // Codes valid for a substance use ('sa') search, which is what #/treatment runs.
@@ -245,6 +246,7 @@ describe('careNavigatorView() renders the additions inside the matching pathway 
       this.className = '';
       this.text = '';
       this.parent = null;
+      this.listeners = {};
     }
     get textContent() { return this.text + this.children.map((c) => c.textContent).join(''); }
     set textContent(v) { this.text = String(v ?? ''); this.children = []; }
@@ -252,7 +254,7 @@ describe('careNavigatorView() renders the additions inside the matching pathway 
     setAttribute(k, v) { this.attributes[k] = String(v); }
     getAttribute(k) { return this.attributes[k] ?? null; }
     removeAttribute(k) { delete this.attributes[k]; }
-    addEventListener() {}
+    addEventListener(type, listener) { this.listeners[type] = listener; }
     append(...items) {
       for (const item of items) {
         const node = item instanceof Node ? item : Object.assign(new Node('#text'), { text: String(item) });
@@ -290,14 +292,21 @@ describe('careNavigatorView() renders the additions inside the matching pathway 
       card.walk((n) => { if (n.dataset.route === 'reentry') addition = n; });
       assert.ok(addition, 'reentry addition sits inside the justice card');
       const cardHrefs = [];
-      addition.walk((n) => { if (n.attributes.href) cardHrefs.push(n.attributes.href); });
-      assert.ok(cardHrefs.includes('#/treatment?codes=CJ,BU'));
+      let reentrySearch = null;
+      addition.walk((n) => {
+        if (n.attributes.href) cardHrefs.push(n.attributes.href);
+        if (n.attributes.href === '#/treatment' && n.textContent.includes('(CJ, BU)')) reentrySearch = n;
+      });
+      assert.ok(reentrySearch, 'CJ/BU search is rendered with a bare treatment route');
+      resetNavigatorState();
+      reentrySearch.listeners.click();
+      assert.deepEqual(getNavigatorHandoffState().codes, ['CJ', 'BU'], 'clinical service choices transfer through RAM');
       assert.ok(cardHrefs.includes(`tel:${NEVER_USE_ALONE.number}`));
       assert.ok(hrefs.includes('tel:18006624357'), 'SAMHSA helpline is shown');
       assert.ok(hrefs.includes('tel:988'));
       assert.ok(hrefs.includes('tel:911'));
       for (const href of hrefs.filter((x) => x.startsWith('#/treatment'))) {
-        assert.match(href, /^#\/treatment(\?codes=[A-Z0-9_,]+)?$/, `finder link carries only codes: ${href}`);
+        assert.equal(href, '#/treatment', `clinical selections must never enter rendered URLs: ${href}`);
       }
     } finally {
       globalThis.document = prev.document;

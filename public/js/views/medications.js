@@ -1,10 +1,12 @@
+import { INTERACTIONS, NALTREXONE_WASHOUT_GUIDANCE, NON_OPIOID_PAIN_ALTERNATIVES, REGIMEN_AGENTS, evaluateRegimenSafety, evaluatePolypharmacyRegimen, evaluateDrugInteractions, getRegimenAgentLabel, localizeInteraction } from './pharmacologyEngine.js';
+export { INTERACTIONS, NALTREXONE_WASHOUT_GUIDANCE, NON_OPIOID_PAIN_ALTERNATIVES, calculateNaltrexoneWashout, REGIMEN_AGENTS, evaluateRegimenSafety, evaluatePolypharmacyRegimen, evaluateDrugInteractions } from './pharmacologyEngine.js';
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, tocNav, emergencyCallout } from './common.js';
 import { t, getLang } from '../i18n.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler } from '../quickExitRegistry.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
-onQuickExit(resetMedicationsState);
+registerQuickExitHandler(resetPharmacologyState);
 
 const tr = (en, es) => (getLang() === 'es' ? es : en);
 
@@ -45,6 +47,11 @@ export function resetMedicationsState() {
   }
 }
 
+/** Public reset contract; the engine itself is pure and holds no patient state. */
+export function resetPharmacologyState() {
+  resetMedicationsState();
+}
+
 export const MEDICATION_CATEGORIES = [
   { id: 'all', label: 'All medications' },
   { id: 'oud', label: 'Opioid Use Disorder (MOUD)' },
@@ -59,6 +66,7 @@ export const MEDICATIONS = [
     id: 'buprenorphine',
     category: 'oud',
     name: 'Buprenorphine',
+    searchTerms: ['Bernese Method', 'micro-induction', 'microinducción'],
     brands: [
       'Suboxone (buprenorphine/naloxone film or tablet)',
       'Zubsolv (buprenorphine/naloxone sublingual tablet)',
@@ -70,16 +78,30 @@ export const MEDICATIONS = [
     samhsaCodes: ['BU'],
     finderHref: '#/treatment?codes=BU',
     finderLabel: 'Find buprenorphine prescribers & clinics',
-    summary: 'An FDA-approved first-line medication for opioid use disorder that stops withdrawal and cravings, cuts fatal overdose risk by more than 50%, and has a built-in ceiling on breathing slowdown.',
-    mechanism: 'Partial mu-opioid receptor agonist with very high receptor affinity and slow dissociation, plus kappa-opioid receptor antagonism. Because it partially activates the mu receptor with a plateau ("ceiling effect") on respiratory depression, it stabilizes brain receptor signaling without producing the dangerous breathing suppression of full agonists when taken alone.',
-    howToStart: 'Traditional start waits until mild-to-moderate withdrawal begins (12–24+ hours after short-acting opioids) so buprenorphine does not displace full agonists and trigger precipitated withdrawal. For people transitioning from street fentanyl—which stores in body fat and clears slowly—a Low-Dose / Micro-Induction ("Bernese Method") cross-taper starts tiny 0.25–0.5 mg doses while gradually stopping fentanyl, avoiding a painful waiting period.',
-    access: 'Any healthcare prescriber with a standard DEA Schedule III registration (primary care doctors, nurse practitioners, physician assistants, psychiatrists, emergency departments, and telehealth clinics) can prescribe buprenorphine. The federal X-waiver requirement was permanently eliminated.',
+    summary: 'An FDA-approved medication for opioid use disorder that can reduce withdrawal and cravings. Treatment with buprenorphine is associated with lower overdose risk, but it does not eliminate that risk.',
+    mechanism: 'Buprenorphine is a partial mu-opioid receptor agonist. Its respiratory-depressant effects have a ceiling relative to full agonists, but breathing can still slow dangerously—especially with alcohol, benzodiazepines, or other sedatives.',
+    howToStart: 'The timing and method of starting buprenorphine depend on the person, the opioid used, and clinical circumstances. A clinician may discuss a standard start after withdrawal begins or a low-dose approach; neither a fixed wait nor a particular approach guarantees that precipitated withdrawal will not occur. This self-check is not a dosing or start-time guide.',
+    access: 'A practitioner with the required DEA registration and state authority may prescribe buprenorphine for opioid use disorder; the former federal X-waiver is no longer required. Scope-of-practice and other requirements still apply.',
     clinicalPearls: [
-      'Let sublingual films or tablets dissolve completely (usually 5–10 minutes); swallowing buprenorphine drastically lowers absorption due to first-pass liver metabolism.',
-      'To protect tooth enamel from acidic sublingual formulations, swish gently with water after the dose has completely dissolved and wait at least 60 minutes before brushing teeth.',
-      'Naloxone in combination products (Suboxone, Zubsolv) is poorly absorbed under the tongue and is included only to deter injection or intranasal misuse; both mono-product and combo buprenorphine are safe and effective during pregnancy and breastfeeding.',
-      'Extended-release depot injections (Sublocade, Brixadi) maintain steady blood levels for a week or a month—eliminating daily dosing burdens and protecting against fentanyl overdose if a slip occurs.',
+      'Do not change a prescribed dose or start method based on this guide. Ask the prescriber or pharmacist about product-specific instructions.',
+      'Combining buprenorphine with alcohol, benzodiazepines, or other sedatives can cause dangerous breathing problems. Do not stop a regularly used benzodiazepine suddenly; ask a clinician about a safe plan.',
+      'During pregnancy or breastfeeding, do not stop buprenorphine without speaking with a clinician. The choice of formulation and plan should be individualized.',
+      'Dental problems have been reported with transmucosal buprenorphine. Follow the product instructions and ask a dental or medical professional about oral care.',
     ],
+    translations: {
+      es: {
+        summary: 'La buprenorfina es un medicamento aprobado por la FDA para el trastorno por consumo de opioides que puede reducir la abstinencia y los antojos. El tratamiento se asocia con menor riesgo de sobredosis, pero no lo elimina.',
+        mechanism: 'La buprenorfina es un agonista parcial de los receptores opioides mu. Sus efectos depresores de la respiración tienen un límite en comparación con los agonistas completos, pero aun así puede ralentizar la respiración de forma peligrosa, especialmente junto con alcohol, benzodiacepinas u otros sedantes.',
+        howToStart: 'El momento y el método para iniciar la buprenorfina dependen de la persona, el opioide usado y las circunstancias clínicas. Un profesional puede hablar sobre un inicio estándar cuando comienza la abstinencia o un método de dosis bajas; ningún tiempo de espera ni método garantiza que no ocurra abstinencia precipitada. Esta autoevaluación no indica dosis ni cuándo iniciar.',
+        access: 'Un profesional con el registro requerido de la DEA y autorización estatal puede recetar buprenorfina para el trastorno por consumo de opioides; ya no se requiere la exención federal X-waiver anterior. Siguen aplicando el alcance profesional y otros requisitos.',
+        clinicalPearls: [
+          'No cambie una dosis recetada ni el método de inicio basándose en esta guía. Consulte las instrucciones del producto con quien lo receta o con un farmacéutico.',
+          'Combinar buprenorfina con alcohol, benzodiacepinas u otros sedantes puede causar problemas respiratorios peligrosos. No suspenda de repente una benzodiacepina que usa con regularidad; consulte a un profesional sobre un plan seguro.',
+          'Durante el embarazo o la lactancia, no suspenda la buprenorfina sin hablar con un profesional. La elección de formulación y el plan deben individualizarse.',
+          'Se han reportado problemas dentales con la buprenorfina transmucosa. Siga las instrucciones del producto y consulte sobre el cuidado bucal con un profesional dental o médico.',
+        ],
+      },
+    },
     sources: [
       ['SAMHSA Buprenorphine Guide', 'https://www.samhsa.gov/substance-use/treatment/options/buprenorphine'],
       ['ASAM National Practice Guideline', 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline'],
@@ -97,16 +119,28 @@ export const MEDICATIONS = [
     samhsaCodes: ['OTP', 'MU'],
     finderHref: '#/treatment?codes=OTP',
     finderLabel: 'Find methadone clinics (OTPs)',
-    summary: 'A full mu-opioid agonist with decades of gold-standard evidence. Because it has no ceiling effect and never triggers precipitated withdrawal when starting, it is often the most effective option for people with high tolerance from potent synthetic opioids like fentanyl.',
-    mechanism: 'Full mu-opioid receptor agonist with additional NMDA glutamate receptor antagonism (which helps blunt opioid tolerance and hyperalgesia). Its long, steady elimination half-life (24–36+ hours once stabilized) prevents the rapid peaks and crashes of short-acting opioids.',
-    howToStart: 'Can be started on Day 1 without waiting for severe withdrawal and without any risk of precipitated withdrawal. Because methadone builds up slowly in tissues over 5–7 days ("start low, go slow"), initial doses (typically 20–40 mg on Day 1) are titrated gradually to a personalized dose that fully relieves cravings and blocks illicit fentanyl.',
-    access: 'For opioid use disorder, methadone is dispensed through federally certified Opioid Treatment Programs (OTPs) or initiated in hospital/emergency settings for up to 72 hours while linking to an OTP. Under the 2024 SAMHSA 42 CFR Part 8 Final Rule, OTPs can initiate methadone via audio-visual telehealth, waive the old 1-year addiction history rule, and provide accelerated take-home doses (up to 7 days in the first 14 days, 14 days by day 15, and 28 days by day 31 based on clinical stability).',
+    summary: 'Methadone is an FDA-approved, full opioid agonist used to treat opioid use disorder. It can reduce withdrawal and cravings; its effects can accumulate, so initiation and dose changes require individualized clinical monitoring.',
+    mechanism: 'Methadone activates mu-opioid receptors. Unlike partial agonists, it has no ceiling on respiratory-depressant effects; overdose risk can increase during initiation or when combined with other sedating substances.',
+    howToStart: 'Methadone treatment for opioid use disorder is started and adjusted by a qualified clinician. There is no patient-specific dose or schedule that can be safely inferred from this guide; do not take extra or unprescribed methadone.',
+    access: 'Methadone for opioid use disorder is generally provided through a SAMHSA-certified Opioid Treatment Program (OTP). Federal rules also contain limited emergency and hospital provisions; availability depends on the setting, practitioner authority, and applicable law. The 2024 Part 8 rule allows individualized OTP decisions about take-home medication and telehealth screening; it does not guarantee a particular take-home amount or remote start.',
     clinicalPearls: [
-      'Because methadone accumulates over 5–10 days before reaching steady state, never take extra unprescribed opioids or sedatives during the first two weeks of dose adjustments.',
-      'Methadone is metabolized primarily by liver enzymes CYP2B6, CYP3A4, and CYP2C19; starting or stopping certain HIV medications, seizure meds (carbamazepine, phenytoin), rifampin, or antifungals/macrolide antibiotics may require a dose adjustment.',
-      'High doses or combinations with other QTc-prolonging medications (such as certain antipsychotics, citalopram/escitalopram, ondansetron, or fluoroquinolones) warrant periodic baseline and follow-up ECG heart rhythm checks.',
-      'During pregnancy or in fast metabolizers, splitting the daily methadone dose into twice-daily dosing keeps levels steady and prevents evening withdrawal.',
+      'Methadone can cause life-threatening breathing problems, particularly during dose changes or when taken with alcohol, benzodiazepines, or other sedatives. Follow the prescription exactly.',
+      'Tell the treatment team about all medicines and substances; some can change methadone effects or affect heart rhythm. A clinician decides whether monitoring or a dose change is needed.',
+      'Do not stop methadone or change the dose without contacting the treatment team. Pregnancy and acute pain need an individualized care plan.',
     ],
+    translations: {
+      es: {
+        summary: 'La metadona es un agonista opioide completo aprobado por la FDA para tratar el trastorno por consumo de opioides. Puede reducir la abstinencia y los antojos; sus efectos pueden acumularse, por lo que el inicio y los cambios de dosis requieren monitoreo clínico individualizado.',
+        mechanism: 'La metadona activa los receptores opioides mu. A diferencia de los agonistas parciales, no tiene un límite para sus efectos depresores de la respiración; el riesgo de sobredosis puede aumentar al iniciar el tratamiento o combinarla con otras sustancias sedantes.',
+        howToStart: 'Un profesional calificado inicia y ajusta la metadona para tratar el trastorno por consumo de opioides. Esta guía no puede determinar una dosis ni un horario seguros para una persona; no tome metadona adicional ni que no le hayan recetado.',
+        access: 'La metadona para el trastorno por consumo de opioides generalmente se ofrece en un Programa de Tratamiento con Opioides (OTP) certificado por SAMHSA. Las normas federales también incluyen disposiciones limitadas para emergencias y hospitales; la disponibilidad depende del lugar, la autoridad del profesional y la ley aplicable. La norma Parte 8 de 2024 permite decisiones individualizadas del OTP sobre medicamentos para llevar y evaluaciones por telesalud; no garantiza una cantidad específica ni un inicio remoto.',
+        clinicalPearls: [
+          'La metadona puede causar problemas respiratorios potencialmente mortales, especialmente durante cambios de dosis o al combinarla con alcohol, benzodiacepinas u otros sedantes. Siga exactamente la receta.',
+          'Informe al equipo de tratamiento sobre todos sus medicamentos y sustancias; algunos pueden cambiar los efectos de la metadona o afectar el ritmo cardíaco. Un profesional decide si se requiere monitoreo o un cambio de dosis.',
+          'No suspenda la metadona ni cambie la dosis sin comunicarse con el equipo de tratamiento. El embarazo y el dolor agudo requieren un plan de atención individualizado.',
+        ],
+      },
+    },
     sources: [
       ['SAMHSA Methadone Guide', 'https://www.samhsa.gov/substance-use/treatment/options/methadone'],
       ['SAMHSA 42 CFR Part 8 Final Rule (2024)', 'https://www.samhsa.gov/medications-substance-use-disorders/statutes-regulations-guidelines/42-cfr-part-8'],
@@ -123,15 +157,26 @@ export const MEDICATIONS = [
     samhsaCodes: ['NU'],
     finderHref: '#/treatment?codes=NU',
     finderLabel: 'Find extended-release naltrexone providers',
-    summary: 'A non-opioid, non-controlled medication that completely blocks opioid receptors for 28 days at a time. Ideal for people who have already completed withdrawal and want a monthly receptor blockade without physical dependence.',
+    summary: 'Extended-release naltrexone is an opioid antagonist used to treat opioid use disorder after an opioid-free interval. It does not treat an active opioid overdose and can precipitate severe withdrawal if opioids remain in the body.',
     mechanism: 'Competitive mu-opioid receptor antagonist. It binds tightly to opioid receptors without activating them, preventing heroin, fentanyl, or prescription opioids from attaching or producing euphoria or sedation.',
-    howToStart: 'Requires a complete opioid-free interval of at least 7–10 days after short-acting opioids, and 10–14+ days after fentanyl, buprenorphine, or methadone. Clinicians often perform a urine screen or a small naloxone/oral naltrexone challenge test first to guarantee that no residual opioids remain, preventing severe precipitated withdrawal.',
+    howToStart: 'A clinician must assess readiness after an opioid-free interval. FDA labeling describes a typical interval after short-acting opioids and warns that transition from buprenorphine or methadone may require longer. Fentanyl exposure and long-acting products need individualized assessment; a urine test or challenge does not guarantee that starting is safe.',
     access: 'Can be prescribed and administered by any licensed physician, nurse practitioner, or physician assistant in primary care, psychiatry, or outpatient addiction clinics—no special certification required.',
     clinicalPearls: [
-      'Crucial safety note: Naltrexone resets your opioid tolerance back to zero. If you miss a monthly Vivitrol injection or stop treatment and return to opioid use, taking a dose you previously tolerated can cause an immediate, fatal overdose.',
-      'Oral naltrexone tablets alone are generally not recommended for Opioid Use Disorder (except during supervised transition) because skipping just 1–2 daily pills drops the blockade while tolerance is low.',
+      'Opioid tolerance may be lower during or after naltrexone treatment. Trying to overcome the blockade or returning to a previously tolerated amount can cause fatal overdose. Keep naloxone available and seek urgent care for suspected overdose.',
+      'Do not use opioid pain medicines with naltrexone without a clinician’s plan. Tell emergency and pain-care teams that you take naltrexone.',
       'Contraindicated in acute hepatitis or liver failure, and cannot be used alongside opioid pain medications (non-opioid or regional pain control must be used in emergencies).',
     ],
+    translations: {
+      es: {
+        summary: 'La naltrexona de liberación prolongada es un antagonista opioide para tratar el trastorno por consumo de opioides después de un período sin opioides. No trata una sobredosis activa y puede precipitar abstinencia grave si aún quedan opioides en el cuerpo.',
+        howToStart: 'Un profesional debe evaluar si está listo después de un período sin opioides. La etiqueta de la FDA describe un intervalo típico después de opioides de acción corta y advierte que la transición desde buprenorfina o metadona puede requerir más tiempo. La exposición al fentanilo y los productos de acción prolongada requieren una evaluación individual; una prueba de orina o de provocación no garantiza que sea seguro iniciar.',
+        clinicalPearls: [
+          'La tolerancia a opioides puede ser menor durante o después del tratamiento con naltrexona. Intentar vencer el bloqueo o volver a una cantidad antes tolerada puede causar una sobredosis mortal. Tenga naloxona disponible y busque atención urgente ante una posible sobredosis.',
+          'No use analgésicos opioides junto con naltrexona sin un plan profesional. Informe a los equipos de urgencias y de tratamiento del dolor que toma naltrexona.',
+          'La naltrexona está contraindicada en ciertas afecciones hepáticas graves; un profesional debe revisar su salud y la etiqueta del producto.',
+        ],
+      },
+    },
     sources: [
       ['SAMHSA Naltrexone Guide', 'https://www.samhsa.gov/substance-use/treatment/options/naltrexone'],
       ['NIDA Medications for OUD', 'https://nida.nih.gov/publications/research-reports/medications-to-treat-opioid-addiction/overview'],
@@ -153,10 +198,10 @@ export const MEDICATIONS = [
     finderLabel: 'Find alcohol use disorder medication providers',
     summary: 'A first-line FDA-approved medication for alcohol use disorder that blunts the brain’s endorphin reward from alcohol, significantly reducing cravings and heavy drinking days.',
     mechanism: 'Mu-opioid receptor antagonist. Alcohol triggers the release of natural endorphins in the brain’s mesolimbic reward pathway; naltrexone blocks those endorphin receptors so drinking feels less rewarding and the urge to keep drinking after one drink ("loss of control") diminishes.',
-    howToStart: 'Unlike disulfiram or acamprosate, you do NOT need to stop drinking before starting naltrexone for alcohol use disorder. It can be taken daily to support complete abstinence or cut back heavy drinking, or taken 1 hour before anticipated drinking ("targeted dosing" / Sinclair Method). However, you must be completely free of all opioids for 7–14 days before starting.',
+    howToStart: 'Oral naltrexone may be started while someone is still drinking under a clinician’s care. The Vivitrol injection label requires that patients not be actively drinking at the first injection. Neither formulation treats acute alcohol withdrawal. Opioid-free readiness and liver health must be assessed before either formulation.',
     access: 'Available by prescription from any primary care provider, telehealth doctor, psychiatrist, or addiction program.',
     clinicalPearls: [
-      'Safe to take while actively drinking—naltrexone does not cause sickness if you drink alcohol.',
+      'Naltrexone does not cause the disulfiram-alcohol reaction. Drinking can still be dangerous; physical dependence requires a medically planned withdrawal approach.',
       'Taking the first few oral doses with food or starting at 25 mg for 2–3 days before increasing to 50 mg minimizes mild stomach upset or headache.',
       'Must be avoided in anyone taking opioid pain medications, buprenorphine, or methadone, or anyone with acute hepatitis or decompensated cirrhosis.',
     ],
@@ -259,15 +304,27 @@ export const MEDICATIONS = [
     samhsaCodes: ['NOE'],
     finderHref: '#/treatment?codes=NOE',
     finderLabel: 'Find free naloxone & overdose education',
-    summary: 'Life-saving competitive mu-opioid receptor antagonists that rapidly displace fentanyl, heroin, and oxycodone from receptors to restore breathing within 2–3 minutes.',
-    mechanism: 'Competitive mu-opioid receptor antagonists with higher receptor affinity than full agonists. Standard naloxone acts in 2–3 minutes and lasts 30–90 minutes. Nalmefene (Opvee nasal spray, Zurnai auto-injector) is a structural analog with a much longer terminal half-life (about 11 hours for Opvee and about 9 hours for Zurnai per FDA labels).',
-    howToStart: 'Administer immediately if someone is unresponsive with slow, shallow, snoring/gurgling, or stopped breathing. Give 1 spray (or 1 IM dose), support breathing with rescue breaths (1 breath every 5 seconds), and wait a full 2–3 minutes before giving a second dose.',
+    summary: 'Naloxone and nalmefene can reverse opioid effects during a suspected overdose. They are temporary treatments; call 911 and follow the specific product instructions.',
+    mechanism: 'Naloxone and nalmefene are opioid-receptor antagonists. Naloxone may restore breathing within minutes, but response and duration vary, and more than one dose may be needed. Nalmefene lasts longer and can cause withdrawal symptoms that last longer.',
+    howToStart: 'For a suspected overdose, give naloxone promptly, call 911, and support breathing as trained or directed by the dispatcher. Follow the product label for repeat doses if breathing does not improve or worsens. Stay with the person until emergency help arrives.',
     access: '4 mg and 3 mg naloxone nasal sprays (Narcan, RiVive, generics) are available Over-The-Counter (OTC) without a prescription at pharmacies, grocery stores, and online, and are distributed for free by harm reduction programs, health departments, and mail-based programs like NEXT Distro.',
     clinicalPearls: [
-      'Why clinical toxicologists & harm reduction specialists prefer standard 4 mg naloxone + rescue breathing: The clinical goal of overdose reversal is restoring adequate spontaneous breathing—not waking someone up into agonizing withdrawal. High-dose 8 mg naloxone or long-acting nalmefene (~9–11 hr half-life) carries a significantly higher risk of severe, prolonged precipitated withdrawal (vomiting/aspiration, catecholamine surge, flash pulmonary edema, extreme agitation, and dangerous attempts to use huge amounts of fentanyl to overcome the blockade).',
-      'Injectable intramuscular (IM) naloxone (0.4 mg–0.8 mg) offered by syringe services programs allows gentler, titratable reversal that restores breathing with minimal withdrawal.',
-      'Xylazine ("tranq") and medetomidine are alpha-2 adrenergic sedatives—NOT opioids. Naloxone reverses the fentanyl component so breathing restarts, but the person may remain deeply sedated from xylazine. Once they are breathing steadily on their own, stop giving extra naloxone, roll them into the recovery position, and continue monitoring airway and breathing.',
+      'Use the naloxone product available without delay. One observational study found no survival difference and more withdrawal symptoms with 8 mg than 4 mg nasal naloxone in the study population; this does not establish that one product is best for every overdose.',
+      'Naloxone does not reverse xylazine or other non-opioid sedatives. Give it for any suspected opioid-involved overdose, call 911, support breathing, and continue monitoring because sedation or breathing problems may persist.',
+      'If the person does not respond or breathing becomes abnormal again, follow the product instructions for repeat doses while waiting for emergency help.',
     ],
+    translations: {
+      es: {
+        summary: 'La naloxona y el nalmefeno pueden revertir los efectos opioides durante una posible sobredosis. Son tratamientos temporales; llame al 911 y siga las instrucciones del producto específico.',
+        mechanism: 'La naloxona y el nalmefeno son antagonistas de los receptores opioides. La naloxona puede restablecer la respiración en minutos, pero la respuesta y la duración varían y puede requerirse más de una dosis. El nalmefeno dura más y puede causar síntomas de abstinencia más prolongados.',
+        howToStart: 'Ante una posible sobredosis, administre naloxona de inmediato, llame al 911 y apoye la respiración según su capacitación o las instrucciones de la persona operadora. Siga la etiqueta del producto para repetir dosis si la respiración no mejora o empeora. Quédese con la persona hasta que llegue ayuda de emergencia.',
+        clinicalPearls: [
+          'Use sin demora el producto de naloxona disponible. Un estudio observacional no halló diferencia de supervivencia y encontró más síntomas de abstinencia con naloxona nasal de 8 mg que de 4 mg en la población estudiada; esto no demuestra que un producto sea mejor para todas las sobredosis.',
+          'La naloxona no revierte la xilacina ni otros sedantes no opioides. Adminístrela ante cualquier posible sobredosis con opioides, llame al 911, apoye la respiración y siga vigilando porque la sedación o los problemas respiratorios pueden continuar.',
+          'Si la persona no responde o la respiración vuelve a ser anormal, siga las instrucciones del producto para repetir dosis mientras espera ayuda de emergencia.',
+        ],
+      },
+    },
     sources: [
       ['ACMT & AACT Position Statement on Nalmefene vs Naloxone', 'https://www.acmt.net/'],
       ['SAMHSA Overdose Prevention and Response Toolkit', 'https://library.samhsa.gov/product/overdose-prevention-response-toolkit/pep23-03-00-001'],
@@ -295,8 +352,8 @@ export const MEDICATIONS = [
     howToStart: 'Can be started immediately—even during active stimulant use or early "crash" recovery (fatigue, depression, hypersomnia). Ask for clinicians familiar with the 2023 ASAM/AAAP Clinical Practice Guideline on Stimulant Use Disorders.',
     access: 'Contingency management is increasingly covered by state Medicaid waivers, VA medical centers, and SAMHSA-listed outpatient programs (`CMI`). Off-label medications can be prescribed by any primary care or psychiatric prescriber.',
     clinicalPearls: [
-      'In the NEJM ADAPT-2 randomized clinical trial, combining extended-release injectable naltrexone (380 mg every 3 weeks) with high-dose extended-release bupropion (450 mg/day) multiplied treatment response rates for moderate-to-severe methamphetamine use disorder compared to placebo.',
-      'Mirtazapine (15–30 mg at bedtime) has multiple randomized trials showing reduced methamphetamine use and improved sleep/anxiety.',
+      'In the NEJM ADAPT-2 trial, naltrexone plus bupropion produced a weighted response of 13.6% versus 2.5% with placebo. This was a study-specific response, not a cure rate. Treatment is off-label and unsuitable during opioid agonist treatment; bupropion requires seizure-risk screening.',
+      'ASAM/AAAP gives mirtazapine a conditional recommendation with low-certainty evidence for amphetamine-type stimulant use disorder. Discuss sedation, weight gain, depression, and the limits of the evidence with your clinician.',
       'Always carry naloxone and fentanyl test strips even if you only use cocaine, crack, or methamphetamine—cross-contamination in the stimulant supply is a leading cause of unexpected opioid overdose in people with zero opioid tolerance.',
     ],
     sources: [
@@ -347,299 +404,58 @@ export const INTERACTION_SUBSTANCES = [
   { id: 'disulfiram', label: 'Disulfiram (Antabuse)' },
 ];
 
-export const INTERACTIONS = [
-  {
-    id: 'opioids-benzos',
-    substances: ['opioids', 'benzodiazepines', 'buprenorphine', 'methadone'],
-    severity: 'high',
-    title: 'Opioids + Benzodiazepines or Z-Drug Sleep Medicines (Xanax, Klonopin, Valium, Ambien)',
-    summary: 'Synergistic respiratory depression: combining opioids with GABA-A sedatives dramatically multiplies the risk of fatal breathing arrest.',
-    mechanism: 'Opioids suppress brainstem respiratory drive (mu receptors in the pre-Bötzinger complex) while benzodiazepines potentiate inhibitory GABA-A chloride channels, reducing upper airway muscle tone and hypoxic/hypercapnic arousal.',
-    action: 'Avoid combining whenever possible, especially with street pressed pills (which frequently mix fentanyl and novel designer benzodiazepines like bromazolam). Importantly, the FDA and SAMHSA emphasize that having a benzodiazepine prescription or dependence is NOT a reason to withhold buprenorphine or methadone—stopping MOUD is far more dangerous than careful co-management.',
-    source: ['FDA Boxed Warning & MOUD Guidance', 'https://www.fda.gov/drugs/food-and-drug-administration-overdose-prevention-framework/medications-opioid-use-disorder'],
-  },
-  {
-    id: 'opioids-xylazine',
-    substances: ['opioids', 'xylazine'],
-    severity: 'high',
-    title: 'Opioids (Fentanyl) + Xylazine or Medetomidine ("Tranq") & Alpha-2 Rebound',
-    summary: 'Profound non-opioid sedation, bradycardia, hypotension, and severe necrotic skin ulcers; naloxone reverses fentanyl but not alpha-2 sedatives, and abrupt cessation triggers severe rebound hypertension and autonomic crisis.',
-    mechanism: 'Xylazine and medetomidine are central alpha-2 adrenergic agonists that inhibit norepinephrine release in the locus coeruleus, causing heavy sedation, bradycardia, hypotension, and peripheral vasoconstriction (leading to necrotic skin wounds). Medetomidine is up to 100–200x more potent at alpha-2 receptors than xylazine. When chronic alpha-2 agonism is abruptly discontinued, unopposed sympathetic outflow causes a hyperadrenergic rebound surge (severe hypertension, tachycardia, tremors, and agitation).',
-    action: 'Always give naloxone first because fentanyl is almost always present alongside xylazine. Prioritize rescue breathing (1 breath every 5 seconds). Once spontaneous breathing is restored, avoid repetitive extra naloxone—it will not reverse alpha-2 sedation and triggers violent opioid withdrawal. For withdrawal and rebound hypertension, clinical protocols use alpha-2 agonist replacement (clonidine, tizanidine, or dexmedetomidine) with structured tapering.',
-    source: ['CDC Xylazine & Medetomidine Clinical Guidance', 'https://www.cdc.gov/overdose-prevention/about/what-you-should-know-about-xylazine.html'],
-  },
-  {
-    id: 'opioids-gabapentinoids',
-    substances: ['opioids', 'gabapentinoids', 'methadone', 'buprenorphine'],
-    severity: 'high',
-    title: 'Opioids + Gabapentinoids (Gabapentin / Neurontin, Pregabalin / Lyrica)',
-    summary: 'Additive central nervous system and respiratory depression, particularly at high doses, in older adults, or in people with reduced kidney function.',
-    mechanism: 'Gabapentinoids bind voltage-gated calcium channels (alpha-2-delta-1) and can reverse opioid tolerance while adding to brainstem respiratory suppression. Because gabapentin and pregabalin are cleared solely by the kidneys, any drop in renal function causes rapid drug accumulation.',
-    action: 'If co-prescribed for neuropathic pain or AUD, start at low doses, adjust for kidney function, avoid taking extra unprescribed doses, and keep naloxone on hand.',
-    source: ['FDA Gabapentinoid Safety Communication', 'https://www.fda.gov/safety/medical-product-safety-information/neurontin-gralise-horizant-gabapentin-and-lyrica-lyrica-cr-pregabalin-drug-safety-communication'],
-  },
-  {
-    id: 'opioids-alcohol',
-    substances: ['opioids', 'alcohol', 'methadone', 'buprenorphine'],
-    severity: 'high',
-    title: 'Opioids + Alcohol',
-    summary: 'Alcohol compounds opioid breathing suppression, impairs gag reflexes, and accelerates overdose onset.',
-    mechanism: 'Ethanol enhances inhibitory GABA-A signaling and inhibits excitatory NMDA glutamate receptors in the medulla, acting synergistically with mu-opioid receptor respiratory depression.',
-    action: 'Avoid drinking alcohol when using opioids or during methadone dose titration. Note that naltrexone or acamprosate can be safely added to help reduce alcohol cravings (acamprosate is compatible with buprenorphine or methadone).',
-    source: ['NIAAA Alcohol-Medication Interactions', 'https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/harmful-interactions-mixing-alcohol-with-medicines'],
-  },
-  {
-    id: 'buprenorphine-full-agonists',
-    substances: ['buprenorphine', 'opioids', 'methadone'],
-    severity: 'high',
-    title: 'Buprenorphine + Full-Agonist Opioids (Fentanyl, Heroin, Oxycodone, Methadone)',
-    summary: 'Taking a standard dose of buprenorphine while full-agonist opioids are still attached to your receptors triggers sudden, intense precipitated withdrawal.',
-    mechanism: 'Buprenorphine has higher binding affinity for the mu-opioid receptor than fentanyl, heroin, or methadone, but lower intrinsic receptor activation (partial agonist). Introducing a standard 4–8 mg dose too early strips the full agonist off receptors and replaces 100% activation with ~40% activation within 30–60 minutes. Fentanyl\'s high lipophilicity causes it to leach from fat stores for days, compounding precipitated withdrawal risk.',
-    action: 'Wait until objective mild-to-moderate withdrawal is present before a standard buprenorphine start, OR use a clinician-guided Low-Dose / Micro-Induction ("Bernese Method") protocol starting at 0.25–0.5 mg so receptor replacement happens gradually without withdrawal. Note: If you are already stabilized on daily buprenorphine and take a full agonist, precipitated withdrawal does NOT happen because buprenorphine already occupies the receptors.',
-    source: ['ASAM Buprenorphine Initiation Guidance', 'https://www.asam.org/quality-care/clinical-guidelines/national-practice-guideline'],
-  },
-  {
-    id: 'methadone-cyp-qtc',
-    substances: ['methadone'],
-    severity: 'moderate',
-    title: 'Methadone + QTc-Prolonging Psychotropics (SSRIs, SNRIs, Tricyclics) & CYP3A4/2B6 Modifiers (Fluoroquinolones, Antifungals)',
-    summary: 'Synergistic cardiac QTc prolongation and hERG potassium channel blockade: combining methadone with psychotropics (citalopram, escitalopram, tricyclics, venlafaxine) or fluoroquinolones/antifungals significantly raises Torsades de Pointes risk, while CYP inhibitors dangerously increase methadone levels.',
-    mechanism: 'Methadone is cleared via hepatic CYP2B6, CYP3A4, and CYP2C19 and blocks cardiac hERG (IKr) potassium channels in a concentration-dependent manner (greater risk at doses > 100 mg/day). Co-administration with QTc-prolonging psychotropics (citalopram, escitalopram, TCAs like amitriptyline, venlafaxine, haloperidol, quetiapine) or fluoroquinolones (ciprofloxacin, levofloxacin, moxifloxacin) produces additive cardiac repolarization delay. CYP3A4/2B6 inhibitors (fluconazole, voriconazole, clarithromycin, fluvoxamine) decrease methadone clearance, multiplying systemic exposure.',
-    action: 'Always tell every prescriber and pharmacist that you take methadone. Ask for a baseline 12-lead ECG and follow-up checks, especially if methadone dose exceeds 100 mg/day or when adding QTc-prolonging psychotropics or antibiotics. Maintain serum potassium >= 4.0 mEq/L and magnesium >= 2.0 mg/dL. If QTc exceeds 500 ms, consider methadone dose reduction, switching to buprenorphine (minimal QTc effect), or selecting non-QTc psychotropics (bupropion, duloxetine).',
-    source: ['SAMHSA TIP 63 & AHA/ACC QTc Guidance', 'https://library.samhsa.gov/product/tip-63-medications-opioid-use-disorder/pep21-02-01-002'],
-  },
-  {
-    id: 'naltrexone-opioids',
-    substances: ['naltrexone', 'opioids', 'buprenorphine', 'methadone'],
-    severity: 'high',
-    title: 'Naltrexone (Vivitrol / Oral) + Any Opioid (7–14 Day Washout & Non-Opioid Pain Management)',
-    summary: 'Starting naltrexone while opioids remain in your system triggers severe, prolonged precipitated withdrawal; stopping naltrexone leaves you with zero opioid tolerance, and managing pain while on naltrexone requires multimodal non-opioid strategies.',
-    mechanism: 'Naltrexone is a potent competitive mu-opioid antagonist. Unlike naloxone (which wears off in 30–90 minutes), oral naltrexone blocks receptors for 24–72 hours and injectable Vivitrol blocks receptors for 28–30 days. Trying to "override" naltrexone with large doses of fentanyl is extremely dangerous because as plasma naltrexone levels dip or fentanyl concentrations surge, fatal respiratory arrest can occur abruptly.',
-    action: 'Strictly observe the full opioid-free washout period: 7–10 days after short-acting opioids, and 10–14+ days after fentanyl, buprenorphine, or methadone before starting naltrexone. Confirm clearance with a urine drug screen and a supervised naloxone challenge test. For acute injury or surgery while taking naltrexone, use multimodal non-opioid analgesia (scheduled acetaminophen, NSAIDs like ibuprofen/ketorolac, regional nerve blocks, and subanesthetic ketamine); never take high-dose opioids to bypass the blockade.',
-    source: ['FDA Vivitrol Safety Information', 'https://www.samhsa.gov/substance-use/treatment/options/naltrexone'],
-  },
-  {
-    id: 'cocaine-alcohol',
-    substances: ['stimulants', 'alcohol'],
-    severity: 'high',
-    title: 'Cocaine + Alcohol (Cocaethylene Formation)',
-    summary: 'The liver combines cocaine and alcohol into a third chemical—cocaethylene—that carries an 18-to-25-fold higher risk of sudden cardiac death than cocaine alone.',
-    mechanism: 'Hepatic carboxylesterases transesterify cocaine in the presence of ethanol to form cocaethylene, which blocks dopamine reuptake and cardiac sodium/potassium channels while having a plasma half-life 3 to 5 times longer than cocaine.',
-    action: 'Avoid drinking alcohol when using powder or crack cocaine. Seek immediate emergency care for chest pain, pressure, palpitations, or shortness of breath.',
-    source: ['NIDA Cocaine Research Report', 'https://nida.nih.gov/research-topics/cocaine'],
-  },
-  {
-    id: 'stimulants-opioids',
-    substances: ['stimulants', 'opioids'],
-    severity: 'high',
-    title: 'Stimulants (Methamphetamine, Cocaine) + Opioids (Fentanyl, Heroin — "Speedball" / "Goofball")',
-    summary: 'Stimulants do NOT prevent an opioid overdose—they mask drowsiness temporarily, and if the stimulant wears off first, fatal respiratory arrest can strike without warning.',
-    mechanism: 'Cocaine has a short duration (30–60 minutes) and methamphetamine increases sympathetic heart rate and oxygen demand while fentanyl simultaneously depresses brainstem ventilation, creating severe myocardial hypoxia and delayed respiratory collapse.',
-    action: 'Never use a stimulant to try to "wake up" someone from an opioid overdose—always use naloxone and rescue breathing. Test stimulant supplies with fentanyl test strips and keep naloxone whenever stimulants are present.',
-    source: ['CDC Stimulant Guide', 'https://www.cdc.gov/overdose-prevention/media/pdfs/2024/03/CDC-Stimulant-Guide.pdf'],
-  },
-  {
-    id: 'alcohol-disulfiram',
-    substances: ['alcohol', 'disulfiram'],
-    severity: 'high',
-    title: 'Alcohol + Disulfiram (Antabuse) or Metronidazole (Flagyl)',
-    summary: 'Blocks aldehyde dehydrogenase, causing rapid toxic acetaldehyde buildup with severe flushing, vomiting, pounding heart, and dangerous blood pressure drops.',
-    mechanism: 'Inhibition of hepatic aldehyde dehydrogenase (ALDH2) stops the conversion of acetaldehyde to harmless acetate, causing a 5-to-10-fold surge in serum acetaldehyde within 10–30 minutes of any ethanol exposure.',
-    action: 'Avoid all alcohol (including mouthwash, liquid medications/elixirs, cooking wine, and kombucha) while taking disulfiram and for 14 days after your last dose (and for 3 days after finishing metronidazole or tinidazole antibiotics).',
-    source: ['NIAAA Harmful Interactions Guide', 'https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/harmful-interactions-mixing-alcohol-with-medicines'],
-  },
-];
-
-export const NALTREXONE_WASHOUT_GUIDANCE = [
-  {
-    id: 'short_acting',
-    label: 'Short-acting opioids (heroin, oxycodone, hydrocodone, morphine, codeine)',
-    washoutWindow: '7–10 days minimum',
-    minDays: 7,
-    maxDays: 10,
-    lipophilicity: 'Low / intermediate',
-    mechanism: 'Shorter elimination half-life (2–4 hours). Receptors clear within 7–10 days, allowing safe initiation without displacing residual agonists.',
-    testingChecklist: [
-      'Comprehensive urine drug screen negative for opioids (morphine, oxycodone, hydrocodone).',
-      'Clinician-supervised Naloxone Challenge Test (0.4–0.8 mg IM/IV with 20–30 min observation) or oral naltrexone trial (12.5–25 mg) showing zero withdrawal signs before Vivitrol injection.',
-    ],
-    plainAdvice: 'Wait at least 7 to 10 full days after your last dose with zero opioids. Your clinic will do a urine test and a small challenge dose first to be sure you will not get sick.',
-  },
-  {
-    id: 'fentanyl',
-    label: 'Illicit / street fentanyl & novel synthetic opioids',
-    washoutWindow: '10–14+ days minimum',
-    minDays: 10,
-    maxDays: 14,
-    lipophilicity: 'Extremely high (adipose storage)',
-    mechanism: 'High lipophilicity causes fentanyl and its analogs to accumulate heavily in peripheral body fat, slowly leaching into systemic circulation for up to 2 weeks even after acute withdrawal fades.',
-    testingChecklist: [
-      'Laboratory-confirmed urine drug screen negative for both fentanyl and norfentanyl via LC-MS.',
-      'Supervised naloxone challenge test before the 380 mg extended-release injection when recent opioid use is uncertain (the FDA Vivitrol label says a challenge test may be helpful; a negative test does not fully rule out precipitated withdrawal).',
-    ],
-    plainAdvice: 'Street fentanyl hides in body fat for up to 2 weeks. You must wait 10 to 14+ full days without any fentanyl before starting naltrexone, or you will experience severe precipitated withdrawal.',
-  },
-  {
-    id: 'buprenorphine',
-    label: 'Buprenorphine (Suboxone, Subutex, Zubsolv sublingual)',
-    washoutWindow: '7–10 days (30+ days for Sublocade / Brixadi depot)',
-    minDays: 7,
-    maxDays: 10,
-    lipophilicity: 'High / slow receptor dissociation',
-    mechanism: 'Buprenorphine binds mu receptors with sub-nanomolar affinity and dissociates very slowly. Sublingual forms require 7–10 days; monthly depot injections require 30–60+ days.',
-    testingChecklist: [
-      'Urine screen negative for buprenorphine and norbuprenorphine.',
-      'Supervised naloxone challenge or low-dose oral naltrexone test before Vivitrol.',
-    ],
-    plainAdvice: 'Wait 7 to 10 days after your last sublingual film or tablet (or 30+ days if you received a monthly injection).',
-  },
-  {
-    id: 'methadone',
-    label: 'Methadone (OTP liquid or tablets)',
-    washoutWindow: '10–14+ days minimum',
-    minDays: 10,
-    maxDays: 14,
-    lipophilicity: 'High tissue binding / long half-life',
-    mechanism: 'Methadone has a long elimination half-life (24–36+ hours) and hepatic reservoir. Clinical guidelines recommend gradual tapering to <= 30 mg daily before beginning the 10–14 day opioid-free washout.',
-    testingChecklist: [
-      'Urine screen negative for methadone and EDDP metabolite.',
-      'Supervised naloxone challenge test before Vivitrol injection.',
-    ],
-    plainAdvice: 'Methadone stays in the body for a long time. Work with your clinic to taper down to 30 mg or less first, then wait 10 to 14+ days with zero opioids before starting naltrexone.',
-  },
-];
-
-export const NON_OPIOID_PAIN_ALTERNATIVES = [
-  {
-    category: 'Scheduled Multimodal Non-Opioid Oral / IV Analgesia',
-    agents: 'Acetaminophen (650–1,000 mg PO q6h, max 3,000–4,000 mg/day) + Ibuprofen (400–800 mg PO q6–8h with food) or IV Ketorolac (15 mg IV q6h, max 5 days)',
-    clinicalMechanism: 'Combines central antinociception (acetaminophen) with peripheral COX-1/COX-2 prostaglandin inhibition (NSAIDs) for synergistic baseline pain control.',
-    safetyGuidance: 'Check total daily acetaminophen from all medications to prevent hepatotoxicity; avoid NSAIDs in active gastrointestinal ulceration, severe renal impairment, or high bleeding risk.',
-  },
-  {
-    category: 'Regional Anesthesia & Peripheral Nerve Blocks',
-    agents: 'Targeted nerve blocks (bupivacaine, ropivacaine, liposomal bupivacaine Exparel), spinal/epidural anesthesia, local surgical infiltration',
-    clinicalMechanism: 'Blocks voltage-gated sodium channels in peripheral nerves, completely arresting nociceptive transmission from operative or fracture sites without activating central opioid receptors.',
-    safetyGuidance: 'Gold-standard approach for acute fractures, dental surgery, and inpatient surgery for patients on Vivitrol.',
-  },
-  {
-    category: 'Neuropathic & Adjuvant Analgesics',
-    agents: 'Gabapentin (300–600 mg PO TID) or Pregabalin (75–150 mg PO BID); topical Lidocaine 5% patches; Duloxetine (30–60 mg PO daily)',
-    clinicalMechanism: 'Modulates alpha-2-delta calcium channels and descending inhibitory serotonergic/noradrenergic pathways to blunt surgical hyperalgesia and neuropathic pain.',
-    safetyGuidance: 'Dose-adjust gabapentinoids for kidney function; monitor for additive sedation with sleep aids.',
-  },
-  {
-    category: 'Non-Opioid Systemic / Procedural Anesthetics',
-    agents: 'Subanesthetic IV Ketamine infusion (0.1–0.3 mg/kg/hr), IV Dexmedetomidine, Nitrous oxide',
-    clinicalMechanism: 'NMDA receptor antagonism (ketamine) prevents central sensitization and provides potent analgesia; alpha-2 agonism (dexmedetomidine) blunts sympathetic pain signals.',
-    safetyGuidance: 'Administered in monitored emergency, surgical, or ICU settings under clinical observation.',
-  },
-];
-
-export function calculateNaltrexoneWashout(input = {}) {
-  const opioidId = typeof input === 'string'
-    ? input.trim().toLowerCase()
-    : String(input?.opioid || input?.substance || 'fentanyl').trim().toLowerCase();
-
-  const normalized = opioidId.includes('fentanyl')
-    ? 'fentanyl'
-    : opioidId.includes('methadone')
-      ? 'methadone'
-      : opioidId.includes('bup') || opioidId.includes('suboxone')
-        ? 'buprenorphine'
-        : 'short_acting';
-
-  const entry = NALTREXONE_WASHOUT_GUIDANCE.find((g) => g.id === normalized) || NALTREXONE_WASHOUT_GUIDANCE[0];
-
-  return {
-    opioidId: entry.id,
-    label: entry.label,
-    washoutWindow: entry.washoutWindow,
-    minDays: entry.minDays,
-    maxDays: entry.maxDays,
-    lipophilicity: entry.lipophilicity,
-    mechanism: entry.mechanism,
-    testingChecklist: entry.testingChecklist,
-    plainAdvice: entry.plainAdvice,
-    nonOpioidAlternatives: NON_OPIOID_PAIN_ALTERNATIVES,
-  };
-}
-
-export const BERNESE_EXAMPLE_SCHEDULE = [
-  {
-    day: 'Day 1',
-    bupDose: '0.5 mg once or twice daily (e.g., quarter of a 2 mg film)',
-    fullAgonist: 'Continue current full-agonist opioid / fentanyl without cutting back yet',
-    why: 'Occupies <5% of mu receptors gently—too small to trigger precipitated withdrawal.',
-  },
-  {
-    day: 'Day 2',
-    bupDose: '0.5 mg twice daily (1 mg total)',
-    fullAgonist: 'Continue current opioid dose',
-    why: 'Gradually increases buprenorphine receptor coverage while full agonist still covers remaining receptors.',
-  },
-  {
-    day: 'Day 3',
-    bupDose: '1 mg twice daily (2 mg total)',
-    fullAgonist: 'Continue or begin gentle reduction if comfortable',
-    why: 'Buprenorphine steadily replaces fentanyl on receptors without a sudden drop in receptor tone.',
-  },
-  {
-    day: 'Day 4',
-    bupDose: '2 mg twice daily (4 mg total)',
-    fullAgonist: 'Begin tapering full agonist as cravings lessen',
-    why: 'Roughly half of mu receptors are now stabilized by buprenorphine.',
-  },
-  {
-    day: 'Day 5',
-    bupDose: '4 mg twice daily (8 mg total)',
-    fullAgonist: 'Reduce or stop full agonist',
-    why: 'Buprenorphine reaches a protective blocking threshold on most receptors.',
-  },
-  {
-    day: 'Day 6',
-    bupDose: '4 mg three times daily (12 mg total)',
-    fullAgonist: 'Discontinue full-agonist opioid completely',
-    why: 'Therapeutic stabilization achieved without having gone through acute withdrawal.',
-  },
-  {
-    day: 'Day 7+',
-    bupDose: '16 mg to 24 mg daily (or transition to Sublocade / Brixadi depot)',
-    fullAgonist: 'None — full receptor protection',
-    why: 'High-affinity receptor blockade protects against cravings and fatal overdose.',
-  },
-];
+export const BERNESE_EXAMPLE_SCHEDULE = [];
 
 export const REVERSAL_COMPARISON = [
   {
-    product: 'Naloxone 3 mg or 4 mg Nasal Spray (RiVive 3 mg; Narcan and generics 4 mg — OTC)',
-    onset: '2–3 minutes',
-    duration: '30–90 minutes',
-    guidance: 'First-line choice recommended by toxicologists and harm reduction programs. Restores breathing reliably with the lowest risk of severe precipitated withdrawal when paired with rescue breaths and a 2–3 minute wait between doses.',
+    product: 'Naloxone nasal spray (RiVive 3 mg or Narcan 4 mg — OTC)',
+    productEs: 'Naloxona en aerosol nasal (RiVive 3 mg o Narcan 4 mg, de venta libre)',
+    onset: 'May work within minutes',
+    onsetEs: 'Puede hacer efecto en minutos',
+    duration: 'Temporary; effects may wear off before the opioid',
+    durationEs: 'Temporal; sus efectos pueden terminar antes que los del opioide',
+    guidance: 'Give the available product without delay for a suspected opioid overdose. Call 911, support breathing, and follow the device label for repeat doses.',
+    guidanceEs: 'Administre sin demora el producto disponible ante una posible sobredosis con opioides. Llame al 911, apoye la respiración y siga la etiqueta del dispositivo para repetir dosis.',
   },
   {
     product: 'Injectable IM Naloxone (0.4 mg/mL vial + syringe)',
-    onset: '2–3 minutes',
-    duration: '30–90 minutes',
-    guidance: 'Gold standard for community harm reduction programs; allows gentle 0.4 mg–0.8 mg titration to restart breathing without throwing the person into violent withdrawal.',
+    productEs: 'Naloxona inyectable IM (vial de 0,4 mg/ml y jeringa)',
+    onset: 'May work within minutes',
+    onsetEs: 'Puede hacer efecto en minutos',
+    duration: 'Temporary; effects may wear off before the opioid',
+    durationEs: 'Temporal; sus efectos pueden terminar antes que los del opioide',
+    guidance: 'Use only if you have the product and training; follow its instructions. Call 911 and support breathing.',
+    guidanceEs: 'Úsela solo si tiene el producto y la capacitación; siga sus instrucciones. Llame al 911 y apoye la respiración.',
   },
   {
     product: 'High-Dose Naloxone 8 mg Nasal Spray (Kloxxado)',
-    onset: '2–3 minutes',
-    duration: '30–90 minutes',
-    guidance: 'Delivers twice the dose per spray. Clinical studies found no survival benefit over 4 mg naloxone in field use, but more than double the rate of severe precipitated withdrawal, vomiting, and agitation.',
+    productEs: 'Naloxona nasal de dosis alta de 8 mg (Kloxxado)',
+    onset: 'May work within minutes',
+    onsetEs: 'Puede hacer efecto en minutos',
+    duration: 'Temporary; effects may wear off before the opioid',
+    durationEs: 'Temporal; sus efectos pueden terminar antes que los del opioide',
+    guidance: 'In one observational study of law-enforcement responses, no survival difference was observed between 8 mg and 4 mg; withdrawal symptoms were more common with 8 mg. These findings do not establish which product is best for every overdose.',
+    guidanceEs: 'En un estudio observacional de respuestas policiales no se observó diferencia de supervivencia entre 8 mg y 4 mg; los síntomas de abstinencia fueron más comunes con 8 mg. Estos resultados no determinan qué producto es mejor para todas las sobredosis.',
   },
   {
     product: 'Nalmefene 2.7 mg Nasal Spray (Opvee — Rx)',
-    onset: '2–5 minutes',
-    duration: 'Many hours (terminal half-life ~11 h per FDA Opvee label)',
-    guidance: 'Long receptor blockade. If precipitated withdrawal occurs, agonizing symptoms and cardiovascular stress can last many hours and cannot be easily treated—leading ACMT and AACT medical toxicology societies to recommend standard naloxone first.',
+    productEs: 'Nalmefeno nasal de 2,7 mg (Opvee, con receta)',
+    onset: 'Follow the product information',
+    onsetEs: 'Consulte la información del producto',
+    duration: 'Longer-acting than naloxone',
+    durationEs: 'De acción más prolongada que la naloxona',
+    guidance: 'Nalmefene can cause withdrawal symptoms that last longer. Call 911, follow the product instructions, and stay with the person.',
+    guidanceEs: 'El nalmefeno puede causar síntomas de abstinencia más prolongados. Llame al 911, siga las instrucciones del producto y quédese con la persona.',
   },
   {
     product: 'Nalmefene 1.5 mg IM/SC Auto-Injector (Zurnai — Rx, FDA-approved Aug 2024)',
-    onset: '2.5–5 minutes (FDA label, clinical study)',
-    duration: 'Many hours (terminal half-life ~9 h per FDA Zurnai label)',
-    guidance: 'Same long-acting nalmefene blockade as Opvee in a needle auto-injector for ages 12+. Repeat every 2–5 minutes with a new device if breathing does not improve. Precipitated withdrawal can be prolonged, so call 911 and stay with the person.',
+    productEs: 'Nalmefeno IM/SC de 1,5 mg en autoinyector (Zurnai, con receta)',
+    onset: 'Follow the product information',
+    onsetEs: 'Consulte la información del producto',
+    duration: 'Longer-acting than naloxone',
+    durationEs: 'De acción más prolongada que la naloxona',
+    guidance: 'Use only according to the product labeling. Nalmefene may cause longer-lasting withdrawal symptoms; call 911 and stay with the person.',
+    guidanceEs: 'Úselo únicamente según la etiqueta del producto. El nalmefeno puede causar síntomas de abstinencia más prolongados; llame al 911 y quédese con la persona.',
   },
 ];
 
@@ -652,136 +468,6 @@ export const PRESCRIBER_QUESTIONS = [
   'What happens if I miss a dose, run out early, or have a return to use? Will the clinic adjust my dose rather than discharging me?',
   'Can you also prescribe over-the-counter or prescription naloxone and nicotine replacement therapy (patch + gum/lozenge) so my insurance covers them at $0 copay?',
 ];
-
-export const REGIMEN_AGENTS = [
-  {
-    id: 'opioids_fentanyl',
-    label: 'Opioids (fentanyl, heroin, oxycodone)',
-    interactionTag: 'opioids',
-    isDepressant: true,
-    isFullOpioid: true,
-    depressantWeight: 3.0,
-  },
-  {
-    id: 'buprenorphine',
-    label: 'Buprenorphine (Suboxone, Sublocade, Brixadi)',
-    interactionTag: 'buprenorphine',
-    isDepressant: true,
-    isPartialAgonist: true,
-    depressantWeight: 1.5,
-  },
-  {
-    id: 'methadone',
-    label: 'Methadone',
-    interactionTag: 'methadone',
-    isDepressant: true,
-    isFullOpioid: true,
-    isQtc: true,
-    depressantWeight: 3.0,
-  },
-  {
-    id: 'naltrexone',
-    label: 'Naltrexone (Vivitrol / oral ReVia)',
-    interactionTag: 'naltrexone',
-    isAntagonist: true,
-  },
-  {
-    id: 'alcohol',
-    label: 'Alcohol',
-    interactionTag: 'alcohol',
-    isDepressant: true,
-    depressantWeight: 2.5,
-  },
-  {
-    id: 'benzos_sedatives',
-    label: 'Benzodiazepines / sleep meds (Xanax, Klonopin, Ambien)',
-    interactionTag: 'benzodiazepines',
-    isDepressant: true,
-    depressantWeight: 2.5,
-  },
-  {
-    id: 'xylazine_medetomidine',
-    label: 'Xylazine / Medetomidine ("Tranq")',
-    interactionTag: 'xylazine',
-    isDepressant: true,
-    depressantWeight: 2.0,
-  },
-  {
-    id: 'stimulants',
-    label: 'Stimulants (cocaine, methamphetamine)',
-    interactionTag: 'stimulants',
-    isQtc: true,
-  },
-  {
-    id: 'gabapentinoids',
-    label: 'Gabapentinoids (gabapentin, pregabalin)',
-    interactionTag: 'gabapentinoids',
-    isDepressant: true,
-    depressantWeight: 1.5,
-  },
-  {
-    id: 'disulfiram',
-    label: 'Disulfiram (Antabuse) / Metronidazole',
-    interactionTag: 'disulfiram',
-  },
-  {
-    id: 'qtc_meds',
-    label: 'QTc / CYP3A4 meds (ondansetron, citalopram, fluconazole, macrolides, fluoroquinolones, TCAs)',
-    interactionTag: 'methadone',
-    isQtc: true,
-  },
-];
-
-const AGENT_ALIAS_MAP = {
-  opioid: 'opioids_fentanyl',
-  opioids: 'opioids_fentanyl',
-  fentanyl: 'opioids_fentanyl',
-  heroin: 'opioids_fentanyl',
-  oxycodone: 'opioids_fentanyl',
-  morphine: 'opioids_fentanyl',
-  hydrocodone: 'opioids_fentanyl',
-  opioids_fentanyl: 'opioids_fentanyl',
-  buprenorphine: 'buprenorphine',
-  suboxone: 'buprenorphine',
-  subutex: 'buprenorphine',
-  sublocade: 'buprenorphine',
-  brixadi: 'buprenorphine',
-  methadone: 'methadone',
-  dolophine: 'methadone',
-  methadose: 'methadone',
-  naltrexone: 'naltrexone',
-  revia: 'naltrexone',
-  vivitrol: 'naltrexone',
-  alcohol: 'alcohol',
-  ethanol: 'alcohol',
-  benzodiazepines: 'benzos_sedatives',
-  benzos: 'benzos_sedatives',
-  benzos_sedatives: 'benzos_sedatives',
-  sedatives: 'benzos_sedatives',
-  xanax: 'benzos_sedatives',
-  klonopin: 'benzos_sedatives',
-  valium: 'benzos_sedatives',
-  ativan: 'benzos_sedatives',
-  ambien: 'benzos_sedatives',
-  xylazine: 'xylazine_medetomidine',
-  medetomidine: 'xylazine_medetomidine',
-  tranq: 'xylazine_medetomidine',
-  xylazine_medetomidine: 'xylazine_medetomidine',
-  stimulant: 'stimulants',
-  stimulants: 'stimulants',
-  cocaine: 'stimulants',
-  methamphetamine: 'stimulants',
-  meth: 'stimulants',
-  gabapentin: 'gabapentinoids',
-  neurontin: 'gabapentinoids',
-  pregabalin: 'gabapentinoids',
-  lyrica: 'gabapentinoids',
-  gabapentinoids: 'gabapentinoids',
-  disulfiram: 'disulfiram',
-  antabuse: 'disulfiram',
-  qtc: 'qtc_meds',
-  qtc_meds: 'qtc_meds',
-};
 
 export const SPECIAL_POPULATIONS_PHARM = [
   {
@@ -930,214 +616,8 @@ export function matchFormulationPreferences({ disorder = 'all', frequency = 'all
   });
 }
 
-const SEVERITY_RANK = { none: 0, info: 1, moderate: 2, high: 3, critical: 4 };
-
-export const evaluateRegimenSafety = evaluatePolypharmacyRegimen;
-
-export function evaluatePolypharmacyRegimen(substances = []) {
-  const list = Array.isArray(substances)
-    ? substances
-    : substances instanceof Set
-      ? [...substances]
-      : substances
-        ? [substances]
-        : [];
-
-  const validMap = new Map(REGIMEN_AGENTS.map((a) => [a.id, a]));
-  const rawIds = list.map((item) => {
-    if (!item) return '';
-    if (typeof item === 'object' && item.id) return String(item.id).trim().toLowerCase();
-    return String(item).trim().toLowerCase();
-  }).filter(Boolean);
-
-  const chosenIds = [...new Set(rawIds.map((id) => AGENT_ALIAS_MAP[id] || id))]
-    .filter((id) => validMap.has(id));
-
-  if (chosenIds.length < 2) {
-    return {
-      riskLevel: 'none',
-      depressantCount: chosenIds.length === 1 && validMap.get(chosenIds[0])?.isDepressant ? 1 : 0,
-      depressantScore: 0,
-      alerts: [],
-      matchedInteractions: [],
-      actionSteps: [],
-      alpha2ReboundRisk: false,
-      washoutGuidance: null,
-      nonOpioidPainGuidance: NON_OPIOID_PAIN_ALTERNATIVES,
-    };
-  }
-
-  const has = (id) => chosenIds.includes(id);
-  const chosenAgents = chosenIds.map((id) => validMap.get(id));
-  const hasAnyOpioidAgonist = has('opioids_fentanyl') || has('buprenorphine') || has('methadone');
-  const hasFullOpioid = has('opioids_fentanyl') || has('methadone');
-
-  // Pairwise interaction matching
-  const matchedIds = new Set();
-  if (has('benzos_sedatives') && hasAnyOpioidAgonist) matchedIds.add('opioids-benzos');
-  if (has('xylazine_medetomidine') && hasAnyOpioidAgonist) matchedIds.add('opioids-xylazine');
-  if (has('gabapentinoids') && hasAnyOpioidAgonist) matchedIds.add('opioids-gabapentinoids');
-  if (has('alcohol') && hasAnyOpioidAgonist) matchedIds.add('opioids-alcohol');
-  if (has('buprenorphine') && hasFullOpioid) matchedIds.add('buprenorphine-full-agonists');
-  if (has('methadone') && (has('qtc_meds') || has('stimulants'))) matchedIds.add('methadone-cyp-qtc');
-  if (has('naltrexone') && hasAnyOpioidAgonist) matchedIds.add('naltrexone-opioids');
-  if (has('stimulants') && has('alcohol')) matchedIds.add('cocaine-alcohol');
-  if (has('stimulants') && hasAnyOpioidAgonist) matchedIds.add('stimulants-opioids');
-  if (has('alcohol') && has('disulfiram')) matchedIds.add('alcohol-disulfiram');
-
-  const matchedInteractions = INTERACTIONS.filter((ix) => matchedIds.has(ix.id));
-  const alerts = [];
-  const actionSteps = new Set();
-
-  // 1. CNS / Respiratory Depressant Synergy Scoring
-  const depressants = chosenAgents.filter((a) => a.isDepressant);
-  let depressantScore = 0;
-  for (const dep of depressants) {
-    depressantScore += dep.depressantWeight || 1.5;
-  }
-
-  if (depressants.length >= 3) {
-    alerts.push({
-      id: 'triple-depressant-synergy',
-      severity: 'critical',
-      title: `Critical Polypharmacy Alert: ${depressants.length} CNS & Respiratory Depressants Combined`,
-      detail: `Combining ${depressants.map((d) => d.label.split(' (')[0]).join(' + ')} creates compounding, non-linear suppression of brainstem breathing drive and upper airway reflexes.`,
-      score: depressantScore,
-    });
-    actionSteps.add('Keep multiple 4 mg naloxone nasal sprays immediately accessible and never use alone (or call Never Use Alone at 800-484-3731).');
-    actionSteps.add('If an overdose occurs, give naloxone AND perform rescue breathing (1 breath every 5 seconds)—naloxone reverses opioids, but rescue breaths are essential for alcohol, benzodiazepines, xylazine, or gabapentinoids.');
-  }
-
-  if (has('opioids_fentanyl') && has('benzos_sedatives') && has('alcohol') && has('gabapentinoids')) {
-    alerts.push({
-      id: 'quadruple-depressant-synergy',
-      severity: 'critical',
-      title: 'Quadruple Depressant Synergy: Opioid + Benzodiazepine + Alcohol + Gabapentinoid',
-      detail: 'Quadruple depressant polypharmacy produces severe, life-threatening medullary respiratory arrest and loss of protective airway reflexes through concurrent mu-opioid, GABA-A, and voltage-gated calcium channel inhibition.',
-      score: depressantScore,
-    });
-    actionSteps.add('Gabapentinoids depend 100% on renal clearance: verify kidney function (eGFR/CrCl) with your prescriber to prevent toxic accumulation, and avoid taking extra unprescribed doses.');
-    actionSteps.add('Per FDA Boxed Warning and SAMHSA clinical guidance: concurrent sedative or alcohol use is NOT a valid reason to discontinue buprenorphine or methadone; co-manage with gradual sedative tapering, frequent follow-up, and naloxone co-prescription.');
-  }
-
-  // 2. Alpha-2 Adrenergic Sedative Polypharmacy & Rebound Risk
-  const alpha2ReboundRisk = has('xylazine_medetomidine');
-  if (alpha2ReboundRisk) {
-    alerts.push({
-      id: 'xylazine-alpha2-rebound-alert',
-      severity: depressants.length >= 3 ? 'critical' : 'high',
-      title: 'Alpha-2 Adrenergic Sedative Polypharmacy & Rebound Risk (Xylazine / Medetomidine)',
-      detail: 'Xylazine and medetomidine are non-opioid alpha-2 adrenergic sedatives. Chronic exposure followed by abrupt cessation triggers severe alpha-2 withdrawal: a life-threatening sympathetic hyperadrenergic surge (severe hypertension, tachycardia, intense tremors, chills, diaphoresis, and agitation).',
-    });
-    actionSteps.add('In tranq overdose emergencies, prioritize rescue breathing (1 breath every 5 seconds) after giving 1 dose of 4 mg naloxone; once spontaneous breathing is restored, do not give repetitive extra naloxone doses since it will not reverse alpha-2 sedation.');
-    actionSteps.add('For xylazine/medetomidine withdrawal and severe rebound hypertension, clinical protocols use scheduled alpha-2 agonist replacement (oral clonidine, tizanidine, or dexmedetomidine) followed by a gradual taper.');
-    actionSteps.add('Inspect skin regularly for necrotic tranq ulcers, which develop at injection and non-injection sites due to severe peripheral vasoconstriction; seek prompt clinical wound care.');
-  }
-
-  // 3. Precipitated Opioid Withdrawal Risks
-  if (has('buprenorphine') && hasFullOpioid) {
-    alerts.push({
-      id: 'precipitated-withdrawal-buprenorphine',
-      severity: 'high',
-      title: 'Precipitated Opioid Withdrawal Risk (Full-Agonist Opioid + Buprenorphine)',
-      detail: 'Because buprenorphine has higher mu-receptor binding affinity but partial activation, taking a standard 4–8 mg dose while fentanyl, heroin, or methadone is still attached to receptors will rapidly strip the full agonist and trigger acute precipitated withdrawal.',
-    });
-    actionSteps.add('To transition from fentanyl or methadone to buprenorphine without precipitated withdrawal, discuss a Low-Dose / Micro-Induction ("Bernese Method") cross-taper starting at 0.25–0.5 mg, or wait until objective withdrawal is clearly established.');
-  }
-
-  let washoutGuidance = null;
-  if (has('naltrexone')) {
-    if (has('opioids_fentanyl')) washoutGuidance = calculateNaltrexoneWashout('fentanyl');
-    else if (has('methadone')) washoutGuidance = calculateNaltrexoneWashout('methadone');
-    else if (has('buprenorphine')) washoutGuidance = calculateNaltrexoneWashout('buprenorphine');
-    else if (hasAnyOpioidAgonist) washoutGuidance = calculateNaltrexoneWashout('short_acting');
-  }
-
-  if (has('naltrexone') && hasAnyOpioidAgonist) {
-    alerts.push({
-      id: 'precipitated-withdrawal-naltrexone',
-      severity: 'critical',
-      title: 'Severe Precipitated Withdrawal & Receptor Blockade (Naltrexone + Opioid)',
-      detail: 'Naltrexone is a potent competitive mu-opioid antagonist that displaces fentanyl, buprenorphine, and methadone—causing prolonged, severe precipitated withdrawal. Trying to override naltrexone blockade with high-dose opioids can cause sudden fatal overdose.',
-    });
-    actionSteps.add('Ensure a full 7–10 day opioid-free interval after short-acting opioids (10–14+ days after fentanyl, buprenorphine, or methadone) before starting oral naltrexone or Vivitrol.');
-    actionSteps.add('Confirm opioid clearance with a comprehensive urine drug screen (including fentanyl metabolite LC-MS) and a supervised naloxone challenge test before intramuscular Vivitrol injection.');
-    actionSteps.add('For acute pain while on naltrexone, use multimodal non-opioid analgesics (acetaminophen, NSAIDs, regional nerve blocks, IV ketamine); never attempt to override the blockade with massive opioid doses.');
-  }
-
-  // 4. QTc Prolongation & Hepatic/Metabolic Alerts
-  if (has('methadone') && (has('qtc_meds') || has('stimulants'))) {
-    alerts.push({
-      id: 'methadone-qtc-cyp-synergy',
-      severity: 'high',
-      title: 'QTc Prolongation & CYP3A4/2B6 Metabolic Interaction (Methadone + QTc/CYP Meds)',
-      detail: 'Combining methadone with CYP3A4 inhibitors (e.g., fluconazole, macrolides) or QTc-prolonging psychotropics (e.g., citalopram, escitalopram, tricyclics, fluoroquinolones, antipsychotics) raises serum methadone and prolongs the cardiac QT interval, increasing Torsades de Pointes risk.',
-    });
-    actionSteps.add('Ask your pharmacist or prescriber to check for CYP3A4/2B6 interactions and consider a baseline/follow-up ECG and electrolyte check (potassium & magnesium).');
-    actionSteps.add('Maintain serum potassium >= 4.0 mEq/L and magnesium >= 2.0 mg/dL; obtain follow-up ECG if methadone dose exceeds 100 mg/day or when adding QTc-prolonging psychotropics.');
-  } else if (chosenAgents.filter((a) => a.isQtc).length >= 2) {
-    alerts.push({
-      id: 'cardiac-qtc-strain',
-      severity: 'moderate',
-      title: 'Additive Cardiac Rhythm (QTc) & Sympathetic Strain',
-      detail: 'Combining stimulants, methadone, or QTc-prolonging medications increases cardiac conduction stress and arrhythmia risk, especially during dehydration or electrolyte depletion.',
-    });
-    actionSteps.add('Stay hydrated, replenish electrolytes, and seek immediate medical care for palpitations, dizziness, fainting, or chest pain.');
-  }
-
-  if (has('alcohol') && has('disulfiram')) {
-    alerts.push({
-      id: 'disulfiram-acetaldehyde-reaction',
-      severity: 'critical',
-      title: 'Acute Acetaldehyde Toxicity (Disulfiram / Metronidazole + Alcohol)',
-      detail: 'Disulfiram blocks aldehyde dehydrogenase, causing toxic acetaldehyde accumulation within 10–30 minutes of any alcohol intake (flushing, throbbing headache, severe vomiting, tachycardia, and hypotension).',
-    });
-    actionSteps.add('Strictly avoid all alcohol sources (including mouthwash, liquid medications, cooking wine, and kombucha) while taking disulfiram and for 14 days after stopping.');
-  }
-
-  if (has('naltrexone') && has('alcohol') && !hasAnyOpioidAgonist) {
-    alerts.push({
-      id: 'naltrexone-alcohol-therapeutic',
-      severity: 'info',
-      title: 'Evidence-Based AUD Combination (Naltrexone + Alcohol)',
-      detail: 'Unlike disulfiram, naltrexone does NOT make you sick if you drink alcohol. It safely blocks endorphin reward signaling to reduce cravings and heavy drinking days.',
-    });
-    actionSteps.add('Continue taking naltrexone as prescribed (daily or 1 hour prior to drinking per your care plan) and have periodic liver enzyme checks.');
-  }
-
-  for (const ix of matchedInteractions) {
-    actionSteps.add(ix.action);
-  }
-
-  let riskLevel = 'info';
-  for (const a of alerts) {
-    if (SEVERITY_RANK[a.severity] > SEVERITY_RANK[riskLevel]) riskLevel = a.severity;
-  }
-  for (const ix of matchedInteractions) {
-    if (SEVERITY_RANK[ix.severity] > SEVERITY_RANK[riskLevel]) riskLevel = ix.severity;
-  }
-
-  if (actionSteps.size === 0) {
-    actionSteps.add('Review your full medication list with a clinical pharmacist or prescriber to check for kidney/liver dose adjustments.');
-  }
-
-  return {
-    riskLevel,
-    depressantCount: depressants.length,
-    depressantScore,
-    alerts,
-    matchedInteractions,
-    actionSteps: [...actionSteps],
-    alpha2ReboundRisk,
-    washoutGuidance,
-    nonOpioidPainGuidance: NON_OPIOID_PAIN_ALTERNATIVES,
-  };
-}
-
-
 /**
- * Clinical evidence-based washout periods and receptor clearance intervals
- * from ASAM, SAMHSA, and American College of Medical Toxicology guidelines.
+ * Educational transition prompts. These are not individual clearance intervals.
  */
 export const WASHOUT_GUIDELINES = {
   naltrexone: {
@@ -1145,35 +625,35 @@ export const WASHOUT_GUIDELINES = {
     sources: {
       short_acting_opioid: {
         fromName: 'Short-acting full opioid (heroin, oxycodone, morphine, hydrocodone)',
-        minHours: 168,
-        recommendedDays: '7–10 days',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; no calculator clearance',
         opioidFreeRequired: true,
         cowsThreshold: null,
-        guidance: 'Requires complete opioid-free interval of 7–10 days before oral naltrexone or XR-naltrexone (Vivitrol). A naloxone challenge or negative urine screen is advised before injection to prevent violent precipitated withdrawal.',
+        guidance: 'The FDA labeling describes a typical opioid-free interval before naltrexone, but timing depends on the opioid, formulation, and person. A clinician must assess readiness; a negative urine test or challenge does not guarantee that starting is safe.',
       },
       fentanyl: {
         fromName: 'Fentanyl (illicit street fentanyl / analogues)',
-        minHours: 240,
-        recommendedDays: '10–14+ days',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; no fixed fentanyl interval',
         opioidFreeRequired: true,
         cowsThreshold: null,
-        guidance: 'Fentanyl is lipophilic and clears unpredictably from body fat. Wait at least 10–14 days opioid-free before naltrexone or Vivitrol.',
+        guidance: 'There is no fixed fentanyl-specific interval in this guide that can establish readiness. A clinician must assess recent exposure and the product labeling; do not rely on elapsed time or a test alone.',
       },
       methadone: {
         fromName: 'Methadone',
-        minHours: 240,
-        recommendedDays: '10–14+ days',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; may require longer',
         opioidFreeRequired: true,
         cowsThreshold: null,
-        guidance: 'Methadone has a 24–36+ hour terminal elimination half-life. Wait at least 10–14 days after the last methadone dose before starting naltrexone.',
+        guidance: 'Transition from methadone may require a longer opioid-free interval than short-acting opioids. A clinician must assess timing and readiness; do not stop or change treatment to follow a calculator.',
       },
       buprenorphine: {
         fromName: 'Buprenorphine (Suboxone, Subutex, Sublocade)',
-        minHours: 168,
-        recommendedDays: '7–14 days',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; may require longer',
         opioidFreeRequired: true,
         cowsThreshold: null,
-        guidance: 'Buprenorphine binds tightly to mu receptors with slow dissociation. Wait 7–14 days after sublingual buprenorphine before starting naltrexone.',
+        guidance: 'Transition from buprenorphine may require a longer opioid-free interval. A clinician must assess the formulation, timing, and readiness; do not stop or change treatment to follow a calculator.',
       },
     },
   },
@@ -1182,31 +662,37 @@ export const WASHOUT_GUIDELINES = {
     sources: {
       short_acting_opioid: {
         fromName: 'Short-acting full opioid (heroin, oxycodone, morphine)',
-        minHours: 12,
-        recommendedDays: '12–24 hours',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; no fixed start time',
+        recommendedDaysEs: 'Evaluación profesional individual; no hay una hora fija para iniciar',
         opioidFreeRequired: false,
         requiresWithdrawal: true,
-        cowsThreshold: 8,
-        guidance: 'Wait 12–24 hours until objective mild-to-moderate withdrawal begins (COWS score >= 8–12) before starting standard 2–4 mg buprenorphine.',
+        cowsThreshold: null,
+        guidance: 'The timing of a standard start varies. A clinician should assess withdrawal and other factors; do not use elapsed time or this self-check to choose a dose or start time.',
+        guidanceEs: 'El momento para un inicio estándar varía. Un profesional debe evaluar la abstinencia y otros factores; no use el tiempo transcurrido ni esta autoevaluación para elegir una dosis o el momento de inicio.',
       },
       methadone: {
         fromName: 'Methadone',
-        minHours: 36,
-        recommendedDays: '36–72 hours',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; no fixed start time',
+        recommendedDaysEs: 'Evaluación profesional individual; no hay una hora fija para iniciar',
         opioidFreeRequired: false,
         requiresWithdrawal: true,
-        cowsThreshold: 12,
-        guidance: 'Taper methadone dose to <= 30 mg/day, then wait 36–72+ hours until moderate withdrawal (COWS >= 12–16) before standard buprenorphine.',
+        cowsThreshold: null,
+        guidance: 'Transition from methadone requires an individualized plan because starting buprenorphine too soon can cause precipitated withdrawal. Do not taper or stop methadone or use a score to choose timing without a clinician.',
+        guidanceEs: 'La transición desde metadona requiere un plan individualizado porque iniciar buprenorfina demasiado pronto puede causar abstinencia precipitada. No reduzca ni suspenda la metadona ni use una puntuación para elegir el momento sin consultar a un profesional.',
       },
       fentanyl: {
         fromName: 'Fentanyl (illicit street fentanyl)',
-        minHours: 48,
-        recommendedDays: '48–72+ hours (or Bernese method: 0 hours)',
+        minHours: null,
+        recommendedDays: 'Individual clinician assessment; no fixed fentanyl interval',
+        recommendedDaysEs: 'Evaluación profesional individual; no hay un intervalo fijo para fentanilo',
         opioidFreeRequired: false,
         requiresWithdrawal: true,
-        cowsThreshold: 12,
-        alternativeStrategy: 'low_dose_micro_induction',
-        guidance: 'Traditional start requires 48–72+ hours wait due to lipophilic fentanyl storage, carrying significant precipitated withdrawal risk. A Low-Dose Micro-Induction ("Bernese Method") is clinically preferred (0-hour wait, cross-taper).',
+        cowsThreshold: null,
+        alternativeStrategy: 'discuss_with_clinician',
+        guidance: 'Fentanyl exposure can make timing difficult to predict. Standard and low-dose approaches may be discussed with a clinician, but this guide cannot select a method or schedule and no approach guarantees avoidance of precipitated withdrawal.',
+        guidanceEs: 'La exposición al fentanilo puede dificultar predecir el momento. Un profesional puede hablar sobre métodos estándar o de dosis bajas, pero esta guía no puede elegir un método ni un horario y ningún método garantiza evitar la abstinencia precipitada.',
       },
     },
   },
@@ -1252,10 +738,7 @@ export const WASHOUT_GUIDELINES = {
   },
 };
 
-/**
- * Calculates evidence-based washout duration, required clinical waiting interval,
- * COWS withdrawal thresholds, and precipitated withdrawal prevention guidance.
- */
+/** Looks up transition guidance. A null minimum means the tool cannot determine timing. */
 export function calculateWashout(arg1, arg2) {
   let fromRaw, toRaw;
   if (typeof arg1 === 'object' && arg1 !== null) {
@@ -1304,12 +787,18 @@ export function calculateWashout(arg1, arg2) {
       target: WASHOUT_GUIDELINES[targetGroup].targetName,
       source: guideline.fromName,
       minimumHours: guideline.minHours,
-      recommendedDays: guideline.recommendedDays,
+      recommendedDays: getLang() === 'es'
+        ? guideline.recommendedDaysEs ?? guideline.recommendedDays
+        : guideline.recommendedDays,
       opioidFreeRequired: Boolean(guideline.opioidFreeRequired),
       requiresWithdrawal: Boolean(guideline.requiresWithdrawal),
       cowsThreshold: guideline.cowsThreshold ?? null,
       alternativeStrategy: guideline.alternativeStrategy ?? null,
-      clinicalGuidance: guideline.guidance,
+      clinicalGuidance: getLang() === 'es'
+        ? guideline.guidanceEs ?? guideline.guidance
+        : guideline.guidance,
+      clinicalGuidanceEs: guideline.guidanceEs ?? guideline.guidance,
+      recommendedDaysEs: guideline.recommendedDaysEs ?? guideline.recommendedDays,
     };
   }
 
@@ -1427,6 +916,7 @@ export function filterMedications({ category = 'all', query = '' } = {}) {
     if (!q) return true;
     const haystack = [
       med.name,
+      ...(med.searchTerms || []),
       ...(med.brands || []),
       med.forms,
       med.summary,
@@ -1491,6 +981,7 @@ function specialPopulationCard(pop) {
 }
 
 function medicationCard(med) {
+  const content = med.translations?.[getLang()] ?? med;
   return h('article', { class: 'card facility', id: `med-${med.id}`, 'aria-labelledby': `med-title-${med.id}` },
     h('div', { class: 'facility-head' },
       h('div', null,
@@ -1500,20 +991,20 @@ function medicationCard(med) {
       h('ul', { class: 'chips', 'aria-label': 'SAMHSA search codes' },
         med.samhsaCodes.map((code) => h('li', { class: 'chip chip-med' }, `SAMHSA: ${code}`))),
     ),
-    p(med.summary),
+    p(content.summary ?? med.summary),
     h('dl', { class: 'service-list' },
       h('dt', null, t('meds.field.forms', 'Forms & dosing')),
-      h('dd', null, med.forms),
+      h('dd', null, content.forms ?? med.forms),
       h('dt', null, t('meds.field.mechanism', 'How it works')),
-      h('dd', null, med.mechanism),
+      h('dd', null, content.mechanism ?? med.mechanism),
       h('dt', null, t('meds.field.start', 'Starting safely')),
-      h('dd', null, med.howToStart),
+      h('dd', null, content.howToStart ?? med.howToStart),
       h('dt', null, t('meds.field.access', 'Where to get it')),
-      h('dd', null, med.access),
+      h('dd', null, content.access ?? med.access),
     ),
     h('div', { class: 'callout callout-info' },
       h('p', { class: 'callout-title' }, icon('shield'), t('meds.field.pearls', 'Clinical pharmacist pearls')),
-      ul(med.clinicalPearls),
+      ul(content.clinicalPearls ?? med.clinicalPearls),
     ),
     h('div', { class: 'actions' },
       h('a', { class: 'btn btn-primary btn-small', href: med.finderHref },
@@ -1526,19 +1017,40 @@ function medicationCard(med) {
 }
 
 function interactionCard(item) {
+  item = localizeInteraction(item, getLang());
   return h('article', { class: 'card', id: `ix-${item.id}`, 'aria-labelledby': `ix-title-${item.id}` },
     h('div', { class: 'facility-head' },
       h('h3', { class: 'facility-name', id: `ix-title-${item.id}` }, item.title),
       severityBadge(item.severity),
     ),
-    p(strong('What happens: '), item.summary),
+    p(strong(tr('What happens: ', 'Qué sucede: ')), item.summary),
     h('dl', { class: 'service-list' },
       h('dt', null, t('meds.ix.mechanism', 'Pharmacology')),
       h('dd', null, item.mechanism),
       h('dt', null, t('meds.ix.action', 'How to stay safer')),
       h('dd', null, item.action),
     ),
-    item.source && fine('Source: ', ext(item.source[1], item.source[0])),
+    item.source && fine(tr('Source: ', 'Fuente: '), ext(item.source[1], tr(item.source[0], 'Referencia clínica'))),
+  );
+}
+
+function currentPharmacologyReference() {
+  const cards = [
+    [tr('Alcohol medication comparison', 'Comparación de medicamentos para el alcohol'),
+      tr('Acamprosate supports abstinence after withdrawal and can be used with MOUD when kidney function permits. Oral or XR naltrexone reduces heavy drinking or supports abstinence, but cannot be combined with opioid agonists. Disulfiram deters drinking through an alcohol reaction; it does not treat cravings or withdrawal and needs informed consent and liver review. Gabapentin and topiramate are off-label alternatives: discuss sedation/renal function with gabapentin and cognitive effects, kidney stones, and pregnancy risks with topiramate. None replaces emergency alcohol-withdrawal care.', 'El acamprosato ayuda a mantener la abstinencia tras la retirada y puede usarse con tratamiento opioide si los riñones lo permiten. La naltrexona oral o inyectable puede reducir el consumo o apoyar la abstinencia, pero no se combina con agonistas opioides. El disulfiram provoca una reacción al beber; no trata el deseo ni la abstinencia y requiere consentimiento y evaluación hepática. Gabapentina y topiramato son alternativas fuera de indicación: revise sedación y riñones con gabapentina, y efectos cognitivos, cálculos y riesgos del embarazo con topiramato. Ninguno sustituye la atención de urgencia por abstinencia de alcohol.'),
+      'https://www.niaaa.nih.gov/health-professionals-communities/core-resource-on-alcohol/recommend-evidence-based-treatment-know-options'],
+    [tr('Stimulant care: evidence and limits', 'Atención por estimulantes: evidencia y límites'),
+      tr('Contingency management (CMI), with CBT or community reinforcement, is the standard of care. Naltrexone + bupropion and mirtazapine may be considered off-label for selected patients; benefits are not guaranteed. Naltrexone is incompatible with methadone, buprenorphine, or other opioids; bupropion needs seizure-risk review. Mirtazapine evidence is limited. Chest pain, seizure, severe overheating, or breathing problems require 911.', 'El manejo de contingencias (CMI), con terapia cognitivo-conductual o refuerzo comunitario, es la referencia de tratamiento. Naltrexona + bupropión y mirtazapina pueden considerarse fuera de indicación en algunas personas; no garantizan beneficios. Naltrexona no se combina con metadona, buprenorfina ni otros opioides; bupropión requiere evaluar convulsiones. La evidencia para mirtazapina es limitada. Dolor de pecho, convulsiones, sobrecalentamiento intenso o problemas respiratorios requieren llamar al 911.'),
+      'https://www.asam.org/quality-care/clinical-guidelines/stimulant-use-disorders'],
+    [tr('MOUD and benzodiazepines', 'Tratamiento opioide y benzodiacepinas'),
+      tr('FDA guidance says buprenorphine or methadone should not be withheld solely because someone takes benzodiazepines or other CNS depressants. The combination still increases overdose risk. Coordinate prescribers, check sedation, carry naloxone, and plan any sedative taper with a clinician; abrupt benzodiazepine withdrawal can cause seizures.', 'La FDA indica que no debe negarse buprenorfina o metadona solo por tomar benzodiacepinas u otros depresores. La combinación sí aumenta el riesgo de sobredosis. Coordine profesionales, vigile la sedación, tenga naloxona y acuerde cualquier reducción de sedantes; suspender benzodiacepinas de golpe puede causar convulsiones.'),
+      'https://www.fda.gov/drugs/drug-safety-and-availability/fda-requiring-boxed-warning-updated-improve-safe-use-benzodiazepine-drug-class'],
+    [tr('4 mg versus 8 mg nasal naloxone', 'Naloxona nasal de 4 mg frente a 8 mg'),
+      tr('A CDC observational study found similar survival and more withdrawal with 8 mg than 4 mg. Give whichever approved product is available promptly; do not delay rescue to find a preferred strength. Nalmefene lasts longer and can cause prolonged withdrawal, but recurrent overdose remains possible. Call 911, support breathing or CPR as directed, and repeat rescue medication according to its device instructions.', 'Un estudio observacional de CDC encontró supervivencia similar y más abstinencia con 8 mg que con 4 mg. Use de inmediato el producto aprobado disponible; no demore el rescate para buscar otra concentración. El nalmefeno dura más y puede prolongar la abstinencia, pero la sobredosis puede reaparecer. Llame al 911, apoye la respiración o RCP según las instrucciones y repita el medicamento según el dispositivo.'),
+      'https://www.cdc.gov/mmwr/volumes/73/wr/mm7305a4.htm'],
+  ];
+  return section('pharmacology-reference', tr('Medication decisions to discuss with your clinician', 'Decisiones sobre medicamentos para conversar con su profesional'),
+    ...cards.map(([title, body, source]) => h('article', { class: 'card' }, h('h3', null, title), p(body), fine(ext(source, tr('Primary clinical reference', 'Referencia clínica primaria'))))),
   );
 }
 
@@ -1592,27 +1104,31 @@ export function medicationsView({ query } = {}) {
         ul([
           [
             strong(tr('Buprenorphine (Suboxone, Sublocade, Brixadi): ', 'Buprenorfina (Suboxone, Sublocade, Brixadi): ')),
-            tr('Calms opioid cravings and withdrawal and cuts fatal overdose risk in half. Any doctor, nurse practitioner, or telehealth clinic can prescribe it.', 'Calma los antojos y la abstinencia de opioides y reduce a la mitad el riesgo de sobredosis mortal.'),
+            tr('Can reduce opioid withdrawal and cravings. Treatment is associated with lower overdose risk, but it does not eliminate that risk. A clinician helps choose the start method and timing.', 'Puede reducir la abstinencia y los antojos de opioides. El tratamiento se asocia con menor riesgo de sobredosis, pero no lo elimina. Un profesional ayuda a elegir el método y el momento para iniciar.'),
           ],
           [
-            strong(tr('Why street fentanyl needs a "Low-Dose / Bernese Method" start: ', 'Por qué el fentanilo callejero requiere el "Método Bernese" de dosis bajas: ')),
-            tr('Street fentanyl hides in body fat for days. Taking a full Suboxone film too soon pushes fentanyl off your brain receptors all at once and makes you violently sick. With a doctor’s Low-Dose ("Bernese Method") schedule, you start with tiny crumbs (0.25–0.5 mg) while slowly stopping fentanyl—so you switch over gently without getting sick.', 'El fentanilo se acumula en la grasa corporal. Con el Método Bernese supervisado por un médico, se empieza con microdosis (0.25–0.5 mg) para hacer la transición sin abstinencia brusca.'),
+            strong(tr('Starting buprenorphine after fentanyl: ', 'Iniciar buprenorfina después del fentanilo: ')),
+            tr('Withdrawal timing varies. A self-check or fixed waiting period cannot tell you when it is safe to start. Ask a clinician about available approaches; no approach guarantees that precipitated withdrawal will not occur.', 'El momento de la abstinencia varía. Una autoevaluación o un tiempo de espera fijo no indican cuándo es seguro iniciar. Consulte a un profesional sobre las opciones; ningún método garantiza que no ocurra abstinencia precipitada.'),
           ],
           [
             strong(tr('Methadone (at OTP clinics): ', 'Metadona (en clínicas OTP): ')),
-            tr('Can be started on Day 1 with zero risk of sudden precipitated withdrawal—often the strongest match for heavy fentanyl use. Under 2024 federal rules, clinics can give take-home bottles much faster. If combined with certain antidepressants or antibiotics, periodic ECG heart rhythm checks protect your safety.', 'Se puede iniciar desde el primer día sin riesgo de abstinencia precipitada.'),
+            tr('Methadone is an effective treatment option for opioid use disorder. A qualified clinician must determine whether and how to start it and monitor for sedation and interactions. Ask an OTP about its current take-home policies.', 'La metadona es una opción eficaz para tratar el trastorno por consumo de opioides. Un profesional calificado debe decidir si iniciar el tratamiento y cómo hacerlo, y vigilar la sedación y las interacciones. Consulte al OTP sobre sus políticas actuales para llevar medicamentos.'),
           ],
           [
-            strong(tr('Naltrexone (Vivitrol) 7–14 Day Washout: ', 'Período de lavado de 7 a 14 días para Naltrexona (Vivitrol): ')),
-            tr('Because Vivitrol completely blocks opioid receptors, taking it while opioids are still in your body causes severe, immediate sickness. You must wait 7–10 days after prescription pain pills and 10–14+ days after fentanyl before starting.', 'Debe esperar de 7 a 14 días completos sin opioides antes de iniciar naltrexona para evitar abstinencia precipitada.'),
+            strong(tr('Naltrexone (Vivitrol): ', 'Naltrexona (Vivitrol): ')),
+            tr('Starting too soon after opioids can cause severe precipitated withdrawal. The opioid-free interval depends on the medication and situation; a clinician must assess readiness. Do not rely on a fixed fentanyl wait or a test alone.', 'Iniciarla demasiado pronto después de usar opioides puede causar abstinencia precipitada grave. El período sin opioides depende del medicamento y de la situación; un profesional debe evaluar si está listo. No dependa de un tiempo fijo tras el fentanilo ni de una sola prueba.'),
           ],
           [
-            strong(tr('Xylazine ("Tranq") & Rebound Risk: ', 'Xilacina ("Tranq") y riesgo de rebote: ')),
-            tr('Tranq is a veterinary sedative mixed into street fentanyl that causes deep sedation and necrotic skin wounds. Naloxone restarts breathing, but does not wake someone from tranq. If you suddenly stop tranq, severe rebound high blood pressure, racing heart, and shaking can occur—doctors use clonidine to safely manage this.', 'La xilacina causa sedación profunda y úlceras en la piel. Al suspenderla bruscamente, se produce rebote hipertensivo que se trata con clonidina.'),
+            strong(tr('Xylazine and overdose response: ', 'Xilacina y respuesta a una sobredosis: ')),
+            tr('Xylazine is a non-opioid sedative found in parts of the unregulated drug supply. Naloxone does not reverse xylazine, but give it for a suspected opioid-involved overdose. Call 911, support breathing, and stay with the person; they may remain sedated or have breathing problems.', 'La xilacina es un sedante no opioide que se encuentra en partes del suministro de drogas no regulado. La naloxona no revierte la xilacina, pero adminístrela ante una posible sobredosis con opioides. Llame al 911, apoye la respiración y quédese con la persona; puede seguir sedada o tener problemas respiratorios.'),
           ],
           [
             strong(tr('Alcohol medications (Naltrexone & Acamprosate): ', 'Medicamentos para el alcohol (Naltrexona y Acamprosato): ')),
-            tr('Naltrexone (daily pill or monthly shot) lowers the urge to drink and is safe to start even if you are still drinking. Acamprosate calms the brain after you stop drinking and is safe for people with liver disease.', 'La naltrexona reduce las ganas de beber y el acamprosato protege el cerebro y es seguro en enfermedad hepática.'),
+            tr('These medications may help some people with alcohol use disorder, but they have different risks and eligibility requirements. A clinician should review opioid use, liver and kidney health, and alcohol-withdrawal risk before treatment.', 'Estos medicamentos pueden ayudar a algunas personas con trastorno por consumo de alcohol, pero tienen distintos riesgos y requisitos. Un profesional debe revisar el uso de opioides, la salud del hígado y los riñones, y el riesgo de abstinencia de alcohol antes del tratamiento.'),
+          ],
+          [
+            strong(tr('Emergency and print note: ', 'Emergencias e impresión: ')),
+            tr('For a suspected overdose, call 911 and follow dispatcher instructions. Any printed or copied information is outside Quick Exit’s control.', 'Ante una posible sobredosis, llame al 911 y siga las instrucciones de la persona operadora. La información impresa o copiada queda fuera del control de Salida rápida.'),
           ],
         ]),
       ),
@@ -1689,7 +1205,7 @@ export function medicationsView({ query } = {}) {
     id: 'naltrexone-washout-output',
     role: 'region',
     'aria-live': 'polite',
-    'aria-label': t('meds.washout.requiredWindow', 'Período de lavado requerido sin opioides'),
+    'aria-label': tr('Naltrexone transition information', 'Información sobre transición a naltrexona'),
   });
 
   function renderWashoutCalculator(shouldAnnounce = false) {
@@ -1701,26 +1217,31 @@ export function medicationsView({ query } = {}) {
       else pill.removeAttribute('aria-current');
     }
 
-    const data = calculateNaltrexoneWashout(activeWashoutOpioid);
+    const selectedOpioid = ({
+      fentanyl: tr('Fentanyl', 'Fentanilo'),
+      methadone: tr('Methadone', 'Metadona'),
+      buprenorphine: tr('Buprenorphine', 'Buprenorfina'),
+      short_acting: tr('Short-acting opioid', 'Opioide de acción corta'),
+    })[activeWashoutOpioid] ?? tr('Selected opioid', 'Opioide seleccionado');
     clear(washoutOutputSlot);
 
     if (shouldAnnounce) {
-      announce(`Washout for ${data.label}: ${data.washoutWindow}.`);
+      announce(tr(`General transition information for ${selectedOpioid}. No fixed interval can confirm readiness.`, `Información general de transición para ${selectedOpioid}. Ningún intervalo fijo confirma que esté listo.`));
     }
 
     washoutOutputSlot.append(
       h('div', { class: 'card facility' },
         h('div', { class: 'facility-head' },
-          h('h4', { class: 'facility-name' }, data.label),
-          h('span', { class: 'chip chip-extra' }, icon('alert'), ' ', `Required Washout: ${data.washoutWindow}`),
+          h('h4', { class: 'facility-name' }, tr('Naltrexone transition', 'Transición a naltrexona')),
+          h('span', { class: 'chip chip-extra' }, icon('alert'), ' ', tr('Clinician assessment required', 'Se requiere evaluación profesional')),
         ),
-        p(strong('Lipophilicity & Body Storage: '), data.lipophilicity),
-        p(strong('Pharmacological Mechanism: '), data.mechanism),
+        p(strong(tr('Selected opioid: ', 'Opioide seleccionado: ')), selectedOpioid),
+        p(tr('The opioid-free interval depends on the opioid, formulation, and individual circumstances. No fixed interval in this tool can confirm that starting oral or extended-release naltrexone is safe. Transitions from methadone or buprenorphine may require longer planning.', 'El período sin opioides depende del opioide, la formulación y las circunstancias individuales. Ningún intervalo fijo de esta herramienta confirma que sea seguro iniciar naltrexona oral o de liberación prolongada. Las transiciones desde metadona o buprenorfina pueden requerir más planificación.')),
         h('div', { class: 'callout callout-info' },
-          h('p', { class: 'callout-title' }, icon('shield'), t('meds.washout.testingTitle', 'Objective Clearance Verification Checklist')),
-          ul(data.testingChecklist),
+          h('p', { class: 'callout-title' }, icon('shield'), tr('Before starting', 'Antes de iniciar')),
+          p(tr('A clinician may consider a naloxone challenge test. A negative urine test or a tolerated challenge cannot confirm that it is safe to start. Ask a clinician to review the product labeling and your situation before changing prescribed treatment.', 'Un profesional puede considerar una prueba de desafío con naloxona. Un análisis de orina negativo o una prueba tolerada no confirman que sea seguro iniciar. Pida a un profesional que revise la etiqueta del producto y su situación antes de cambiar un tratamiento recetado.')),
         ),
-        p(strong('Plain-Language Guidance: '), data.plainAdvice),
+        fine(ext('https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/021897s057lbl.pdf', tr('FDA Vivitrol prescribing information', 'Información de prescripción de Vivitrol de la FDA'))),
       ),
       h('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Non-opioid acute and perioperative pain alternative options' },
         h('table', null,
@@ -1754,6 +1275,7 @@ export function medicationsView({ query } = {}) {
           class: 'btn btn-secondary btn-small',
           onclick: () => window.print(),
         }, icon('printer'), t('meds.washout.print', 'Imprimir folleto de lavado de naltrexona y alternativas para el dolor')),
+        fine(tr('Printed or copied information is outside Quick Exit’s control.', 'La información impresa o copiada queda fuera del control de Salida rápida.')),
       ),
     );
   }
@@ -1878,7 +1400,7 @@ export function medicationsView({ query } = {}) {
       return;
     }
 
-    const result = evaluatePolypharmacyRegimen(chosenIds);
+    const result = evaluateDrugInteractions(chosenIds, { lang: getLang() });
     const calloutTone = result.riskLevel === 'critical' || result.riskLevel === 'high'
       ? 'callout callout-emergency'
       : result.riskLevel === 'moderate'
@@ -1886,15 +1408,15 @@ export function medicationsView({ query } = {}) {
         : 'callout callout-info';
 
     const summaryTitle = result.riskLevel === 'critical'
-      ? 'Critical Multi-Substance Risk Detected'
+      ? tr('Critical Multi-Substance Risk Detected', 'Riesgo crítico por varias sustancias')
       : result.riskLevel === 'high'
-        ? 'High-Risk Combination Detected'
+        ? tr('High-Risk Combination Detected', 'Combinación de alto riesgo')
         : result.riskLevel === 'moderate'
-          ? 'Moderate Interaction — Clinical Monitoring Recommended'
-          : 'Combination Pharmacology Note';
+          ? tr('Moderate Interaction — Clinical Monitoring Recommended', 'Interacción moderada: se recomienda vigilancia clínica')
+          : tr('Combination Pharmacology Note', 'Nota sobre la combinación');
 
     if (shouldAnnounce) {
-      announce(`${summaryTitle}: ${result.alerts.length} clinical alert${result.alerts.length === 1 ? '' : 's'} and ${result.matchedInteractions.length} pairwise interaction${result.matchedInteractions.length === 1 ? '' : 's'}.`);
+      announce(tr(`${summaryTitle}: ${result.alerts.length} clinical alerts and ${result.matchedInteractions.length} pairwise interactions.`, `${summaryTitle}: ${result.alerts.length} alertas clínicas y ${result.matchedInteractions.length} interacciones.`));
     }
 
     regimenOutput.append(
@@ -1906,14 +1428,18 @@ export function medicationsView({ query } = {}) {
           severityBadge(result.riskLevel),
         ),
         result.depressantCount > 0 && p(
-          strong('Depressant Polypharmacy Score: '),
-          `${result.depressantScore.toFixed(1)} (${result.depressantCount} sedatives/depressants active)`,
+          strong(tr('Selected sedatives/depressants: ', 'Sedantes/depresores seleccionados: ')),
+          String(result.depressantCount),
         ),
+        fine(tr('Educational interaction flags, not a validated risk score or a safe-use clearance. Missing alerts do not establish safety. A pharmacist or prescriber must review your full regimen.', 'Alertas educativas, no una escala de riesgo validada ni una autorización de uso seguro. La ausencia de alertas no demuestra seguridad. Un profesional debe revisar todos sus medicamentos.')),
         result.alerts.length > 0 && ul(
           result.alerts.map((a) => [strong(`${a.title}: `), a.detail]),
         ),
+        result.matchedInteractions.length > 0 && h('div', { class: 'results-list' },
+          ...result.matchedInteractions.map(interactionCard),
+        ),
         result.actionSteps.length > 0 && h('div', null,
-          p(strong('Clinical Pharmacist Harm-Reduction Steps:')),
+          p(strong(tr('Clinical Pharmacist Harm-Reduction Steps:', 'Pasos para reducir daños:'))),
           ul(result.actionSteps),
         ),
         h('p', { class: 'actions' },
@@ -1924,7 +1450,7 @@ export function medicationsView({ query } = {}) {
               selectedRegimen.clear();
               renderRegimenChecker(true);
             },
-          }, icon('x'), 'Clear selection'),
+          }, icon('x'), tr('Clear selection', 'Borrar selección')),
         ),
       ),
     );
@@ -1932,7 +1458,7 @@ export function medicationsView({ query } = {}) {
 
   const regimenCheckerPanel = h('div', { class: 'card', id: 'regimen-safety-checker' },
     h('h3', null, t('meds.regimen.title', 'Multi-Substance Regimen & Polypharmacy Safety Check')),
-    p('Select 2 or more medications or substances below to evaluate combined sedative load, precipitated withdrawal risk, and cardiac QTc / liver enzyme interactions:'),
+    p(tr('Select 2 or more medications or substances below to review sedation, precipitated withdrawal, and heart rhythm or metabolism warnings. This is not a dosing tool. All selections stay in browser memory.', 'Seleccione dos o más medicamentos o sustancias para revisar alertas de sedación, abstinencia precipitada, ritmo cardíaco o metabolismo. No calcula dosis. Todo queda en la memoria del navegador.')),
     h('div', {
       class: 'presets',
       role: 'group',
@@ -1947,7 +1473,7 @@ export function medicationsView({ query } = {}) {
           else selectedRegimen.add(agent.id);
           renderRegimenChecker(true);
         },
-      }, agent.label);
+      }, getRegimenAgentLabel(agent.id, getLang()));
       regimenPills.push(btn);
       return btn;
     })),
@@ -1986,13 +1512,14 @@ export function medicationsView({ query } = {}) {
         onclick: () => window.print(),
       }, icon('printer'), tr('Print Bernese Method & Pharmacist Handout', 'Imprimir folleto de Método Bernese y preguntas')),
       fine(tr('Selections and reading mode stay in your browser’s memory and are cleared on Quick exit.', 'Las selecciones y el modo de lectura se mantienen en la memoria de su navegador y se borran con Salida rápida.')),
+      fine(tr('Printed or copied information is outside Quick Exit’s control.', 'La información impresa o copiada queda fuera del control de Salida rápida.')),
     ),
     plainSummarySlot,
     tocNav([
       ['quick-find', 'Find medication providers'],
       ['profiles', 'Medication guide'],
       ['bernese-guide', 'Fentanyl & micro-induction ("Bernese Method")'],
-      ['naltrexone-washout', 'Naltrexone 7–14 day washout & pain guide'],
+      ['naltrexone-washout', tr('Naltrexone transition planning', 'Planificación de transición a naltrexona')],
       ['otp-rules', 'Methadone & 2024 take-home rules'],
       ['reversal-science', 'Naloxone vs. nalmefene & xylazine'],
       ['special-populations', 'Pregnancy, liver/kidney & surgery'],
@@ -2021,6 +1548,7 @@ export function medicationsView({ query } = {}) {
       ),
     ),
 
+    currentPharmacologyReference(),
     section('profiles', t('meds.profiles.title', 'Evidence-based medication profiles'),
       p('Taking medication for an opioid or alcohol use disorder is NOT "trading one addiction for another." Stabilizing receptor signaling stops the cycle of withdrawal and cravings, heals brain circuitry, and—for opioid use disorder—staying on methadone or buprenorphine is linked to fewer overdose deaths.'),
       categoryTablist,
@@ -2028,44 +1556,20 @@ export function medicationsView({ query } = {}) {
       medPanel,
     ),
 
-    section('bernese-guide', t('meds.bernese.title', 'Pharmacist Guide: Transitioning from Fentanyl to Buprenorphine ("Bernese Method")'),
-      p('If you or someone you love has experienced sudden, terrible withdrawal after taking Suboxone following street fentanyl use, ',
-        strong('you did nothing wrong—and buprenorphine can still work for you. '),
-        'Understanding how fentanyl behaves in the body explains why traditional starts fail and how low-dose micro-induction solves it.'),
+    section('bernese-guide', tr('Starting buprenorphine after fentanyl', 'Iniciar buprenorfina después del fentanilo'),
+      p(tr('If you have had sudden withdrawal after taking buprenorphine, that experience does not mean treatment cannot help. Fentanyl exposure can make the timing of a standard start difficult to predict. A low-dose approach is one option a clinician may discuss, but evidence and protocols vary and it does not guarantee avoidance of precipitated withdrawal.', 'Si tuvo abstinencia repentina después de tomar buprenorfina, esa experiencia no significa que el tratamiento no pueda ayudar. La exposición al fentanilo puede dificultar predecir el momento de un inicio estándar. Un profesional puede hablar sobre un método de dosis bajas, pero la evidencia y los protocolos varían y no garantizan evitar la abstinencia precipitada.')),
       h('div', { class: 'callout callout-info' },
-        h('p', { class: 'callout-title' }, icon('info'), 'Why street fentanyl is different from heroin or prescription pain pills'),
+        h('p', { class: 'callout-title' }, icon('info'), tr('Starting buprenorphine is individualized', 'El inicio de buprenorfina es individualizado')),
         ul([
-          [strong('Fentanyl stores in body fat (lipophilicity): '), 'Heroin and oxycodone are water-soluble and clear from receptors in 12–24 hours. Illicitly manufactured fentanyl and its analogs are highly fat-soluble—with regular use, they build up in peripheral fat tissue and leach back into the bloodstream slowly over many days.'],
-          [strong('Why precipitated withdrawal happens: '), 'Even if you feel sick 24–36 hours after using fentanyl, significant fentanyl still clings to your mu-opioid receptors. Taking a standard 4 mg or 8 mg dose of buprenorphine (a high-affinity partial agonist) rapidly knocks that remaining fentanyl off your receptors all at once, causing an abrupt drop in receptor signaling ("precipitated withdrawal").'],
-          [strong('How Low-Dose / Micro-Induction ("Bernese Method") works: '), 'Instead of waiting days in agony, you start with tiny micro-doses of buprenorphine (0.25 mg to 0.5 mg) that gently attach to just a few percent of your receptors at a time while continuing your full-agonist opioid. Over 5–7 days, buprenorphine gradually takes over the receptors until a full protective dose (12–24 mg/day) is reached—then the full agonist is stopped with little to no withdrawal.'],
+          [strong(tr('Precipitated withdrawal: ', 'Abstinencia precipitada: ')), tr('Buprenorphine can displace other opioids from receptors and trigger sudden withdrawal. The risk and timing vary; elapsed time and a symptom score cannot reliably predict an individual start.', 'La buprenorfina puede desplazar otros opioides de los receptores y provocar abstinencia repentina. El riesgo y el momento varían; el tiempo transcurrido y una puntuación de síntomas no predicen de manera fiable el inicio para una persona.')],
+          [strong(tr('Low-dose approaches: ', 'Métodos de dosis bajas: ')), tr('Some clinicians use a low-dose approach, but protocols differ and evidence is still developing. There is no single validated schedule for everyone. Do not follow a dosing schedule from this page or continue using non-prescribed opioids based on it.', 'Algunos profesionales usan un método de dosis bajas, pero los protocolos varían y la evidencia sigue desarrollándose. No existe un horario validado único para todas las personas. No siga una pauta de dosis de esta página ni continúe usando opioides no recetados basándose en ella.')],
         ]),
       ),
       h('div', { class: 'callout callout-warn', role: 'note' },
-        h('p', { class: 'callout-title' }, icon('alert'), t('meds.bernese.warn.title', 'For prescribers. Not for self-dosing.')),
-        p(t('meds.bernese.warn.body', 'The schedule below is an example to help you talk with a prescriber. It is not instructions to follow on your own. Never start buprenorphine this way or change any dose without your prescriber. If you do not have one, a bridge clinic or telehealth program can help, or call the SAMHSA National Helpline at 1-800-662-4357 (free, 24/7).')),
+        h('p', { class: 'callout-title' }, icon('alert'), tr('For discussion with a clinician—not for self-dosing', 'Para conversar con un profesional; no para ajustar dosis por cuenta propia')),
+        p(tr('Do not start, change, or combine doses based on an online schedule. Ask a licensed clinician or pharmacist to review your recent opioid exposure, other medicines, health conditions, and options. A self-check cannot diagnose withdrawal or determine treatment.', 'No inicie, cambie ni combine dosis basándose en un horario en línea. Pida a un profesional autorizado o farmacéutico que revise su exposición reciente a opioides, otros medicamentos, condiciones de salud y opciones. Una autoevaluación no diagnostica abstinencia ni determina el tratamiento.')),
       ),
-      h('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Illustrative 7-day low-dose buprenorphine micro-induction cross-taper schedule' },
-        h('table', null,
-          h('caption', { class: 'visually-hidden' }, 'Illustrative 7-day low-dose buprenorphine micro-induction cross-taper schedule'),
-          h('thead', null,
-            h('tr', null,
-              h('th', { scope: 'col' }, 'Day'),
-              h('th', { scope: 'col' }, 'Illustrative Buprenorphine Dose'),
-              h('th', { scope: 'col' }, 'Full Agonist Approach'),
-              h('th', { scope: 'col' }, 'Receptor Pharmacology'),
-            ),
-          ),
-          h('tbody', null,
-            BERNESE_EXAMPLE_SCHEDULE.map((row) => h('tr', null,
-              h('th', { scope: 'row' }, row.day),
-              h('td', null, row.bupDose),
-              h('td', null, row.fullAgonist),
-              h('td', null, row.why),
-            )),
-          ),
-        ),
-      ),
-      fine('Clinical note: Every person’s tolerance and supply differ. This table is an educational example from peer-reviewed addiction medicine protocols—work with a prescriber, telehealth bridge clinic, or pharmacist to tailor your exact schedule and get non-opioid comfort medications (clonidine, lofexidine, ondansetron, hydroxyzine, trazodone).'),
+      fine(tr('If someone is hard to wake or not breathing normally, call 911. Printed or copied information is outside Quick Exit’s control.', 'Si alguien no despierta o no respira normalmente, llame al 911. La información impresa o copiada queda fuera del control de Salida rápida.')),
       h('p', { class: 'actions no-print' },
         h('button', {
           type: 'button',
@@ -2077,52 +1581,52 @@ export function medicationsView({ query } = {}) {
       p(h('a', { class: 'btn btn-secondary btn-small', href: '#/dental-care' }, icon('shield'), tr('FDA 2022 Buprenorphine Dental Safety & Enamel Protocol', 'Protocolo de Seguridad Dental y Protección del Esmalte FDA 2022'))),
     ),
 
-    section('naltrexone-washout', t('meds.washout.title', 'Naltrexone 7–14 Day Opioid Washout Calculator & Non-Opioid Pain Guide'),
-      p(t('meds.washout.lede', 'Starting oral naltrexone (ReVia) or extended-release injectable naltrexone (Vivitrol) requires a strict opioid-free washout period. Because naltrexone has an extremely high binding affinity for mu-opioid receptors, taking it with residual opioids in your system will trigger severe, prolonged precipitated withdrawal.')),
+    section('naltrexone-washout', tr('Naltrexone transition planning & non-opioid pain information', 'Planificación de transición a naltrexona e información sobre dolor no opioide'),
+      p(tr('Starting oral or extended-release naltrexone too soon after opioids can cause severe precipitated withdrawal. The opioid-free interval varies by medication and individual circumstances. The calculator below is general education only: it cannot confirm that a person is opioid-free or ready to start. A clinician should review the product labeling, recent medications, and clinical context.', 'Iniciar naltrexona oral o de liberación prolongada demasiado pronto después de usar opioides puede causar abstinencia precipitada grave. El período sin opioides varía según el medicamento y las circunstancias individuales. La calculadora siguiente es solo información general: no confirma que una persona esté libre de opioides ni lista para iniciar. Un profesional debe revisar la etiqueta del producto, los medicamentos recientes y el contexto clínico.')),
       washoutSelectorBar,
       washoutOutputSlot,
     ),
 
     section('otp-rules', t('meds.otp.title', 'Methadone Access & the 2024 SAMHSA 42 CFR Part 8 Final Rule'),
-      p('Federal updates that took effect in 2024 removed several outdated barriers to methadone care at Opioid Treatment Programs (OTPs):'),
+      p(tr('The 2024 federal rule expands access at Opioid Treatment Programs (OTPs). State requirements and individualized clinical decisions still apply:', 'La norma federal de 2024 amplía el acceso en programas de tratamiento con opioides (OTP). También aplican los requisitos estatales y las decisiones clínicas individuales:')),
       ul([
-        [strong('Faster take-home doses: '), 'Clinics may now provide up to ', strong('7 unsupervised take-home doses '), 'during the first 14 days of treatment, up to ', strong('14 take-home doses '), 'starting on day 15, and up to ', strong('28 take-home doses '), 'starting on day 31 based on individualized clinical stability rather than rigid year-long waiting periods.'],
-        [strong('Telehealth intake flexibilities: '), 'Authorized OTP practitioners can now initiate methadone or buprenorphine after an audio-visual telehealth evaluation (and audio-only for buprenorphine when video is unavailable).'],
-        [strong('No 1-year history requirement: '), 'People seeking methadone no longer have to prove a full 12-month history of opioid addiction before admission.'],
-        [strong('Counseling is never a barrier to medication: '), 'Refusing or missing counseling sessions cannot be used to automatically deny or terminate life-saving medication.'],
+        tr('Methadone take-home ceilings: up to 7 days during the first 14 days, up to 14 days from day 15, and up to 28 days from day 31. These are permitted maximums, not automatic entitlements; the OTP documents an individualized safety decision.', 'Límites de metadona para llevar: hasta 7 días durante los primeros 14 días, hasta 14 días desde el día 15 y hasta 28 días desde el día 31. Son máximos permitidos, no derechos automáticos; el OTP documenta la decisión de seguridad individual.'),
+        tr('Telehealth screening: buprenorphine may use audio-only or video when an adequate evaluation is possible. Methadone generally requires audio-visual screening. The narrow audio-only exception requires the patient to be physically with an appropriately DEA-registered licensed practitioner; audio-only is not a general home methadone start.', 'Evaluación por telesalud: la buprenorfina puede evaluarse por audio o video si la evaluación es adecuada. La metadona generalmente requiere audio y video. La excepción limitada de solo audio exige que la persona esté físicamente con un profesional habilitado y registrado ante la DEA; no autoriza un inicio general de metadona desde casa por teléfono.'),
+        tr('Adults no longer need to prove a full year of opioid addiction before admission. Counseling should be offered; refusal alone does not bar MOUD.', 'Los adultos ya no deben demostrar un año completo de adicción a opioides para ingresar. Se debe ofrecer asesoramiento; rechazarlo por sí solo no impide recibir medicación.'),
       ]),
+      fine(ext('https://www.samhsa.gov/substance-use/treatment/opioid-treatment-program/42-cfr-part-8/faqs', tr('SAMHSA Part 8 implementation questions', 'Preguntas de SAMHSA sobre la Parte 8'))),
       p(h('a', { class: 'btn btn-secondary', href: '#/treatment?codes=OTP' }, icon('pin'), 'Search certified OTP methadone clinics near me')),
       p(h('a', { class: 'btn btn-secondary', href: '#/methadone-access' }, icon('shield'), 'Open Methadone 2024 Take-Home Calculator & Patient Rights Guide')),
     ),
 
     section('reversal-science', t('meds.reversal.title', 'Overdose Reversal Pharmacology: 4 mg vs. 8 mg Naloxone, Nalmefene & Xylazine'),
-      p('When responding to an opioid overdose, ', strong('the medical goal is restoring normal breathing—not forcing immediate, wide-awake withdrawal. '),
-        'Understanding the pharmacokinetics of reversal agents helps keep people alive and safe.'),
-      h('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': 'Comparison of opioid overdose reversal medications' },
+      p(tr('For a suspected overdose, give naloxone, call 911, support breathing, and follow the product instructions. Naloxone is temporary and does not reverse non-opioid sedatives such as xylazine.', 'Ante una posible sobredosis, administre naloxona, llame al 911, apoye la respiración y siga las instrucciones del producto. La naloxona es temporal y no revierte sedantes no opioides como la xilacina.')),
+      h('div', { class: 'table-wrap', tabindex: '0', role: 'region', 'aria-label': tr('Comparison of opioid overdose reversal medications', 'Comparación de medicamentos para revertir sobredosis de opioides') },
         h('table', null,
-          h('caption', { class: 'visually-hidden' }, 'Comparison of opioid overdose reversal medications'),
+          h('caption', { class: 'visually-hidden' }, tr('Comparison of opioid overdose reversal medications', 'Comparación de medicamentos para revertir sobredosis de opioides')),
           h('thead', null,
             h('tr', null,
-              h('th', { scope: 'col' }, 'Reversal Agent'),
-              h('th', { scope: 'col' }, 'Onset'),
-              h('th', { scope: 'col' }, 'Duration'),
-              h('th', { scope: 'col' }, 'Clinical Pharmacist & Harm Reduction Guidance'),
+              h('th', { scope: 'col' }, tr('Reversal agent', 'Medicamento de rescate')),
+              h('th', { scope: 'col' }, tr('Onset', 'Inicio del efecto')),
+              h('th', { scope: 'col' }, tr('Duration', 'Duración')),
+              h('th', { scope: 'col' }, tr('Safety guidance', 'Consejos de seguridad')),
             ),
           ),
           h('tbody', null,
             REVERSAL_COMPARISON.map((r) => h('tr', null,
-              h('th', { scope: 'row' }, r.product),
-              h('td', null, r.onset),
-              h('td', null, r.duration),
-              h('td', null, r.guidance),
+              h('th', { scope: 'row' }, tr(r.product, r.productEs)),
+              h('td', null, tr(r.onset, r.onsetEs)),
+              h('td', null, tr(r.duration, r.durationEs)),
+              h('td', null, tr(r.guidance, r.guidanceEs)),
             )),
           ),
         ),
       ),
       h('div', { class: 'callout callout-warn' },
-        h('p', { class: 'callout-title' }, icon('alert'), t('meds.alpha2.title', 'Xylazine ("Tranq") & Medetomidine: Breathe for them, don’t over-naloxone')),
-        p(t('meds.alpha2.overdoseRule', 'Xylazine and medetomidine are non-opioid alpha-2 adrenergic sedatives mixed into street fentanyl. Always give 1 dose of naloxone first to reverse the fentanyl, and immediately provide rescue breaths (1 breath every 5 seconds). If their chest rises and they start breathing ≥10 times a minute on their own—even if they remain deeply asleep—stop giving extra naloxone. Extra naloxone will not reverse xylazine sedation, and will only trigger severe opioid withdrawal. Place them in the recovery position and stay until EMS arrives.')),
-        p(strong(t('meds.alpha2.reboundSummary', 'Alpha-2 Rebound Management: When someone with chronic xylazine/medetomidine exposure suddenly stops, severe rebound hypertension, tachycardia, and agitation occur. Inpatient protocols use scheduled clonidine, tizanidine, or dexmedetomidine to replace alpha-2 tone, followed by a gradual taper.'))),
+        h('p', { class: 'callout-title' }, icon('alert'), tr('Xylazine: naloxone does not replace emergency care', 'Xilacina: la naloxona no sustituye la atención de emergencia')),
+        p(tr('Naloxone can reverse an opioid component but will not reverse xylazine. Give naloxone for a suspected overdose, call 911, provide rescue breaths if trained or directed, and stay with the person. Follow the product label and dispatcher instructions if breathing does not improve or becomes abnormal again; sedation can continue after naloxone.', 'La naloxona puede revertir el componente opioide, pero no revierte la xilacina. Adminístrela ante una posible sobredosis, llame al 911, dé respiraciones de rescate si tiene capacitación o se lo indican, y quédese con la persona. Siga la etiqueta del producto y las instrucciones de la persona operadora si la respiración no mejora o vuelve a ser anormal; la sedación puede continuar después de la naloxona.')),
+        p(tr('Xylazine withdrawal can be severe. Evidence and treatment approaches continue to develop; seek medical assessment rather than trying to manage withdrawal or change medications alone.', 'La abstinencia de xilacina puede ser grave. La evidencia y los métodos de tratamiento siguen desarrollándose; busque una evaluación médica en vez de intentar controlar la abstinencia o cambiar medicamentos por cuenta propia.')),
+        fine(ext('https://www.cdc.gov/overdose-prevention/about/what-you-should-know-about-xylazine.html', tr('CDC guidance on xylazine and overdose response', 'Guía de los CDC sobre xilacina y respuesta a sobredosis'))),
       ),
     ),
 

@@ -11,7 +11,7 @@ const CACHE_PREFIX = 'harborpath-offline';
 // any of them changes this name, so the new copy is saved as a whole beside the
 // old one and swapped in at activation. Kept current by `npm run stamp:sw`
 // (scripts/build-check.mjs fails while it is stale).
-const BUILD = 'afd91bae6d17';
+const BUILD = '9e414d93fbc4';
 const CACHE_NAME = `${CACHE_PREFIX}-${BUILD}`;
 // Shell requests wait this long for the network before a saved copy is used,
 // so overdose steps open promptly on a weak or captive connection.
@@ -30,9 +30,12 @@ const APP_SHELL = [
   '/',
   '/index.html',
   '/styles.css',
+  '/css/home.css',
   '/css/print.css',
+  '/css/print-handouts.css',
   '/icons.svg',
   '/favicon.svg',
+  '/harbor.svg',
   '/manifest.webmanifest',
   '/js/app.js',
   '/js/api.js',
@@ -40,6 +43,7 @@ const APP_SHELL = [
   '/js/dom.js',
   '/js/i18n.js',
   '/js/offline.js',
+  '/js/quickExitRegistry.js',
   '/js/regionsApi.js',
   '/js/state.js',
   '/js/components/facilityCard.js',
@@ -54,6 +58,8 @@ const APP_SHELL = [
   '/js/components/stateResources.js',
   '/js/components/sensoryMode.js',
   '/js/components/emergencyDrawer.js',
+  '/js/components/equityFallback.js',
+  '/js/components/printHandout.js',
   '/js/components/stateLegalCard.js',
   '/js/components/mutualAidFinder.js',
   '/js/components/sessionBookmarks.js',
@@ -63,9 +69,15 @@ const APP_SHELL = [
   '/js/views/core.js',
   '/js/views/treatment.js',
   '/js/views/guides.js',
+  '/js/views/overdose.js',
+  '/js/views/overdoseResilience.js',
+  '/js/views/support.js',
+  '/js/views/rightsAndSafetyPlan.js',
   '/js/views/choosingCare.js',
   '/js/views/states.js',
   '/js/views/health.js',
+  '/js/views/navigatorHandoff.js',
+  '/js/views/territoryEquity.js',
   '/js/views/insuranceHelpers.js',
   '/js/views/insuranceWidget.js',
   '/js/locales/es.js',
@@ -84,6 +96,8 @@ const APP_SHELL = [
 // background after activation so they never delay or break install, and
 // cached on first online visit by the fetch handler below.
 const ELECTIVE_SHELL = [
+  '/css/elective.css',
+  '/css/care.css',
   '/js/views/tools.js',
   '/js/views/workspace.js',
   '/js/components/sourceContext.js',
@@ -93,6 +107,9 @@ const ELECTIVE_SHELL = [
   '/js/views/harmReduction.js',
   '/js/views/populationHelpers.js',
   '/js/views/plan.js',
+  '/js/views/clinicalScores.js',
+  '/js/views/withdrawalPlanner.js',
+  '/js/views/pharmacologyEngine.js',
   '/js/views/assessment.js',
   '/js/views/readiness.js',
   '/js/views/match.js',
@@ -188,6 +205,9 @@ const ELECTIVE_SHELL = [
   '/js/views/cardiogenicToxinHiet.js',
   '/js/views/woodenChestRigidity.js',
   '/js/views/hyperthermicToxidrome.js',
+  '/js/views/salicylateTox.js',
+  '/js/views/moodStabilizerTox.js',
+  '/js/views/antimuscarinicTox.js',
 ];
 
 const SHELL_PATHS = new Set(APP_SHELL);

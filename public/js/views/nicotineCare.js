@@ -3,7 +3,7 @@
 // Clinical standards: CDC Surgeon General Report on Cessation, ASAM/SAMHSA TIP 45, FTND, EAGLES Trial
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { getLang } from '../i18n.js';
 
 // ============================================================================
@@ -417,6 +417,7 @@ function renderNicotineCareContent() {
   for (const tInfo of tabList) {
     const isActive = localState.currentTab === tInfo.id;
     const tabBtn = h('button', {
+      type: 'button',
       class: `tab-btn ${isActive ? 'active' : ''}`,
       role: 'tab',
       'aria-selected': isActive ? 'true' : 'false',
@@ -720,15 +721,18 @@ function renderCravingPlanTab(localState, isEs) {
 
   const copyStatus = h('span', { class: 'copy-status', 'aria-live': 'polite' }, '');
   const copyBtn = h('button', {
+    type: 'button',
     class: 'btn btn-primary',
     onclick: async () => {
-      try {
-        await navigator.clipboard.writeText(summaryText);
-        copyStatus.textContent = isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!';
-        setTimeout(() => { copyStatus.textContent = ''; }, 3000);
-      } catch (_e) {
-        copyStatus.textContent = isEs ? ' Error al copiar' : ' Copy failed';
-      }
+      const ok = await copyText(summaryText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        failedLabel: isEs ? 'Error al copiar' : 'Copy failed',
+      });
+      copyStatus.textContent = ok
+        ? (isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!')
+        : (isEs ? ' Error al copiar' : ' Copy failed');
+      if (ok) setTimeout(() => { copyStatus.textContent = ''; }, 3000);
     }
   }, [
     icon('copy'),
@@ -736,6 +740,7 @@ function renderCravingPlanTab(localState, isEs) {
   ]);
 
   const resetBtn = h('button', {
+    type: 'button',
     class: 'btn btn-secondary',
     onclick: () => {
       resetNicotineState();

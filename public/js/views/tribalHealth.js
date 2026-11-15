@@ -42,7 +42,7 @@
  * - Complete bilingual parity (English / Spanish).
  */
 
-import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, sms, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
@@ -568,7 +568,8 @@ export function tribalHealthView(containerOrOptions = {}, maybeOptions = {}) {
       role: 'tab',
       id: `tab-btn-th-${tab.id}`,
       'aria-selected': isSelected ? 'true' : 'false',
-      'aria-controls': `tab-panel-th-${tab.id}`,
+      'aria-controls': 'tab-panel-th',
+      tabindex: isSelected ? '0' : '-1',
       class: isSelected ? 'tab active' : 'tab',
     }, tab.label);
 
@@ -583,7 +584,7 @@ export function tribalHealthView(containerOrOptions = {}, maybeOptions = {}) {
 
   // Panel Content
   const tabPanel = h('div', {
-    id: `tab-panel-th-${currentTab}`,
+    id: 'tab-panel-th',
     role: 'tabpanel',
     'aria-labelledby': `tab-btn-th-${currentTab}`,
     class: 'tab-content-panel',
@@ -794,16 +795,12 @@ export function tribalHealthView(containerOrOptions = {}, maybeOptions = {}) {
     );
     copyBtn.addEventListener('click', async () => {
       const text = formatTribalHealthSummaryText(plan, lang);
-      try {
-        await navigator.clipboard.writeText(text);
-        announce(isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard');
-        copyBtn.textContent = isEs ? '✓ ¡Copiado!' : '✓ Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? ' Copiar Plan de Salud Tribal' : ' Copy Tribal Care Plan';
-        }, 3000);
-      } catch {
-        announce(isEs ? 'Error al copiar' : 'Clipboard write failed');
-      }
+      await copyText(text, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '✓ ¡Copiado!' : '✓ Copied!',
+        announceSuccess: isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard',
+        announceFailure: isEs ? 'Error al copiar' : 'Clipboard write failed',
+      });
     });
     btnRow.append(copyBtn);
 
@@ -920,7 +917,9 @@ export function tribalHealthView(containerOrOptions = {}, maybeOptions = {}) {
   );
   root.append(hotlineBar);
 
+  syncTablists(root);
   if (container) container.append(root);
+  wireTablistKeyboard(container ?? root);
   return root;
 }
 

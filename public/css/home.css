@@ -1,0 +1,272 @@
+/* Home composition shares the palette and control styles of the app shell. */
+.view-home {
+  padding-top: clamp(1.75rem, 5vw, 4.5rem);
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4.75rem);
+  padding: 0 0 clamp(1.75rem, 5vw, 4rem);
+}
+
+.home-hero h1 {
+  max-width: 16ch;
+  margin: 0 0 .85rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 5.65rem);
+  font-weight: 500;
+  letter-spacing: -.045em;
+  line-height: .99;
+  text-wrap: balance;
+}
+
+.home-hero h1 em {
+  display: block;
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.home-hero .lede {
+  max-width: 42ch;
+  margin: 1.25rem 0 0;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+}
+
+.home-hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem 1.25rem;
+  margin-top: 1.35rem;
+}
+
+.home-hero-art {
+  padding: .45rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.home-hero-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+.view-home .home-text-action {
+  padding-inline: 0;
+  background: transparent;
+  border-color: transparent;
+  color: var(--brand-strong);
+  text-decoration: underline;
+  text-underline-offset: .22em;
+}
+
+.view-home .home-text-action:hover {
+  text-decoration-thickness: 2px;
+}
+
+.view-home .home-urgent-action,
+.view-home .quick-emergency .home-text-action {
+  color: var(--danger-strong);
+}
+
+.view-home .quick-help,
+.view-home #start-here,
+.view-home .hero-intro {
+  border-top: 1px solid var(--border);
+  padding-top: clamp(1.35rem, 3vw, 2rem);
+}
+
+.view-home .quick-help > h2,
+.view-home #start-here > h2,
+.view-home .hero-intro > h2,
+.view-home .promises > h2 {
+  margin-bottom: 1rem;
+}
+
+.view-home .quick-card {
+  padding: clamp(1rem, 2vw, 1.4rem);
+  box-shadow: none;
+  transition: none;
+}
+
+.view-home .quick-card:hover,
+.view-home .path-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.view-home .quick-title {
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.1vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.view-home .quick-title .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: .15em;
+}
+
+.view-home .quick-card p:not(.actions) {
+  font-size: .94rem;
+}
+
+.view-home .quick-card .actions {
+  gap: 0 .85rem;
+}
+
+.view-home .quick-emergency {
+  border-left: 3px solid var(--danger);
+}
+
+.view-home #start-here,
+.view-home .hero-intro {
+  margin-top: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.view-home #start-here .path-grid {
+  gap: 0 1.5rem;
+  margin-bottom: .65rem;
+}
+
+.view-home #start-here .path-card {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 1rem 0;
+  box-shadow: none;
+}
+
+.view-home #start-here .path-card:hover .path-title {
+  text-decoration: underline;
+  text-underline-offset: .18em;
+}
+
+.view-home #start-here .path-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+}
+
+.view-home #start-here .path-icon .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.view-home #start-here .path-title {
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.view-home .hero-search {
+  margin-top: 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+}
+
+.view-home .hero-actions {
+  align-items: center;
+  gap: .2rem 1.05rem;
+}
+
+.view-home .hero-more {
+  margin-bottom: 0;
+}
+
+.view-home .help-for-disclosure {
+  margin-top: 1rem;
+  padding: .1rem 0 .6rem;
+  border-block: 1px solid var(--border);
+}
+
+.view-home .help-for-disclosure > summary {
+  cursor: pointer;
+  padding: .65rem 0 .25rem;
+  font-weight: 650;
+}
+
+.view-home .help-for-list a {
+  border-radius: var(--radius-xs);
+}
+
+.view-home .promises {
+  margin-top: clamp(1.75rem, 4vw, 3.5rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+
+.view-home .promise-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: 1rem 1.75rem;
+}
+
+.view-home .promise-grid li {
+  padding: .85rem 0 0;
+  border-top: 1px solid var(--border);
+}
+
+.view-home .promise-grid p {
+  margin-bottom: 0;
+}
+
+@media (max-width: 43rem) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(2.25rem, 9.5vw, 4rem);
+  }
+
+  .home-hero .lede {
+    margin-top: .9rem;
+  }
+
+  .home-hero-links {
+    margin-top: .95rem;
+  }
+
+  .home-hero-art img {
+    height: clamp(7rem, 30vw, 13rem);
+    object-fit: cover;
+    object-position: center 47%;
+  }
+}
+
+:root.sensory-mode-active .home-hero,
+body.sensory-mode-active .home-hero {
+  grid-template-columns: 1fr;
+}
+
+:root.sensory-mode-active .home-hero-art,
+body.sensory-mode-active .home-hero-art {
+  display: none;
+}
+
+@media print {
+  .home-hero,
+  .view-home {
+    padding: 0;
+  }
+
+  .home-hero {
+    display: block;
+  }
+
+  .home-hero-art,
+  .home-hero-links {
+    display: none;
+  }
+}

@@ -6,7 +6,7 @@
 // SAMHSA / ASAM National Practice Guideline for MOUD in Chronic Kidney Disease & ESRD.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -436,6 +436,7 @@ export function renalCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'rc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `rc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setRenalState({ viewMode: 'community' }),
@@ -444,6 +445,7 @@ export function renalCareView() {
         h('span', {}, t('rc.mode.community', 'Community & Patient Mode (Dark Urine, Swelling & Hydration)')),
       ]),
       h('button', {
+        type: 'button',
         class: `rc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setRenalState({ viewMode: 'clinical' }),
@@ -456,36 +458,42 @@ export function renalCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'rc-tabs-nav', role: 'tablist', 'aria-label': 'Renal Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `rc-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setRenalState({ activeTab: 'triage' }),
       }, t('rc.tabs.triage', 'Renal & Rhabdomyolysis Triage')),
       h('button', {
+        type: 'button',
         class: `rc-tab-btn ${state.activeTab === 'rhabdo' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'rhabdo' ? 'true' : 'false',
         onclick: () => setRenalState({ activeTab: 'rhabdo' }),
       }, t('rc.tabs.rhabdo', 'Rhabdomyolysis & Hyperkalemia')),
       h('button', {
+        type: 'button',
         class: `rc-tab-btn ${state.activeTab === 'compartment' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'compartment' ? 'true' : 'false',
         onclick: () => setRenalState({ activeTab: 'compartment' }),
       }, t('rc.tabs.compartment', 'Compartment Syndrome & Fasciotomy')),
       h('button', {
+        type: 'button',
         class: `rc-tab-btn ${state.activeTab === 'kdigo' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'kdigo' ? 'true' : 'false',
         onclick: () => setRenalState({ activeTab: 'kdigo' }),
       }, t('rc.tabs.kdigo', 'KDIGO AKI Staging')),
       h('button', {
+        type: 'button',
         class: `rc-tab-btn ${state.activeTab === 'moud' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'moud' ? 'true' : 'false',
         onclick: () => setRenalState({ activeTab: 'moud' }),
       }, t('rc.tabs.moud', 'MOUD in Renal Disease & Dialysis')),
       h('button', {
+        type: 'button',
         class: `rc-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -639,25 +647,26 @@ export function renalCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildRenalSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('rc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildRenalSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('rc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'rc-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('rc.sbar.title', 'Zero-PII Renal & Rhabdomyolysis Clinical SBAR Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildRenalSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('rc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildRenalSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('rc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildRenalSbarText(state, evaluation, 'en')),
     ]);

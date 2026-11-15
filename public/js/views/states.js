@@ -5,6 +5,8 @@ import { stateLegalCard, resetStateLegalCardState } from '../components/stateLeg
 import { regionsApi } from '../regionsApi.js';
 import { state, onQuickExit } from '../state.js';
 import { t, getLang } from '../i18n.js';
+import { buildTerritoryAndRuralFallback } from './territoryEquity.js';
+import { setNavigatorHandoffState } from './navigatorHandoff.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
@@ -249,6 +251,7 @@ export function resetStatesState() {
  */
 export function buildRuralTerritoryReachCard({ stateCode, onSelectNetwork, plainLanguage = false } = {}) {
   const resolvedCode = String(stateCode || state.location?.state || '').trim().toUpperCase();
+  const reach = buildTerritoryAndRuralFallback({ location: { state: resolvedCode, rural: true } });
   const territoryGuide = getTerritoryEquityGuide(resolvedCode);
   const isEs = getLang() === 'es';
 
@@ -304,14 +307,16 @@ export function buildRuralTerritoryReachCard({ stateCode, onSelectNetwork, plain
           'Alcance de atención rural, fronteriza (200–250 millas) y territorios de EE. UU.',
         )),
       h('span', { class: 'chip chip-care' },
-        tr('200–250 mi + Telehealth & Island Safety-Net', '200–250 mi + Telesalud y red de islas')),
+        tr(`Up to ${reach.radius} mi + Telehealth & Island Safety-Net`, `Hasta ${reach.radius} mi + Telesalud y red de islas`)),
     ),
     p(ruralLeadText),
     territoryHighlight,
     h('div', { class: 'actions no-print' },
       h('a', {
         class: 'btn btn-primary btn-small',
-        href: '#/treatment?codes=TELE,BU',
+        href: '#/treatment',
+        'data-navigator-handoff': 'true',
+        onclick: () => setNavigatorHandoffState({ codes: ['TELE', 'BU'] }),
         'aria-label': tr('Search telehealth buprenorphine and treatment programs', 'Buscar programas de telesalud y buprenorfina'),
       }, icon('phone'), tr('Statewide Telehealth & Buprenorphine (TELE)', 'Telesalud estatal y buprenorfina (TELE)')),
       h('a', {

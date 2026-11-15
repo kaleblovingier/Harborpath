@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { runInNewContext } from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -202,6 +203,60 @@ test('dental, nightlife, polysubstance, and sleep views have a bilingual h1', ()
 });
 
 // ------------------------------------------------------------ 3. Escape and scrolling
+function escapeHandlerHarness({ mobileOpen = false, moreMenu = null, now = 1000 } = {}) {
+  const src = read('public/js/app.js');
+  const start = src.indexOf('  let lastEscape = 0;');
+  const end = src.indexOf('toggle?.addEventListener', start);
+  assert.ok(start >= 0 && end > start, 'find the registered Escape handler');
+
+  let handler;
+  let quickExitCalls = 0;
+  let closeMenuCalls = 0;
+  let clock = now;
+  const toggle = {
+    expanded: mobileOpen,
+    focused: false,
+    getAttribute(name) {
+      return name === 'aria-expanded' ? String(this.expanded) : null;
+    },
+    focus() { this.focused = true; },
+  };
+  const nav = {
+    querySelector(selector) {
+      assert.equal(selector, '.nav-more-menu[open]');
+      return moreMenu?.open ? moreMenu : null;
+    },
+  };
+  const document = {
+    addEventListener(type, callback) {
+      if (type === 'keydown') handler = callback;
+    },
+  };
+
+  runInNewContext(src.slice(start, end), {
+    document,
+    nav,
+    toggle,
+    closeMenu() {
+      closeMenuCalls += 1;
+      toggle.expanded = false;
+    },
+    quickExit() { quickExitCalls += 1; },
+    Date: { now: () => clock },
+  });
+  assert.equal(typeof handler, 'function', 'registers the Escape handler');
+
+  return {
+    keydown({ key = 'Escape', repeat = false } = {}) {
+      handler({ key, repeat });
+    },
+    setNow(value) { clock = value; },
+    get quickExitCalls() { return quickExitCalls; },
+    get closeMenuCalls() { return closeMenuCalls; },
+    toggle,
+  };
+}
+
 test('Escape that closes the More tools menu does not count toward quick exit', () => {
   const src = read('public/js/app.js');
   const handler = src.slice(src.indexOf('let lastEscape = 0;'), src.indexOf('toggle?.addEventListener'));
@@ -211,6 +266,35 @@ test('Escape that closes the More tools menu does not count toward quick exit', 
   assert.match(branch, /return;/);
 });
 
+test('dismissing More tools clears a pending Escape, so Quick Exit needs two later presses', () => {
+  const menu = {
+    open: false,
+    summary: { focused: false, focus() { this.focused = true; } },
+    querySelector(selector) {
+      assert.equal(selector, 'summary');
+      return this.summary;
+    },
+  };
+  const keyboard = escapeHandlerHarness({ moreMenu: menu });
+
+  keyboard.keydown();
+  assert.equal(keyboard.quickExitCalls, 0, 'the first plain Escape only arms Quick Exit');
+
+  menu.open = true;
+  keyboard.setNow(1100);
+  keyboard.keydown();
+  assert.equal(menu.open, false, 'Escape dismisses the disclosure');
+  assert.equal(menu.summary.focused, true, 'focus returns to the disclosure summary');
+  assert.equal(keyboard.quickExitCalls, 0, 'the dismissal itself is not Quick Exit');
+
+  keyboard.setNow(1200);
+  keyboard.keydown();
+  assert.equal(keyboard.quickExitCalls, 0, 'the next plain Escape starts a fresh sequence');
+  keyboard.setNow(1300);
+  keyboard.keydown();
+  assert.equal(keyboard.quickExitCalls, 1, 'a second subsequent plain Escape performs Quick Exit');
+});
+
 test('Escape closes the open mobile menu, returns focus to Menu, and does not count toward quick exit', () => {
   const src = read('public/js/app.js');
   const handler = src.slice(src.indexOf('let lastEscape = 0;'), src.indexOf('toggle?.addEventListener'));
@@ -218,6 +302,23 @@ test('Escape closes the open mobile menu, returns focus to Menu, and does not co
   assert.match(branch, /closeMenu\(\);/);
   assert.match(branch, /toggle\.focus\(\);/);
   assert.match(branch, /lastEscape = 0;/);
+});
+
+test('dismissing the mobile menu clears a pending Escape and restores focus', () => {
+  const keyboard = escapeHandlerHarness({ mobileOpen: true });
+
+  keyboard.keydown();
+  assert.equal(keyboard.closeMenuCalls, 1, 'Escape closes the open mobile menu');
+  assert.equal(keyboard.toggle.expanded, false, 'the menu state is closed');
+  assert.equal(keyboard.toggle.focused, true, 'focus returns to the Menu control');
+  assert.equal(keyboard.quickExitCalls, 0, 'closing the menu is not Quick Exit');
+
+  keyboard.setNow(1100);
+  keyboard.keydown();
+  assert.equal(keyboard.quickExitCalls, 0, 'the next plain Escape starts a fresh sequence');
+  keyboard.setNow(1200);
+  keyboard.keydown();
+  assert.equal(keyboard.quickExitCalls, 1, 'Quick Exit needs two subsequent plain Escapes');
 });
 
 test('quick exit turns plain-language mode off', async () => {

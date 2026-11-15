@@ -34,7 +34,7 @@
  * - Complete bilingual parity (English / Spanish).
  */
 
-import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, sms, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
@@ -534,7 +534,8 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
       role: 'tab',
       id: `tab-btn-lg-${tab.id}`,
       'aria-selected': isSelected ? 'true' : 'false',
-      'aria-controls': `tab-panel-lg-${tab.id}`,
+      'aria-controls': 'tab-panel-lg',
+      tabindex: isSelected ? '0' : '-1',
       class: isSelected ? 'tab active' : 'tab',
     }, tab.label);
 
@@ -549,7 +550,7 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
 
   // Tab Panel
   const tabPanel = h('div', {
-    id: `tab-panel-lg-${currentTab}`,
+    id: 'tab-panel-lg',
     role: 'tabpanel',
     'aria-labelledby': `tab-btn-lg-${currentTab}`,
     class: 'tab-content-panel',
@@ -738,16 +739,12 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
     );
     copyBtn.addEventListener('click', async () => {
       const text = formatLgbtqSummaryText(plan, lang);
-      try {
-        await navigator.clipboard.writeText(text);
-        announce(isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard');
-        copyBtn.textContent = isEs ? '✓ ¡Copiado!' : '✓ Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? ' Copiar Plan Afirmativo' : ' Copy Affirming Plan';
-        }, 3000);
-      } catch {
-        announce(isEs ? 'Error al copiar' : 'Clipboard write failed');
-      }
+      await copyText(text, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '✓ ¡Copiado!' : '✓ Copied!',
+        announceSuccess: isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard',
+        announceFailure: isEs ? 'Error al copiar' : 'Clipboard write failed',
+      });
     });
     btnRow.append(copyBtn);
 
@@ -877,7 +874,9 @@ export function lgbtqCareView(containerOrOptions = {}, maybeOptions = {}) {
   );
   root.append(hotlineBar);
 
+  syncTablists(root);
   if (container) container.append(root);
+  wireTablistKeyboard(container ?? root);
   return root;
 }
 

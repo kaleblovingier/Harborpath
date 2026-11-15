@@ -3,7 +3,7 @@
 // Evidence-based IDDT Model, Psychotropic-MOUD Interactions, False-Positive Toxicology Registry & Crisis Planning
 // Strictly Zero-PII, In-RAM ephemeral state, WCAG 2.2 AA accessible DOM
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 /**
@@ -507,7 +507,7 @@ export function dualDiagnosisView() {
       class: 'tab-btn' + (dualDiagnosisState.activeTab === tab.id ? ' active' : ''),
       id: `tab-dual-${tab.id}`,
       'aria-selected': dualDiagnosisState.activeTab === tab.id ? 'true' : 'false',
-      'aria-controls': `panel-dual-${tab.id}`,
+      'aria-controls': 'panel-dual-active',
       tabindex: dualDiagnosisState.activeTab === tab.id ? '0' : '-1'
     }, tab.label);
 
@@ -550,7 +550,7 @@ export function dualDiagnosisView() {
     const activeTab = dualDiagnosisState.activeTab;
     const panel = h('section', {
       role: 'tabpanel',
-      id: `panel-dual-${activeTab}`,
+      id: 'panel-dual-active',
       'aria-labelledby': `tab-dual-${activeTab}`,
       class: 'tab-panel'
     });
@@ -733,16 +733,13 @@ export function dualDiagnosisView() {
       class: 'btn btn-secondary'
     }, icon('share'), t('dual.copyReport', 'Copy Dual Diagnosis Care Report'));
 
-    exportBtn.addEventListener('click', () => {
+    exportBtn.addEventListener('click', async () => {
       const summary = formatDualDiagnosisSummaryText(dualDiagnosisState);
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(summary).then(() => {
-          exportBtn.textContent = t('dual.copied', 'Report Copied to Clipboard!');
-          setTimeout(() => {
-            exportBtn.textContent = t('dual.copyReport', 'Copy Dual Diagnosis Care Report');
-          }, 2500);
-        });
-      }
+      await copyText(summary, {
+        trigger: exportBtn,
+        copiedLabel: t('dual.copied', 'Report Copied to Clipboard!'),
+        announceSuccess: t('dual.copied', 'Report Copied to Clipboard!'),
+      });
     });
 
     panel.appendChild(exportBtn);
@@ -785,16 +782,13 @@ export function dualDiagnosisView() {
       class: 'btn btn-secondary'
     }, icon('share'), 'Copy Script to Clipboard');
 
-    copyBtn.addEventListener('click', () => {
+    copyBtn.addEventListener('click', async () => {
       const txt = scriptBox.textContent;
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(txt).then(() => {
-          copyBtn.textContent = 'Script Copied!';
-          setTimeout(() => {
-            copyBtn.textContent = 'Copy Script to Clipboard';
-          }, 2000);
-        });
-      }
+      await copyText(txt, {
+        trigger: copyBtn,
+        copiedLabel: t('dual.scriptCopied', 'Script Copied!'),
+        announceSuccess: t('dual.scriptCopied', 'Script Copied!'),
+      });
     });
 
     scriptPreview.appendChild(copyBtn);

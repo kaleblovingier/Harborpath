@@ -144,3 +144,102 @@ export function debounce(fn, ms) {
     timer = setTimeout(() => fn(...args), ms);
   };
 }
+
+const copyResetTimers = new WeakMap();
+const copyOriginalLabels = new WeakMap();
+
+/**
+ * Copy `text` with screen-reader announcement (`announce`), optional temporary
+ * trigger label feedback, and graceful failure notification. Never throws.
+ */
+export async function copyText(text, {
+  trigger = null,
+  copiedLabel = t('common.copiedBtn', 'Copied'),
+  failedLabel = t('common.copyFailedBtn', 'Copy failed — select text manually'),
+  announceSuccess = t('common.copiedAnnounce', 'Copied to clipboard.'),
+  announceFailure = t('common.copyFailedAnnounce', 'Could not access clipboard. Select the text to copy manually.'),
+  resetMs = 2000,
+} = {}) {
+  const applyFeedback = (label) => {
+    if (!trigger) return;
+    if (!copyOriginalLabels.has(trigger)) copyOriginalLabels.set(trigger, trigger.textContent);
+    const prevTimer = copyResetTimers.get(trigger);
+    if (prevTimer) clearTimeout(prevTimer);
+    trigger.textContent = label;
+    if (resetMs > 0) {
+      copyResetTimers.set(trigger, setTimeout(() => {
+        if (copyOriginalLabels.has(trigger)) trigger.textContent = copyOriginalLabels.get(trigger);
+      }, resetMs));
+    }
+  };
+  try {
+    if (!globalThis.navigator?.clipboard?.writeText) throw new Error('clipboard unavailable');
+    await globalThis.navigator.clipboard.writeText(String(text ?? ''));
+    applyFeedback(copiedLabel);
+    announce(announceSuccess);
+    return true;
+  } catch {
+    applyFeedback(failedLabel);
+    announce(announceFailure);
+    return false;
+  }
+}
+
+/** Sync roving tabindex (`0` on active, `-1` on inactive) inside all `[role="tablist"]`s. */
+export function syncTablists(container) {
+  if (!container?.querySelectorAll) return;
+  for (const list of container.querySelectorAll('[role="tablist"]')) {
+    const tabs = [...list.querySelectorAll('[role="tab"]')];
+    if (!tabs.length) continue;
+    const active = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') ?? tabs[0];
+    for (const tab of tabs) tab.setAttribute('tabindex', tab === active ? '0' : '-1');
+  }
+}
+
+const wiredTabContainers = new WeakSet();
+
+/**
+ * Enable WAI-ARIA Tabs keyboard navigation (ArrowLeft/Right/Up/Down, Home/End)
+ * for any `[role="tablist"]` inside `container`, restoring focus even when click triggers a redraw.
+ */
+export function wireTablistKeyboard(container) {
+  if (!container || wiredTabContainers.has(container)) return;
+  wiredTabContainers.add(container);
+  syncTablists(container);
+  container.addEventListener('keydown', (event) => {
+    const target = event.target;
+    if (!target?.closest) return;
+    const currentTab = target.closest('[role="tab"]');
+    const tablist = currentTab?.closest('[role="tablist"]');
+    if (!currentTab || !tablist) return;
+    const tabs = [...tablist.querySelectorAll('[role="tab"]')].filter((tab) => !tab.disabled && tab.getAttribute('aria-disabled') !== 'true');
+    const idx = tabs.indexOf(currentTab);
+    if (idx === -1 || tabs.length < 2) return;
+    let nextIdx = -1;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIdx = (idx + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIdx = (idx - 1 + tabs.length) % tabs.length;
+    else if (event.key === 'Home') nextIdx = 0;
+    else if (event.key === 'End') nextIdx = tabs.length - 1;
+    if (nextIdx === -1) return;
+    event.preventDefault();
+    const listIndex = [...container.querySelectorAll('[role="tablist"]')].indexOf(tablist);
+    const nextTab = tabs[nextIdx];
+    const nextId = nextTab.id || '';
+    const nextDataTab = nextTab.dataset?.tab || '';
+    const nextControls = nextTab.getAttribute('aria-controls') || '';
+    nextTab.click();
+    syncTablists(container);
+    let focusTarget = nextTab.isConnected ? nextTab : null;
+    if (!focusTarget) {
+      const lists = [...container.querySelectorAll('[role="tablist"]')];
+      const newList = lists[listIndex] ?? lists[0];
+      const newTabs = newList ? [...newList.querySelectorAll('[role="tab"]')] : [];
+      focusTarget = (nextId && newTabs.find((x) => x.id === nextId))
+        || (nextDataTab && newTabs.find((x) => x.dataset?.tab === nextDataTab))
+        || (nextControls && newTabs.find((x) => x.getAttribute('aria-controls') === nextControls))
+        || newTabs[nextIdx]
+        || null;
+    }
+    if (focusTarget && typeof focusTarget.focus === 'function') focusTarget.focus();
+  });
+}
