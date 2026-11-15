@@ -1204,8 +1204,6 @@ tbody th { font-weight: 700; min-width: 200px; }
 .tools-filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; align-items: end; background: var(--surface-2); }
 .tools-filters .field { min-width: 0; }
 .tools-filters input, .tools-filters select { width: 100%; min-width: 0; min-height: 44px; }
-.tools-filters > p { grid-column: 1 / -1; margin: 0; }
-.tools-filters > button { justify-self: start; }
 .tools-discovery { display: grid; gap: 8px; }
 .tools-discovery-group .label { margin: 0 0 6px; }
 .tools-discovery-group .presets { margin: 0; }
@@ -1213,20 +1211,13 @@ tbody th { font-weight: 700; min-width: 200px; }
 .tools-freshness h2 { font-size: 1.05rem; margin: 0 0 10px; }
 .tools-freshness p:last-child { margin-bottom: 0; }
 .tools-count { font-weight: 600; margin: 22px 0 12px; }
-.tools-result-group { padding-top: 18px; margin-top: 20px; border-top: 1px solid var(--border); }
-.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 14px; }
-.tool-card h2 { font-size: 1.35rem; margin: 0 0 8px; }
-.tool-card h2 a { display: inline-flex; align-items: center; min-height: 44px; }
-.tool-card .chips { margin-bottom: 8px; }
+.tools-grid { display: grid; }
 .tool-card p { margin-bottom: 0; color: var(--muted); }
 .source-context { margin-top: 28px; overflow-wrap: anywhere; }
 .source-context > summary { cursor: pointer; min-height: 44px; padding: 8px 0; font-weight: 700; }
 .source-context dd { margin: 4px 0 16px; }
-.workspace-stages { display: grid; gap: 14px; }
-.workspace-stages .section { margin: 0; padding: clamp(14px, 3vw, 24px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-.workspace-tasks { list-style: none; padding: 0; border-top: 1px solid var(--border); }
-.workspace-tasks li { margin: 0; padding: 0; border-bottom: 1px solid var(--border); }
-.workspace-task { min-height: 44px; margin: 0; padding: 10px 6px; }
+.workspace-stages { display: grid; }
+.workspace-task { min-height: 44px; }
 .workspace-task input { flex: none; margin-top: 3px; }
 .workspace-progress { font-weight: 650; padding: 10px 14px; background: var(--surface-2); border-radius: var(--radius-sm); }
 .workspace-summary { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
