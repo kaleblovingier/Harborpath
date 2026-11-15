@@ -1,11 +1,13 @@
 import { h, clear, ext, tel, icon, announce } from '../dom.js';
 import { api } from '../api.js';
-import { state, setRadius } from '../state.js';
+import { state, setRadius, onQuickExit } from '../state.js';
 import { locationPicker } from './locationPicker.js';
 import { treatmentCard, healthCenterCard } from './facilityCard.js';
 import { treatmentReach, healthCenterReach } from './reach.js';
 import { statePanel } from './stateResources.js';
 import { t, tp, formatNumber, getLang } from '../i18n.js';
+import { searchWithEquityFallback } from '../views/territoryEquity.js';
+import { equityFallbackPanel } from './equityFallback.js';
 
 const MAX_FILTERS = 8;
 
@@ -94,7 +96,7 @@ export function harmReductionSupplyBanner() {
 /**
  * Search SAMHSA's directory. kind: 'sa' (substance use) or 'mh' (mental health).
  */
-export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun = 'places' }) {
+export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun = 'places', rankResults = (items) => items, renderCard = treatmentCard, prioritizesCoverage = () => false }) {
   const selected = new Set(initialCodes);
   let page = 1;
   let results = [];
@@ -102,6 +104,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
   let totalPages = 0;
   let total = 0;
   let controller;
+  let equity = null;
 
   const statusLine = h('p', { class: 'results-status', role: 'status' });
   const list = h('div', { class: 'results-list' });
@@ -112,6 +115,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     'aria-label': t('finder.activeFiltersRegion', 'Active search filters'),
   });
   const harmNoticeSlot = h('div', { class: 'finder-harm-reduction-slot' });
+  const equitySlot = h('div', { class: 'finder-equity-slot' });
   const filterCount = h('span', { class: 'count' });
   const limitNote = h('p', { class: 'help', hidden: true },
     t('finder.maxFilters', 'You can combine up to {n} filters.', { n: MAX_FILTERS }));
@@ -173,6 +177,9 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
   function renderResults() {
     clear(list);
     clear(more);
+    clear(equitySlot);
+    const equityPanel = equityFallbackPanel(equity ?? {});
+    if (equityPanel) equitySlot.append(equityPanel);
     if (!state.location) {
       statusLine.textContent = '';
       list.append(h('div', { class: 'empty' },
@@ -207,7 +214,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
               ),
             ),
             h('div', { class: 'results-list relaxed-list' },
-              ...relaxed.results.map((f) => treatmentCard(f, { requestedCodes: reqCodes, labelFor })),
+              ...rankResults(relaxed.results).map((f) => renderCard(f, { requestedCodes: reqCodes, labelFor })),
             ),
           ),
         );
@@ -250,10 +257,12 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
         fallbackHelp()));
       return;
     }
-    statusLine.textContent = t('finder.showingCount',
+    statusLine.textContent = prioritizesCoverage() ? t('finder.showingCoverageCount',
+      'Showing {shown} of {total} {noun} within {miles} miles of {label}, by coverage tier then distance. Call to verify coverage.',
+      { shown: formatNumber(results.length), total: formatNumber(total), noun, miles: state.radius, label: state.location.label }) : t('finder.showingCount',
       'Showing {shown} of {total} {noun} within {miles} miles of {label}, nearest first.',
       { shown: formatNumber(results.length), total: formatNumber(total), noun, miles: state.radius, label: state.location.label });
-    list.append(...results.map((f) => treatmentCard(f)));
+    list.append(...rankResults(results).map((f) => renderCard(f)));
     if (page < totalPages) {
       more.append(h('button', { type: 'button', class: 'btn btn-secondary', onclick: loadMore },
         t('finder.showMore', 'Show more results')));
@@ -269,6 +278,7 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     statusLine,
     list,
     more,
+    equitySlot,
     h('p', { class: 'source-note' },
       t('finder.sourceSamhsa1', 'Listings come live from '),
       ext(t('url.findtreatment', 'https://findtreatment.gov/'), 'SAMHSA FindTreatment.gov'),
@@ -285,6 +295,8 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
     resultsContainer.setAttribute('aria-busy', 'true');
     if (nextPage === 1) {
       relaxed = null;
+      equity = null;
+      clear(equitySlot);
       clear(list).append(...skeleton());
       clear(more);
       statusLine.textContent = t('finder.searchingShort', 'Searching…');
@@ -292,10 +304,19 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
       clear(more).append(h('p', { class: 'help' }, t('finder.loadingMore', 'Loading more…')));
     }
     try {
-      const data = await api.treatment({
-        lat: state.location.lat, lng: state.location.lng, radius: state.radius,
+      const location = state.location;
+      const signal = controller.signal;
+      const request = (radius) => api.treatment({
+        lat: location.lat, lng: location.lng, radius,
         kind, codes: [...selected], page: nextPage,
-      }, controller.signal);
+      }, signal);
+      let data;
+      if (nextPage === 1) {
+        equity = await searchWithEquityFallback({ location, radius: state.radius, search: request, api, signal });
+        data = equity.data;
+        if (equity.fallback.active) setRadius(equity.fallback.radius);
+      } else data = await request(state.radius);
+      if (signal.aborted) return;
       page = data.page;
       totalPages = data.totalPages;
       total = data.total;
@@ -341,6 +362,9 @@ export function treatmentFinder({ kind = 'sa', filters, initialCodes = [], noun 
 
   if (state.location) search();
   else renderResults();
+  el.refreshResults = renderResults;
+  const unregister = onQuickExit(() => { controller?.abort(); results = []; relaxed = null; equity = null; selected.clear(); });
+  el._cleanupFinder = () => { controller?.abort(); unregister(); };
   return el;
 }
 

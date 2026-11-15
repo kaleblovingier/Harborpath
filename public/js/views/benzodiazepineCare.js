@@ -5,7 +5,7 @@
 // ASAM Deprescribing Consensus, Maudsley Deprescribing Guidelines.
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { getLang } from '../i18n.js';
 
 // ============================================================================
@@ -805,12 +805,14 @@ export function benzodiazepineCareView() {
     tabDefs.forEach((tab) => {
       const isActive = localState.currentTab === tab.id;
       const tabBtn = h('button', {
+        type: 'button',
         class: `sub-nav-tab-btn ${isActive ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(isActive),
-        'aria-controls': `benzo-tab-${tab.id}`,
+        'aria-controls': 'benzo-tab-panel',
         id: `tab-btn-${tab.id}`,
-        click: () => {
+        tabindex: isActive ? '0' : '-1',
+        onclick: () => {
           localState = setBenzodiazepineState({ currentTab: tab.id });
           render();
         }
@@ -824,7 +826,7 @@ export function benzodiazepineCareView() {
 
     // Active Tab Content
     const tabContent = h('div', {
-      id: `benzo-tab-${localState.currentTab}`,
+      id: 'benzo-tab-panel',
       role: 'tabpanel',
       'aria-labelledby': `tab-btn-${localState.currentTab}`,
       tabindex: '0'
@@ -841,9 +843,11 @@ export function benzodiazepineCareView() {
     }
 
     container.appendChild(tabContent);
+    syncTablists(container);
   }
 
   render();
+  wireTablistKeyboard(container);
   return container;
 }
 
@@ -1086,22 +1090,21 @@ function renderCalculatorTab(localState, isEs, reRender) {
 
   const copyStatus = h('div', { class: 'copy-status-region', role: 'status', 'aria-live': 'polite' });
   const copyBtn = h('button', {
+    type: 'button',
     class: 'btn btn-primary',
-    click: async () => {
+    onclick: async () => {
       const text = formatBenzoClinicianProposalText(localState, isEs);
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(text);
-          clear(copyStatus);
-          copyStatus.appendChild(h('span', { class: 'text-success' }, isEs ? '✓ Propuesta copiada al portapapeles sin datos personales.' : '✓ Brief copied to clipboard (Zero PII).'));
-        } else {
-          clear(copyStatus);
-          copyStatus.appendChild(h('span', null, isEs ? 'Seleccione y copie el texto a continuación.' : 'Please copy from the text box below.'));
-        }
-      } catch (e) {
-        clear(copyStatus);
-        copyStatus.appendChild(h('span', null, isEs ? 'Error al copiar; use el cuadro inferior.' : 'Unable to copy automatically; copy below.'));
-      }
+      const ok = await copyText(text, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        announceSuccess: isEs ? 'Propuesta copiada al portapapeles sin datos personales.' : 'Brief copied to clipboard (Zero PII).',
+      });
+      clear(copyStatus);
+      copyStatus.appendChild(
+        ok
+          ? h('span', { class: 'text-success' }, isEs ? '✓ Propuesta copiada al portapapeles sin datos personales.' : '✓ Brief copied to clipboard (Zero PII).')
+          : h('span', null, isEs ? 'Error al copiar; use el cuadro inferior.' : 'Unable to copy automatically; copy below.')
+      );
     }
   }, icon('share'), h('span', null, isEs ? ' Copiar Propuesta para Médico' : ' Copy Clinician Proposal Brief'));
 

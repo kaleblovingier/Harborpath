@@ -1,0 +1,169 @@
+{
+  "language": "javascript,python,swift,java",
+  "total_modules": 13,
+  "total_edges": 15,
+  "dag_depth": 2,
+  "sccs": [
+    [
+      "web-components",
+      "web-content",
+      "web-js-core",
+      "web-views"
+    ]
+  ],
+  "modules": {
+    "web-views": {
+      "loc": 9125,
+      "files": 117,
+      "layer": 0,
+      "in_degree": 2,
+      "out_degree": 4
+    },
+    "web-components": {
+      "loc": 4925,
+      "files": 23,
+      "layer": 0,
+      "in_degree": 2,
+      "out_degree": 3
+    },
+    "node-build-tools": {
+      "loc": 2306,
+      "files": 30,
+      "layer": 0,
+      "in_degree": 0,
+      "out_degree": 2
+    },
+    "python-backend": {
+      "loc": 1272,
+      "files": 7,
+      "layer": 0,
+      "in_degree": 0,
+      "out_degree": 0
+    },
+    "web-content": {
+      "loc": 1103,
+      "files": 2,
+      "layer": 0,
+      "in_degree": 3,
+      "out_degree": 1
+    },
+    "web-locales": {
+      "loc": 693,
+      "files": 10,
+      "layer": 0,
+      "in_degree": 1,
+      "out_degree": 0
+    },
+    "web-match": {
+      "loc": 479,
+      "files": 1,
+      "layer": 0,
+      "in_degree": 1,
+      "out_degree": 0
+    },
+    "web-service-worker": {
+      "loc": 308,
+      "files": 1,
+      "layer": 0,
+      "in_degree": 0,
+      "out_degree": 0
+    },
+    "ios-app": {
+      "loc": 37,
+      "files": 2,
+      "layer": 0,
+      "in_degree": 0,
+      "out_degree": 0
+    },
+    "node-entrypoint": {
+      "loc": 10,
+      "files": 1,
+      "layer": 0,
+      "in_degree": 0,
+      "out_degree": 1
+    },
+    "android-app": {
+      "loc": 9,
+      "files": 1,
+      "layer": 0,
+      "in_degree": 0,
+      "out_degree": 0
+    },
+    "node-server-core": {
+      "loc": 4455,
+      "files": 20,
+      "layer": 1,
+      "in_degree": 2,
+      "out_degree": 0
+    },
+    "web-js-core": {
+      "loc": 2271,
+      "files": 10,
+      "layer": 1,
+      "in_degree": 4,
+      "out_degree": 4
+    }
+  },
+  "edges": [
+    {
+      "source": "node-build-tools",
+      "target": "node-server-core"
+    },
+    {
+      "source": "node-build-tools",
+      "target": "web-js-core"
+    },
+    {
+      "source": "node-entrypoint",
+      "target": "node-server-core"
+    },
+    {
+      "source": "web-components",
+      "target": "web-content"
+    },
+    {
+      "source": "web-components",
+      "target": "web-js-core"
+    },
+    {
+      "source": "web-components",
+      "target": "web-views"
+    },
+    {
+      "source": "web-content",
+      "target": "web-js-core"
+    },
+    {
+      "source": "web-js-core",
+      "target": "web-components"
+    },
+    {
+      "source": "web-js-core",
+      "target": "web-content"
+    },
+    {
+      "source": "web-js-core",
+      "target": "web-locales"
+    },
+    {
+      "source": "web-js-core",
+      "target": "web-views"
+    },
+    {
+      "source": "web-views",
+      "target": "web-components"
+    },
+    {
+      "source": "web-views",
+      "target": "web-content"
+    },
+    {
+      "source": "web-views",
+      "target": "web-js-core"
+    },
+    {
+      "source": "web-views",
+      "target": "web-match"
+    }
+  ]
+}

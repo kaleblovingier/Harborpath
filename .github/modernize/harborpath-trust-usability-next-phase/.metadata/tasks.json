@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Five bounded HarborPath workstreams for the trust, usability, and release-confidence next phase.",
+  "tasks": [
+    {
+      "type": "transform",
+      "id": "001-clinical-information-trust",
+      "description": "Improve trustworthiness and bilingual source review for high-risk clinical information.",
+      "reason": "The assessment summary identifies dated, conflicting, or weakly sourced clinical/legal information as a trust risk.",
+      "requirements": "Workstream 1 of 5; owner: clinical information/source-review agent. Scope is limited to clinical information and patient-facing framing in public/js/views/medications.js, public/js/views/navigator.js, and public/js/views/guidedNavigator.js, plus a concise source-review record in docs/CLINICAL_CONTENT_REVIEW.md. Verify each in-scope material clinical/legal claim against an authoritative primary source; record citation and access/review date adjacent to the claim or in the review record; correct, qualify, or label unresolved claims as unknown rather than infer facts. Preserve emergency escalation independent of computed scores; make clear self-checks are not diagnosis, prescription, or clinician assessment; ensure EN/ES and print parity. Do not edit shared styles, locale dictionaries, routing, provider data, tests, or other workstream files; submit any new UI translation keys to workstream 5. No new clinical tool, diagnosis, dosing schedule, external service, or expanded content domain.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "002-provider-data-provenance",
+      "description": "Make provider-data freshness, provenance, and human review status transparent.",
+      "reason": "The VA source date is reported as MAR2025 despite a 2026 rebuild, and all six virtual-provider entries remain pending review.",
+      "requirements": "Workstream 2 of 5; owner: provider-data/provenance agent. Own data/va-facilities.json, data/meta.json, data/virtual-providers.json, scripts/sources/va-facilities.mjs, public/js/views/health.js, public/js/views/veterans.js, public/js/components/sourceContext.js, and docs/PROVIDER_DATA.md. Reconcile VA publisher/source-update date with HarborPath build date so neither is presented as the other; show a useful stale/unknown state when source dates are missing or old. Preserve provenance and distinguish live results from bundled snapshots. Review all six virtual-provider records against their own official pages and record conflicts/unknowns; keep any record pending unless a human can verify it from authoritative evidence, and never imply independent confirmation of provider claims. Do not add a crawler, external API, or change the public API contract without approval. Tests remain owned by workstream 5; request any required test cases there.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "003-task-first-information-architecture",
+      "description": "Make existing HarborPath tools and care paths easier to find through task-first navigation.",
+      "reason": "The client contains 163 modules, 108 elective offline assets, and a long roadmap, creating a substantial discovery burden.",
+      "requirements": "Workstream 3 of 5; owner: information-architecture/usability agent. Own only public/js/views/core.js and public/js/views/tools.js. Improve the homepage and catalog around a small set of user goals (for example: find treatment, understand options, get immediate safety help, or prepare for a visit), make the existing bilingual catalog easier to scan, and link to existing functionality rather than making users navigate the roadmap's implementation waves. Keep the scope to progressive organization and wayfinding; do not add a new route, module, clinical feature, account, or backend. Preserve emergency access, existing APIs, and privacy-safe in-memory search. Send any new UI translation keys to workstream 5; tests remain with workstream 5.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "004-privacy-flow-verification",
+      "description": "Verify sensitive-data flows and preserve privacy boundaries during the phase.",
+      "reason": "Persistent backend, referral, or FHIR proposals would materially change HarborPath's privacy, legal, and operational scope.",
+      "requirements": "Workstream 4 of 5; owner: privacy-flow/scope-guardrails agent. Own public/js/app.js, public/js/api.js, public/js/state.js, public/js/quickExitRegistry.js, src/privacy.js, src/app.js, and vercel.json. Trace the existing clinical-state lifecycle and verify that clinical answers never enter URLs (including hashes), cookies, local/session storage, IndexedDB, network requests, or logs; verify no third-party client request is introduced. Preserve the existing strict CSP and identical security-header sets, same-origin API boundary, approximately 1 km client/server coordinate quantization, no coordinate logging/persistence, and deterministic Quick Exit reset behavior including in-flight cancellation. Add no persistent clinical data, accounts, referrals, FHIR, external services, external geocoding, or scope-expanding API. Any proposal in those areas must stop for explicit user approval. Do not modify another lane's owned files or shared tests; send tests needed to workstream 5.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "security",
+      "id": "005-accessibility-test-release-confidence",
+      "description": "Integrate the four workstreams and establish accessibility, test, and release confidence.",
+      "reason": "The assessment baseline reports 17 failures in 2,087 npm tests, while accessibility evidence identifies serious contrast/label concerns despite broad WCAG claims.",
+      "requirements": "Workstream 5 of 5; owner: accessibility/test/release integrator. Depends on workstreams 001–004. Own public/styles.css, public/index.html, public/locales/es.js, test/, docs/QA_REPORT.md, and docs/DEPLOYMENT.md; own the final integration checklist and service-worker stamping at integration. Reproduce and track the reported 17 npm test failures without masking or weakening assertions; add focused regression coverage for the four workstreams and the privacy, Quick Exit, URL/storage/network/log, provider provenance, bilingual, keyboard/focus/labels, contrast/target-size, and print requirements. Correct shared shell/style issues within owned files; return findings in workstream-owned modules to their owners rather than editing those files. Preserve zero npm dependencies. At integration, run npm test, npm run lint, npm run build, and npm run test:backend; include route/language/viewport accessibility checks with available existing tooling and document any checks that cannot run. A Java/AppCAT or .venv credential finding is not accepted as confirmed application scope without a focused rescan; do not add a broad dependency upgrade or deployment task. Do not commit, push, or deploy.",
+      "dependencies": [
+        "001-clinical-information-trust",
+        "002-provider-data-provenance",
+        "003-task-first-information-architecture",
+        "004-privacy-flow-verification"
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "true",
+        "passUnitTests": "true"
+      }
+    }
+  ],
+  "metadata": {
+    "planName": "harborpath-trust-usability-next-phase",
+    "projectName": "HarborPath",
+    "language": "javascript",
+    "createdAt": "2026-11-12T05:54:13.489Z",
+    "version": "1.0"
+  }
+}

@@ -168,14 +168,21 @@ describe('Overdose reversal and naltrexone product facts (FDA labels)', () => {
     assert.doesNotMatch(row.product, /^Naloxone 4 mg Nasal Spray \(Narcan, RiVive/);
   });
 
-  test('nalmefene durations follow the label half-life, not a 12–24+ hour claim', () => {
-    const nal = REVERSAL_COMPARISON.find((r) => /Opvee/.test(r.product));
-    assert.match(nal.duration, /~11 h/);
-    assert.doesNotMatch(JSON.stringify(REVERSAL_COMPARISON), /12–24/);
+  test('nalmefene is described as longer acting without implying a period of safety', () => {
+    // The Opvee and Zurnai labels report elimination half-life separately from
+    // the risk of recurrent respiratory depression, which still needs emergency help.
+    for (const brand of ['Opvee', 'Zurnai']) {
+      const row = REVERSAL_COMPARISON.find((r) => r.product.includes(brand));
+      assert.match(row.duration, /longer-acting than naloxone/i);
+      assert.doesNotMatch(row.duration, /\d/);
+      assert.match(row.guidance, /Call 911/i);
+      assert.match(row.guidance, /stay with the person/i);
+    }
   });
 
-  test('a naloxone challenge before Vivitrol is not described as always mandatory', () => {
-    assert.doesNotMatch(WASHOUT, /Naloxone Challenge Test is mandatory/i);
-    assert.match(WASHOUT, /challenge test may be helpful/);
+  test('the Vivitrol transition guide presents a clinician-led challenge without treating it as clearance', () => {
+    assert.match(WASHOUT, /A clinician may consider a naloxone challenge test/);
+    assert.match(WASHOUT, /a tolerated challenge cannot confirm that it is safe to start/);
+    assert.doesNotMatch(WASHOUT, /naloxone challenge test is mandatory/i);
   });
 });

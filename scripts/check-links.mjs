@@ -32,15 +32,38 @@ for (const file of [...walk(path.join(PUBLIC_DIR, 'js')), path.join(PUBLIC_DIR, 
   });
 }
 
+const INITIAL_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (compatible; link-check)',
+  Accept: 'text/html,*/*',
+};
+
+const BROWSER_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Cache-Control': 'no-cache',
+  'Upgrade-Insecure-Requests': '1',
+};
+
+const BOT_BLOCK_STATUSES = new Set([202, 203, 401, 403, 405, 406, 429]);
+
+async function fetchStatus(url, headers) {
+  const res = await fetch(url, {
+    redirect: 'follow',
+    signal: AbortSignal.timeout(20_000),
+    headers,
+  });
+  await res.body?.cancel();
+  return res.status;
+}
+
 async function status(url) {
   try {
-    const res = await fetch(url, {
-      redirect: 'follow',
-      signal: AbortSignal.timeout(20_000),
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; link-check)', Accept: 'text/html,*/*' },
-    });
-    await res.body?.cancel();
-    return res.status;
+    const first = await fetchStatus(url, INITIAL_HEADERS);
+    if (BOT_BLOCK_STATUSES.has(first)) {
+      return await fetchStatus(url, BROWSER_HEADERS);
+    }
+    return first;
   } catch (err) {
     return String(err?.cause?.code ?? err?.name ?? err);
   }

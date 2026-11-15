@@ -33,7 +33,7 @@
  * - Complete bilingual parity (English / Spanish).
  */
 
-import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, sms, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
@@ -518,7 +518,8 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
       id: `tab-btn-wi-${tab.id}`,
       'data-tab': tab.id,
       'aria-selected': isSelected ? 'true' : 'false',
-      'aria-controls': `tab-panel-wi-${tab.id}`,
+      'aria-controls': 'tab-panel-wi',
+      tabindex: isSelected ? '0' : '-1',
       class: isSelected ? 'tab active' : 'tab',
     }, tab.label);
 
@@ -533,7 +534,7 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
 
   // Tab Panel
   const tabPanel = h('div', {
-    id: `tab-panel-wi-${currentTab}`,
+    id: 'tab-panel-wi',
     role: 'tabpanel',
     'aria-labelledby': `tab-btn-wi-${currentTab}`,
     class: 'tab-content-panel',
@@ -677,16 +678,12 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
     );
     copyBtn.addEventListener('click', async () => {
       const text = formatWoundSummaryText(plan, lang);
-      try {
-        await navigator.clipboard.writeText(text);
-        announce(isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard');
-        copyBtn.textContent = isEs ? '✓ ¡Copiado!' : '✓ Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? ' Copiar Plan de Cuidado de Heridas' : ' Copy Wound Care Plan';
-        }, 3000);
-      } catch {
-        announce(isEs ? 'Error al copiar' : 'Clipboard write failed');
-      }
+      await copyText(text, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '✓ ¡Copiado!' : '✓ Copied!',
+        announceSuccess: isEs ? 'Plan copiado al portapapeles' : 'Plan copied to clipboard',
+        announceFailure: isEs ? 'Error al copiar' : 'Clipboard write failed',
+      });
     });
     btnRow.append(copyBtn);
 
@@ -866,6 +863,8 @@ export function woundInfectiousView(containerOrOptions = {}, maybeOptions = {}) 
   root.append(urologyCard);
   root.append(hotlineBar);
 
+  syncTablists(root);
   if (container) container.append(root);
+  wireTablistKeyboard(container ?? root);
   return root;
 }

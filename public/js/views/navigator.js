@@ -1,6 +1,6 @@
 import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong, emergencyCallout } from './common.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 import {
   ALL_POPULATION_RECOMMENDERS,
   evaluatePopulationPathways,
@@ -15,10 +15,14 @@ import {
   REENTRY_TRANSITION_INPUT,
 } from './populationHelpers.js';
 import { NEVER_USE_ALONE, hotlinesById } from '../content/hotlines.js';
-import { onQuickExit } from '../state.js';
+import { registerQuickExitHandler as onQuickExit } from '../quickExitRegistry.js';
+import { resetNavigatorState, onNavigatorReset, setNavigatorHandoffState as storeNavigatorHandoff } from './navigatorHandoff.js';
+import { printClinicalHandout } from '../components/printHandout.js';
 
 // Quick Exit clears this module's in-memory state (see runQuickExitResets in app.js).
 onQuickExit(resetNavigatorState);
+
+const tr = (en, es) => getLang() === 'es' ? es : en;
 
 // Valid SAMHSA filter codes for Dimension 6 validation and chip display
 const PAYMENT_OPTIONS = [
@@ -177,106 +181,14 @@ function normalizeSubstances(raw) {
   return new Set();
 }
 
-// Ephemeral in-memory handoff state kept strictly in browser RAM (never written
-// to localStorage, sessionStorage, cookies, or URL query parameters).
-let currentNavigatorState = null;
-const resetCallbacks = new Set();
-
-function clonePathway(pathway) {
-  if (!pathway || typeof pathway !== 'object') return pathway;
-  return {
-    ...pathway,
-    codes: Array.isArray(pathway.codes) ? [...pathway.codes] : [],
-    clinicalActions: Array.isArray(pathway.clinicalActions) ? [...pathway.clinicalActions] : [],
-  };
-}
-
-function cloneNavigatorState(snap) {
-  if (!snap || typeof snap !== 'object') return null;
-  return {
-    ...snap,
-    answers: snap.answers
-      ? {
-          ...snap.answers,
-          substances: [...normalizeSubstances(snap.answers.substances)],
-        }
-      : {},
-    recommendation: snap.recommendation
-      ? {
-          ...snap.recommendation,
-          codes: Array.isArray(snap.recommendation.codes) ? [...snap.recommendation.codes] : [],
-          broadCodes: Array.isArray(snap.recommendation.broadCodes) ? [...snap.recommendation.broadCodes] : [],
-          redFlags: Array.isArray(snap.recommendation.redFlags) ? [...snap.recommendation.redFlags] : [],
-          clinicalNotes: Array.isArray(snap.recommendation.clinicalNotes) ? [...snap.recommendation.clinicalNotes] : [],
-          populationPathways: Array.isArray(snap.recommendation.populationPathways)
-            ? snap.recommendation.populationPathways.map(clonePathway)
-            : [],
-        }
-      : null,
-    populationPathways: Array.isArray(snap.populationPathways)
-      ? snap.populationPathways.map(clonePathway)
-      : [],
-    codes: Array.isArray(snap.codes) ? [...snap.codes] : [],
-    broadCodes: Array.isArray(snap.broadCodes) ? [...snap.broadCodes] : [],
-    updatedAt: snap.updatedAt ?? Date.now(),
-  };
-}
-
-export function getNavigatorHandoffState() {
-  return cloneNavigatorState(currentNavigatorState);
-}
-
+// Keep the legacy view exports while the router uses the decoupled helper.
+export { getNavigatorHandoffState, resetNavigatorState } from './navigatorHandoff.js';
 export function setNavigatorHandoffState(next) {
-  if (!next || typeof next !== 'object') {
-    currentNavigatorState = null;
-    return null;
-  }
-  const rawAnswers = next.answers ?? {};
-  const normalizedAnswers = {
-    ...rawAnswers,
-    substances: [...normalizeSubstances(rawAnswers.substances)],
-  };
-  const recommendation =
-    next.recommendation ??
-    (Object.keys(rawAnswers).length > 0 ? evaluateAsamCare(normalizedAnswers) : null);
-  const populationPathways = Array.isArray(next.populationPathways)
-    ? next.populationPathways.map(clonePathway)
-    : Array.isArray(recommendation?.populationPathways)
-      ? recommendation.populationPathways.map(clonePathway)
-      : [];
-  const codes = Array.isArray(next.codes)
-    ? [...next.codes].slice(0, 8)
-    : Array.isArray(recommendation?.codes)
-      ? [...recommendation.codes].slice(0, 8)
-      : [];
-  const broadCodes = Array.isArray(next.broadCodes)
-    ? [...next.broadCodes]
-    : Array.isArray(recommendation?.broadCodes)
-      ? [...recommendation.broadCodes]
-      : [];
-
-  currentNavigatorState = {
+  if (!next || typeof next !== 'object') return storeNavigatorHandoff(null);
+  return storeNavigatorHandoff({
     ...next,
-    answers: normalizedAnswers,
-    recommendation,
-    populationPathways,
-    codes,
-    broadCodes,
-    updatedAt: typeof next.updatedAt === 'number' ? next.updatedAt : Date.now(),
-  };
-  return getNavigatorHandoffState();
-}
-
-export function resetNavigatorState() {
-  currentNavigatorState = null;
-  for (const cb of [...resetCallbacks]) {
-    try {
-      cb();
-    } catch {
-      // ignore listener errors during reset
-    }
-  }
-  currentNavigatorState = null;
+    recommendation: next.recommendation ?? (next.answers ? evaluateAsamCare(next.answers) : null),
+  });
 }
 
 /**
@@ -320,44 +232,44 @@ export function scoreOpioidWithdrawal(symptoms = {}) {
   if (score <= 4) {
     band = 'none_minimal';
     navWithdrawalRisk = 'none';
-    bupGuidance = t(
-      'nav.calc.opioid.guidance.none',
-      'Too early for standard sublingual buprenorphine: With minimal or no objective withdrawal (score 0–4), taking full sublingual doses of buprenorphine right after full-agonist opioids (especially fentanyl or methadone) can trigger precipitated withdrawal. Wait until clear mild-to-moderate objective withdrawal (score >= 8–12), or ask a clinician about low-dose micro-induction (“Bernese method”, see #/medications) or OTP methadone, which do not require waiting for withdrawal.',
+    bupGuidance = tr(
+      'This self-reported symptom check is not a validated withdrawal scale and cannot tell you when or how to start buprenorphine. Starting too soon after another opioid can cause precipitated withdrawal. Ask a clinician about your options; this result is not a dosing or start-time guide.',
+      'Esta autoevaluación de síntomas no es una escala de abstinencia validada y no puede indicar cuándo ni cómo iniciar buprenorfina. Iniciarla demasiado pronto después de otro opioide puede causar abstinencia precipitada. Consulte a un profesional sobre sus opciones; este resultado no indica dosis ni momento para iniciar.',
     );
   } else if (score <= 12) {
     band = 'mild';
     navWithdrawalRisk = 'mild';
     if (score < 8) {
-      bupGuidance = t(
-        'nav.calc.opioid.guidance.mild_early',
-        'Early mild withdrawal (score 5–7): Standard sublingual buprenorphine usually works best once at least 3 objective signs reach score >= 8–12. If you have been using high-potency lipophilic fentanyl, starting full-dose buprenorphine too early can cause precipitated withdrawal—consider waiting a few more hours until score >= 10–12, or ask about low-dose micro-induction (“Bernese method”, #/medications) or OTP methadone.',
+      bupGuidance = tr(
+        'This self-reported symptom check is not a validated withdrawal scale or a buprenorphine readiness test. Timing varies, and starting too soon after another opioid can cause precipitated withdrawal. A clinician can discuss standard or low-dose approaches and other options; this result does not choose a dose or start time.',
+        'Esta autoevaluación de síntomas no es una escala de abstinencia validada ni una prueba para determinar si está listo para buprenorfina. El momento varía e iniciarla demasiado pronto después de otro opioide puede causar abstinencia precipitada. Un profesional puede hablar sobre métodos estándar o de dosis bajas y otras opciones; este resultado no elige una dosis ni el momento para iniciar.',
       );
     } else {
-      bupGuidance = t(
-        'nav.calc.opioid.guidance.mild_ready',
-        'Mild-to-moderate withdrawal window (score 8–12): Standard sublingual buprenorphine initiation (starting with a cautious 2–4 mg test dose) is typically safe after heroin or short-acting prescription opioids. Extra caution for fentanyl: because lipophilic fentanyl lingers in fat tissues, waiting for score >= 12–13, using a cautious low-dose micro-induction (“Bernese method”, #/medications), or starting OTP methadone can prevent precipitated withdrawal.',
+      bupGuidance = tr(
+        'This self-reported symptom check is not a validated withdrawal scale or a buprenorphine readiness test. A clinician should assess timing and method; no score or fixed wait guarantees that precipitated withdrawal will be avoided. This result does not choose a dose or start time.',
+        'Esta autoevaluación de síntomas no es una escala de abstinencia validada ni una prueba para determinar si está listo para buprenorfina. Un profesional debe evaluar el momento y el método; ninguna puntuación ni espera fija garantiza evitar la abstinencia precipitada. Este resultado no elige una dosis ni el momento para iniciar.',
       );
     }
   } else if (score <= 20) {
     band = 'moderate';
     navWithdrawalRisk = 'moderate';
-    bupGuidance = t(
-      'nav.calc.opioid.guidance.moderate',
-      'Moderate objective withdrawal (score 13–20): Standard sublingual buprenorphine initiation is typically safe and provides rapid relief. If you have experienced precipitated withdrawal from street fentanyl in the past, ask a bridge clinic or Emergency Department clinician about macro-induction, comfort medications (clonidine, ondansetron, hydroxyzine), low-dose micro-induction (“Bernese method”, #/medications), or OTP methadone.',
+    bupGuidance = tr(
+      'This self-reported symptom check is not a validated withdrawal scale or a buprenorphine readiness test. A clinician should assess timing and method; no score or fixed wait guarantees that precipitated withdrawal will be avoided. This result does not choose a dose or start time.',
+      'Esta autoevaluación de síntomas no es una escala de abstinencia validada ni una prueba para determinar si está listo para buprenorfina. Un profesional debe evaluar el momento y el método; ninguna puntuación ni espera fija garantiza evitar la abstinencia precipitada. Este resultado no elige una dosis ni el momento para iniciar.',
     );
   } else if (score <= 24) {
     band = 'moderately_severe';
     navWithdrawalRisk = 'severe';
-    bupGuidance = t(
-      'nav.calc.opioid.guidance.mod_severe',
-      'Moderately severe withdrawal (score 21–24): Standard or high-dose sublingual buprenorphine initiation or OTP methadone is appropriate right now. Under the federal DEA 72-Hour Rule (21 CFR § 1306.07(b)), any hospital Emergency Department or bridge clinic can administer buprenorphine or methadone immediately to relieve acute withdrawal; if xylazine (“tranq”) is in the supply, ask for clonidine or tizanidine alongside opioid medication (see #/medications).',
+    bupGuidance = tr(
+      'This symptom check suggests you may need prompt clinical assessment, but it is not a validated withdrawal scale or treatment decision. Seek urgent medical help for severe symptoms. A clinician—not this score—must decide whether, when, and how to start medication.',
+      'Esta autoevaluación sugiere que quizá necesite una valoración clínica pronta, pero no es una escala de abstinencia validada ni una decisión de tratamiento. Busque atención médica urgente ante síntomas graves. Un profesional, no esta puntuación, debe decidir si iniciar un medicamento, cuándo y cómo.',
     );
   } else {
     band = 'severe';
     navWithdrawalRisk = 'severe';
-    bupGuidance = t(
-      'nav.calc.opioid.guidance.severe',
-      'Severe acute opioid withdrawal (score >= 25): Seek prompt medical stabilization at an Emergency Department, bridge clinic, or inpatient withdrawal program (ASAM Level 3.7-WM / 4.0). Standard or rapid high-dose buprenorphine initiation or methadone under the DEA 72-Hour Rule (21 CFR § 1306.07(b)), IV fluids for dehydration, and targeted alpha-2 agonist support (if xylazine is involved; see #/medications) can safely relieve symptoms within hours.',
+    bupGuidance = tr(
+      'This symptom check suggests you may need prompt clinical assessment, but it is not a validated withdrawal scale or treatment decision. Seek urgent medical care for severe withdrawal, confusion, seizure, fainting, trouble breathing, or inability to keep fluids down. A clinician must decide whether, when, and how to start medication.',
+      'Esta autoevaluación sugiere que quizá necesite una valoración clínica pronta, pero no es una escala de abstinencia validada ni una decisión de tratamiento. Busque atención médica urgente ante abstinencia grave, confusión, convulsiones, desmayo, dificultad para respirar o incapacidad para retener líquidos. Un profesional debe decidir si iniciar un medicamento, cuándo y cómo.',
     );
   }
 
@@ -432,6 +344,11 @@ export function scoreAlcoholSedativeRisk(factors = {}) {
     );
   }
 
+  guidance = `${guidance} ${tr(
+    'This is an educational check, not a validated PAWSS or CIWA-Ar assessment. A lower result cannot rule out withdrawal or make stopping alcohol or benzodiazepines safe.',
+    'Esta es una autoevaluación educativa, no una valoración PAWSS ni CIWA-Ar validada. Un resultado bajo no descarta la abstinencia ni hace seguro dejar el alcohol o las benzodiacepinas.',
+  )}`;
+
   return {
     score,
     riskLevel,
@@ -485,15 +402,15 @@ export function evaluateTransitionRisk({
       riskBand: 'baseline',
       headline: 'Baseline Transition Profile — Keep Naloxone & Overdose Prevention Tools Ready',
       physiologicalWhy:
-        'Opioid receptor tolerance remains relatively steady during consistent daily agonist medication (buprenorphine or methadone), but drops rapidly within days of any pause in opioid use, hospitalization, incarceration, or detox.',
+        tr('Tolerance can change after a period without opioids. A previously used amount may then cause overdose; medication treatment and naloxone can reduce risk but do not remove it.', 'La tolerancia puede cambiar después de un período sin opioides. Una cantidad antes tolerada puede causar una sobredosis; el tratamiento con medicamentos y la naloxona pueden reducir el riesgo, pero no eliminarlo.'),
       actionSteps: [
         carriesNaloxone
-          ? 'Keep your naloxone (Narcan) visible and make sure family or friends know where it is.'
-          : 'Get free or over-the-counter naloxone nasal spray (SAMHSA code NOE) to keep at home and on your person.',
+          ? tr('Keep naloxone accessible and make sure someone nearby knows where it is.', 'Tenga naloxona a mano y asegúrese de que alguien cercano sepa dónde está.')
+          : tr('Ask a pharmacy or local health program about obtaining naloxone (SAMHSA code NOE).', 'Pregunte en una farmacia o programa de salud local cómo obtener naloxona (código NOE de SAMHSA).'),
         isOnMoud
-          ? 'Continue your daily buprenorphine or methadone maintenance—staying on agonist medication is linked to a much lower risk of dying from an overdose.'
-          : 'If you use opioids, starting buprenorphine (BU) or methadone (OTP) protects your receptor tolerance and prevents fatal respiratory arrest.',
-        'Never use alone: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590) if no trusted person is nearby.',
+          ? tr('Do not stop prescribed buprenorphine or methadone without discussing a plan with the treatment team; ongoing treatment is associated with lower overdose mortality.', 'No suspenda la buprenorfina ni la metadona recetadas sin hablar sobre un plan con el equipo de tratamiento; continuar el tratamiento se asocia con menor mortalidad por sobredosis.')
+          : tr('If you use opioids, ask a clinician about buprenorphine or methadone treatment. A clinician can discuss what may fit your needs.', 'Si usa opioides, consulte a un profesional sobre tratamiento con buprenorfina o metadona. Un profesional puede hablar sobre qué opción se ajusta a sus necesidades.'),
+        tr('If you use, having someone present can help in an emergency. Never Use Alone (1-800-484-3731) and SafeSpot (1-800-972-0590) are optional support services, not emergency response.', 'Si consume, contar con alguien presente puede ayudar en una emergencia. Never Use Alone (1-800-484-3731) y SafeSpot (1-800-972-0590) son servicios de apoyo opcionales, no de respuesta a emergencias.'),
       ],
       recommendedCodes,
       searchHref: `#/treatment?codes=${recommendedCodes.join(',')}`,
@@ -520,8 +437,8 @@ export function evaluateTransitionRisk({
         ? 'Critical Re-Entry Window: Extremely High Overdose Risk After Release from Jail or Prison'
         : 'Elevated Re-Entry Transition: Maintain Medication Continuity & Overdose Protection';
     physiologicalWhy = isOnMoud
-      ? 'Daily buprenorphine or methadone maintains mu-opioid receptor cross-tolerance, and staying on them after release is linked to far fewer overdose deaths. Ensure uninterrupted prescription or OTP bridge dosing so no gap occurs during re-entry.'
-      : 'During incarceration, mu-opioid receptors rapidly resensitize and physiological opioid tolerance drops back toward opioid-naive levels. Returning to a previous “normal” dose—especially with street fentanyl—is the #1 cause of fatal overdose in the first 7–14 days after release.';
+      ? tr('Continuing prescribed buprenorphine or methadone after release is associated with lower overdose mortality. Ask the treatment team about continuity of care.', 'Continuar la buprenorfina o metadona recetadas después de salir se asocia con menor mortalidad por sobredosis. Consulte al equipo de tratamiento sobre la continuidad de la atención.')
+      : tr('Tolerance may decrease during a period without opioids. Returning to a previously used amount after release can cause a fatal overdose; this tool cannot predict an individual’s risk.', 'La tolerancia puede disminuir durante un período sin opioides. Volver a una cantidad antes usada después de salir puede causar una sobredosis mortal; esta herramienta no puede predecir el riesgo de una persona.')
     addRecCode('CJ');
     addRecCode('BU');
     addRecCode('NOE');
@@ -532,8 +449,8 @@ export function evaluateTransitionRisk({
         ? 'Critical Post-Overdose Window: Highest Immediate Risk of Repeat Overdose'
         : 'Post-Overdose Stabilization: Continue Agonist Protection & Multi-Dose Naloxone';
     physiologicalWhy = isOnMoud
-      ? 'Continuing daily buprenorphine or methadone stabilizes opioid receptors after a non-fatal overdose. Still use extreme caution: high-potency fentanyl analogs and xylazine/medetomidine (“tranq”) can cause profound sedation even with tolerance.'
-      : 'A recent non-fatal overdose indicates high-potency fentanyl/xylazine exposure or reduced respiratory reserve. After naloxone reversal or an ER visit without maintenance medication, unbound opioid receptors and acute withdrawal cravings drive a spike in fatal repeat overdoses within 48 hours to 7 days.';
+      ? tr('Continuing prescribed treatment may help reduce overdose risk after an overdose. A repeat overdose can still occur; keep naloxone available and follow the clinician’s plan.', 'Continuar el tratamiento recetado puede ayudar a reducir el riesgo de sobredosis después de una sobredosis. Aun así puede ocurrir otra; tenga naloxona disponible y siga el plan profesional.')
+      : tr('A recent overdose is a reason to seek medical follow-up and discuss treatment. Another overdose can occur, but this tool cannot predict when or whether it will happen.', 'Una sobredosis reciente es motivo para buscar seguimiento médico y hablar sobre tratamiento. Puede ocurrir otra sobredosis, pero esta herramienta no puede predecir cuándo ni si ocurrirá.')
     addRecCode('NOE');
     addRecCode('BU');
     addRecCode('PEER');
@@ -544,8 +461,8 @@ export function evaluateTransitionRisk({
         ? 'Critical Post-Detox / Hospital Discharge Alert: Rapid Loss of Opioid Tolerance'
         : 'Post-Discharge Care Continuity: Protect Receptor Tolerance with Ongoing MOUD';
     physiologicalWhy = isOnMoud
-      ? 'Staying on daily buprenorphine or methadone after hospital or residential discharge protects your mu-opioid receptor tolerance while you transition to outpatient care.'
-      : 'Completing detox, inpatient withdrawal management, or a hospital stay without ongoing buprenorphine or methadone resets your physiological opioid tolerance within 3 to 7 days. Taking even a fraction of your pre-hospital dose can stop breathing within minutes.';
+      ? tr('Continuing prescribed buprenorphine or methadone after discharge may reduce overdose risk. Ask the care team to coordinate follow-up and prescriptions before leaving.', 'Continuar la buprenorfina o metadona recetadas después del alta puede reducir el riesgo de sobredosis. Pida al equipo que coordine el seguimiento y las recetas antes de salir.')
+      : tr('Tolerance may decrease during time away from opioids. A previously used amount can cause overdose after discharge; ask the care team about follow-up, treatment, and naloxone.', 'La tolerancia puede disminuir durante un período sin opioides. Una cantidad antes usada puede causar sobredosis después del alta; consulte al equipo sobre seguimiento, tratamiento y naloxona.')
     addRecCode('BU');
     addRecCode('OTP');
     addRecCode('NOE');
@@ -556,8 +473,8 @@ export function evaluateTransitionRisk({
         ? 'Critical Post-Naltrexone (Vivitrol) Receptor Supersensitivity Window'
         : 'Post-Naltrexone Transition: Bridge Safely to Agonist Protection & Carry Naloxone';
     physiologicalWhy = isOnMoud
-      ? 'Transitioning onto daily buprenorphine or methadone restores steady mu-opioid receptor protection after stopping naltrexone.'
-      : 'Extended-release naltrexone (Vivitrol) blocks opioid receptors for 28–35 days (oral naltrexone for 24–72 hours) while completely eliminating opioid tolerance. Attempting to “override” the blockade or using opioids as the shot wears off exposes hypersensitive, unblocked receptors to fatal respiratory depression.';
+      ? tr('A clinician can help plan a transition from naltrexone to another treatment. Do not start or stop medicines based on this self-check.', 'Un profesional puede ayudar a planificar una transición de naltrexona a otro tratamiento. No inicie ni suspenda medicamentos basándose en esta autoevaluación.')
+      : tr('Naltrexone’s blocking effect eventually wears off, and tolerance may be lower. Trying to overcome the blockade or returning to a previously used amount can cause a fatal overdose; keep naloxone available and discuss a plan with a clinician.', 'El efecto bloqueador de la naltrexona finalmente desaparece y la tolerancia puede ser menor. Intentar vencer el bloqueo o volver a una cantidad antes usada puede causar una sobredosis mortal; tenga naloxona disponible y consulte con un profesional.')
     addRecCode('BU');
     addRecCode('NOE');
     addRecCode('TELE');
@@ -566,11 +483,11 @@ export function evaluateTransitionRisk({
 
   if (!isOnMoud) {
     actionSteps.push(
-      'Start or restart buprenorphine (BU) or methadone (OTP) today: under the federal DEA 72-Hour Rule (21 CFR § 1306.07(b)) and telehealth rules (TELE), emergency rooms and bridge clinics can provide immediate same-day medication.',
+      tr('Contact a prescriber, OTP, or treatment program promptly and ask about an appointment or short-term treatment options. Availability depends on the setting and clinician; this tool cannot guarantee same-day medication.', 'Comuníquese pronto con quien receta, un OTP o un programa de tratamiento y pregunte por una cita u opciones de atención a corto plazo. La disponibilidad depende del lugar y del profesional; esta herramienta no garantiza medicamentos el mismo día.'),
     );
   } else {
     actionSteps.push(
-      'Prevent any gap in your daily buprenorphine or methadone: if your prescription or clinic transfer is delayed after release or discharge, an Emergency Department can dispense up to 72 hours of bridge medication under 21 CFR § 1306.07(b).',
+      tr('If a prescription or clinic transfer may be interrupted, contact your treatment team early and ask about continuity options. Federal emergency provisions are limited and do not guarantee that a particular hospital can provide medication.', 'Si puede interrumpirse una receta o el cambio de clínica, comuníquese pronto con su equipo y pregunte por opciones para continuar el tratamiento. Las disposiciones federales de emergencia son limitadas y no garantizan que un hospital específico pueda proporcionar medicamentos.'),
     );
   }
 
@@ -585,7 +502,7 @@ export function evaluateTransitionRisk({
   }
 
   actionSteps.push(
-    'Never use alone during a transition window: call Never Use Alone (1-800-484-3731) or SafeSpot (1-800-972-0590), and if you do use, test a tiny fraction first (“start low, go slow”).',
+    tr('Avoid using alone if possible. Never Use Alone (1-800-484-3731) and SafeSpot (1-800-972-0590) are optional support services, not emergency response. Call 911 for a suspected overdose.', 'Evite consumir a solas si es posible. Never Use Alone (1-800-484-3731) y SafeSpot (1-800-972-0590) son servicios de apoyo opcionales, no de respuesta a emergencias. Llame al 911 ante una posible sobredosis.'),
   );
 
   if (normEvent === 'post_release') {
@@ -597,7 +514,10 @@ export function evaluateTransitionRisk({
   return {
     riskBand,
     headline,
-    physiologicalWhy,
+    physiologicalWhy: `${physiologicalWhy} ${tr(
+      'This is a general educational prompt, not a validated risk prediction or an emergency assessment; a lower category cannot rule out overdose.',
+      'Este es un mensaje educativo general, no una predicción de riesgo validada ni una evaluación de emergencia; una categoría menor no descarta una sobredosis.',
+    )}`,
     actionSteps,
     recommendedCodes,
     searchHref: `#/treatment?codes=${recommendedCodes.join(',')}`,
@@ -674,7 +594,7 @@ export function formatAsamHandoffText(answers = {}, evaluation = evaluateAsamCar
     'SAMHSA DIRECTORY SEARCH FILTERS USED:',
     `- Focused Filter Codes (<= 8): ${codeDescriptions.join(', ') || 'None'}`,
     `- Broad Core Codes: ${(evalResult.broadCodes ?? []).join(', ') || 'None'}`,
-    `- HarborPath Search Route: ${evalResult.searchHref}`,
+    '- HarborPath Search Route: #/treatment (filters transferred in browser memory)',
     '',
     'FEDERAL PATIENT RIGHTS & EMERGENCY BRIDGE CARE:',
     '- EMTALA: Hospital emergency departments must screen and stabilize emergency medical conditions (severe withdrawal, overdose, active labor, systemic infection) regardless of ability to pay.',
@@ -1207,7 +1127,7 @@ function careRouteAddition(route) {
       'p',
       { class: 'actions' },
       route.links.map((l) =>
-        h('a', { class: 'btn btn-secondary btn-small', href: l.href }, icon('search'), `${l.label} (${l.codes.join(', ')})`),
+        h('a', { class: 'btn btn-secondary btn-small', href: '#/treatment', 'data-navigator-handoff': 'true', onclick: () => setNavigatorHandoffState({ codes: l.codes }) }, icon('search'), `${l.label} (${l.codes.join(', ')})`),
       ),
       route.extraLinks.map((l) => h('a', { class: 'btn btn-ghost btn-small', href: l.href }, l.label)),
     ),
@@ -1451,7 +1371,7 @@ export function careNavigatorView({ query } = {}) {
       : null;
 
     // Answer-specific additions (narrower searches, urgent callouts) shown
-    // inside the matching pathway card. Links carry SAMHSA codes only.
+    // inside the matching pathway card. Finder clicks hand codes over in RAM.
     const careRoutesByPathway = new Map(
       getPopulationCareRoutes(answers).map((route) => [route.pathwayId, route]),
     );
@@ -1504,7 +1424,8 @@ export function careNavigatorView({ query } = {}) {
                     'a',
                     {
                       class: 'btn btn-secondary btn-small',
-                      href: pathway.searchHref,
+                      href: '#/treatment',
+                      'data-navigator-handoff': 'true',
                       onclick: () => {
                         setNavigatorHandoffState({
                           answers: {
@@ -1617,7 +1538,8 @@ export function careNavigatorView({ query } = {}) {
             'a',
             {
               class: result.crisis ? 'btn btn-secondary' : 'btn btn-primary btn-large',
-              href: result.searchHref,
+              href: '#/treatment',
+              'data-navigator-handoff': 'true',
               onclick: () => {
                 setNavigatorHandoffState({
                   answers: {
@@ -1638,7 +1560,8 @@ export function careNavigatorView({ query } = {}) {
             'a',
             {
               class: 'btn btn-secondary',
-              href: result.broadSearchHref,
+              href: '#/treatment',
+              'data-navigator-handoff': 'true',
               onclick: () => {
                 setNavigatorHandoffState({
                   answers: {
@@ -1678,7 +1601,14 @@ export function careNavigatorView({ query } = {}) {
             {
               type: 'button',
               class: 'btn btn-ghost',
-              onclick: () => window.print(),
+              onclick: () => printClinicalHandout(h('article', { class: 'asam-summary-card print-handout' },
+                h('h1', null, getLang() === 'es' ? 'Resumen de atención para conversar con un profesional' : 'Care summary to discuss with a clinician'),
+                p(t('nav.disclaimer', 'This is not a diagnosis or a clinical assessment. A licensed clinician will assess you.')),
+                h('h2', null, `${result.asamLevel} — ${result.asamTitle}`), p(result.summary),
+                ul((result.dimensionBreakdown ?? []).map((dimension) => `${dimension.dimension} · ${dimension.title}: ${dimension.finding}`)),
+                ...(result.redFlags.length ? [h('h2', null, getLang() === 'es' ? 'Alertas de seguridad' : 'Safety alerts'), ul(result.redFlags)] : []),
+                p(getLang() === 'es' ? 'Llame al 911 ante una emergencia médica o al 988 para crisis. EMTALA protege la evaluación y estabilización de emergencias en hospitales participantes sin importar capacidad de pago.' : 'Call 911 for a medical emergency or 988 for crisis support. EMTALA protects emergency screening and stabilization at participating hospitals regardless of ability to pay.'),
+                fine(getLang() === 'es' ? 'La información impresa queda fuera del control de Salida rápida.' : 'Printed information remains outside Quick Exit’s control.'))),
             },
             icon('printer'),
             t('nav.cta.print', 'Print my answers'),
@@ -2054,7 +1984,7 @@ export function careNavigatorView({ query } = {}) {
     updateRecommendation(announceReset, { skipHandoffStore });
   }
 
-  resetCallbacks.add(() => performFormReset({ announceReset: false, skipHandoffStore: true }));
+  onNavigatorReset(() => performFormReset({ announceReset: false, skipHandoffStore: true }));
 
   const resetBtn = h(
     'button',
@@ -2063,7 +1993,7 @@ export function careNavigatorView({ query } = {}) {
       class: 'btn btn-ghost btn-small',
       onclick: () => {
         performFormReset({ announceReset: true, skipHandoffStore: true });
-        currentNavigatorState = null;
+        storeNavigatorHandoff(null);
       },
     },
     icon('x'),
@@ -2137,7 +2067,8 @@ export function careNavigatorView({ query } = {}) {
               'a',
               {
                 class: 'btn btn-secondary btn-small',
-                href: pathway.searchHref,
+                href: '#/treatment',
+                      'data-navigator-handoff': 'true',
                 onclick: () => {
                   setNavigatorHandoffState({
                     answers: {
@@ -2217,6 +2148,10 @@ export function careNavigatorView({ query } = {}) {
     ),
 
     emergencyCallout(),
+
+    h('div', { class: 'actions no-print' },
+      h('a', { class: 'btn btn-secondary', href: '#/clinical-scores' }, getLang() === 'es' ? 'Autoevaluaciones COWS / CIWA-Ar' : 'COWS / CIWA-Ar self-checks'),
+      h('a', { class: 'btn btn-secondary', href: '#/withdrawal-planner' }, getLang() === 'es' ? 'Referencia de abstinencia y dosis bajas' : 'Withdrawal & low-dose initiation reference')),
 
     // 6-Dimension Interactive Questionnaire
     section(

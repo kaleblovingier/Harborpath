@@ -1,4 +1,4 @@
-import { h, clear, ext, tel, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, icon, announce, copyText } from '../dom.js';
 import { state, subscribe, setPersist, toggleSaved } from '../state.js';
 import { MENTAL_HEALTH_FILTERS } from '../codes.js';
 import { treatmentFinder, healthCenterFinder } from '../components/finder.js';
@@ -161,20 +161,23 @@ function helpForList(id, title, links) {
 }
 
 function helpForSection() {
-  return section('help-for', t('home.helpFor.title', 'Help for your situation'),
+  return h('details', { class: 'help-for-disclosure' },
+    h('summary', null, t('home.helpFor.title', 'Help for your situation')),
     helpForList('help-for-people', t('home.helpFor.people', 'For people and circumstances'), HELP_FOR_PEOPLE),
-    helpForList('help-for-concerns', t('home.helpFor.concerns', 'For specific concerns'), HELP_FOR_CONCERNS));
+    helpForList('help-for-concerns', t('home.helpFor.concerns', 'For specific concerns'), HELP_FOR_CONCERNS),
+    h('a', { class: 'path-sublink', href: '#/family-support' },
+      t('home.start.supporter.craft', 'Family guide: how to help a loved one with CRAFT')));
 }
 
 // ---------------------------------------------------------------- Home
 /**
- * The three things a first-time visitor on a phone needs most, in the first
- * screen: emergency help, treatment near them, and someone to talk to.
+ * Keep emergency help, nearby treatment, and someone to talk to together
+ * before the longer search and discovery tools.
  */
 function quickHelp() {
   const samhsa = HOTLINES.substanceUse.find((line) => line.id === 'samhsa').call;
   return h('section', { class: 'quick-help', 'aria-labelledby': 'quick-help-title' },
-    h('h2', { id: 'quick-help-title', class: 'visually-hidden' }, t('home.quick.title', 'Get help now')),
+    h('h2', { id: 'quick-help-title' }, t('home.quick.title', 'Get help now')),
     h('ul', { class: 'quick-grid' },
       h('li', { class: 'quick-card quick-emergency' },
         h('h3', { class: 'quick-title' }, icon('alert'), t('common.emergency.title', 'Someone not breathing or won’t wake up?')),
@@ -184,8 +187,8 @@ function quickHelp() {
         })),
         h('p', { class: 'actions' },
           tel('911', [icon('phone'), t('common.call911', 'Call 911')], { class: 'btn btn-emergency' }),
-          h('a', { class: 'btn btn-secondary', href: '#/overdose' }, t('common.emergency.steps', 'Overdose response steps')),
-          tel('988', [icon('phone'), t('home.quick.988', 'Crisis line 988')], { class: 'btn btn-ghost' }),
+          h('a', { class: 'btn home-text-action', href: '#/overdose' }, t('common.emergency.steps', 'Overdose response steps')),
+          tel('988', [icon('phone'), t('home.quick.988', 'Crisis line 988')], { class: 'btn home-text-action' }),
         ),
       ),
       h('li', { class: 'quick-card' },
@@ -195,7 +198,7 @@ function quickHelp() {
           plain: 'See licensed places near you that help with drugs or alcohol, including places that give medicine.',
         })),
         h('p', { class: 'actions' },
-          h('a', { class: 'btn btn-primary', href: '#/treatment' }, icon('search'), t('home.quick.find.cta', 'Search near me'))),
+          h('a', { class: 'btn home-text-action', href: '#/treatment' }, t('home.quick.find.cta', 'Search near me'), icon('chevron'))),
       ),
       h('li', { class: 'quick-card' },
         h('h3', { class: 'quick-title' }, icon('message'), t('home.quick.talk.title', 'Talk to someone')),
@@ -204,8 +207,8 @@ function quickHelp() {
           plain: 'Call the free SAMHSA Helpline any time, day or night. It is private. You can talk in English or Spanish.',
         })),
         h('p', { class: 'actions' },
-          tel(samhsa.number, [icon('phone'), samhsa.label], { class: 'btn btn-primary' }),
-          h('a', { class: 'btn btn-ghost', href: '#/crisis' }, t('home.quick.talk.all', 'All support lines'))),
+          tel(samhsa.number, [icon('phone'), samhsa.label], { class: 'btn home-text-action' }),
+          h('a', { class: 'btn home-text-action', href: '#/crisis' }, t('home.quick.talk.all', 'All support lines'))),
       ),
     ),
   );
@@ -214,27 +217,49 @@ function quickHelp() {
 export function homeView() {
   const go = (href) => () => location.replace(href);
   return h('div', { class: 'view view-home' },
-    h('section', { class: 'hero', 'aria-labelledby': 'page-title' },
-      h('h1', { id: 'page-title', tabindex: '-1' },
-        t('home.hero.fit', 'Find treatment that fits your needs, your insurance, and your life.')),
+    h('section', { class: 'hero home-hero', 'aria-labelledby': 'page-title' },
+      h('div', { class: 'home-hero-copy' },
+        h('h1', { id: 'page-title', tabindex: '-1' },
+          t('home.hero.heading', 'Find care that'), ' ',
+          h('em', null, t('home.hero.emphasis', 'fits your life.'))),
+        h('p', { class: 'lede' },
+          t('home.hero.lede', {
+            text: 'Search licensed addiction treatment, clinical care navigation, medication guides, harm reduction tools, and low-cost health care near you. Free and private, with no sign-up, ads, or tracking.',
+            plain: 'Find help for drug or alcohol use, ways to stay safer, and low-cost health care near you. It is free and private. No sign-up, no ads, no tracking.',
+          })),
+        h('div', { class: 'home-hero-links' },
+          h('a', { class: 'btn btn-primary', href: '#/treatment' }, t('app.nav.treatment', 'Find treatment'), icon('chevron')),
+          h('a', { class: 'btn home-text-action', href: '#/tools' }, t('app.nav.tools', 'Care tools')))),
+      h('div', { class: 'home-hero-art' },
+        h('img', { src: '/harbor.svg', width: 640, height: 480, alt: '', fetchpriority: 'high' })),
     ),
-    // Emergency, treatment, and someone to talk to come first so they fit on
-    // the first screen of a small phone; the longer introduction follows.
     quickHelp(),
+    section('start-here', t('home.start.title', 'Start with what you need today'),
+      h('div', { class: 'path-grid' },
+        pathCard({ href: '#/match', iconName: 'search',
+          title: t('tools.item.match.title', 'Find care that fits'),
+          desc: t('tools.item.match.description', 'Compare treatment options, payment information, distance, and questions to ask before an appointment.') }),
+        pathCard({ href: '#/guided', iconName: 'compass',
+          title: t('tools.item.guided.title', 'Help me choose where to start'),
+          desc: t('tools.item.guided.description', 'Follow short, optional questions to find relevant resources. Your answers stay on this device.') }),
+        pathCard({ href: '#/overdose', iconName: 'alert', tone: 'warm',
+          title: t('tools.item.overdose.title', 'Overdose response'),
+          desc: t('tools.item.overdose.description', 'Open emergency steps and the optional response timer. Call 911 for a suspected overdose.') }),
+        pathCard({ href: '#/plan', iconName: 'clipboard',
+          title: t('tools.item.plan.title', 'Safety plan and first appointment'),
+          desc: t('tools.item.plan.description', 'Prepare questions, explore what a first visit is like, and create a private plan to print.') })),
+      h('p', { class: 'small' },
+        h('a', { href: '#/workspace' }, t('tools.item.workspace.title', 'Care team workspace')), ' · ',
+        h('a', { href: '#/tools' }, t('home.start.browse', 'Browse all care tools and guides')))),
     h('section', { class: 'hero-intro', 'aria-labelledby': 'hero-search-title' },
-      h('h2', { id: 'hero-search-title', class: 'visually-hidden' }, t('home.search.title', 'Search by location')),
-      h('p', { class: 'lede' },
-        t('home.hero.lede', {
-          text: 'Search licensed addiction treatment, clinical care navigation, medication guides, harm reduction tools, and low-cost health care near you. Free and private, with no sign-up, ads, or tracking.',
-          plain: 'Find help for drug or alcohol use, ways to stay safer, and low-cost health care near you. It is free and private. No sign-up, no ads, no tracking.',
-        })),
+      h('h2', { id: 'hero-search-title' }, t('home.search.title', 'Search by location')),
       h('div', { class: 'card hero-search' },
         locationPicker(),
         h('div', { class: 'hero-actions' },
           h('button', { type: 'button', class: 'btn btn-primary', onclick: go('#/match') }, icon('search'), t('home.cta.find', 'Find treatment')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=virtual') }, icon('globe'), t('home.cta.online', 'Explore online treatment')),
-          h('button', { type: 'button', class: 'btn btn-secondary', onclick: go('#/match?start=affordable') }, icon('heart'), t('home.cta.affordable', 'Find affordable care')),
-          h('button', { type: 'button', class: 'btn btn-emergency', onclick: go('#/crisis') }, icon('phone'), t('home.cta.helpNow', 'Get help now')),
+          h('button', { type: 'button', class: 'btn home-text-action', onclick: go('#/match?start=virtual') }, t('home.cta.online', 'Explore online treatment')),
+          h('button', { type: 'button', class: 'btn home-text-action', onclick: go('#/match?start=affordable') }, t('home.cta.affordable', 'Find affordable care')),
+          h('button', { type: 'button', class: 'btn home-text-action home-urgent-action', onclick: go('#/crisis') }, t('home.cta.helpNow', 'Get help now')),
         ),
         h('p', { class: 'hero-more' },
           h('a', { href: '#/treatment' }, t('home.cta.directory', 'Search the full treatment directory')), ' · ',
@@ -244,94 +269,7 @@ export function homeView() {
       ),
     ),
     topicSearch({ idPrefix: 'home-topic', title: t('topicSearch.homeTitle', 'Looking for something specific?') }),
-    section('start-here', t('home.start.title', 'Start with what you need today'),
-      h('div', { class: 'path-grid' },
-        pathCard({ href: '#/guided', iconName: 'compass',
-          title: t('home.start.individual.title', 'I’m looking for help for myself'),
-          desc: t('home.start.individual.description', 'Answer short, optional questions to find a starting point. You do not need to know which type of care to ask for.') }),
-        h('div', { class: 'path-stack' },
-          pathCard({ href: '#/support', iconName: 'users',
-            title: t('home.start.supporter.title', 'I’m supporting someone'),
-            desc: t('home.start.supporter.description', 'Find family and peer support, crisis help, and ways to prepare the next step together.') }),
-          h('a', { class: 'path-sublink', href: '#/family-support' },
-            t('home.start.supporter.craft', 'Family guide: how to help a loved one with CRAFT'))),
-        pathCard({ href: '#/workspace', iconName: 'clipboard',
-          title: t('home.start.team.title', 'I work with patients or in the community'),
-          desc: t('home.start.team.description', 'Organize a visit, verify a referral, and prepare an anonymous follow-up checklist.') })),
-      h('p', { class: 'actions' }, h('a', { href: '#/tools', class: 'btn btn-secondary' },
-        t('home.start.browse', 'Browse all care tools and guides')))),
     helpForSection(),
-    h('nav', { class: 'path-grid', 'aria-label': t('home.paths.label', 'What do you need?') },
-      pathCard({
-        href: '#/treatment', iconName: 'compass',
-        title: t('home.path.treatment.title', 'Find treatment'),
-        desc: t('home.path.treatment.desc', {
-          text: 'Detox, outpatient, residential, and medications like buprenorphine and methadone, from SAMHSA’s national directory.',
-          plain: 'Places to stop or cut back safely, live-in programs, and medicines like buprenorphine and methadone.',
-        }),
-      }),
-      pathCard({
-        href: '#/navigator', iconName: 'activity',
-        title: t('home.path.navigator.title', 'Clinical care navigator'),
-        desc: t('home.path.navigator.desc', {
-          text: 'Private 6-dimension ASAM 4th Edition self-check to match your withdrawal, medical, and housing needs to the right level of care.',
-          plain: 'Answer private questions about your health, withdrawal, and home. See what kind of care may fit you best.',
-        }),
-      }),
-      pathCard({
-        href: '#/medications', iconName: 'pill',
-        title: t('home.path.medications.title', 'Medications & interactions'),
-        desc: t('home.path.medications.desc', {
-          text: 'Pharmacist guide to buprenorphine (including fentanyl micro-induction), methadone, naltrexone, alcohol medications, and drug interactions.',
-          plain: 'Learn about medicines that treat opioid and alcohol use, and which drugs are risky to mix.',
-        }),
-      }),
-      pathCard({
-        href: '#/harm-reduction', iconName: 'shield',
-        title: t('home.path.harm.title', 'Harm reduction'),
-        desc: t('home.path.harm.desc', {
-          text: 'Naloxone, test strips, never-use-alone lines, safer use, and wound care. No judgment, no requirement to quit.',
-          plain: 'Naloxone, test strips, lines to call so you don’t use alone, and wound care. No judgment. You don’t have to quit.',
-        }),
-      }),
-      pathCard({
-        href: '#/health', iconName: 'heart',
-        title: t('home.path.health.title', 'Health, VA, IHS & ER care'),
-        desc: t('home.path.health.desc', {
-          text: 'Sliding-fee health centers, mental health care, VA & Vet Centers, Indian Health Service, rural clinics, and emergency hospitals.',
-          plain: 'Low-cost clinics, mental health care, care for veterans and Native Americans, and emergency rooms.',
-        }),
-      }),
-      pathCard({
-        href: '#/plan', iconName: 'clipboard',
-        title: t('home.path.plan.title', 'Safety plan & first visit'),
-        desc: t('home.path.plan.desc', {
-          text: 'Build a private, printable safety and recovery plan, explore therapy options, and see what happens at a first intake appointment.',
-          plain: 'Make a private plan for hard moments, and see what happens at your first visit.',
-        }),
-      }),
-      pathCard({
-        href: '#/support', iconName: 'users',
-        title: t('home.path.support.title', 'Recovery & family'),
-        desc: t('home.path.support.desc', {
-          text: 'Peer support, meetings, recovery housing, and CRAFT-based guidance for people who love someone who uses.',
-          plain: 'Support groups, sober housing, and help for family and friends of someone who uses.',
-        }),
-      }),
-      pathCard({
-        href: '#/choosing-care', iconName: 'check-circle',
-        title: t('home.path.choosing.title', 'Choosing quality care'),
-        desc: t('home.path.choosing.desc', {
-          text: 'Signs of good treatment, questions to ask, and red flags for scams and patient brokering.',
-          plain: 'How to spot good care, what to ask, and warning signs of scams.',
-        }),
-      }),
-      pathCard({
-        href: '#/crisis', iconName: 'phone', tone: 'warm',
-        title: t('home.path.crisis.title', 'Talk to someone now'),
-        desc: t('home.path.crisis.desc', '988, the SAMHSA helpline, overdose prevention lines, and other free, confidential support.'),
-      }),
-    ),
     h('section', { class: 'promises', 'aria-labelledby': 'promises-title' },
       h('h2', { id: 'promises-title' }, t('home.promises.title', 'How HarborPath works')),
       h('ul', { class: 'promise-grid' },
@@ -556,21 +494,21 @@ export function savedView() {
         p(t('saved.empty', 'Nothing saved yet. Tap “Save” on any listing to keep it here while you compare.'))));
       return;
     }
+    const copyAllBtn = h('button', {
+      type: 'button', class: 'btn btn-ghost',
+      onclick: async () => {
+        const text = items.map(formatSavedText).join('\n\n');
+        await copyText(text, {
+          trigger: copyAllBtn,
+          announceSuccess: t('saved.copied', 'Saved list copied'),
+          announceFailure: t('common.copyUnavailable', 'Copy is not available in this browser'),
+        });
+      },
+    }, icon('copy'), t('saved.copyAll', 'Copy all'));
     tools.append(
       h('button', { type: 'button', class: 'btn btn-secondary', onclick: () => window.print() },
         icon('printer'), t('saved.print', 'Print list')),
-      h('button', {
-        type: 'button', class: 'btn btn-ghost',
-        onclick: async () => {
-          const text = items.map(formatSavedText).join('\n\n');
-          try {
-            await navigator.clipboard.writeText(text);
-            announce(t('saved.copied', 'Saved list copied'));
-          } catch {
-            announce(t('common.copyUnavailable', 'Copy is not available in this browser'));
-          }
-        },
-      }, icon('copy'), t('saved.copyAll', 'Copy all')),
+      copyAllBtn,
       h('button', {
         type: 'button', class: 'btn btn-ghost',
         onclick: () => {

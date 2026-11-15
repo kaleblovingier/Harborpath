@@ -270,9 +270,12 @@ describe('Harm Reduction View (public/js/views/harmReduction.js) Data & Safety P
       assert.equal(typeof s.detailEs, 'string');
     }
 
-    assert.match(GOOD_SAMARITAN_STEPS[1].detail, /Over 48 states and Washington D\.C\./i);
-    assert.match(GOOD_SAMARITAN_STEPS[2].detail, /All 50 states/i);
-    assert.match(GOOD_SAMARITAN_STEPS[3].detail, /NOT protect against outstanding felony arrest warrants/i);
+    assert.match(GOOD_SAMARITAN_STEPS[1].detail, /differ by state and territory/i);
+    assert.match(GOOD_SAMARITAN_STEPS[1].detail, /not universally provided/i);
+    assert.match(GOOD_SAMARITAN_STEPS[2].detail, /Do not delay naloxone or 911/i);
+    assert.match(GOOD_SAMARITAN_STEPS[2].detail, /No blanket promise of civil or criminal immunity/i);
+    assert.match(GOOD_SAMARITAN_STEPS[3].detail, /Exceptions may involve.*warrants/i);
+    assert.match(GOOD_SAMARITAN_STEPS[3].detailEs, /varían por lugar/i);
   });
 
   it('exports SUPPLY_PATHWAYS covering SSPs, vending machines, test strips, NEXT Distro mail, and mobile vans', () => {

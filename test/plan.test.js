@@ -479,8 +479,9 @@ test('resetPlanState() wipes active plan from RAM, resets form controls, and int
     assert.doesNotThrow(() => resetPlanState());
     assert.ok(getPlanState() === null || getPlanState()?.goal === '');
 
-    // Mount plan view with preloaded query
-    const root = planView({ query: new URLSearchParams('goal=Stay+grounded+today') });
+    // Goals enter through RAM only; a URL must not initialize clinical state.
+    setPlanState({ goal: 'Stay grounded today' });
+    const root = planView({ query: new URLSearchParams('goal=Ignore+URL+clinical+state') });
     const initialPlan = getPlanState();
     assert.ok(initialPlan);
     assert.equal(initialPlan.goal, 'Stay grounded today');
@@ -578,7 +579,8 @@ test('planView renders zero-knowledge builder, urge-surfing toolkit, intake scri
   };
 
   try {
-    const root = planView({ query: new URLSearchParams('goal=Stay+safe+tonight') });
+    setPlanState({ goal: 'Stay safe tonight' });
+    const root = planView();
     const fullText = root.textContent;
 
     // Verify all 5 sections render
@@ -625,8 +627,8 @@ test('planView renders zero-knowledge builder, urge-surfing toolkit, intake scri
     assert.doesNotMatch(previewCards[0].textContent, /Stay safe tonight/);
     assert.equal(chipButtons[0].attributes['aria-pressed'], 'false');
 
-    // Verify links to #/treatment?codes=... for counseling modalities
-    const links = root.findAll((n) => n.tagName === 'A' && (n.attributes.href ?? '').startsWith('#/treatment?codes='));
+    // Counseling preferences transfer in RAM, without health codes in URLs.
+    const links = root.findAll((n) => n.tagName === 'A' && n.attributes.href === '#/treatment');
     assert.ok(links.length >= COUNSELING_MODALITIES.length);
   } finally {
     globalThis.document = prevDoc;

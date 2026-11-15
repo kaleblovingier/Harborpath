@@ -6,7 +6,7 @@
 // Critical Pharmacology Contraindications: Lithium Status Epilepticus Hazard & MAOI Serotonin Syndrome.
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -432,6 +432,7 @@ export function psychedelicCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'pc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `pc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setPsychedelicState({ viewMode: 'community' }),
@@ -440,6 +441,7 @@ export function psychedelicCareView() {
         h('span', {}, t('pc.mode.community', 'Peer & Community Mode (Calming Grounding, Bad Trip Help & 62-FIRESIDE)')),
       ]),
       h('button', {
+        type: 'button',
         class: `pc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setPsychedelicState({ viewMode: 'clinical' }),
@@ -452,24 +454,28 @@ export function psychedelicCareView() {
     // Navigation Tabs
     const tabsList = h('div', { class: 'pc-tabs-nav', role: 'tablist', 'aria-label': 'Psychedelic Navigation Tabs' }, [
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'crisis' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'crisis' ? 'true' : 'false',
         onclick: () => setPsychedelicState({ activeTab: 'crisis' }),
       }, t('pc.tabs.crisis', 'Crisis Triage & Grounding')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'pharmacology' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'pharmacology' ? 'true' : 'false',
         onclick: () => setPsychedelicState({ activeTab: 'pharmacology' }),
       }, t('pc.tabs.pharmacology', 'Substance Science & Profiles')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'interactions' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'interactions' ? 'true' : 'false',
         onclick: () => setPsychedelicState({ activeTab: 'interactions' }),
       }, t('pc.tabs.interactions', 'Dangerous Drug Interactions')),
       h('button', {
+        type: 'button',
         class: `pc-tab-btn ${state.activeTab === 'hppd' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'hppd' ? 'true' : 'false',
@@ -668,35 +674,28 @@ export function psychedelicCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar',
+      onclick: () => {
+        const text = buildPsychedelicSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn, copiedLabel: 'Copied to Clipboard!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('pc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar secondary',
+      onclick: () => {
+        const text = buildPsychedelicSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn, copiedLabel: '¡Copiado al Portapapeles!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('pc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'sbar-export-container' }, [
       h('div', { class: 'sbar-header' }, [
         h('h4', {}, t('pc.sbar.title', 'Zero-PII Clinical Handoff & Dispatch Note Generator')),
         h('p', {}, t('pc.sbar.desc', 'Generate an anonymous, structured clinical SBAR summary for Emergency Department triage, festival medical teams, or psychiatric crisis responders. Operates 100% in local browser memory.')),
       ]),
-      h('div', { class: 'sbar-actions' }, [
-        h('button', {
-          class: 'btn-copy-sbar',
-          onclick: (e) => {
-            const text = buildPsychedelicSbarText(state, evaluation, 'en');
-            navigator.clipboard.writeText(text).then(() => {
-              const orig = e.currentTarget.textContent;
-              e.currentTarget.textContent = 'Copied to Clipboard!';
-              setTimeout(() => { e.currentTarget.textContent = orig; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('pc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-        h('button', {
-          class: 'btn-copy-sbar secondary',
-          onclick: (e) => {
-            const text = buildPsychedelicSbarText(state, evaluation, 'es');
-            navigator.clipboard.writeText(text).then(() => {
-              const orig = e.currentTarget.textContent;
-              e.currentTarget.textContent = '¡Copiado al Portapapeles!';
-              setTimeout(() => { e.currentTarget.textContent = orig; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('pc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-      ]),
+      h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
     ]);
 
     section.appendChild(hotlineBanner);

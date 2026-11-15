@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { LAZY_LOADERS, ROUTE_TITLES, preloadRoute } from '../public/js/app.js';
 import { TOOL_CATALOG, filterCareTools } from '../public/js/views/tools.js';
+import { installMockDom } from './fixtures/mockDomHelper.js';
 import {
   getFamilyState,
   setFamilyState,
@@ -75,9 +76,12 @@ test('Wave 15: Care Tools Catalog & Search Filtering Integration', () => {
   assert.ok(esTools['tools.item.family-support.description']);
 });
 
-test('Wave 15: Guides Navigation Integration', () => {
-  const guidesContent = readFileSync(new URL('../public/js/views/guides.js', import.meta.url), 'utf8');
-  assert.match(guidesContent, /#\/family-support/, 'guides.js must provide direct navigation link to #/family-support');
+test('Wave 15: Recovery and family support links directly to the CRAFT guide', async () => {
+  const supportView = await preloadRoute('support');
+  const restore = installMockDom();
+  try {
+    assert.ok(supportView().querySelectorAll('a').some(link => link.getAttribute('href') === '#/family-support'));
+  } finally { restore(); }
 });
 
 test('Wave 15: Service Worker Manifest & Elective Cache Verification', () => {

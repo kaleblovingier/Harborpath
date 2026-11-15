@@ -59,15 +59,14 @@ describe('Finding 3: no unsourced effect-size percentages in the navigator', () 
   });
 });
 
-describe('Finding 4: micro-induction table is introduced by a prescriber-only warning', () => {
-  it('places a callout-warn above the dosing table', () => {
+describe('Finding 4: the buprenorphine start guide is for clinician discussion', () => {
+  it('keeps the self-dosing warning in both languages and omits a dosing table', () => {
     const src = read('public/js/views/medications.js');
-    const warn = src.indexOf("t('meds.bernese.warn.title'");
-    const table = src.indexOf('BERNESE_EXAMPLE_SCHEDULE.map');
-    assert.ok(warn > 0 && table > 0 && warn < table, 'warning must come before the table');
-    assert.match(src.slice(src.lastIndexOf('callout callout-warn', warn), warn), /callout callout-warn/);
-    assert.ok(src.lastIndexOf('callout callout-warn', warn) > src.lastIndexOf("h('div', { class: 'table-wrap' }", warn));
-    assert.ok(es['meds.bernese.warn.title'] && es['meds.bernese.warn.body']);
+    const guide = src.slice(src.indexOf("section('bernese-guide'"), src.indexOf("section('naltrexone-washout'"));
+    assert.match(guide, /callout callout-warn/);
+    assert.match(guide, /For discussion with a clinician.*not for self-dosing/);
+    assert.match(guide, /Para conversar con un profesional.*no para ajustar dosis por cuenta propia/);
+    assert.doesNotMatch(guide, /BERNESE_EXAMPLE_SCHEDULE|h\('table'|\b\d+(?:[.,]\d+)?\s*mg\b/i);
   });
 });
 
