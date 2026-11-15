@@ -784,7 +784,6 @@ export function antimuscarinicToxView(containerOrOptions = {}, maybeOptions = {}
       }),
       tel('1-800-222-1222', [icon('phone'), ' ', pick('Poison Control 1-800-222-1222', 'Control de Intoxicaciones 1-800-222-1222')], {
         class: 'btn btn-secondary',
-        'aria-label': pick('Call Poison Control at 1-800-222-1222', 'Llamar a Control de Intoxicaciones al 1-800-222-1222'),
       }),
     ),
   );
@@ -998,7 +997,7 @@ export function antimuscarinicToxView(containerOrOptions = {}, maybeOptions = {}
       checked: Boolean(getAntimuscarinicToxState()[def.key]),
       onchange: (e) => updateAntimuscarinicToxState({ [def.key]: e.target.checked }),
     });
-    const row = h('label', { class: 'checkbox-row antimuscarinic-check-row', for: def.id },
+    const row = h('label', { class: 'check antimuscarinic-check-row', for: def.id },
       cb,
       h('span', null, def.label),
     );
@@ -1051,7 +1050,7 @@ export function antimuscarinicToxView(containerOrOptions = {}, maybeOptions = {}
       },
     });
     const row = h('label', {
-      class: `checkbox-row antimuscarinic-check-row ${flag.fatal ? 'antimuscarinic-fatal-row' : ''}`,
+      class: `check antimuscarinic-check-row ${flag.fatal ? 'antimuscarinic-fatal-row' : ''}`,
       for: flag.id,
     },
       cb,
