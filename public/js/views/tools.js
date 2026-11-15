@@ -279,15 +279,14 @@ export const CATEGORY_GROUPS = Object.freeze([
 
 export const categoryGroupFor = (category) => CATEGORY_GROUPS.find((group) => group.categories.includes(category)) ?? null;
 
-// Short, touch-friendly pill & card-badge labels for each category group so
-// chips wrap cleanly without horizontal overflow at 320px viewports.
+// Short labels for quick filters and category metadata on each tool.
 const CATEGORY_PILL_META = Object.freeze({
-  emergency: Object.freeze({ key: 'tools.pill.emergency', label: 'Urgent support', chipClass: 'chip-emergency' }),
-  care: Object.freeze({ key: 'tools.pill.care', label: 'Find care', chipClass: 'chip-care' }),
-  'harm-reduction': Object.freeze({ key: 'tools.pill.harmReduction', label: 'Stay safer', chipClass: 'chip-warn' }),
-  health: Object.freeze({ key: 'tools.pill.health', label: 'Medical guides', chipClass: 'chip-primary' }),
-  planning: Object.freeze({ key: 'tools.pill.planning', label: 'Plans & support', chipClass: 'chip-ok' }),
-  populations: Object.freeze({ key: 'tools.pill.populations', label: 'By situation', chipClass: 'chip-secondary' }),
+  emergency: Object.freeze({ key: 'tools.pill.emergency', label: 'Urgent support' }),
+  care: Object.freeze({ key: 'tools.pill.care', label: 'Find care' }),
+  'harm-reduction': Object.freeze({ key: 'tools.pill.harmReduction', label: 'Stay safer' }),
+  health: Object.freeze({ key: 'tools.pill.health', label: 'Medical guides' }),
+  planning: Object.freeze({ key: 'tools.pill.planning', label: 'Plans & support' }),
+  populations: Object.freeze({ key: 'tools.pill.populations', label: 'By situation' }),
 });
 
 const POPULAR_SUGGESTIONS = Object.freeze([
@@ -340,14 +339,14 @@ export function careToolsView({ meta } = {}) {
   activeKeydownCleanup?.();
   activeKeydownCleanup = null;
 
-  const search = h('input', { id: 'care-tools-search', type: 'search', value: filters.query,
+  const search = h('input', { class: 'input', id: 'care-tools-search', type: 'search', value: filters.query,
     autocomplete: 'off', spellcheck: 'false', 'aria-describedby': 'care-tools-shortcut care-tools-privacy' });
-  const audience = h('select', { id: 'care-tools-audience' },
+  const audience = h('select', { class: 'select', id: 'care-tools-audience' },
     h('option', { value: 'all' }, t('tools.audience.all', 'Everyone')),
     h('option', { value: 'individual' }, t('tools.audience.individual', 'For me')),
     h('option', { value: 'supporter' }, t('tools.audience.supporter', 'Supporting someone')),
     h('option', { value: 'care-team' }, t('tools.audience.team', 'Healthcare and community workers')));
-  const category = h('select', { id: 'care-tools-category' },
+  const category = h('select', { class: 'select', id: 'care-tools-category' },
     h('option', { value: 'all' }, t('tools.category.all', 'All topics')),
     CATEGORY_GROUPS.map((group) => h('option', { value: group.id }, t(group.key, group.label))));
   audience.value = filters.audience;
@@ -436,10 +435,9 @@ export function careToolsView({ meta } = {}) {
         h('h2', { id: headingId }, t(group.key, group.label)),
         h('div', { class: 'tools-grid' },
           groupedTools.map((tool) => h('article', { class: 'card tool-card' },
-            h('h2', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))),
-            h('div', { class: 'chips' },
-              h('span', { class: `chip ${CATEGORY_PILL_META[group.id]?.chipClass ?? 'chip-secondary'} tool-category-badge` },
-                t(CATEGORY_PILL_META[group.id]?.key ?? group.key, CATEGORY_PILL_META[group.id]?.label ?? group.label))),
+            h('p', { class: 'tool-category-badge' },
+              t(CATEGORY_PILL_META[group.id]?.key ?? group.key, CATEGORY_PILL_META[group.id]?.label ?? group.label)),
+            h('h3', null, h('a', { href: tool.path }, t(tool.titleKey, tool.title))),
             h('p', null, t(tool.descriptionKey, tool.description)))))));
     }
   }
@@ -466,12 +464,14 @@ export function careToolsView({ meta } = {}) {
     h('section', { class: 'card tools-filters no-print', 'aria-label': t('tools.filters', 'Filter care tools') },
       h('div', { class: 'field' },
         h('label', { for: 'care-tools-search' }, t('tools.search', 'Search tools and guides')),
-        search,
-        h('p', { id: 'care-tools-shortcut', class: 'help' }, t('tools.searchShortcut', 'Press / anytime to jump to search.'))),
+        search),
       h('div', { class: 'field' }, h('label', { for: 'care-tools-audience' }, t('tools.audience', 'Who are you helping?')), audience),
       h('div', { class: 'field' }, h('label', { for: 'care-tools-category' }, t('tools.category', 'What would help?')), category),
-      h('button', { class: 'btn btn-ghost', type: 'button', onclick: () => { resetCareToolsState(); search.focus(); } }, t('tools.clear', 'Clear filters')),
-      h('p', { id: 'care-tools-privacy', class: 'small muted' }, t('tools.privacy', 'Search stays in this browser. It is not sent, saved, or added to the address bar. Quick exit clears it.'))),
+      h('div', { class: 'tools-filter-footer' },
+        h('div', { class: 'tools-filter-notes' },
+          h('p', { id: 'care-tools-privacy', class: 'small muted' }, t('tools.privacy', 'Search stays in this browser. It is not sent, saved, or added to the address bar. Quick exit clears it.')),
+          h('p', { id: 'care-tools-shortcut', class: 'small muted' }, t('tools.searchShortcut', 'Press / anytime to jump to search.'))),
+        h('button', { class: 'btn btn-ghost', type: 'button', onclick: () => { resetCareToolsState(); search.focus(); } }, t('tools.clear', 'Clear filters')))),
     h('section', {
       class: 'hero-search tools-discovery no-print',
       'aria-label': t('tools.discovery.region', 'Quick topic filters and popular searches'),
