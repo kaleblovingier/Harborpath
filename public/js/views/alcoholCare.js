@@ -8,7 +8,7 @@
 // - Sinclair JD. Evidence about the use of naltrexone and for different ways of using it in the treatment of alcoholism. Alcohol Alcohol. 2001;36(1):2-10.
 // - Wernicke-Korsakoff Syndrome Prevention & Thiamine Protocols (Royal College of Physicians / EFNS Guidelines)
 
-import { h, append, icon } from '../dom.js';
+import { h, append, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 /**
@@ -379,6 +379,7 @@ export function alcoholCareView() {
   // Tab Navigation
   const tabList = h('div', { class: 'tab-nav', role: 'tablist', 'aria-label': 'Alcohol Care Sections' });
   const tabPawssBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'pawss' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-pawss-btn',
@@ -387,6 +388,7 @@ export function alcoholCareView() {
   }, t('alcohol.tab.pawss', 'Withdrawal Risk (PAWSS)'));
 
   const tabMaudBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'maud' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-maud-btn',
@@ -395,6 +397,7 @@ export function alcoholCareView() {
   }, t('alcohol.tab.maud', 'Medications (MAUD)'));
 
   const tabWernickeBtn = h('button', {
+    type: 'button',
     class: `tab-btn ${inMemoryState.activeTab === 'wernicke' ? 'active' : ''}`,
     role: 'tab',
     id: 'tab-wernicke-btn',
@@ -656,14 +659,8 @@ export function alcoholCareView() {
   const copyStatus = actionsCard.querySelector('#alcohol-copy-status');
   copyBtn.addEventListener('click', async () => {
     const text = formatAlcoholSummaryText(inMemoryState, 'en');
-    try {
-      await navigator.clipboard.writeText(text);
-      copyStatus.textContent = 'Summary copied to clipboard.';
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => { copyBtn.textContent = 'Copy Plain-Text Summary'; }, 2000);
-    } catch {
-      copyStatus.textContent = 'Unable to access clipboard.';
-    }
+    const ok = await copyText(text, { trigger: copyBtn, copiedLabel: 'Copied!' });
+    copyStatus.textContent = ok ? 'Summary copied to clipboard.' : 'Unable to access clipboard.';
   });
 
   const resetBtn = actionsCard.querySelector('#btn-reset-alcohol');

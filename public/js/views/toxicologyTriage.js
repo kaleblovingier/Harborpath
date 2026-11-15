@@ -7,7 +7,7 @@
 // Emergency Medical Treatment and Labor Act (EMTALA, 42 U.S.C. § 1395dd).
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon, tel } from '../dom.js';
+import { h, clear, icon, tel, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 
 // ============================================================================
@@ -1345,22 +1345,20 @@ function renderHandoffTab(localState, isEs, isClinician) {
     const copyBtn = h('button', {
       type: 'button',
       class: 'btn btn-primary',
-      click: async () => {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(sbarText);
-            clear(copyStatus);
-            copyStatus.appendChild(h('span', { class: 'text-success' }, isEs ? '✓ Nota SBAR copiada al portapapeles sin datos personales.' : '✓ SBAR note copied to clipboard (Zero PII).'));
-          } else {
-            clear(copyStatus);
-            copyStatus.appendChild(h('span', null, isEs ? 'Seleccione y copie desde el cuadro superior.' : 'Please copy from the text box above.'));
-          }
-        } catch (e) {
-          clear(copyStatus);
-          copyStatus.appendChild(h('span', null, isEs ? 'Copie manualmente desde el cuadro superior.' : 'Unable to copy automatically; copy above.'));
-        }
-      }
     }, icon('copy'), ' ', isEs ? 'Copiar Nota SBAR (Sin Datos Personales)' : 'Copy SBAR Clinical Note (Zero PII)');
+    const handleCopy = async () => {
+      const ok = await copyText(sbarText, { trigger: copyBtn });
+      clear(copyStatus);
+      copyStatus.appendChild(h(
+        'span',
+        ok ? { class: 'text-success' } : null,
+        ok
+          ? (isEs ? '✓ Nota SBAR copiada al portapapeles sin datos personales.' : '✓ SBAR note copied to clipboard (Zero PII).')
+          : (isEs ? 'Copie manualmente desde el cuadro superior.' : 'Unable to copy automatically; copy above.'),
+      ));
+    };
+    if (typeof copyBtn.addEventListener === 'function') copyBtn.addEventListener('click', handleCopy);
+    else copyBtn.onclick = handleCopy;
 
     exportCard.appendChild(copyBtn);
     exportCard.appendChild(copyStatus);
@@ -1522,22 +1520,20 @@ function renderHandoffTab(localState, isEs, isClinician) {
     const copyBtn = h('button', {
       type: 'button',
       class: 'btn btn-primary',
-      click: async () => {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(scriptText);
-            clear(copyStatus);
-            copyStatus.appendChild(h('span', { class: 'text-success' }, isEs ? '✓ Guion copiado al portapapeles.' : '✓ Script copied to clipboard.'));
-          } else {
-            clear(copyStatus);
-            copyStatus.appendChild(h('span', null, isEs ? 'Copie desde el cuadro superior.' : 'Please copy from the text box above.'));
-          }
-        } catch (e) {
-          clear(copyStatus);
-          copyStatus.appendChild(h('span', null, isEs ? 'Copie manualmente desde el cuadro.' : 'Unable to copy automatically; copy above.'));
-        }
-      }
     }, icon('copy'), ' ', isEs ? 'Copiar Guion para el 911' : 'Copy 911 Dispatch Script');
+    const handleCopy = async () => {
+      const ok = await copyText(scriptText, { trigger: copyBtn });
+      clear(copyStatus);
+      copyStatus.appendChild(h(
+        'span',
+        ok ? { class: 'text-success' } : null,
+        ok
+          ? (isEs ? '✓ Guion copiado al portapapeles.' : '✓ Script copied to clipboard.')
+          : (isEs ? 'Copie manualmente desde el cuadro.' : 'Unable to copy automatically; copy above.'),
+      ));
+    };
+    if (typeof copyBtn.addEventListener === 'function') copyBtn.addEventListener('click', handleCopy);
+    else copyBtn.onclick = handleCopy;
 
     bystanderCard.appendChild(copyBtn);
     bystanderCard.appendChild(copyStatus);

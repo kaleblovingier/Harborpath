@@ -7,7 +7,7 @@
 // ACC/AHA Cardiothoracic Surgery Guidelines for Valvular Heart Disease in Persons Who Inject Drugs (PWID).
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -394,6 +394,7 @@ export function endocarditisCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'ec-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `ec-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setEndocarditisState({ viewMode: 'community' }),
@@ -402,6 +403,7 @@ export function endocarditisCareView() {
         h('span', {}, t('ec.mode.community', 'Community & Patient Mode (Chest Pain, Cough & Prevention)')),
       ]),
       h('button', {
+        type: 'button',
         class: `ec-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setEndocarditisState({ viewMode: 'clinical' }),
@@ -414,30 +416,35 @@ export function endocarditisCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'ec-tabs-nav', role: 'tablist', 'aria-label': 'Endocarditis Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `ec-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setEndocarditisState({ activeTab: 'triage' }),
       }, t('ec.tabs.triage', 'Endocarditis Emergency Triage')),
       h('button', {
+        type: 'button',
         class: `ec-tab-btn ${state.activeTab === 'valves' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'valves' ? 'true' : 'false',
         onclick: () => setEndocarditisState({ activeTab: 'valves' }),
       }, t('ec.tabs.valves', 'Tricuspid vs. Aortic/Mitral Pathology')),
       h('button', {
+        type: 'button',
         class: `ec-tab-btn ${state.activeTab === 'duke' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'duke' ? 'true' : 'false',
         onclick: () => setEndocarditisState({ activeTab: 'duke' }),
       }, t('ec.tabs.duke', 'Duke-ISCVID Criteria & Cultures')),
       h('button', {
+        type: 'button',
         class: `ec-tab-btn ${state.activeTab === 'surgery' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'surgery' ? 'true' : 'false',
         onclick: () => setEndocarditisState({ activeTab: 'surgery' }),
       }, t('ec.tabs.surgery', 'Cardiothoracic Surgery & POET Protocol')),
       h('button', {
+        type: 'button',
         class: `ec-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -603,25 +610,26 @@ export function endocarditisCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildEndocarditisSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('ec.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildEndocarditisSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('ec.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'ec-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('ec.sbar.title', 'Zero-PII Infective Endocarditis Clinical SBAR Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildEndocarditisSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('ec.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildEndocarditisSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('ec.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildEndocarditisSbarText(state, evaluation, 'en')),
     ]);

@@ -32,6 +32,7 @@ const { SECURITY_HEADERS } = await import('../src/app.js');
 const { auditSecurityHeaders } = await import('../src/privacy.js');
 const { state, setLocation, setRadius, toggleSaved, setPersist, wipeAll } = await import('../public/js/state.js');
 const navModule = await import('../public/js/views/navigator.js');
+const { detectCrisisOrOverdose } = await import('../public/js/views/guidedNavigator.js');
 const popHelpers = await import('../public/js/views/populationHelpers.js');
 const { rankMatches, fromFacility } = await import('../public/js/match/engine.js');
 const { HOTLINES, hotlinesById } = await import('../public/js/content/hotlines.js');
@@ -191,14 +192,12 @@ describe('Deterministic Triage & Crisis / Overdose Red-Flag Interception', () =>
     assert.equal(lineSafespot.call.label, '1-800-972-0590');
     assert.ok(lineSamhsa && lineSamhsa.call.number === '18006624357');
 
-    // Verify guides.js & hotlines.js include Never Use Alone, SafeSpot (800-972-0590), 911, and #/overdose
-    const guidesSrc = fs.readFileSync(
-      path.join(rootDir, 'public', 'js', 'views', 'guides.js'),
-      'utf8',
-    );
-    assert.match(guidesSrc, /Never Use Alone/);
-    assert.match(guidesSrc, /SafeSpot/);
-    assert.match(guidesSrc, /#\/overdose/);
+    const overdose = detectCrisisOrOverdose({ overdose: true });
+    assert.equal(overdose.category, 'overdose');
+    assert.ok(overdose.actions.some(({ href }) => href === 'tel:911'));
+    assert.ok(overdose.actions.some(({ href }) => href === '#/overdose'));
+    assert.ok(overdose.actions.some(({ label }) => label.includes('Never Use Alone')));
+    assert.ok(overdose.actions.some(({ label }) => label.includes('SafeSpot')));
 
     // 2. Verify navigator.js crisis interception puts 988 & 911 safety first
     const crisisEval = navModule.evaluateAsamCare({

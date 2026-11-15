@@ -3,7 +3,7 @@
 // Clinical Harm Reduction, Sedation Triage, and Alpha-2 Adrenergic Rebound Engine
 // Strictly Zero-PII, In-RAM ephemeral state, WCAG 2.2 AA accessible DOM
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 import { NEVER_USE_ALONE } from '../content/hotlines.js';
 
@@ -463,7 +463,7 @@ export function adulterantCareView() {
       class: 'tab-btn' + (adulterantState.activeTab === tab.id ? ' active' : ''),
       id: `tab-adulterant-${tab.id}`,
       'aria-selected': adulterantState.activeTab === tab.id ? 'true' : 'false',
-      'aria-controls': `panel-adulterant-${tab.id}`,
+      'aria-controls': 'panel-adulterant-active',
       tabindex: adulterantState.activeTab === tab.id ? '0' : '-1'
     }, tab.label);
 
@@ -506,7 +506,7 @@ export function adulterantCareView() {
     const activeTab = adulterantState.activeTab;
     const panel = h('section', {
       role: 'tabpanel',
-      id: `panel-adulterant-${activeTab}`,
+      id: 'panel-adulterant-active',
       'aria-labelledby': `tab-adulterant-${activeTab}`,
       class: 'tab-panel'
     });
@@ -656,16 +656,13 @@ export function adulterantCareView() {
       class: 'btn btn-secondary'
     }, icon('share'), t('adulterant.copySummary', 'Copy Clinical Assessment Summary'));
 
-    exportBtn.addEventListener('click', () => {
+    exportBtn.addEventListener('click', async () => {
       const summary = formatAdulterantSummaryText(adulterantState);
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(summary).then(() => {
-          exportBtn.textContent = t('adulterant.copied', 'Summary Copied to Clipboard!');
-          setTimeout(() => {
-            exportBtn.textContent = t('adulterant.copySummary', 'Copy Clinical Assessment Summary');
-          }, 2500);
-        });
-      }
+      await copyText(summary, {
+        trigger: exportBtn,
+        copiedLabel: t('adulterant.copied', 'Summary Copied to Clipboard!'),
+        announceSuccess: t('adulterant.copied', 'Summary Copied to Clipboard!'),
+      });
     });
 
     panel.appendChild(exportBtn);

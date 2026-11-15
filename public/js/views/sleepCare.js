@@ -3,7 +3,7 @@
 // Clinical standards: American College of Physicians (ACP) CBT-I Guidelines, AASM, SAMHSA TIP 63 / TIP 45, ASAM
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 
 // ============================================================================
@@ -443,24 +443,28 @@ export function sleepCareView() {
     // Navigation Tabs
     const tabsNav = h('nav', { class: 'tab-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de Restauración del Sueño' : 'Sleep Tabs' }, [
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'calculator' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'calculator'),
         onclick: () => { setSleepState({ activeTab: 'calculator' }); render(); }
       }, isEs ? 'Calculadora de Eficiencia' : 'Efficiency Calculator'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'medications' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'medications'),
         onclick: () => { setSleepState({ activeTab: 'medications' }); render(); }
       }, isEs ? 'Fármacos No Controlados' : 'Non-Controlled Meds'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'cbti' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'cbti'),
         onclick: () => { setSleepState({ activeTab: 'cbti' }); render(); }
       }, isEs ? 'Protocolos TCC-I' : 'CBT-I Protocols'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'plan' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'plan'),
@@ -786,15 +790,18 @@ function renderPlanTab(isEs, localState, evalResult, reRender) {
 
   const copyStatus = h('span', { class: 'copy-status', 'aria-live': 'polite' }, '');
   const copyBtn = h('button', {
+    type: 'button',
     class: 'btn btn-primary',
     onclick: async () => {
-      try {
-        await navigator.clipboard.writeText(summaryText);
-        copyStatus.textContent = isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!';
-        setTimeout(() => { copyStatus.textContent = ''; }, 3000);
-      } catch (_e) {
-        copyStatus.textContent = isEs ? ' Error al copiar' : ' Copy failed';
-      }
+      const ok = await copyText(summaryText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        failedLabel: isEs ? 'Error al copiar' : 'Copy failed',
+      });
+      copyStatus.textContent = ok
+        ? (isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!')
+        : (isEs ? ' Error al copiar' : ' Copy failed');
+      if (ok) setTimeout(() => { copyStatus.textContent = ''; }, 3000);
     }
   }, [
     icon('copy'),
@@ -802,6 +809,7 @@ function renderPlanTab(isEs, localState, evalResult, reRender) {
   ]);
 
   const resetBtn = h('button', {
+    type: 'button',
     class: 'btn btn-secondary',
     onclick: () => {
       resetSleepState();

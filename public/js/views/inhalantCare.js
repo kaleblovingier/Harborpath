@@ -6,7 +6,7 @@
 // CDC Clinical Guidance on Inhalant-Induced Sudden Sniffing Death Syndrome (SSDS) & Alkyl Nitrite Methemoglobinemia.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -465,6 +465,7 @@ export function inhalantCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'ic-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `ic-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setInhalantState({ viewMode: 'community' }),
@@ -473,6 +474,7 @@ export function inhalantCareView() {
         h('span', {}, t('ic.mode.community', 'Community & Festival Mode (Balloons, Poppers & Safety)')),
       ]),
       h('button', {
+        type: 'button',
         class: `ic-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setInhalantState({ viewMode: 'clinical' }),
@@ -485,24 +487,28 @@ export function inhalantCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'ic-tabs-nav', role: 'tablist', 'aria-label': 'Inhalant Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `ic-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setInhalantState({ activeTab: 'triage' }),
       }, t('ic.tabs.triage', 'Emergency & Toxin Triage')),
       h('button', {
+        type: 'button',
         class: `ic-tab-btn ${state.activeTab === 'substances' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'substances' ? 'true' : 'false',
         onclick: () => setInhalantState({ activeTab: 'substances' }),
       }, t('ic.tabs.substances', 'Substance Science & Kinetics')),
       h('button', {
+        type: 'button',
         class: `ic-tab-btn ${state.activeTab === 'differentials' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'differentials' ? 'true' : 'false',
         onclick: () => setInhalantState({ activeTab: 'differentials' }),
       }, t('ic.tabs.differentials', 'Clinical Differentials & Antidotes')),
       h('button', {
+        type: 'button',
         class: `ic-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -679,25 +685,26 @@ export function inhalantCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildInhalantSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('ic.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildInhalantSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('ic.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'ic-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('ic.sbar.title', 'Zero-PII Inhalant & Toxicology Clinical Handoff Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildInhalantSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('ic.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildInhalantSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('ic.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildInhalantSbarText(state, evaluation, 'en')),
     ]);

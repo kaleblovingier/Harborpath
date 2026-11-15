@@ -1,4 +1,4 @@
-import { h, clear } from '../dom.js';
+import { h, clear, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 
 function el(tag, opts = {}, ...children) {
@@ -785,10 +785,14 @@ export function geriatricCareView() {
   const copyStatus = el('span', { className: 'copy-status-msg', attrs: { role: 'status', 'aria-live': 'polite' } });
   const copyBtn = makeButton(isEs ? 'Copiar SBAR al Portapapeles' : 'Copy SBAR to Clipboard', async () => {
     const txt = formatGeriatricSbarText(getGeriatricState());
-    if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(txt);
-    }
-    copyStatus.textContent = isEs ? '¡Copiado al portapapeles!' : 'Copied to clipboard!';
+    const ok = await copyText(txt, {
+      trigger: copyBtn,
+      copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+      failedLabel: isEs ? 'No se pudo copiar — seleccione el texto manualmente' : 'Copy failed — select text manually',
+    });
+    copyStatus.textContent = ok
+      ? (isEs ? '¡Copiado al portapapeles!' : 'Copied to clipboard!')
+      : (isEs ? 'No se pudo acceder al portapapeles. Copie el texto manualmente.' : 'Could not access clipboard. Select the text to copy manually.');
   }, { className: 'button primary copy-sbar-btn' });
 
   const resetBtn = makeButton(isEs ? 'Reiniciar (RAM)' : 'Reset (RAM)', () => {

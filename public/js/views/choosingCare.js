@@ -2,10 +2,11 @@
 // EKRA (18 U.S.C. § 220) Anti-Patient-Brokering & Verification Script Engine.
 
 import { h, ext, icon } from '../dom.js';
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 import { pageHeader, section, p, fine, ul, strong, resourceList, tocNav } from './common.js';
 import { INSURANCE_TIERS } from './insuranceHelpers.js';
 import { insuranceSelectorWidget } from './insuranceWidget.js';
+import { rightsAndSafetyGuide } from './rightsAndSafetyPlan.js';
 
 export const QUESTIONS = [
   'Is the program licensed by the state, and is it accredited (for example, by CARF or The Joint Commission)?',
@@ -30,13 +31,13 @@ export const RED_FLAGS = [
 ];
 
 export function choosingCareView() {
+  const insuranceWidget = insuranceSelectorWidget({ defaultOpenScript: true });
   const tierItems = [
     {
       tier: INSURANCE_TIERS.EMTALA_PROTECTED,
-      desc: t(
-        'choosing.tier.emtalaDesc',
-        'Hospital emergency departments (EMTALA, 42 U.S.C. § 1395dd) and acute hospital/detox programs during a withdrawal emergency (DEA 72-Hour Rule, 21 CFR § 1306.07(b)).',
-      ),
+      desc: getLang() === 'es'
+        ? 'Las salas de emergencia hospitalarias participantes deben evaluar y estabilizar las emergencias según EMTALA. No garantiza atención gratis ni una dosis de metadona; la regla de 72 horas es una autorización clínica separada, no un derecho a recibir medicación.'
+        : 'Participating hospital emergency departments must screen and stabilize emergencies under EMTALA. This does not guarantee free care or a methadone dose; the 72-hour rule is a separate clinical permission, not a right to receive medication.',
     },
     {
       tier: INSURANCE_TIERS.CONFIRMED_MATCH,
@@ -68,7 +69,7 @@ export function choosingCareView() {
     },
   ];
 
-  return h('div', { class: 'view view-prose' },
+  const root = h('div', { class: 'view view-prose' },
     pageHeader(
       t('choosing.title', 'Choosing quality care'),
       t('choosing.lede', 'Good treatment is personal, evidence-based, and honest about cost. Here is how to tell the difference.'),
@@ -132,7 +133,7 @@ export function choosingCareView() {
           'Federal law protects both your insurance coverage for substance use treatment and your safety from predatory referral brokers. Select your coverage type below to customize a printable verification checklist in your browser’s memory:',
         ),
       ),
-      insuranceSelectorWidget({ defaultOpenScript: true }),
+      insuranceWidget,
       h('div', { class: 'card' },
         h('h3', null, t('choosing.tiers.heading', 'How HarborPath classifies coverage & safety-net compatibility')),
         h('dl', { class: 'glossary' },
@@ -192,5 +193,8 @@ export function choosingCareView() {
         },
       ]),
     ),
+    rightsAndSafetyGuide(),
   );
+  root._cleanup = () => insuranceWidget._cleanupInsuranceWidget();
+  return root;
 }

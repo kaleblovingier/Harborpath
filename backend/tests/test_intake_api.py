@@ -41,6 +41,9 @@ from backend.app.interop.fhir import (
     build_fhir_service_request,
     build_fhir_healthcare_service,
 )
+from fastapi.testclient import TestClient
+
+from backend.app.main import app
 from backend.app.models.intake import Consent42CFRPart2Record, ASAMEvaluationResult
 
 
@@ -253,6 +256,58 @@ class TestHarborPathBackend(unittest.TestCase):
         self.assertEqual(sr["priority"], "urgent")
         self.assertEqual(sr["code"]["coding"][0]["code"], "3.7")
         self.assertEqual(sr["supportingInfo"][0]["reference"], f"Consent/{consent_id}")
+
+    # -----------------------------------------------------------------------
+    # 6. Directory Capabilities (Wave 67) & 42 CFR Part 2 Security Headers
+    # -----------------------------------------------------------------------
+
+    def test_directory_summary_exposes_wave67_capabilities(self):
+        """Directory summary endpoint must disclose Wave 66 and Wave 67 clinical engines."""
+        client = TestClient(app)
+        res = client.get("/api/v1/directory/summary")
+        self.assertEqual(res.status_code, 200)
+        body = res.json()
+        caps = body.get("capabilities", {})
+
+        # Wave 66 parity
+        for key in ("cardiogenic_toxin_hiet", "wooden_chest_rigidity", "hyperthermic_toxidrome"):
+            self.assertIn(key, caps)
+            self.assertIsInstance(caps[key], str)
+            self.assertGreater(len(caps[key]), 20)
+
+        # Wave 67 capabilities
+        self.assertIn("salicylate_nsaid_tox", caps)
+        self.assertIn("salicylate", caps["salicylate_nsaid_tox"].lower())
+        self.assertIn("alkalinization", caps["salicylate_nsaid_tox"].lower())
+
+        self.assertIn("mood_stabilizer_tox", caps)
+        self.assertIn("lithium", caps["mood_stabilizer_tox"].lower())
+        self.assertIn("valproate", caps["mood_stabilizer_tox"].lower())
+        self.assertIn("lamotrigine", caps["mood_stabilizer_tox"].lower())
+
+        self.assertIn("antimuscarinic_toxidrome", caps)
+        self.assertIn("anticholinergic", caps["antimuscarinic_toxidrome"].lower())
+        self.assertIn("physostigmine", caps["antimuscarinic_toxidrome"].lower())
+
+    def test_api_responses_enforce_42cfr_part2_and_security_headers(self):
+        """Every API response must carry 42 CFR Part 2 confidentiality and defense-in-depth headers."""
+        client = TestClient(app)
+        for path in ("/health", "/api/v1/meta", "/api/v1/directory/summary"):
+            res = client.get(path)
+            self.assertEqual(res.status_code, 200, msg=f"Unexpected status on {path}")
+            self.assertIn(
+                "42 CFR Part 2",
+                res.headers.get("X-Confidentiality-Rule", ""),
+                msg=f"Missing 42 CFR Part 2 header on {path}",
+            )
+            self.assertEqual(res.headers.get("Cache-Control"), "no-store, no-cache, must-revalidate, max-age=0")
+            self.assertEqual(res.headers.get("Pragma"), "no-cache")
+            self.assertEqual(res.headers.get("X-Content-Type-Options"), "nosniff")
+            self.assertEqual(res.headers.get("X-Frame-Options"), "DENY")
+            self.assertEqual(res.headers.get("Referrer-Policy"), "strict-origin-when-cross-origin")
+            self.assertEqual(res.headers.get("Permissions-Policy"), "camera=(), microphone=(), geolocation=()")
+            self.assertEqual(res.headers.get("Strict-Transport-Security"), "max-age=63072000; includeSubDomains; preload")
+            self.assertEqual(res.headers.get("Content-Security-Policy"), "default-src 'self'")
 
 
 if __name__ == "__main__":

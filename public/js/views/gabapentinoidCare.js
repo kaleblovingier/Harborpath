@@ -7,7 +7,7 @@
 // ASAM & ACMT Management of Gabapentinoid Withdrawal Syndrome (GWS).
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -556,6 +556,7 @@ export function gabapentinoidCareView() {
     clear(modeSlot);
     modeSlot.appendChild(h('div', { class: 'gc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `gc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ viewMode: 'community' }),
@@ -564,6 +565,7 @@ export function gabapentinoidCareView() {
         h('span', {}, t('gc.mode.community', 'Patient & Family Safety Mode (Plain-Language Safe Tapering & Naloxone)')),
       ]),
       h('button', {
+        type: 'button',
         class: `gc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ viewMode: 'clinical' }),
@@ -576,30 +578,35 @@ export function gabapentinoidCareView() {
     clear(tabsSlot);
     tabsSlot.appendChild(h('div', { class: 'gc-tabs-nav', role: 'tablist', 'aria-label': 'Gabapentinoid Navigation Tabs' }, [
       h('button', {
+        type: 'button',
         class: `gc-tab-btn ${state.activeTab === 'calculator' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'calculator' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ activeTab: 'calculator' }),
       }, t('gc.tabs.calculator', 'Overdose Risk & Renal Calculator')),
       h('button', {
+        type: 'button',
         class: `gc-tab-btn ${state.activeTab === 'deprescribing' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'deprescribing' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ activeTab: 'deprescribing' }),
       }, t('gc.tabs.deprescribing', 'Hyperbolic Deprescribing Protocol')),
       h('button', {
+        type: 'button',
         class: `gc-tab-btn ${state.activeTab === 'pharmacology' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'pharmacology' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ activeTab: 'pharmacology' }),
       }, t('gc.tabs.pharmacology', 'Gabapentin vs. Pregabalin Science')),
       h('button', {
+        type: 'button',
         class: `gc-tab-btn ${state.activeTab === 'synergy' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'synergy' ? 'true' : 'false',
         onclick: () => setGabapentinoidState({ activeTab: 'synergy' }),
       }, t('gc.tabs.synergy', 'FDA 2019 Respiratory Synergy')),
       h('button', {
+        type: 'button',
         class: `gc-tab-btn ${state.activeTab === 'renal' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'renal' ? 'true' : 'false',
@@ -662,35 +669,28 @@ export function gabapentinoidCareView() {
       ]),
     ]);
 
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar',
+      onclick: () => {
+        const text = buildGabapentinoidSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn, copiedLabel: 'Copied to Clipboard!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('gc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar secondary',
+      onclick: () => {
+        const text = buildGabapentinoidSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn, copiedLabel: '¡Copiado al Portapapeles!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('gc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'sbar-export-container' }, [
       h('div', { class: 'sbar-header' }, [
         h('h4', {}, t('gc.sbar.title', 'Zero-PII Clinical Handoff & Physician Note Generator')),
         h('p', {}, t('gc.sbar.desc', 'Generate an anonymous, structured clinical SBAR summary for Primary Care, Pain Management, or Emergency Department consults. Operates 100% in local browser memory.')),
       ]),
-      h('div', { class: 'sbar-actions' }, [
-        h('button', {
-          class: 'btn-copy-sbar',
-          onclick: (e) => {
-            const text = buildGabapentinoidSbarText(state, evaluation, 'en');
-            navigator.clipboard.writeText(text).then(() => {
-              const orig = e.currentTarget.textContent;
-              e.currentTarget.textContent = 'Copied to Clipboard!';
-              setTimeout(() => { e.currentTarget.textContent = orig; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('gc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-        h('button', {
-          class: 'btn-copy-sbar secondary',
-          onclick: (e) => {
-            const text = buildGabapentinoidSbarText(state, evaluation, 'es');
-            navigator.clipboard.writeText(text).then(() => {
-              const orig = e.currentTarget.textContent;
-              e.currentTarget.textContent = '¡Copiado al Portapapeles!';
-              setTimeout(() => { e.currentTarget.textContent = orig; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('gc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-      ]),
+      h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
     ]);
 
     calcResultsSlot.appendChild(resultBox);
@@ -706,6 +706,7 @@ export function gabapentinoidCareView() {
       h('div', { class: 'taper-controls-card' }, [
         h('label', { class: 'input-label' }, t('gc.dep.chooseSpeed', 'Select Deprescribing Speed Tier:')),
         h('div', { class: 'taper-btn-group' }, HYPERBOLIC_TAPERING_PRINCIPLES.speedTiers.map((tier) => h('button', {
+          type: 'button',
           class: `taper-tier-btn ${state.selectedTaperSpeed === tier.tierId ? 'active' : ''}`,
           onclick: () => setGabapentinoidState({ selectedTaperSpeed: tier.tierId }),
         }, [

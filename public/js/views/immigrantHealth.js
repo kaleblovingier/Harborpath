@@ -8,7 +8,7 @@
 // - Title VI of the Civil Rights Act of 1964: 42 U.S.C. § 2000d; Executive Order 13166 (Language Access Mandates)
 // - Public Health Service Act § 330: 42 U.S.C. § 254b (HRSA Community & Migrant Health Centers)
 
-import { h, append, icon } from '../dom.js';
+import { h, append, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
 
@@ -350,8 +350,9 @@ export function immigrantHealthView(containerOrOptions = {}) {
         role: 'tab',
         class: `tab-button ${immigrantState.activeTab === tab.id ? 'active' : ''}`,
         'aria-selected': String(immigrantState.activeTab === tab.id),
-        'aria-controls': `tab-content-${tab.id}`,
-        id: `tab-${tab.id}`
+        'aria-controls': 'immigrant-tab-content',
+        id: `tab-${tab.id}`,
+        tabindex: immigrantState.activeTab === tab.id ? '0' : '-1'
       }, isEs ? tab.labelEs : tab.labelEn);
 
       btn.addEventListener('click', () => {
@@ -365,7 +366,7 @@ export function immigrantHealthView(containerOrOptions = {}) {
     // Content Area
     const contentArea = h('div', {
       class: 'tab-content-area',
-      id: `tab-content-${immigrantState.activeTab}`,
+      id: 'immigrant-tab-content',
       role: 'tabpanel',
       'aria-labelledby': `tab-${immigrantState.activeTab}`
     });
@@ -381,9 +382,11 @@ export function immigrantHealthView(containerOrOptions = {}) {
     }
 
     wrapper.appendChild(contentArea);
+    syncTablists(wrapper);
   }
 
   draw();
+  wireTablistKeyboard(wrapper);
   if (container) {
     container.textContent = '';
     container.appendChild(wrapper);
@@ -516,17 +519,11 @@ function renderDecisionAidTab(container, isEs, onRerender) {
   const copyBtn = h('button', { type: 'button', class: 'button secondary-button' }, isEs ? 'Copiar Resumen' : 'Copy Summary');
   copyBtn.addEventListener('click', async () => {
     const text = formatImmigrantSummaryText(immigrantState, isEs ? 'es' : 'en');
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = isEs ? '¡Copiado!' : 'Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? 'Copiar Resumen' : 'Copy Summary';
-        }, 2000);
-      }
-    } catch {
-      // Fallback
-    }
+    await copyText(text, {
+      trigger: copyBtn,
+      copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+      announceSuccess: isEs ? 'Resumen copiado al portapapeles.' : 'Summary copied to clipboard.',
+    });
   });
 
   const printBtn = h('button', { type: 'button', class: 'button primary-button' }, isEs ? 'Imprimir Resumen' : 'Print Summary');

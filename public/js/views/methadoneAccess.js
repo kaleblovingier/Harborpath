@@ -3,7 +3,7 @@
 // SAMHSA 42 CFR Part 8 Final Rule (2024), Take-Home Calculator & Patient Rights
 // Strictly Zero-PII, In-RAM ephemeral state, WCAG 2.2 AA accessible DOM
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 /**
@@ -417,7 +417,7 @@ export function methadoneAccessView() {
       class: 'tab-btn' + (methadoneState.activeTab === tab.id ? ' active' : ''),
       id: `tab-methadone-${tab.id}`,
       'aria-selected': methadoneState.activeTab === tab.id ? 'true' : 'false',
-      'aria-controls': `panel-methadone-${tab.id}`,
+      'aria-controls': 'panel-methadone-active',
       tabindex: methadoneState.activeTab === tab.id ? '0' : '-1'
     }, tab.label);
 
@@ -460,7 +460,7 @@ export function methadoneAccessView() {
     const activeTab = methadoneState.activeTab;
     const panel = h('section', {
       role: 'tabpanel',
-      id: `panel-methadone-${activeTab}`,
+      id: 'panel-methadone-active',
       'aria-labelledby': `tab-methadone-${activeTab}`,
       class: 'tab-panel'
     });
@@ -588,16 +588,13 @@ export function methadoneAccessView() {
       class: 'btn btn-secondary'
     }, icon('share'), t('methadone.copySummary', 'Copy Take-Home Evaluation Report'));
 
-    exportBtn.addEventListener('click', () => {
+    exportBtn.addEventListener('click', async () => {
       const summary = formatMethadoneSummaryText(methadoneState);
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(summary).then(() => {
-          exportBtn.textContent = t('methadone.copied', 'Report Copied to Clipboard!');
-          setTimeout(() => {
-            exportBtn.textContent = t('methadone.copySummary', 'Copy Take-Home Evaluation Report');
-          }, 2500);
-        });
-      }
+      await copyText(summary, {
+        trigger: exportBtn,
+        copiedLabel: t('methadone.copied', 'Report Copied to Clipboard!'),
+        announceSuccess: t('methadone.copied', 'Report Copied to Clipboard!'),
+      });
     });
 
     panel.appendChild(exportBtn);
@@ -711,16 +708,13 @@ export function methadoneAccessView() {
       class: 'btn btn-secondary'
     }, icon('share'), 'Copy Script to Clipboard');
 
-    copyBtn.addEventListener('click', () => {
+    copyBtn.addEventListener('click', async () => {
       const txt = scriptBox.textContent;
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(txt).then(() => {
-          copyBtn.textContent = 'Script Copied!';
-          setTimeout(() => {
-            copyBtn.textContent = 'Copy Script to Clipboard';
-          }, 2000);
-        });
-      }
+      await copyText(txt, {
+        trigger: copyBtn,
+        copiedLabel: t('methadone.scriptCopied', 'Script Copied!'),
+        announceSuccess: t('methadone.scriptCopied', 'Script Copied!'),
+      });
     });
 
     scriptPreview.appendChild(copyBtn);

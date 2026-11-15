@@ -7,7 +7,7 @@
 // Emergency Management of Loperamide Cardiotoxicity & hERG Potassium Channel Blockade (Torsades de Pointes).
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -419,6 +419,7 @@ export function novelSubstancesView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'ns-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `ns-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setNovelState({ viewMode: 'community' }),
@@ -427,6 +428,7 @@ export function novelSubstancesView() {
         h('span', {}, t('ns.mode.community', 'Consumer & Family Safety Mode (Product Alerts & Safe Tapering)')),
       ]),
       h('button', {
+        type: 'button',
         class: `ns-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setNovelState({ viewMode: 'clinical' }),
@@ -439,30 +441,35 @@ export function novelSubstancesView() {
     // Tab Navigation
     const tabsList = h('div', { class: 'ns-tabs-nav', role: 'tablist', 'aria-label': 'Novel Substances Navigation Tabs' }, [
       h('button', {
+        type: 'button',
         class: `ns-tab-btn ${state.activeTab === 'calculator' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'calculator' ? 'true' : 'false',
         onclick: () => setNovelState({ activeTab: 'calculator' }),
       }, t('ns.tabs.calculator', 'Triage & Cardiotoxicity Calculator')),
       h('button', {
+        type: 'button',
         class: `ns-tab-btn ${state.activeTab === 'substances' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'substances' ? 'true' : 'false',
         onclick: () => setNovelState({ activeTab: 'substances' }),
       }, t('ns.tabs.substances', 'Substance Pharmacology Profiles')),
       h('button', {
+        type: 'button',
         class: `ns-tab-btn ${state.activeTab === 'products' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'products' ? 'true' : 'false',
         onclick: () => setNovelState({ activeTab: 'products' }),
       }, t('ns.tabs.products', 'Gas Station Brand Alerts')),
       h('button', {
+        type: 'button',
         class: `ns-tab-btn ${state.activeTab === 'baclofen-taper' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'baclofen-taper' ? 'true' : 'false',
         onclick: () => setNovelState({ activeTab: 'baclofen-taper' }),
       }, t('ns.tabs.baclofen', 'Baclofen & MOUD Tapers')),
       h('button', {
+        type: 'button',
         class: `ns-tab-btn ${state.activeTab === 'uds-blindspots' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'uds-blindspots' ? 'true' : 'false',
@@ -614,35 +621,28 @@ export function novelSubstancesView() {
     ]);
 
     // SBAR Action Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar',
+      onclick: () => {
+        const text = buildNovelSubstancesSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn, copiedLabel: 'Copied to Clipboard!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('ns.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn-copy-sbar secondary',
+      onclick: () => {
+        const text = buildNovelSubstancesSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn, copiedLabel: '¡Copiado al Portapapeles!', resetMs: 2500 });
+      },
+    }, [icon('copy'), h('span', {}, t('ns.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'sbar-export-container' }, [
       h('div', { class: 'sbar-header' }, [
         h('h4', {}, t('ns.sbar.title', 'Zero-PII Clinical Handoff & Physician Note Generator')),
         h('p', {}, t('ns.sbar.desc', 'Generate an anonymous, structured clinical SBAR summary for Emergency Department triage, inpatient addiction consult, or primary care. Operates 100% in local memory.')),
       ]),
-      h('div', { class: 'sbar-actions' }, [
-        h('button', {
-          class: 'btn-copy-sbar',
-          onclick: (e) => {
-            const text = buildNovelSubstancesSbarText(state, evaluation, 'en');
-            navigator.clipboard.writeText(text).then(() => {
-              const orig = e.currentTarget.textContent;
-              e.currentTarget.textContent = 'Copied to Clipboard!';
-              setTimeout(() => { e.currentTarget.textContent = orig; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('ns.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-        h('button', {
-          class: 'btn-copy-sbar secondary',
-          onclick: (e) => {
-            const text = buildNovelSubstancesSbarText(state, evaluation, 'es');
-            navigator.clipboard.writeText(text).then(() => {
-              const orig = e.currentTarget.textContent;
-              e.currentTarget.textContent = '¡Copiado al Portapapeles!';
-              setTimeout(() => { e.currentTarget.textContent = orig; }, 2500);
-            }).catch(() => {});
-          },
-        }, [icon('copy'), h('span', {}, t('ns.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-      ]),
+      h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
     ]);
 
     section.appendChild(inputsGrid);

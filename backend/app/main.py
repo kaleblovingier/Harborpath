@@ -134,6 +134,9 @@ async def directory_summary():
             "cardiogenic_toxin_hiet": "ACMT/EAPCCT consensus for CCB and BB severe toxicity, weight-based HIET dosing (1 U/kg bolus, 1-10 U/kg/hr infusion), D10W/D50W titration, and permissive hypokalemia rules",
             "wooden_chest_rigidity": "ASA/ACEP consensus for fentanyl-induced muscle rigidity (FIMR), failed BVM rescue, rocuronium/vecuronium RSI, and succinylcholine hyperkalemic arrest prohibition",
             "hyperthermic_toxidrome": "ACMT and WMS consensus for synthetic cathinone / methamphetamine severe hyperthermia (>40°C), rapid ice-water immersion, parenteral sedation, and antipyretic futility",
+            "salicylate_nsaid_tox": "ACMT/EXTRIP consensus for acute/chronic salicylate toxicity, Done nomogram limits, urinary alkalinization (NaHCO3), K+ repletion, hemodialysis triggers, and high-dose NSAID renal/GI triage",
+            "mood_stabilizer_tox": "ACMT/EXTRIP consensus for acute/chronic lithium neurotoxicity, valproate hyperammonemic encephalopathy (L-carnitine), and lamotrigine sodium-channel/SJS triage",
+            "antimuscarinic_toxidrome": "ACMT/AACT consensus for anticholinergic delirium (diphenhydramine, scopolamine, jimsonweed), ECG QRS widening (NaHCO3), benzodiazepine sedation, and physostigmine/rivastigmine protocols",
             "syndication": "Zero-cookie iframe widgets & partner seals"
         }
     }

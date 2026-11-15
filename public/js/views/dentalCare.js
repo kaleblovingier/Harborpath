@@ -3,7 +3,7 @@
 // Clinical standards: FDA Drug Safety Communication (2022), ADA, SAMHSA, AHA Endocarditis Prevention
 // Privacy invariant: zero device storage, zero PII, in-RAM ephemeral state only.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t, getLang } from '../i18n.js';
 
 // ============================================================================
@@ -337,24 +337,28 @@ export function dentalCareView() {
     // Navigation Tabs
     const tabsNav = h('nav', { class: 'tab-nav', role: 'tablist', 'aria-label': isEs ? 'Pestañas de Salud Dental' : 'Dental Tabs' }, [
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'assessment' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'assessment'),
         onclick: () => { setDentalState({ activeTab: 'assessment' }); render(); }
       }, isEs ? 'Evaluación de Riesgo' : 'Risk Assessment'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'bup-protocol' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'bup-protocol'),
         onclick: () => { setDentalState({ activeTab: 'bup-protocol' }); render(); }
       }, isEs ? 'Protocolo FDA Buprenorfina' : 'FDA Buprenorphine Protocol'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'stimulants-heart' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'stimulants-heart'),
         onclick: () => { setDentalState({ activeTab: 'stimulants-heart' }); render(); }
       }, isEs ? 'Estimulantes y Endocarditis' : 'Stimulants & Endocarditis'),
       h('button', {
+        type: 'button',
         class: `tab-btn ${localState.activeTab === 'clinic-nav' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': String(localState.activeTab === 'clinic-nav'),
@@ -745,15 +749,18 @@ function renderClinicNavTab(isEs, localState, evalResult, reRender) {
 
   const copyStatus = h('span', { class: 'copy-status', 'aria-live': 'polite' }, '');
   const copyBtn = h('button', {
+    type: 'button',
     class: 'btn btn-primary',
     onclick: async () => {
-      try {
-        await navigator.clipboard.writeText(summaryText);
-        copyStatus.textContent = isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!';
-        setTimeout(() => { copyStatus.textContent = ''; }, 3000);
-      } catch (_e) {
-        copyStatus.textContent = isEs ? ' Error al copiar' : ' Copy failed';
-      }
+      const ok = await copyText(summaryText, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '¡Copiado!' : 'Copied!',
+        failedLabel: isEs ? 'Error al copiar' : 'Copy failed',
+      });
+      copyStatus.textContent = ok
+        ? (isEs ? ' ¡Copiado con éxito!' : ' Copied successfully!')
+        : (isEs ? ' Error al copiar' : ' Copy failed');
+      if (ok) setTimeout(() => { copyStatus.textContent = ''; }, 3000);
     }
   }, [
     icon('copy'),
@@ -761,6 +768,7 @@ function renderClinicNavTab(isEs, localState, evalResult, reRender) {
   ]);
 
   const resetBtn = h('button', {
+    type: 'button',
     class: 'btn btn-secondary',
     onclick: () => {
       resetDentalState();

@@ -6,7 +6,7 @@
 // King's College Criteria for Acute Liver Failure Liver Transplantation.
 // Privacy Invariant: 100% ephemeral in-RAM state, zero device storage, zero PII.
 
-import { h, clear, icon } from '../dom.js';
+import { h, clear, icon, copyText } from '../dom.js';
 import { t } from '../i18n.js';
 
 // ============================================================================
@@ -438,6 +438,7 @@ export function liverCareView() {
     // Mode Switcher
     const modeSwitcher = h('div', { class: 'lc-mode-switcher', role: 'group', 'aria-label': 'Audience Mode Switcher' }, [
       h('button', {
+        type: 'button',
         class: `lc-mode-btn ${state.viewMode === 'community' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'community' ? 'true' : 'false',
         onclick: () => setLiverState({ viewMode: 'community' }),
@@ -446,6 +447,7 @@ export function liverCareView() {
         h('span', {}, t('lc.mode.community', 'Community & Patient Mode (Tylenol Limits, Jaundice & HCV Cure)')),
       ]),
       h('button', {
+        type: 'button',
         class: `lc-mode-btn ${state.viewMode === 'clinical' ? 'active' : ''}`,
         'aria-pressed': state.viewMode === 'clinical' ? 'true' : 'false',
         onclick: () => setLiverState({ viewMode: 'clinical' }),
@@ -458,30 +460,35 @@ export function liverCareView() {
     // Tabs Nav
     const tabsList = h('div', { class: 'lc-tabs-nav', role: 'tablist', 'aria-label': 'Liver Care Tabs' }, [
       h('button', {
+        type: 'button',
         class: `lc-tab-btn ${state.activeTab === 'triage' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'triage' ? 'true' : 'false',
         onclick: () => setLiverState({ activeTab: 'triage' }),
       }, t('lc.tabs.triage', 'Liver Emergency Triage')),
       h('button', {
+        type: 'button',
         class: `lc-tab-btn ${state.activeTab === 'apap' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'apap' ? 'true' : 'false',
         onclick: () => setLiverState({ activeTab: 'apap' }),
       }, t('lc.tabs.apap', 'APAP Toxicity & Rumack Nomogram')),
       h('button', {
+        type: 'button',
         class: `lc-tab-btn ${state.activeTab === 'cirrhosis' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'cirrhosis' ? 'true' : 'false',
         onclick: () => setLiverState({ activeTab: 'cirrhosis' }),
       }, t('lc.tabs.cirrhosis', 'Cirrhosis Staging (Child-Pugh A–C)')),
       h('button', {
+        type: 'button',
         class: `lc-tab-btn ${state.activeTab === 'moud' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'moud' ? 'true' : 'false',
         onclick: () => setLiverState({ activeTab: 'moud' }),
       }, t('lc.tabs.moud', 'MOUD Liver Pharmacokinetics')),
       h('button', {
+        type: 'button',
         class: `lc-tab-btn ${state.activeTab === 'harmReduction' ? 'active' : ''}`,
         role: 'tab',
         'aria-selected': state.activeTab === 'harmReduction' ? 'true' : 'false',
@@ -650,25 +657,26 @@ export function liverCareView() {
     ]);
 
     // SBAR Export Card
+    const copyEnBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildLiverSbarText(state, evaluation, 'en');
+        copyText(text, { trigger: copyEnBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('lc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]);
+    const copyEsBtn = h('button', {
+      type: 'button',
+      class: 'btn btn-secondary',
+      onclick: () => {
+        const text = buildLiverSbarText(state, evaluation, 'es');
+        copyText(text, { trigger: copyEsBtn });
+      },
+    }, [icon('copy'), h('span', {}, t('lc.sbar.copyEs', 'Copiar SBAR (Español)'))]);
     const sbarCard = h('div', { class: 'lc-sbar-card' }, [
       h('div', { class: 'sbar-header' }, [
         h('h3', {}, t('lc.sbar.title', 'Zero-PII Hepatic Clinical SBAR Note Generator')),
-        h('div', { class: 'sbar-actions' }, [
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildLiverSbarText(state, evaluation, 'en');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('lc.sbar.copyEn', 'Copy Clinical SBAR (English)'))]),
-          h('button', {
-            class: 'btn btn-secondary',
-            onclick: () => {
-              const text = buildLiverSbarText(state, evaluation, 'es');
-              navigator.clipboard?.writeText(text);
-            },
-          }, [icon('copy'), h('span', {}, t('lc.sbar.copyEs', 'Copiar SBAR (Español)'))]),
-        ]),
+        h('div', { class: 'sbar-actions' }, [copyEnBtn, copyEsBtn]),
       ]),
       h('pre', { class: 'sbar-pre', 'aria-label': 'SBAR Preview' }, buildLiverSbarText(state, evaluation, 'en')),
     ]);

@@ -40,7 +40,7 @@
  * - Complete bilingual parity (English / Spanish).
  */
 
-import { h, clear, ext, tel, sms, icon, announce } from '../dom.js';
+import { h, clear, ext, tel, sms, icon, copyText, syncTablists, wireTablistKeyboard } from '../dom.js';
 import { pageHeader, section, p, fine, ul, strong } from './common.js';
 import { t, getLang } from '../i18n.js';
 import { onQuickExit } from '../state.js';
@@ -693,7 +693,8 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
       role: 'tab',
       id: `tab-btn-oa-${tab.id}`,
       'aria-selected': isSelected ? 'true' : 'false',
-      'aria-controls': `tab-panel-oa-${tab.id}`,
+      'aria-controls': 'tab-panel-oa',
+      tabindex: isSelected ? '0' : '-1',
       class: isSelected ? 'tab active' : 'tab',
     }, tab.label);
 
@@ -708,7 +709,7 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
 
   // Panel Content Container
   const tabPanel = h('div', {
-    id: `tab-panel-oa-${currentTab}`,
+    id: 'tab-panel-oa',
     role: 'tabpanel',
     'aria-labelledby': `tab-btn-oa-${currentTab}`,
     class: 'tab-content-panel',
@@ -877,16 +878,12 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
     );
     copyBtn.addEventListener('click', async () => {
       const text = formatOlderAdultSummaryText(plan, lang);
-      try {
-        await navigator.clipboard.writeText(text);
-        announce(isEs ? 'Resumen copiado al portapapeles' : 'Summary copied to clipboard');
-        copyBtn.textContent = isEs ? '✓ ¡Copiado!' : '✓ Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = isEs ? ' Copiar Resumen Clínico' : ' Copy Clinical Summary';
-        }, 3000);
-      } catch {
-        announce(isEs ? 'Error al copiar' : 'Clipboard write failed');
-      }
+      await copyText(text, {
+        trigger: copyBtn,
+        copiedLabel: isEs ? '✓ ¡Copiado!' : '✓ Copied!',
+        announceSuccess: isEs ? 'Resumen copiado al portapapeles' : 'Summary copied to clipboard',
+        announceFailure: isEs ? 'Error al copiar' : 'Clipboard write failed',
+      });
     });
     btnRow.append(copyBtn);
 
@@ -1061,6 +1058,8 @@ export function olderAdultsView(containerOrOptions = {}, maybeOptions = {}) {
   );
   root.append(hotlineBar);
 
+  syncTablists(root);
   if (container) container.append(root);
+  wireTablistKeyboard(container ?? root);
   return root;
 }
