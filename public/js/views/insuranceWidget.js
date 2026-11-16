@@ -120,10 +120,8 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
     type: 'checkbox',
     id: 'ins-emergency-toggle',
     checked: getInsuranceState().emergencyFlag,
-    'aria-label': t(
-      'ins.widget.emergencyAria',
-      'Acute withdrawal or medical emergency: highlight EMTALA and DEA 72-Hour Rule protections',
-    ),
+    'aria-labelledby': 'ins-emergency-label',
+    'aria-describedby': 'ins-emergency-hint',
   });
 
   const emergencyBanner = h('div', {
@@ -149,12 +147,7 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
       'MHPAEA Insurance Parity & EKRA Anti-Brokering Verification Script',
     ),
   },
-    h('summary', {
-      'aria-label': t(
-        'ins.widget.drawerSummaryAria',
-        'Open MHPAEA Insurance Parity & EKRA Anti-Brokering Verification Script and Checklist',
-      ),
-    },
+    h('summary', null,
       icon('shield'),
       t('ins.widget.drawerSummary', 'MHPAEA Parity & EKRA Anti-Brokering Verification Script'),
     ),
@@ -229,7 +222,6 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
         h('button', {
           type: 'button',
           class: 'btn btn-small btn-ghost',
-          'aria-label': t('ins.widget.resetAria', 'Reset coverage and emergency filters in browser memory'),
           onclick: () => {
             const reset = resetInsuranceState();
             announce(t('ins.widget.resetAnnounce', 'Coverage selection reset to all coverage types'));
@@ -252,12 +244,10 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
         t('ins.widget.stateKnownPrompt', 'Need your state’s Medicaid behavioral health office or state-funded treatment agency? '),
         h('a', {
           href: `#/state/${cleanCode}`,
-          'aria-label': t('ins.widget.stateCodeLinkAria', 'Open state Medicaid and treatment resources for {code}', { code: cleanCode }),
         }, t('ins.widget.stateCodeLink', 'View {code} Medicaid & state agency directory', { code: cleanCode })),
         ' · ',
         h('a', {
           href: '#/states',
-          'aria-label': t('ins.widget.allStatesAria', 'Browse all state and territory Medicaid directories'),
         }, t('ins.widget.allStatesLink', 'All states & territories')),
       );
     } else {
@@ -267,7 +257,6 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
         t('ins.widget.stateUnknownPrompt', 'Looking for state Medicaid behavioral health contacts or state-funded care? '),
         h('a', {
           href: '#/states',
-          'aria-label': t('ins.widget.allStatesAria', 'Browse all state and territory Medicaid directories'),
         }, t('ins.widget.browseStatesLink', 'Browse state & territory Medicaid directories')),
       );
     }
@@ -282,7 +271,6 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
     const copyBtn = h('button', {
       type: 'button',
       class: 'btn btn-small btn-secondary',
-      'aria-label': t('ins.widget.copyScriptAria', 'Copy insurance and parity verification checklist to clipboard'),
       onclick: async (e) => {
         const btn = e.currentTarget;
         try {
@@ -301,7 +289,6 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
     const printBtn = h('button', {
       type: 'button',
       class: 'btn btn-small btn-ghost',
-      'aria-label': t('ins.widget.printScriptAria', 'Print insurance and parity verification checklist'),
       onclick: () => {
         printClinicalHandout(scriptContent);
       },
@@ -385,8 +372,9 @@ export function insuranceSelectorWidget({ onChange, defaultOpenScript = false } 
     h('label', { class: 'check' },
       emergencyBox,
       h('span', null,
-        t('ins.widget.emergencyLabel', 'Need urgent withdrawal relief or emergency stabilization right now?'),
-        h('small', null,
+        h('span', { id: 'ins-emergency-label' },
+          t('ins.widget.emergencyLabel', 'Need urgent withdrawal relief or emergency stabilization right now?')),
+        h('small', { id: 'ins-emergency-hint' },
           t(
             'ins.widget.emergencyHint',
             'Highlights EMTALA (42 U.S.C. § 1395dd) hospital screening rights and the DEA 72-Hour Rule (21 CFR § 1306.07(b)) for immediate buprenorphine or methadone administration.',
