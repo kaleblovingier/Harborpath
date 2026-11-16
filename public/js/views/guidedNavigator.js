@@ -1386,7 +1386,6 @@ export function guidedNavigatorView() {
               type: 'button',
               class: guidedState.transition.onMoud ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small',
               'aria-pressed': String(Boolean(guidedState.transition.onMoud)),
-              'aria-label': gt('Currently taking daily buprenorphine or methadone', 'Tomando actualmente buprenorfina o metadona diaria'),
               onclick: () => {
                 setGuidedNavigatorState({
                   transition: { ...guidedState.transition, onMoud: !guidedState.transition.onMoud },
@@ -1403,7 +1402,6 @@ export function guidedNavigatorView() {
               type: 'button',
               class: guidedState.transition.hasNaloxone ? 'btn btn-primary btn-small' : 'btn btn-secondary btn-small',
               'aria-pressed': String(Boolean(guidedState.transition.hasNaloxone)),
-              'aria-label': gt('Currently have naloxone (Narcan) on hand', 'Cuenta actualmente con naloxona (Narcan) a la mano'),
               onclick: () => {
                 setGuidedNavigatorState({
                   transition: { ...guidedState.transition, hasNaloxone: !guidedState.transition.hasNaloxone },
@@ -1702,7 +1700,6 @@ export function guidedNavigatorView() {
             {
               class: 'btn btn-secondary btn-small',
               href: med.finderHref,
-              'aria-label': `${gt('Find providers for', 'Buscar proveedores para')} ${med.name}`,
             },
             icon('search'),
             `${gt('Find', 'Buscar')} ${med.name}`,
@@ -1712,7 +1709,7 @@ export function guidedNavigatorView() {
             {
               class: 'btn btn-ghost btn-small',
               href: '#/medications',
-              'aria-label': `${gt('Read clinical guide for', 'Leer guía clínica sobre')} ${med.name}`,
+              'aria-label': `${gt('Medication details', 'Detalles del medicamento')}: ${med.name}`,
             },
             gt('Medication details', 'Detalles del medicamento'),
           ),
@@ -1759,7 +1756,6 @@ export function guidedNavigatorView() {
             href: '#/treatment',
             'data-navigator-handoff': 'true',
             onclick: () => setNavigatorHandoffState({ codes: triage.recommendedCodes }),
-            'aria-label': gt('Open treatment finder with recommended filters', 'Abrir buscador de tratamiento con los filtros recomendados'),
           },
           icon('search'),
           gt('Find Matching Treatment Providers', 'Buscar proveedores de tratamiento compatibles'),
@@ -1771,7 +1767,6 @@ export function guidedNavigatorView() {
             href: '#/treatment',
             'data-navigator-handoff': 'true',
             onclick: () => setNavigatorHandoffState({ codes: triage.asamResult.broadCodes }),
-            'aria-label': gt('Broaden treatment search to core filters', 'Ampliar búsqueda de tratamiento a filtros principales'),
           },
           gt('Broaden Search (Core Filters)', 'Ampliar búsqueda (filtros principales)'),
         ),
@@ -1780,7 +1775,6 @@ export function guidedNavigatorView() {
           {
             class: 'btn btn-secondary',
             href: '#/overdose',
-            'aria-label': gt('Open overdose response and 2-minute naloxone timer', 'Abrir respuesta a sobredosis y temporizador de naloxona de 2 minutos'),
           },
           icon('heart'),
           gt('Overdose & Naloxone Timer', 'Guía de sobredosis y naloxona'),
@@ -1790,7 +1784,6 @@ export function guidedNavigatorView() {
           {
             class: 'btn btn-ghost',
             href: '#/navigator',
-            'aria-label': gt('Open full 6-dimension ASAM clinical calculator', 'Abrir calculadora clínica ASAM completa de 6 dimensiones'),
           },
           gt('Full ASAM Calculator', 'Calculadora ASAM completa'),
         ),
@@ -1799,7 +1792,6 @@ export function guidedNavigatorView() {
           {
             type: 'button',
             class: 'btn btn-ghost btn-small',
-            'aria-label': gt('Print this triage summary handout', 'Imprimir este resumen de orientación'),
             onclick: () => {
               if (typeof window !== 'undefined' && typeof window.print === 'function') {
                 window.print();
@@ -1870,7 +1862,6 @@ export function guidedNavigatorView() {
             {
               type: 'button',
               class: 'btn btn-secondary btn-small',
-              'aria-label': gt('Clear all guided navigator answers from browser memory', 'Borrar todas las respuestas del navegador en memoria'),
               onclick: () => {
                 resetGuidedNavigatorState();
                 announce(gt('Guided navigator answers cleared from browser memory.', 'Respuestas borradas de la memoria del navegador.'));
@@ -1900,22 +1891,18 @@ export function guidedNavigatorView() {
         }),
         tel('988', [icon('phone'), gt('Call or Text 988 Lifeline', 'Llamar o enviar texto al 988')], {
           class: 'btn btn-secondary btn-small',
-          'aria-label': gt('Call or Text 988 Suicide and Crisis Lifeline', 'Llamar o enviar texto al 988 Línea de Crisis'),
         }),
         tel(NEVER_USE_ALONE.number, [icon('phone'), `Never Use Alone (${NEVER_USE_ALONE.label})`], {
           class: 'btn btn-secondary btn-small',
-          'aria-label': `Call Never Use Alone at ${NEVER_USE_ALONE.label}`,
         }),
         tel('8009720590', [icon('phone'), 'SafeSpot (800-972-0590)'], {
           class: 'btn btn-secondary btn-small',
-          'aria-label': 'Call SafeSpot Overdose Prevention Line at 800-972-0590',
         }),
         h(
           'a',
           {
             class: 'btn btn-primary btn-small',
             href: '#/overdose',
-            'aria-label': gt('Open Step-by-Step Overdose & 2-Minute Naloxone Timer', 'Abrir guía paso a paso de sobredosis y temporizador de naloxona'),
           },
           icon('heart'),
           gt('Overdose & 2-Minute Naloxone Timer', 'Guía de sobredosis y temporizador de naloxona'),
@@ -1954,7 +1941,6 @@ export function guidedNavigatorView() {
             {
               type: 'submit',
               class: 'btn btn-primary',
-              'aria-label': gt('Update guidance from text input', 'Actualizar orientación según el texto'),
             },
             gt('Update Guidance', 'Actualizar orientación'),
           ),

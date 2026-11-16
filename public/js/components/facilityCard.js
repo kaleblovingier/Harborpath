@@ -27,15 +27,25 @@ export function directionsUrl(address) {
   return isApple ? `https://maps.apple.com/?daddr=${q}` : `https://www.google.com/maps/dir/?api=1&destination=${q}`;
 }
 
+function facilityActionLabel(action, name) {
+  return t('card.actionForFacility', '{action}: {name}', { action, name });
+}
+
+function facilityPhoneLink(phone, label, name, className) {
+  return tel(phone, [icon('phone'), label], {
+    class: `btn btn-small ${className}`,
+    'aria-label': facilityActionLabel(label, name),
+  });
+}
+
 export function saveButton(item) {
   const btn = h('button', { type: 'button', class: 'btn btn-small btn-ghost save-btn' });
   const render = () => {
     const saved = isSaved(item.id);
-    btn.replaceChildren(icon(saved ? 'bookmark-fill' : 'bookmark'), saved ? t('card.saved', 'Saved') : t('card.save', 'Save'));
+    const label = saved ? t('card.saved', 'Saved') : t('card.save', 'Save');
+    btn.replaceChildren(icon(saved ? 'bookmark-fill' : 'bookmark'), label);
     btn.setAttribute('aria-pressed', String(saved));
-    btn.setAttribute('aria-label', saved
-      ? t('card.removeLabel', 'Remove {name} from saved list', { name: item.name })
-      : t('card.saveLabel', 'Save {name}', { name: item.name }));
+    btn.setAttribute('aria-label', facilityActionLabel(label, item.name));
   };
   btn.addEventListener('click', () => {
     // Only public directory facts belong in an optionally persisted bookmark.
@@ -52,22 +62,28 @@ export function saveButton(item) {
 }
 
 export function copyButton(text, name) {
+  const label = t('card.copy', 'Copy');
   return h('button', {
     type: 'button',
     class: 'btn btn-small btn-ghost',
-    'aria-label': t('card.copyLabel', 'Copy details for {name}', { name }),
+    'aria-label': facilityActionLabel(label, name),
     onclick: async (e) => {
       const btn = e.currentTarget;
       try {
         await navigator.clipboard.writeText(text);
-        btn.replaceChildren(icon('check'), t('card.copied', 'Copied'));
+        const copied = t('card.copied', 'Copied');
+        btn.replaceChildren(icon('check'), copied);
+        btn.setAttribute('aria-label', facilityActionLabel(copied, name));
         announce(t('card.copiedAnnounce', 'Details for {name} copied', { name }));
-        setTimeout(() => btn.replaceChildren(icon('copy'), t('card.copy', 'Copy')), 2000);
+        setTimeout(() => {
+          btn.replaceChildren(icon('copy'), label);
+          btn.setAttribute('aria-label', facilityActionLabel(label, name));
+        }, 2000);
       } catch {
         announce(t('common.copyUnavailable', 'Copy is not available in this browser'));
       }
     },
-  }, icon('copy'), t('card.copy', 'Copy'));
+  }, icon('copy'), label);
 }
 
 export function distance(miles) {
@@ -153,18 +169,11 @@ export function treatmentCard(f, { headingLevel = 3, requestedCodes, labelFor } 
     chips.length > 0 && h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
       chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
     h('div', { class: 'actions' },
-      f.phone && tel(f.phone, [icon('phone'), t('card.call', 'Call {phone}', { phone: f.phone })], {
-        class: 'btn btn-small btn-primary',
-        'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: f.name, phone: f.phone }),
-      }),
-      f.intake && digits(f.intake) !== digits(f.phone) && tel(f.intake, [icon('phone'), t('card.intake', 'Intake {phone}', { phone: f.intake })], {
-        class: 'btn btn-small btn-secondary',
-        'aria-label': t('card.intakeLabel', 'Call intake for {name} at {phone}', { name: f.name, phone: f.intake }),
-      }),
-      f.hotline && digits(f.hotline) !== digits(f.phone) && tel(f.hotline, [icon('phone'), t('card.hotline', '24/7 line {phone}', { phone: f.hotline })], {
-        class: 'btn btn-small btn-secondary',
-        'aria-label': t('card.hotlineLabel', 'Call 24/7 line for {name} at {phone}', { name: f.name, phone: f.hotline }),
-      }),
+      f.phone && facilityPhoneLink(f.phone, t('card.call', 'Call {phone}', { phone: f.phone }), f.name, 'btn-primary'),
+      f.intake && digits(f.intake) !== digits(f.phone) &&
+        facilityPhoneLink(f.intake, t('card.intake', 'Intake {phone}', { phone: f.intake }), f.name, 'btn-secondary'),
+      f.hotline && digits(f.hotline) !== digits(f.phone) &&
+        facilityPhoneLink(f.hotline, t('card.hotline', '24/7 line {phone}', { phone: f.hotline }), f.name, 'btn-secondary'),
       safeHref(f.website) && h('a', {
         class: 'btn btn-small btn-ghost',
         href: safeHref(f.website),
@@ -239,10 +248,7 @@ export function healthCenterCard(c, { headingLevel = 3 } = {}) {
       c.hours && h('li', { class: 'chip chip-neutral' }, t('hc.hours', '{hours} hrs/week', { hours: formatNumber(Math.round(c.hours)) })),
     ),
     h('div', { class: 'actions' },
-      c.phone && tel(c.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: c.phone })], {
-        class: 'btn btn-small btn-primary',
-        'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: c.name, phone: c.phone }),
-      }),
+      c.phone && facilityPhoneLink(c.phone.replace(/\s*x.*$/i, ''), t('card.call', 'Call {phone}', { phone: c.phone }), c.name, 'btn-primary'),
       safeHref(c.website) && h('a', {
         class: 'btn btn-small btn-ghost',
         href: safeHref(c.website),
@@ -386,10 +392,7 @@ export function providerCard(p, { headingLevel = 3 } = {}) {
     chips.length > 0 && h('ul', { class: 'chips', 'aria-label': t('card.highlights', 'Highlights') },
       chips.map((c) => h('li', { class: `chip chip-${c.tone}` }, c.label))),
     h('div', { class: 'actions' },
-      p.phone && tel(p.phone.replace(/\s*x.*$/i, ''), [icon('phone'), t('card.call', 'Call {phone}', { phone: p.phone })], {
-        class: 'btn btn-small btn-primary',
-        'aria-label': t('card.callLabel', 'Call {name} at {phone}', { name: tidyName(p.name), phone: p.phone }),
-      }),
+      p.phone && facilityPhoneLink(p.phone.replace(/\s*x.*$/i, ''), t('card.call', 'Call {phone}', { phone: p.phone }), tidyName(p.name), 'btn-primary'),
       safeHref(web) && h('a', {
         class: 'btn btn-small btn-ghost',
         href: safeHref(web),
