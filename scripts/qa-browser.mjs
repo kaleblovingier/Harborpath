@@ -88,6 +88,7 @@ try {
           id: v.id,
           impact: v.impact,
           affected: v.nodes.length,
+          nodes: v.nodes.map(({ target, failureSummary }) => ({ target, failureSummary })),
         }));
       });
       const serious = violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
@@ -96,11 +97,15 @@ try {
         if (item.affected > allowed) {
           errors.push(scenario + ': axe ' + item.id +
             ' (' + item.impact + ', ' + item.affected + ' nodes; baseline ' + allowed + ')');
+          console.error(JSON.stringify({ scenario, rule: item.id, nodes: item.nodes }));
         } else {
           console.warn('BASELINE (remediation needed) ' + scenario + ': ' + item.id + ' ' + item.affected + ' nodes');
         }
       }
-      console.log(JSON.stringify({ route, width: viewport.width, language, heading, violations }));
+      console.log(JSON.stringify({
+        route, width: viewport.width, language, heading,
+        violations: violations.map(({ id, impact, affected }) => ({ id, impact, affected })),
+      }));
       if (route === '/#/treatment') {
         await page.locator('.finder [role="combobox"]').fill('98225');
         await page.locator('.suggestions [role="option"]').first().click();
