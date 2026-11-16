@@ -282,12 +282,12 @@ test('facilityCard.js renders near-match banner with .badge-matched and .badge-u
     const saveBtns = card.findAll((n) => n.hasClass('save-btn'));
     assert.equal(saveBtns.length, 1);
     assert.equal(saveBtns[0].getAttribute('aria-pressed'), 'false');
-    assert.match(saveBtns[0].getAttribute('aria-label'), /Save Harbor Recovery Clinic/);
+    assert.equal(saveBtns[0].getAttribute('aria-label'), `${saveBtns[0].textContent}: Harbor Recovery Clinic`);
 
     // Clicking save toggles aria-pressed and aria-label
     saveBtns[0].listeners.click();
     assert.equal(saveBtns[0].getAttribute('aria-pressed'), 'true');
-    assert.match(saveBtns[0].getAttribute('aria-label'), /Remove Harbor Recovery Clinic/);
+    assert.equal(saveBtns[0].getAttribute('aria-label'), `${saveBtns[0].textContent}: Harbor Recovery Clinic`);
     saveBtns[0].listeners.click();
     assert.equal(saveBtns[0].getAttribute('aria-pressed'), 'false');
 
