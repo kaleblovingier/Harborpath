@@ -49,7 +49,6 @@ export const es = {
   'emergency.scriptLabel': 'Palabras para comunicar a la persona que atiende el 911',
   'emergency.locationPlaceholder': '[Ubicación]',
   'emergency.script': '«Estoy en {location}. Una persona no responde y no respira. Se necesita ayuda médica de inmediato».',
-  'emergency.call911Label': 'Llame al 911 de inmediato',
   'emergency.naloxoneTitle': 'Naloxona y ritmo de respiración de rescate',
   'emergency.step1Title': 'Verifique si responde',
   'emergency.step1Desc': 'Grite y toque sus hombros. Verifique si no responde, respira de forma lenta o superficial, no respira, jadea o tiene labios pálidos, azules o grises. Los jadeos no son respiración normal. Llame al 911 si sospecha una sobredosis.',

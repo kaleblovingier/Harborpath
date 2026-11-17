@@ -21,8 +21,14 @@ const routes = [
   '/#/antimuscarinic-toxidrome', '/#/salicylate-nsaid-tox', '/#/mood-stabilizer-tox',
 ];
 const translatedControlRoutes = [
-  '/#/treatment', '/#/guided', '/#/choosing-care', '/#/antimuscarinic-toxidrome',
+  '/', '/#/treatment', '/#/guided', '/#/choosing-care', '/#/antimuscarinic-toxidrome',
 ];
+const specialistRoutes = {
+  '/#/vein-care': '.vein-care-view',
+  '/#/fhir-export': '.fhir-export-view',
+  '/#/mass-overdose-mci': '.mass-mci-view',
+  '/#/toxic-alcohol': '.toxic-alcohol-view',
+};
 const treatmentFixture = {
   page: 1, totalPages: 1, total: 1,
   results: [{
@@ -52,11 +58,13 @@ try {
   browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   const viewports = [{ width: 390, height: 844 }, { width: 1280, height: 800 }];
   const scenarios = viewports.flatMap((viewport) => ['light', 'dark'].flatMap((colorScheme) => [
-    { viewport, colorScheme, language: 'en', pages: routes },
+    { viewport, colorScheme, language: 'en', pages: [...routes, ...Object.keys(specialistRoutes)] },
     { viewport, colorScheme, language: 'es', pages: translatedControlRoutes },
   ]));
   for (const { viewport, colorScheme, language, pages } of scenarios) {
-    const context = await browser.newContext({ viewport, colorScheme, hasTouch: viewport.width === 390 });
+    const context = await browser.newContext({
+      viewport, colorScheme, hasTouch: viewport.width === 390, serviceWorkers: 'block',
+    });
     const page = await context.newPage();
     // HarborPath intentionally blocks inline JS via CSP. Serve axe from a
     // same-origin intercepted QA URL instead of weakening the policy.
@@ -78,12 +86,18 @@ try {
       url.searchParams.set('qa', route);
       url.searchParams.set('lang', language);
       const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      const scenario = `${route} ${viewport.width}px (${language}, ${colorScheme})`;
+      if (specialistRoutes[route]) {
+        await page.locator(specialistRoutes[route]).waitFor({ state: 'visible', timeout: 12000 });
+        await page.addScriptTag({ url: base + '/__qa__/axe.min.js' });
+        await auditControls(page, scenario);
+        continue;
+      }
       await page.locator('#page-title').waitFor({ state: 'visible', timeout: 12000 });
       const heading = (await page.locator('#page-title').innerText()).trim();
       if (response?.status() !== 200 || !heading) {
         errors.push(route + ': missing visible heading or HTTP 200');
       }
-      const scenario = `${route} ${viewport.width}px (${language}, ${colorScheme})`;
       if (await page.locator('html').getAttribute('lang') !== language) {
         errors.push(scenario + ': expected page language was not applied');
       }
@@ -131,7 +145,9 @@ try {
         ]);
       } else if (route === '/') {
         await page.locator('#btn-emergency-drawer').click();
-        await auditControls(page, scenario + ' emergency drawer');
+        await auditControls(page, scenario + ' emergency drawer', [
+          'color-contrast', 'label-content-name-mismatch',
+        ]);
       } else if (route === '/#/overdose') {
         await page.locator('#od-tab-stimulant').click();
         await auditControls(page, scenario + ' stimulant tab');

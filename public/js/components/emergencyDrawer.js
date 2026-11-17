@@ -275,7 +275,6 @@ export function buildGoodSamaritanCard(options = {}) {
     t('emergency.call911Action', 'Call 911 Now'),
     {
       class: 'btn btn-emergency btn-large',
-      'aria-label': t('emergency.call911Label', 'Call 911 immediately'),
     }
   );
 
@@ -472,7 +471,6 @@ export function emergencyDrawer(options = {}) {
 
   const footerCallBtn = tel('911', t('emergency.call911Action', 'Call 911 Now'), {
     class: 'btn btn-emergency',
-    'aria-label': t('emergency.call911Label', 'Call 911 immediately'),
   });
 
   const footer = h('div', { class: 'emergency-drawer-footer' }, footerCloseBtn, footerCallBtn);
