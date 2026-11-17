@@ -17,39 +17,54 @@ const routes = [
   '/', '/#/treatment', '/#/match', '/#/overdose', '/#/plan',
   '/#/tools', '/#/workspace', '/#/navigator', '/#/guided',
   '/#/medications', '/#/harm-reduction', '/#/support', '/#/choosing-care',
-  '/#/antimuscarinic-toxidrome',
+  '/#/health', '/#/assessment', '/#/stimulant-care',
+  '/#/antimuscarinic-toxidrome', '/#/salicylate-nsaid-tox', '/#/mood-stabilizer-tox',
 ];
 const translatedControlRoutes = [
-  '/#/treatment', '/#/guided', '/#/choosing-care', '/#/antimuscarinic-toxidrome',
+  '/', '/#/treatment', '/#/guided', '/#/choosing-care', '/#/antimuscarinic-toxidrome',
 ];
+const specialistRoutes = {
+  '/#/vein-care': '.vein-care-view',
+  '/#/fhir-export': '.fhir-export-view',
+  '/#/mass-overdose-mci': '.mass-mci-view',
+  '/#/toxic-alcohol': '.toxic-alcohol-view',
+};
 const treatmentFixture = {
   page: 1, totalPages: 1, total: 1,
   results: [{
     id: 'qa-facility', name: 'Example Provider',
     address: { street: '100 Example Street', city: 'Bellingham', state: 'WA', zip: '98225' },
     phone: '360-555-0101', intake: '360-555-0102', hotline: '360-555-0103',
-    miles: 2, services: [], codes: [],
+    miles: 2, services: [], codes: ['BU', 'MD'],
   }],
 };
-// Remaining contrast baselines captured 2026-11-10 from both viewports.
-const knownViolations = {
-  '/': { 'color-contrast': 33 },
-  '/#/treatment': { 'color-contrast': 24 },
-  '/#/match': { 'color-contrast': 6 },
-  '/#/overdose': { 'color-contrast': 13 },
-  '/#/plan': { 'color-contrast': 23 },
-};
 const errors = [];
+
+async function auditControls(page, scenario, rules = ['color-contrast']) {
+  const violations = await page.evaluate(async (runOnly) => {
+    const result = await window.axe.run(document, { runOnly });
+    return result.violations.map(({ id, nodes }) => ({
+      id, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })),
+    }));
+  }, rules);
+  for (const violation of violations) {
+    errors.push(`${scenario}: axe ${violation.id} (${violation.nodes.length} nodes)`);
+    console.error(JSON.stringify({ scenario, ...violation }));
+  }
+}
+
 let browser;
 try {
   browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   const viewports = [{ width: 390, height: 844 }, { width: 1280, height: 800 }];
-  const scenarios = viewports.flatMap((viewport) => [
-    { viewport, language: 'en', pages: routes },
-    { viewport, language: 'es', pages: translatedControlRoutes },
-  ]);
-  for (const { viewport, language, pages } of scenarios) {
-    const context = await browser.newContext({ viewport, hasTouch: viewport.width === 390 });
+  const scenarios = viewports.flatMap((viewport) => ['light', 'dark'].flatMap((colorScheme) => [
+    { viewport, colorScheme, language: 'en', pages: [...routes, ...Object.keys(specialistRoutes)] },
+    { viewport, colorScheme, language: 'es', pages: translatedControlRoutes },
+  ]));
+  for (const { viewport, colorScheme, language, pages } of scenarios) {
+    const context = await browser.newContext({
+      viewport, colorScheme, hasTouch: viewport.width === 390, serviceWorkers: 'block',
+    });
     const page = await context.newPage();
     // HarborPath intentionally blocks inline JS via CSP. Serve axe from a
     // same-origin intercepted QA URL instead of weakening the policy.
@@ -59,6 +74,9 @@ try {
       body: axeSource,
     }));
     await page.route(/\/api\/treatment\?/, (route) => route.fulfill({ json: treatmentFixture }));
+    await page.route(/\/api\/geocode\?/, (route) => route.fulfill({ json: {
+      results: [{ label: '98225, Bellingham, WA', state: 'WA', lat: 48.75, lng: -122.48, kind: 'zip' }],
+    } }));
     const pageErrors = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
     for (const route of pages) {
@@ -68,12 +86,18 @@ try {
       url.searchParams.set('qa', route);
       url.searchParams.set('lang', language);
       const response = await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      const scenario = `${route} ${viewport.width}px (${language}, ${colorScheme})`;
+      if (specialistRoutes[route]) {
+        await page.locator(specialistRoutes[route]).waitFor({ state: 'visible', timeout: 12000 });
+        await page.addScriptTag({ url: base + '/__qa__/axe.min.js' });
+        await auditControls(page, scenario);
+        continue;
+      }
       await page.locator('#page-title').waitFor({ state: 'visible', timeout: 12000 });
       const heading = (await page.locator('#page-title').innerText()).trim();
       if (response?.status() !== 200 || !heading) {
         errors.push(route + ': missing visible heading or HTTP 200');
       }
-      const scenario = route + ' ' + viewport.width + 'px (' + language + ')';
       if (await page.locator('html').getAttribute('lang') !== language) {
         errors.push(scenario + ': expected page language was not applied');
       }
@@ -93,20 +117,18 @@ try {
       });
       const serious = violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
       for (const item of serious) {
-        const allowed = knownViolations[route]?.[item.id] ?? 0;
-        if (item.affected > allowed) {
-          errors.push(scenario + ': axe ' + item.id +
-            ' (' + item.impact + ', ' + item.affected + ' nodes; baseline ' + allowed + ')');
-          console.error(JSON.stringify({ scenario, rule: item.id, nodes: item.nodes }));
-        } else {
-          console.warn('BASELINE (remediation needed) ' + scenario + ': ' + item.id + ' ' + item.affected + ' nodes');
-        }
+        errors.push(`${scenario}: axe ${item.id} (${item.impact}, ${item.affected} nodes)`);
+        console.error(JSON.stringify({ scenario, rule: item.id, nodes: item.nodes }));
       }
       console.log(JSON.stringify({
-        route, width: viewport.width, language, heading,
+        route, width: viewport.width, colorScheme, language, heading,
         violations: violations.map(({ id, impact, affected }) => ({ id, impact, affected })),
       }));
       if (route === '/#/treatment') {
+        const filters = page.locator('.finder details.filters');
+        if (await filters.getAttribute('open') === null) await filters.locator('summary').click();
+        await page.locator('.coverage-pill-bar [data-coverage="medicaid"]').click();
+        await page.locator('.verification-drawer summary').click();
         await page.locator('.finder [role="combobox"]').fill('98225');
         await page.locator('.suggestions [role="option"]').first().click();
         const facility = page.getByRole('article', { name: 'Example Provider' });
@@ -117,16 +139,24 @@ try {
         // Scan again after saving so the updated visible label and accessible name
         // are checked together with the contact actions on a populated result.
         await facility.locator('.save-btn').click();
-        const resultViolations = await page.evaluate(async () => {
-          const result = await window.axe.run(document, {
-            runOnly: ['label-content-name-mismatch', 'target-size'],
-          });
-          return result.violations.map((item) => item.id + ': ' + item.nodes.length);
-        });
-        for (const violation of resultViolations) errors.push(scenario + ' populated results: ' + violation);
+        await facility.locator('.admissions-questions summary').click();
+        await auditControls(page, scenario + ' populated results', [
+          'color-contrast', 'label-content-name-mismatch', 'target-size',
+        ]);
+      } else if (route === '/') {
+        await page.locator('#btn-emergency-drawer').click();
+        await auditControls(page, scenario + ' emergency drawer', [
+          'color-contrast', 'label-content-name-mismatch',
+        ]);
+      } else if (route === '/#/overdose') {
+        await page.locator('#od-tab-stimulant').click();
+        await auditControls(page, scenario + ' stimulant tab');
+      } else if (route === '/#/plan') {
+        await page.locator('#safety-plan .presets button').first().click();
+        await auditControls(page, scenario + ' selected preset');
       }
     }
-    for (const err of pageErrors) errors.push(viewport.width + 'px (' + language + ') JavaScript error: ' + err);
+    for (const err of pageErrors) errors.push(`${viewport.width}px (${language}, ${colorScheme}) JavaScript error: ${err}`);
     await context.close();
   }
 } finally {

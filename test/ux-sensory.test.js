@@ -594,7 +594,8 @@ test('emergencyDrawer: Card 3 - 911 Good Samaritan Script provides exact phrasin
       // Call 911 action button
       const call911 = card.findAll((n) => n.getAttribute('href') === 'tel:911')[0];
       assert.ok(call911, 'Call 911 tel link must exist');
-      assert.equal(call911.getAttribute('aria-label'), 'Call 911 immediately');
+      assert.equal(call911.textContent, 'Call 911 Now');
+      assert.equal(call911.hasAttribute('aria-label'), false);
     } finally {
       setLocation(null);
     }
@@ -702,10 +703,16 @@ test('emergencyDrawer: Spanish includes emergency accessible names, description,
       const wrapper = emergencyDrawer({ singleton: false });
       const labels = wrapper.findAll((node) => node.hasAttribute('aria-label')).map((node) => node.getAttribute('aria-label'));
       for (const key of ['common.closeEmergencyDrawer', 'emergency.stepsLabel', 'emergency.pacerLabel',
-        'emergency.matrixLabel', 'emergency.tableLabel', 'emergency.scriptLabel', 'emergency.call911Label']) {
+        'emergency.matrixLabel', 'emergency.tableLabel', 'emergency.scriptLabel']) {
         assert.ok(labels.includes(es[key]), `Missing Spanish accessible name: ${key}`);
       }
       assert.ok(labels.every((label) => Object.values(es).includes(label)), 'No emergency accessible names remain in English');
+      const callLinks = wrapper.findAll((node) => node.getAttribute('href') === 'tel:911');
+      assert.equal(callLinks.length, 2);
+      for (const link of callLinks) {
+        assert.equal(link.textContent, es['emergency.call911Action']);
+        assert.equal(link.hasAttribute('aria-label'), false);
+      }
       assert.equal(wrapper.querySelector('#emergency-drawer-desc').textContent, es['emergency.description']);
       assert.match(wrapper.querySelector('blockquote').textContent, /Una persona no responde y no respira/);
       assert.match(wrapper.textContent, /nunca retrase la RCP para usar un temporizador/);

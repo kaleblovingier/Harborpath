@@ -240,7 +240,8 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
   font-weight: 600;
   font-size: 0.88rem;
   line-height: 1;
-  /* Swap the active colors together so the label never fades through low contrast. */
+  /* Override the global link transition so selected colors change together. */
+  transition: none;
 }
 .plain-toggle {
   display: inline-flex; align-items: center; gap: 8px;
@@ -359,7 +360,7 @@ a:hover { color: var(--brand-strong); text-decoration-color: var(--brand-strong)
   border: 1px solid transparent; border-radius: var(--radius-sm);
   font: 650 0.96rem/1.2 var(--font);
   text-decoration: none; cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  transition: border-color 0.15s ease, transform 0.1s ease;
 }
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
@@ -526,7 +527,7 @@ textarea.input {
   display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px;
   border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface);
   color: var(--text); text-decoration: none; font: 600 0.92rem/1.1 var(--font); cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 .preset:hover { background: var(--surface-2); border-color: var(--brand); color: var(--text); }
 .preset[aria-current="true"], .preset[aria-pressed="true"] {
@@ -828,7 +829,7 @@ textarea.input {
   min-height: 44px; padding: 0 18px; border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
   font: 600 0.95rem var(--font); cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 .tab:hover { background: var(--surface-2); border-color: var(--brand); color: var(--text); }
 .tab[aria-selected="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
@@ -958,7 +959,7 @@ textarea.input {
   color: var(--text);
   font: 600 0.92rem/1.2 var(--font);
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s;
 }
 .pacer-step-tab:hover {
   background: var(--surface-hover);
@@ -1647,7 +1648,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s;
 }
 .btn-sensory-mode:hover {
   background: var(--surface-2);
@@ -1671,7 +1672,6 @@ body.sensory-mode-active [tabindex]:focus-visible {
   color: var(--danger-strong);
   font: 700 0.95rem var(--font);
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
 }
 .btn-emergency-drawer:hover,
 .btn-emergency-drawer[aria-expanded="true"] {
@@ -1895,7 +1895,7 @@ body.sensory-mode-active [tabindex]:focus-visible {
   font-weight: 500;
   cursor: pointer;
   color: var(--text);
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 .tab-btn:hover { background: var(--surface-2); border-color: var(--brand); }
 .tab-btn.active, .tab-btn[aria-selected="true"] {
