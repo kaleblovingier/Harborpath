@@ -10133,8 +10133,8 @@
 .nsti-btn-row,.decon-btn-row,.carceral-btn-row{display:flex;align-items:center;gap:0.75rem}
 .nsti-num-input,.decon-num-input,.carceral-days-input{padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem}
 .nsti-check-row,.decon-check-row,.carceral-pillar-row{display:flex;align-items:flex-start;gap:0.75rem;padding:0.65rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:0.5rem;background:var(--surface-2)}
-.nsti-check-row.active-hard{border-color:#ef4444;background:#fef2f2}
-.nsti-check-row.active-soft{border-color:#f59e0b;background:#fffbeb}
+.nsti-check-row.active-hard{border-color:var(--danger);background:var(--danger-soft)}
+.nsti-check-row.active-soft{border-color:var(--warn);background:var(--warn-soft)}
 .nsti-check-label,.decon-check-label{display:flex;flex-direction:column;gap:0.2rem;cursor:pointer;font-size:0.95rem}
 .nsti-check-desc,.decon-subtext{font-size:0.85rem;color:var(--muted);line-height:1.4}
 .nsti-pocus-details,.decon-tox-details,.nsti-stage-info,.carceral-reg-details,.decon-directive-box{background:var(--surface-2);padding:0.85rem;border-radius:var(--radius-sm);font-size:0.9rem;line-height:1.5}
@@ -10143,7 +10143,7 @@
 .nsti-emergent-banner,.carceral-spike-banner{background:#fef2f2;border:2px solid #ef4444;color:#991b1b}
 .nsti-emergent-banner{border-left:6px solid #b91c1c}
 .carceral-legal-banner{background:#f0fdfa;border:1.5px solid #0d9488;color:#134e4a}
-.decon-emergency-bar{background:#f0fdf4;border:1.5px solid #22c55e}
+.decon-emergency-bar{background:var(--ok-soft);border:1.5px solid var(--ok)}
 .nsti-badge,.carceral-badge{display:inline-flex;align-items:center;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.85rem;font-weight:700}
 .badge-low{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .badge-moderate{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
@@ -10152,7 +10152,7 @@
 .nsti-lab-row{display:grid;grid-template-columns:2fr 1fr auto;align-items:center;gap:0.75rem}
 .nsti-lab-label{font-size:0.9rem;font-weight:500}
 .nsti-pts-badge{font-size:0.8rem;font-weight:700;color:#0369a1;background:#e0f2fe;padding:0.25rem 0.5rem;border-radius:4px}
-.nsti-protocol-text{margin-top:0.5rem;color:#0f766e}
+.nsti-protocol-text{margin-top:0.5rem;color:var(--ok-strong)}
 .nsti-tendon-alert{margin-top:0.75rem;background:#fff1f2;border:1.5px solid #e11d48;border-radius:var(--radius-sm);padding:0.75rem;color:#9f1239;font-size:0.85rem;display:flex;align-items:flex-start;gap:0.5rem;line-height:1.4}
 .decon-obs-pill{display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.5rem;background:#e0e7ff;color:#3730a3;padding:0.35rem 0.65rem;border-radius:4px;font-size:0.85rem;font-weight:600}
 .decon-input-group{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.85rem}
@@ -10161,17 +10161,17 @@
 .card-alert{border-color:#eab308}
 .decon-directive-box{border-left:4px solid #0284c7}
 .decon-directive-text{font-size:0.95rem;line-height:1.5;margin:0}
-.decon-wbi-box{margin-top:0.85rem;background:#eff6ff;border:1px solid #bfdbfe;padding:0.75rem;border-radius:var(--radius-sm);font-size:0.9rem}
+.decon-wbi-box{margin-top:0.85rem;background:var(--info-soft);border:1px solid var(--info-border);padding:0.75rem;border-radius:var(--radius-sm);font-size:0.9rem}
 .decon-nalox-badge{background:#fdf4ff;border:1px solid #f0abfc;color:#86198f;padding:0.5rem 0.75rem;border-radius:var(--radius-sm);margin-bottom:0.5rem;display:inline-block}
 .decon-nalox-desc{font-size:0.9rem;line-height:1.5;color:var(--text)}
 .carceral-task-list{list-style:none;padding:0;margin:0.5rem 0 0;display:flex;flex-direction:column;gap:0.4rem}
 .carceral-task-list li{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.9rem;line-height:1.4;color:var(--text)}
-.carceral-bridge-tip{margin-top:0.5rem;color:#047857}
+.carceral-bridge-tip{margin-top:0.5rem;color:var(--ok-strong)}
 .carceral-countdown-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;background:var(--surface-2);padding:0.75rem;border-radius:var(--radius-sm)}
 .carceral-days-input{width:90px;font-weight:700;text-align:center}
 .carceral-pillars-list{display:flex;flex-direction:column;gap:0.5rem}
-.carceral-pillar-row.pillar-complete{border-color:#22c55e;background:#f0fdf4}
-.carceral-pillar-row.pillar-pending{border-color:#f59e0b;background:#fffbeb}
+.carceral-pillar-row.pillar-complete{border-color:var(--ok);background:var(--ok-soft)}
+.carceral-pillar-row.pillar-pending{border-color:var(--warn);background:var(--warn-soft)}
 .disaster-moud-view,.movement-disorders-view,.fungal-care-view,.inhalant-view,.adulterant-view,.pulmonary-view{max-width:1280px;margin:0 auto;padding:1rem 0 3rem}
 .disaster-grid,.movement-grid,.fungal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
 @media(max-width:900px){.disaster-grid,.movement-grid,.fungal-grid{grid-template-columns:1fr}}
@@ -10182,7 +10182,7 @@
 .disaster-select,.movement-select,.fungal-select{width:100%;padding:0.65rem 0.85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem}
 .disaster-num-input,.movement-num-input,.fungal-num-input{width:110px;padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.95rem}
 .disaster-check-row,.movement-check-row,.fungal-check-row{display:flex;align-items:flex-start;gap:0.75rem;padding:0.65rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:0.5rem;background:var(--surface-2)}
-.disaster-check-row.emergency-row,.movement-check-row.emergency-row,.fungal-check-row.emergency-row{border-color:#ef4444;background:#fef2f2}
+.disaster-check-row.emergency-row,.movement-check-row.emergency-row,.fungal-check-row.emergency-row{border-color:var(--danger);background:var(--danger-soft)}
 .disaster-check-label,.movement-check-label,.fungal-check-label{display:flex;flex-direction:column;gap:0.2rem;cursor:pointer;font-size:0.95rem}
 .disaster-subtext,.movement-subtext,.fungal-subtext{font-size:0.85rem;color:var(--muted);line-height:1.4}
 .disaster-auth-banner,.movement-blackbox-banner{border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem}
@@ -10198,10 +10198,10 @@
 .disaster-action-list,.movement-action-list,.fungal-action-list{display:flex;flex-direction:column;gap:0.65rem}
 .disaster-action-item,.movement-action-item,.fungal-action-item{padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2)}
 .disaster-action-head,.movement-action-head,.fungal-action-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem}
-.priority-stat .disaster-badge,.priority-stat .movement-badge,.priority-stat .fungal-badge{background:#dc2626;color:#fff}
-.priority-urgent .disaster-badge,.priority-urgent .movement-badge,.priority-urgent .fungal-badge{background:#e11d48;color:#fff}
-.priority-high .disaster-badge,.priority-high .movement-badge,.priority-high .fungal-badge{background:#ea580c;color:#fff}
-.priority-medium .disaster-badge,.priority-medium .movement-badge,.priority-medium .fungal-badge{background:#0284c7;color:#fff}
+.priority-stat .disaster-badge,.priority-stat .movement-badge,.priority-stat .fungal-badge{background:var(--danger);color:var(--on-danger)}
+.priority-urgent .disaster-badge,.priority-urgent .movement-badge,.priority-urgent .fungal-badge{background:var(--danger-soft);color:var(--danger-strong)}
+.priority-high .disaster-badge,.priority-high .movement-badge,.priority-high .fungal-badge{background:var(--warn-soft);color:var(--warn-strong)}
+.priority-medium .disaster-badge,.priority-medium .movement-badge,.priority-medium .fungal-badge{background:var(--info-soft);color:var(--info-strong)}
 .disaster-badge,.movement-badge,.fungal-badge{display:inline-block;padding:0.15rem 0.45rem;border-radius:4px;font-size:0.75rem;font-weight:700}
 .disaster-supply-list,.movement-supply-list,.fungal-supply-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
 .disaster-supply-list li,.movement-supply-list li,.fungal-supply-list li{display:flex;align-items:center;gap:0.5rem;font-size:0.9rem;color:var(--text)}
